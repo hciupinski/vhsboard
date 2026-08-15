@@ -17,6 +17,7 @@ dist-ssr
 *.local
 
 */superpowers/
+docs/tasks/
 
 # Wrangler / Cloudflare
 .wrangler/

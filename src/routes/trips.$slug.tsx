@@ -12,7 +12,12 @@ export const Route = createFileRoute("/trips/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Nie znaleziono wyjazdu — VHSBOARD" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [
+          { title: "Nie znaleziono wyjazdu — VHSBOARD" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
     }
     const { trip } = loaderData;
     const title = `${trip.title} — ${trip.place} | VHSBOARD`;
@@ -68,9 +73,18 @@ function TripDetail() {
             </h1>
             <p className="mt-4 max-w-xl text-background/85">{trip.intro}</p>
             <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-background/90">
-              <span className="flex items-center gap-2"><MapPin className="size-4" />{trip.place}</span>
-              <span className="flex items-center gap-2"><Users className="size-4" />{trip.days}</span>
-              <span className="flex items-center gap-2"><Wallet className="size-4" />{trip.price} od osoby</span>
+              <span className="flex items-center gap-2">
+                <MapPin className="size-4" />
+                {trip.place}
+              </span>
+              <span className="flex items-center gap-2">
+                <Users className="size-4" />
+                {trip.days}
+              </span>
+              <span className="flex items-center gap-2">
+                <Wallet className="size-4" />
+                {trip.price} od osoby
+              </span>
             </div>
           </div>
         </section>
@@ -79,7 +93,9 @@ function TripDetail() {
           <div>
             <h2 className="text-3xl sm:text-4xl">O wyjeździe</h2>
             {trip.description.map((p) => (
-              <p key={p.slice(0, 24)} className="mt-4 text-muted-foreground">{p}</p>
+              <p key={p.slice(0, 24)} className="mt-4 text-muted-foreground">
+                {p}
+              </p>
             ))}
 
             <h2 className="mt-12 text-3xl sm:text-4xl">Najlepsze momenty</h2>
@@ -126,7 +142,9 @@ function TripDetail() {
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Cena od osoby</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                Cena od osoby
+              </p>
               <p className="font-display text-4xl text-primary">{trip.price}</p>
               <dl className="mt-5 space-y-2 text-sm">
                 <div className="flex justify-between border-b border-border pb-2">
@@ -143,7 +161,9 @@ function TripDetail() {
                 </div>
               </dl>
               <Button asChild size="lg" className="mt-6 w-full rounded-full">
-                <Link to="/" hash="contact">Zapytaj o ten wyjazd</Link>
+                <Link to="/" hash="contact">
+                  Zapytaj o ten wyjazd
+                </Link>
               </Button>
               <p className="mt-3 text-center text-xs text-muted-foreground">
                 Zaliczka 700 zł · pełny zwrot do 45 dni przed wyjazdem
@@ -192,7 +212,9 @@ function TripDetail() {
                 <div>
                   <h3 className="text-xl">{o.title}</h3>
                   <p className="text-sm text-accent">{o.place}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{o.days} · {o.price}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {o.days} · {o.price}
+                  </p>
                 </div>
               </Link>
             ))}

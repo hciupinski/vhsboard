@@ -7,7 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ListField } from "@/components/admin/ListField";
 import { emptyOffer, loadOffers, slugify, upsertOffer, type OfferDraft } from "@/lib/adminStore";
 
@@ -15,7 +21,10 @@ export const Route = createFileRoute("/admin/$slug")({
   head: () => ({
     meta: [
       { title: "Edycja oferty — panel VHSBOARD" },
-      { name: "description", content: "Napisz ofertę wyjazdu: opis, cena, co w cenie, plan dnia i galeria." },
+      {
+        name: "description",
+        content: "Napisz ofertę wyjazdu: opis, cena, co w cenie, plan dnia i galeria.",
+      },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Edycja oferty — panel VHSBOARD" },
       { property: "og:description", content: "Napisz ofertę wyjazdu dla VHSBOARD." },
@@ -48,7 +57,11 @@ function OfferEditor() {
   if (!offer) return <div className="min-h-screen bg-muted/40" />;
 
   const save = (status: OfferDraft["status"]) => {
-    const next = upsertOffer({ ...offer, status, slug: finalSlug || slugify(offer.title) || "bez-tytulu" });
+    const next = upsertOffer({
+      ...offer,
+      status,
+      slug: finalSlug || slugify(offer.title) || "bez-tytulu",
+    });
     setOffer(next);
     setSaved(true);
     if (isNew) navigate({ to: "/admin/$slug", params: { slug: next.slug } });
@@ -73,7 +86,12 @@ function OfferEditor() {
           </div>
           <div className="flex items-center gap-2">
             {saved ? <span className="text-xs text-muted-foreground">Zapisano</span> : null}
-            <Button size="sm" variant="outline" className="rounded-full" onClick={() => save("draft")}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-full"
+              onClick={() => save("draft")}
+            >
               Zapisz szkic
             </Button>
             <Button size="sm" className="rounded-full" onClick={() => save("published")}>
@@ -93,7 +111,10 @@ function OfferEditor() {
             <TabsTrigger value="photos">Zdjęcia</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="basics" className="mt-6 space-y-6 rounded-2xl border border-border/70 bg-background p-6">
+          <TabsContent
+            value="basics"
+            className="mt-6 space-y-6 rounded-2xl border border-border/70 bg-background p-6"
+          >
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Tytuł wyjazdu">
                 <Input
@@ -129,10 +150,18 @@ function OfferEditor() {
                 />
               </Field>
               <Field label="Długość i wielkość grupy">
-                <Input value={offer.days} placeholder="7 dni · 12-18 osób" onChange={(e) => set("days", e.target.value)} />
+                <Input
+                  value={offer.days}
+                  placeholder="7 dni · 12-18 osób"
+                  onChange={(e) => set("days", e.target.value)}
+                />
               </Field>
               <Field label="Cena">
-                <Input value={offer.price} placeholder="od 3 100 zł" onChange={(e) => set("price", e.target.value)} />
+                <Input
+                  value={offer.price}
+                  placeholder="od 3 100 zł"
+                  onChange={(e) => set("price", e.target.value)}
+                />
               </Field>
             </div>
 
@@ -165,7 +194,10 @@ function OfferEditor() {
             </Field>
           </TabsContent>
 
-          <TabsContent value="story" className="mt-6 space-y-6 rounded-2xl border border-border/70 bg-background p-6">
+          <TabsContent
+            value="story"
+            className="mt-6 space-y-6 rounded-2xl border border-border/70 bg-background p-6"
+          >
             <Field label="Zdanie wprowadzające" hint="Jedno zdanie pod tytułem">
               <Textarea
                 value={offer.intro}
@@ -190,7 +222,10 @@ function OfferEditor() {
             />
           </TabsContent>
 
-          <TabsContent value="inout" className="mt-6 grid gap-6 rounded-2xl border border-border/70 bg-background p-6 md:grid-cols-2">
+          <TabsContent
+            value="inout"
+            className="mt-6 grid gap-6 rounded-2xl border border-border/70 bg-background p-6 md:grid-cols-2"
+          >
             <div className="rounded-xl bg-secondary/40 p-4">
               <p className="mb-3 flex items-center gap-2 font-display text-lg tracking-wide">
                 <Check className="size-4 text-primary" /> Co jest w cenie
@@ -215,15 +250,24 @@ function OfferEditor() {
             </div>
           </TabsContent>
 
-          <TabsContent value="days" className="mt-6 space-y-4 rounded-2xl border border-border/70 bg-background p-6">
+          <TabsContent
+            value="days"
+            className="mt-6 space-y-4 rounded-2xl border border-border/70 bg-background p-6"
+          >
             {offer.schedule.map((s, i) => (
-              <div key={i} className="flex flex-col gap-2 rounded-xl border border-border/60 p-4 sm:flex-row">
+              <div
+                key={i}
+                className="flex flex-col gap-2 rounded-xl border border-border/60 p-4 sm:flex-row"
+              >
                 <Input
                   value={s.day}
                   placeholder="Dzień 1"
                   className="sm:w-40"
                   onChange={(e) =>
-                    set("schedule", offer.schedule.map((x, j) => (j === i ? { ...x, day: e.target.value } : x)))
+                    set(
+                      "schedule",
+                      offer.schedule.map((x, j) => (j === i ? { ...x, day: e.target.value } : x)),
+                    )
                   }
                 />
                 <Textarea
@@ -231,7 +275,10 @@ function OfferEditor() {
                   placeholder="Odbiór w Lizbonie, zakwaterowanie, kolacja powitalna."
                   className="min-h-20"
                   onChange={(e) =>
-                    set("schedule", offer.schedule.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))
+                    set(
+                      "schedule",
+                      offer.schedule.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)),
+                    )
                   }
                 />
                 <Button
@@ -240,7 +287,12 @@ function OfferEditor() {
                   size="icon"
                   aria-label={`Usuń dzień ${i + 1}`}
                   className="shrink-0 text-muted-foreground hover:text-destructive"
-                  onClick={() => set("schedule", offer.schedule.filter((_, j) => j !== i))}
+                  onClick={() =>
+                    set(
+                      "schedule",
+                      offer.schedule.filter((_, j) => j !== i),
+                    )
+                  }
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -252,17 +304,28 @@ function OfferEditor() {
               size="sm"
               className="rounded-full"
               onClick={() =>
-                set("schedule", [...offer.schedule, { day: `Dzień ${offer.schedule.length + 1}`, text: "" }])
+                set("schedule", [
+                  ...offer.schedule,
+                  { day: `Dzień ${offer.schedule.length + 1}`, text: "" },
+                ])
               }
             >
               <Plus className="mr-1 size-4" /> Dodaj dzień
             </Button>
           </TabsContent>
 
-          <TabsContent value="photos" className="mt-6 space-y-4 rounded-2xl border border-border/70 bg-background p-6">
-            <p className="text-sm text-muted-foreground">Zdjęcia z poprzednich wyjazdów — adres zdjęcia i krótki opis alternatywny.</p>
+          <TabsContent
+            value="photos"
+            className="mt-6 space-y-4 rounded-2xl border border-border/70 bg-background p-6"
+          >
+            <p className="text-sm text-muted-foreground">
+              Zdjęcia z poprzednich wyjazdów — adres zdjęcia i krótki opis alternatywny.
+            </p>
             {offer.gallery.map((g, i) => (
-              <div key={i} className="flex flex-col gap-2 rounded-xl border border-border/60 p-4 sm:flex-row sm:items-center">
+              <div
+                key={i}
+                className="flex flex-col gap-2 rounded-xl border border-border/60 p-4 sm:flex-row sm:items-center"
+              >
                 <div className="h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
                   {g.src ? (
                     <img src={g.src} alt="" className="h-full w-full object-cover" />
@@ -277,14 +340,20 @@ function OfferEditor() {
                     value={g.src}
                     placeholder="https://…/zdjecie.jpg"
                     onChange={(e) =>
-                      set("gallery", offer.gallery.map((x, j) => (j === i ? { ...x, src: e.target.value } : x)))
+                      set(
+                        "gallery",
+                        offer.gallery.map((x, j) => (j === i ? { ...x, src: e.target.value } : x)),
+                      )
                     }
                   />
                   <Input
                     value={g.alt}
                     placeholder="Ekipa przy ognisku obok busa"
                     onChange={(e) =>
-                      set("gallery", offer.gallery.map((x, j) => (j === i ? { ...x, alt: e.target.value } : x)))
+                      set(
+                        "gallery",
+                        offer.gallery.map((x, j) => (j === i ? { ...x, alt: e.target.value } : x)),
+                      )
                     }
                   />
                 </div>
@@ -294,7 +363,12 @@ function OfferEditor() {
                   size="icon"
                   aria-label={`Usuń zdjęcie ${i + 1}`}
                   className="shrink-0 text-muted-foreground hover:text-destructive"
-                  onClick={() => set("gallery", offer.gallery.filter((_, j) => j !== i))}
+                  onClick={() =>
+                    set(
+                      "gallery",
+                      offer.gallery.filter((_, j) => j !== i),
+                    )
+                  }
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -316,7 +390,15 @@ function OfferEditor() {
   );
 }
 
-function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between gap-3">

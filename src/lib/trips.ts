@@ -63,9 +63,18 @@ export const trips: Trip[] = [
       "Napoje i wydatki własne",
     ],
     schedule: [
-      { day: "Dzień 1", text: "Odbiór w Lizbonie, zakwaterowanie, kolacja powitalna i omówienie prognozy." },
-      { day: "Dni 2-6", text: "Poranna sesja, obiad, wolne popołudnie lub drugi surf, wspólna kolacja." },
-      { day: "Dzień 4", text: "Opcja dnia wolnego: wędrówka wybrzeżem do Foz do Lizandro i obiad z owoców morza." },
+      {
+        day: "Dzień 1",
+        text: "Odbiór w Lizbonie, zakwaterowanie, kolacja powitalna i omówienie prognozy.",
+      },
+      {
+        day: "Dni 2-6",
+        text: "Poranna sesja, obiad, wolne popołudnie lub drugi surf, wspólna kolacja.",
+      },
+      {
+        day: "Dzień 4",
+        text: "Opcja dnia wolnego: wędrówka wybrzeżem do Foz do Lizandro i obiad z owoców morza.",
+      },
       { day: "Dzień 7", text: "Sesja o wschodzie słońca, śniadanie, transfer do Lizbony." },
     ],
     gallery: [
@@ -113,10 +122,19 @@ export const trips: Trip[] = [
       "Napoje i kolejki na après",
     ],
     schedule: [
-      { day: "Dzień 1", text: "Transfer z Genewy, zakwaterowanie, dobór sprzętu i odprawa lawinowa." },
-      { day: "Dzień 2", text: "Rozjazdowe zjazdy w Le Tour, podział na grupy, ćwiczenia w terenie." },
+      {
+        day: "Dzień 1",
+        text: "Transfer z Genewy, zakwaterowanie, dobór sprzętu i odprawa lawinowa.",
+      },
+      {
+        day: "Dzień 2",
+        text: "Rozjazdowe zjazdy w Le Tour, podział na grupy, ćwiczenia w terenie.",
+      },
       { day: "Dni 3-5", text: "Przewodnicy każdego ranka wybierają górę pod śnieg i wiatr." },
-      { day: "Dzień 6", text: "Ostatnie poranne zjazdy, późny obiad w mieście, transfer do Genewy." },
+      {
+        day: "Dzień 6",
+        text: "Ostatnie poranne zjazdy, późny obiad w mieście, transfer do Genewy.",
+      },
     ],
     gallery: [
       { src: tripSnow, alt: "Snowboardziści zjeżdżający szerokim polem puchu w Alpach" },
@@ -163,9 +181,18 @@ export const trips: Trip[] = [
       "Napiwki, napoje i pamiątki",
     ],
     schedule: [
-      { day: "Dni 1-5", text: "Taghazout: codzienne sesje surfingu, kolacje na dachu, jedno popołudnie w hammamie." },
-      { day: "Dzień 6", text: "Road trip przez Atlas z postojami w wioskach i punktach widokowych." },
-      { day: "Dni 7-9", text: "Oukaïmeden: prowadzone dni jazdy, wieczory w pensjonacie, tadżin na okrągło." },
+      {
+        day: "Dni 1-5",
+        text: "Taghazout: codzienne sesje surfingu, kolacje na dachu, jedno popołudnie w hammamie.",
+      },
+      {
+        day: "Dzień 6",
+        text: "Road trip przez Atlas z postojami w wioskach i punktach widokowych.",
+      },
+      {
+        day: "Dni 7-9",
+        text: "Oukaïmeden: prowadzone dni jazdy, wieczory w pensjonacie, tadżin na okrągło.",
+      },
       { day: "Dzień 10", text: "Poranek na suku w Marrakeszu i wylot." },
     ],
     gallery: [

@@ -10,7 +10,10 @@ export const Route = createFileRoute("/admin/")({
   head: () => ({
     meta: [
       { title: "CMS ofert — panel VHSBOARD" },
-      { name: "description", content: "Twórz i edytuj oferty wyjazdów VHSBOARD: opis, cena, co w cenie i galeria." },
+      {
+        name: "description",
+        content: "Twórz i edytuj oferty wyjazdów VHSBOARD: opis, cena, co w cenie i galeria.",
+      },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "CMS ofert — panel VHSBOARD" },
       { property: "og:description", content: "Twórz i edytuj oferty wyjazdów VHSBOARD." },
@@ -54,7 +57,8 @@ function AdminList() {
       <main className="mx-auto max-w-5xl px-5 py-10">
         <h1 className="font-display text-4xl tracking-wide">Twoje oferty</h1>
         <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-          Każda oferta to jeden wpis: opis, cena, co jest i czego nie ma w cenie, plan dzień po dniu i zdjęcia z poprzednich wyjazdów.
+          Każda oferta to jeden wpis: opis, cena, co jest i czego nie ma w cenie, plan dzień po dniu
+          i zdjęcia z poprzednich wyjazdów.
         </p>
 
         <div className="mt-8 space-y-3">
@@ -74,7 +78,9 @@ function AdminList() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="font-display text-xl tracking-wide">{o.title || "Oferta bez tytułu"}</h2>
+                  <h2 className="font-display text-xl tracking-wide">
+                    {o.title || "Oferta bez tytułu"}
+                  </h2>
                   <Badge variant={o.status === "published" ? "default" : "secondary"}>
                     {o.status === "published" ? "opublikowana" : "szkic"}
                   </Badge>
@@ -83,7 +89,9 @@ function AdminList() {
                 <p className="mt-1 truncate text-sm text-muted-foreground">
                   {o.place} · {o.days} · {o.price}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">Zaktualizowano {o.updatedAt} · /trips/{o.slug}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Zaktualizowano {o.updatedAt} · /trips/{o.slug}
+                </p>
               </div>
               <div className="flex shrink-0 gap-2">
                 <Button asChild size="sm" variant="outline" className="rounded-full">

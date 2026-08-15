@@ -5,7 +5,6 @@ import { trips } from "@/lib/trips";
 import heroSurf from "@/assets/hero-surf.jpg";
 import aboutCrew from "@/assets/about-crew.jpg";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -30,12 +29,23 @@ export const Route = createFileRoute("/")({
 
 const offers = trips;
 
-
 const values = [
-  { title: "Jeździmy, nie sprzedajemy", text: "Rezerwujemy wyjazdy, na których sami chcemy być. Jeśli sami byśmy nie pojechali, nie ma tego na liście." },
-  { title: "Małe ekipy", text: "Od 10 do 20 osób. Wystarczy na dobrą energię, mało na tyle, żeby każdy znał twoje imię." },
-  { title: "Każdy poziom mile widziany", text: "Pierwszy raz i stare wygi jadą tym samym busem. Szkolenie w cenie, ego nie." },
-  { title: "Nic nie musisz organizować", text: "Noclegi, transfery, sprzęt, przewodnicy, jedzenie. Ty bierzesz chęci i paszport." },
+  {
+    title: "Jeździmy, nie sprzedajemy",
+    text: "Rezerwujemy wyjazdy, na których sami chcemy być. Jeśli sami byśmy nie pojechali, nie ma tego na liście.",
+  },
+  {
+    title: "Małe ekipy",
+    text: "Od 10 do 20 osób. Wystarczy na dobrą energię, mało na tyle, żeby każdy znał twoje imię.",
+  },
+  {
+    title: "Każdy poziom mile widziany",
+    text: "Pierwszy raz i stare wygi jadą tym samym busem. Szkolenie w cenie, ego nie.",
+  },
+  {
+    title: "Nic nie musisz organizować",
+    text: "Noclegi, transfery, sprzęt, przewodnicy, jedzenie. Ty bierzesz chęci i paszport.",
+  },
 ];
 
 function Index() {
@@ -47,9 +57,15 @@ function Index() {
             <Brand />
           </a>
           <div className="hidden gap-7 text-sm font-medium text-muted-foreground sm:flex">
-            <a href="#about" className="transition-colors hover:text-primary">O nas</a>
-            <a href="#offers" className="transition-colors hover:text-primary">Oferty</a>
-            <a href="#contact" className="transition-colors hover:text-primary">Kontakt</a>
+            <a href="#about" className="transition-colors hover:text-primary">
+              O nas
+            </a>
+            <a href="#offers" className="transition-colors hover:text-primary">
+              Oferty
+            </a>
+            <a href="#contact" className="transition-colors hover:text-primary">
+              Kontakt
+            </a>
           </div>
           <Button asChild size="sm" className="rounded-full">
             <a href="#contact">Zaplanuj wyjazd</a>
@@ -76,8 +92,9 @@ function Index() {
               Wyjazdy zbudowane wokół fal, puchu i ludzi, których poznajesz po drodze
             </h1>
             <p className="mt-5 max-w-xl text-base text-background/85 sm:text-lg">
-              Zabieramy ekipy od 10 do 20 osób w dobre miejsca, ogarniamy każdy szczegół
-              i zostawiamy sporo miejsca na to, czego nie da się zaplanować — zwykle to najlepsza część.
+              Zabieramy ekipy od 10 do 20 osób w dobre miejsca, ogarniamy każdy szczegół i
+              zostawiamy sporo miejsca na to, czego nie da się zaplanować — zwykle to najlepsza
+              część.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-full shadow-warm">
@@ -104,13 +121,15 @@ function Index() {
                 Mała agencja prowadzona przez ludzi, którzy wolą być na zewnątrz
               </h2>
               <p className="mt-5 text-muted-foreground">
-                VHSBOARD zaczęło się od jednego wynajętego busa, szóstki znajomych i bardzo optymistycznej
-                prognozy falowania. Dziesięć lat później robimy dokładnie to samo — tylko z lepszą kawą,
-                porządnymi przewodnikami i wyjazdami, które faktycznie trzymają się planu.
+                VHSBOARD zaczęło się od jednego wynajętego busa, szóstki znajomych i bardzo
+                optymistycznej prognozy falowania. Dziesięć lat później robimy dokładnie to samo —
+                tylko z lepszą kawą, porządnymi przewodnikami i wyjazdami, które faktycznie trzymają
+                się planu.
               </p>
               <p className="mt-4 text-muted-foreground">
-                Nie robimy resortów, wycieczek autokarowych ani planów dnia, które trzeba przetrwać. Robimy
-                poranne sesje, wspólne posiłki, ogniska i taką grupę, w której po drugim dniu nikt nie jest obcy.
+                Nie robimy resortów, wycieczek autokarowych ani planów dnia, które trzeba przetrwać.
+                Robimy poranne sesje, wspólne posiłki, ogniska i taką grupę, w której po drugim dniu
+                nikt nie jest obcy.
               </p>
               <div className="mt-8 grid gap-5 sm:grid-cols-2">
                 {values.map((v) => (
@@ -169,7 +188,9 @@ function Index() {
                     <p className="text-sm font-medium text-accent">{o.place}</p>
                     <p className="mt-3 flex-1 text-sm text-muted-foreground">{o.text}</p>
                     <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">{o.days}</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                        {o.days}
+                      </span>
                       <span className="font-display text-xl text-primary">{o.price}</span>
                     </div>
                     <Button asChild className="mt-4 w-full rounded-full" variant="secondary">
@@ -179,11 +200,11 @@ function Index() {
                     </Button>
                   </div>
                 </article>
-
               ))}
             </div>
             <p className="mt-8 text-sm text-muted-foreground">
-              Masz własną ekipę, klub albo drużynę? Budujemy prywatne wyjazdy od zera — napisz nam terminy i klimat.
+              Masz własną ekipę, klub albo drużynę? Budujemy prywatne wyjazdy od zera — napisz nam
+              terminy i klimat.
             </p>
           </div>
         </section>
@@ -193,17 +214,33 @@ function Index() {
           <div className="overflow-hidden rounded-3xl bg-sunset-gradient p-8 text-primary-foreground shadow-warm sm:p-12">
             <div className="grid gap-10 lg:grid-cols-2">
               <div>
-                <h2 className="text-4xl leading-tight sm:text-5xl">Napisz do nas, odpowiadamy szybko</h2>
+                <h2 className="text-4xl leading-tight sm:text-5xl">
+                  Napisz do nas, odpowiadamy szybko
+                </h2>
                 <p className="mt-4 max-w-md text-primary-foreground/90">
-                  Napisz, kto jedzie, mniej więcej kiedy i co lubicie robić. Wrócimy z planem
-                  i uczciwą ceną — bez broszur i gadki sprzedażowej.
+                  Napisz, kto jedzie, mniej więcej kiedy i co lubicie robić. Wrócimy z planem i
+                  uczciwą ceną — bez broszur i gadki sprzedażowej.
                 </p>
                 <div className="mt-8 space-y-2 text-primary-foreground/95">
-                  <p><span className="font-semibold">E-mail</span> · <a href="mailto:czesc@vhsboard.pl" className="underline-offset-4 hover:underline">czesc@vhsboard.pl</a></p>
-                  <p><span className="font-semibold">WhatsApp</span> · <a href="tel:+48512448010" className="underline-offset-4 hover:underline">+48 512 448 010</a></p>
-                  <p><span className="font-semibold">Baza</span> · ul. Nadmorska 14, Gdynia</p>
+                  <p>
+                    <span className="font-semibold">E-mail</span> ·{" "}
+                    <a
+                      href="mailto:czesc@vhsboard.pl"
+                      className="underline-offset-4 hover:underline"
+                    >
+                      czesc@vhsboard.pl
+                    </a>
+                  </p>
+                  <p>
+                    <span className="font-semibold">WhatsApp</span> ·{" "}
+                    <a href="tel:+48512448010" className="underline-offset-4 hover:underline">
+                      +48 512 448 010
+                    </a>
+                  </p>
+                  <p>
+                    <span className="font-semibold">Baza</span> · ul. Nadmorska 14, Gdynia
+                  </p>
                 </div>
-
               </div>
               <form
                 className="rounded-2xl bg-card p-6 text-card-foreground"
