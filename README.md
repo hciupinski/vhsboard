@@ -38,3 +38,18 @@ bun run build
 bun run lint
 bun run format
 ```
+
+## Supabase lokalnie
+
+Migracje CMS, RLS i prywatny Storage wymagają Docker Desktop oraz Supabase CLI.
+Uruchamiaj je z katalogu głównego projektu:
+
+```bash
+supabase start
+supabase db reset
+supabase db lint --fail-on error
+supabase test db supabase/tests
+```
+
+Instrukcję ręcznego nadania roli administratora, zasady podpisanych URL-i i
+bezpiecznej ewolucji schematu zawiera [runbook Supabase](docs/supabase-runbook.md).
