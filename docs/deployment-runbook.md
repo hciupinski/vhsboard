@@ -12,9 +12,10 @@ w Cloudflare.
 1. W Cloudflare utwórz projekt **Pages Direct Upload**. Projekt nie może mieć
    integracji z Git ani przypisanej własnej domeny. Jego nazwę ustaw później w
    zmiennej `CLOUDFLARE_PAGES_PROJECT`.
-2. W GitHub utwórz lub skonfiguruj środowisko `production`. Dostęp do niego
-   powinien pozostać chroniony zgodnie z zasadami zespołu; tylko to środowisko
-   przechowuje sekrety wdrożeniowe.
+2. W GitHub utwórz lub skonfiguruj środowisko `production`. W regułach ochrony
+   wdrożenia zezwól wyłącznie na gałąź `main`; nie zezwalaj na wdrożenia z
+   innych gałęzi ani tagów. Wszystkie sekrety wdrożeniowe przechowuj tylko w
+   tym środowisku, a nie jako sekrety repozytorium lub organizacji.
 3. W GitHub (na poziomie repozytorium lub organizacji) dodaj następujące
    publiczne zmienne Actions. Są one przekazywane do kompilacji frontendu, więc
    nie wolno wpisywać w nich sekretów:

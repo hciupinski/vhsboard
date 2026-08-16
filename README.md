@@ -41,10 +41,12 @@ bun run format
 
 ## Wdrożenia
 
-Tylko merge do `main` wdraża witrynę na bezpłatny adres Cloudflare Pages
-`*.pages.dev`. Domena `vhsboard.pl` pozostaje poza zakresem tego wdrożenia i
-nadal obsługuje ją WordPress. Ręczną konfigurację oraz sprawdzenia pierwszego
-merge'a opisuje [runbook wdrożenia](docs/deployment-runbook.md).
+Tylko gałąź `main` może wdrażać witrynę na bezpłatny adres Cloudflare Pages
+`*.pages.dev` — po pushu lub merge'u do `main`, a także przez ręczne
+uruchomienie workflow rozpoczęte z `main`. Domena `vhsboard.pl` pozostaje poza
+zakresem tego wdrożenia i nadal obsługuje ją WordPress. Ręczną konfigurację oraz
+sprawdzenia pierwszego merge'a opisuje
+[runbook wdrożenia](docs/deployment-runbook.md).
 
 ## Supabase lokalnie
 

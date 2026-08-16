@@ -65,13 +65,38 @@ jobs:
           command: pages deploy .output/public --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=main
           packageManager: bun
       - name: Check deployed Pages URL
+        env:
+          DEPLOYMENT_URL: ${{ steps.pages_deploy.outputs.deployment-url }}
         run: |
-          deployment_url="${{ steps.pages_deploy.outputs.deployment-url }}"
-          case "$deployment_url" in
-            https://*.pages.dev) ;;
-            *)
-              echo "Unexpected Cloudflare Pages deployment URL: $deployment_url"
-              exit 1
-              ;;
-          esac
-          curl --fail --show-error --silent --location "$deployment_url"
+          node <<'NODE'
+          const deploymentUrl = process.env.DEPLOYMENT_URL ?? "";
+          let parsed;
+
+          try {
+            parsed = new URL(deploymentUrl);
+          } catch {
+            console.error("Invalid deployment URL: expected an HTTPS Cloudflare Pages root URL.");
+            process.exit(1);
+          }
+
+          const isExactRoot =
+            deploymentUrl === `https://${parsed.hostname}` ||
+            deploymentUrl === `https://${parsed.hostname}/`;
+          const isPagesRoot =
+            isExactRoot &&
+            parsed.protocol === "https:" &&
+            parsed.hostname.endsWith(".pages.dev") &&
+            parsed.hostname !== "pages.dev" &&
+            parsed.username === "" &&
+            parsed.password === "" &&
+            parsed.port === "" &&
+            parsed.pathname === "/" &&
+            parsed.search === "" &&
+            parsed.hash === "";
+
+          if (!isPagesRoot) {
+            console.error("Invalid deployment URL: expected an HTTPS *.pages.dev root URL without credentials, port, query, or fragment.");
+            process.exit(1);
+          }
+          NODE
+          curl --fail --show-error --silent --location "$DEPLOYMENT_URL"
