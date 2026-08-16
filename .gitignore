@@ -19,6 +19,10 @@ coverage/
 *.local
 .worktrees/
 
+# Supabase CLI local state
+supabase/.branches/
+supabase/.temp/
+
 */superpowers/
 docs/tasks/
 
