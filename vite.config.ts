@@ -10,6 +10,21 @@ export default defineConfig({
     tsConfigPaths(),
     tanstackStart({
       server: { entry: "server" },
+      prerender: {
+        enabled: true,
+        autoStaticPathsDiscovery: false,
+        crawlLinks: false,
+        failOnError: true,
+      },
+      pages: [
+        {
+          path: "/",
+          prerender: {
+            enabled: true,
+            outputPath: "/index.html",
+          },
+        },
+      ],
     }),
     nitro(),
     viteReact(),
