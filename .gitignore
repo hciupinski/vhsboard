@@ -14,7 +14,10 @@ dist-ssr
 .vinxi
 .tanstack/**
 .nitro
+.env
+coverage/
 *.local
+.worktrees/
 
 */superpowers/
 docs/tasks/

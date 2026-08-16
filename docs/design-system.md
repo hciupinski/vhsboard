@@ -18,15 +18,15 @@ their semantic Tailwind utilities (`bg-background`, `text-primary`,
 `bg-secondary`, `border-border`, and so on) instead of introducing near-match
 hex values or a second palette.
 
-| Role | CSS token | Light-theme value | Intent |
-| --- | --- | --- | --- |
-| Page ground | `--background` | `oklch(0.985 0.012 85)` | Warm cream, never sterile white. |
-| Main text | `--foreground` | `oklch(0.22 0.03 60)` | Deep warm brown for high contrast. |
-| Brand action | `--primary` | `oklch(0.63 0.19 42)` | Volcanic orange for primary CTAs and emphasis. |
-| Place/context | `--accent` | `oklch(0.55 0.11 210)` | Ocean blue, used with restraint. |
-| Quiet section | `--secondary` | `oklch(0.94 0.03 85)` | Sand-tinted surface. |
-| Boundaries | `--border` | `oklch(0.9 0.02 80)` | Soft separation without cold grey. |
-| Warm emphasis | `--gradient-sunset` | Orange-to-golden gradient | Use for memorable small surfaces and CTAs. |
+| Role          | CSS token           | Light-theme value         | Intent                                         |
+| ------------- | ------------------- | ------------------------- | ---------------------------------------------- |
+| Page ground   | `--background`      | `oklch(0.985 0.012 85)`   | Warm cream, never sterile white.               |
+| Main text     | `--foreground`      | `oklch(0.22 0.03 60)`     | Deep warm brown for high contrast.             |
+| Brand action  | `--primary`         | `oklch(0.63 0.19 42)`     | Volcanic orange for primary CTAs and emphasis. |
+| Place/context | `--accent`          | `oklch(0.55 0.11 210)`    | Ocean blue, used with restraint.               |
+| Quiet section | `--secondary`       | `oklch(0.94 0.03 85)`     | Sand-tinted surface.                           |
+| Boundaries    | `--border`          | `oklch(0.9 0.02 80)`      | Soft separation without cold grey.             |
+| Warm emphasis | `--gradient-sunset` | Orange-to-golden gradient | Use for memorable small surfaces and CTAs.     |
 
 Supporting tokens are `--sunset`, `--ocean`, `--sand`, and `--shadow-warm`.
 All CSS color additions must use OKLCH, matching the existing stylesheet.

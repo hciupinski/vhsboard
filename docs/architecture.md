@@ -78,30 +78,30 @@ not a mandatory migration that overrides an already better implementation.
 
 ### `offers`
 
-| Field | Purpose |
-| --- | --- |
-| `id` | Stable primary key. |
-| `slug` | Unique, human-readable public identifier. |
-| `title`, `subtitle` | Offer headings. |
-| `short_description`, `description` | Listing and detail-page copy. |
-| `location` | Destination label. |
-| `start_date`, `end_date` | Optional trip period. |
-| `price_from` | Starting price, represented consistently for display. |
-| `booking_url` | External TripAhead destination. |
-| `hero_image` | Reference to a Storage object or primary image. |
-| `status` | `draft`, `published`, or `archived`. |
-| `published_at`, `created_at`, `updated_at` | Lifecycle and audit timestamps. |
+| Field                                      | Purpose                                               |
+| ------------------------------------------ | ----------------------------------------------------- |
+| `id`                                       | Stable primary key.                                   |
+| `slug`                                     | Unique, human-readable public identifier.             |
+| `title`, `subtitle`                        | Offer headings.                                       |
+| `short_description`, `description`         | Listing and detail-page copy.                         |
+| `location`                                 | Destination label.                                    |
+| `start_date`, `end_date`                   | Optional trip period.                                 |
+| `price_from`                               | Starting price, represented consistently for display. |
+| `booking_url`                              | External TripAhead destination.                       |
+| `hero_image`                               | Reference to a Storage object or primary image.       |
+| `status`                                   | `draft`, `published`, or `archived`.                  |
+| `published_at`, `created_at`, `updated_at` | Lifecycle and audit timestamps.                       |
 
 ### `offer_images`
 
-| Field | Purpose |
-| --- | --- |
-| `id` | Stable primary key. |
-| `offer_id` | Required relation to `offers`. |
+| Field          | Purpose                                 |
+| -------------- | --------------------------------------- |
+| `id`           | Stable primary key.                     |
+| `offer_id`     | Required relation to `offers`.          |
 | `storage_path` | Path of the object in Supabase Storage. |
-| `alt_text` | Meaningful image description. |
-| `position` | Deterministic gallery order. |
-| `created_at` | Upload timestamp. |
+| `alt_text`     | Meaningful image description.           |
+| `position`     | Deterministic gallery order.            |
+| `created_at`   | Upload timestamp.                       |
 
 Add a minimal administrator-role source (for example, a `profiles` record or
 approved Auth metadata) only as needed to support RLS. Do not rely solely on
@@ -114,11 +114,11 @@ one to five administrators.
 
 Enable RLS on CMS tables. The required policy outcome is:
 
-| Actor | Offers | Images / Storage |
-| --- | --- | --- |
-| Public visitor | `SELECT` published offers only | Read published offer images only. |
+| Actor                                          | Offers                                                              | Images / Storage                             |
+| ---------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------- |
+| Public visitor                                 | `SELECT` published offers only                                      | Read published offer images only.            |
 | Authenticated administrator with approved role | `SELECT`, `INSERT`, `UPDATE`, `DELETE`; publish, unpublish, archive | Upload, update, and delete permitted images. |
-| Any other user | No CMS mutation; no draft or archived data | No upload, modification, or deletion. |
+| Any other user                                 | No CMS mutation; no draft or archived data                          | No upload, modification, or deletion.        |
 
 Policies must be enforced at the database and Storage layer. Frontend state and
 route guards improve UX but are not authorization. Drafts and archived offers
