@@ -1,6 +1,7 @@
 import { supabase } from "../supabase";
 
 export type AdminSession = { userId: string; email: string; role: "admin" };
+export type AdminPath = "/admin" | `/admin/${string}`;
 
 const applicationOrigin = "https://vhsboard.local";
 const adminPathPattern = /^\/admin(?:\/[^/?#]+)?$/;
@@ -46,7 +47,7 @@ export const signOut = async (): Promise<void> => {
   }
 };
 
-export const sanitizeAdminNext = (next: string | undefined): string => {
+export const sanitizeAdminNext = (next: string | undefined): AdminPath => {
   if (!next) {
     return "/admin";
   }

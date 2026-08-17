@@ -11,12 +11,7 @@ const mockedSupabase = vi.hoisted(() => ({
 
 vi.mock("../supabase", () => ({ supabase: mockedSupabase }));
 
-import {
-  getAdminSession,
-  sanitizeAdminNext,
-  signInWithPassword,
-  signOut,
-} from "./session";
+import { getAdminSession, sanitizeAdminNext, signInWithPassword, signOut } from "./session";
 
 const user = { id: "user-1", email: "admin@example.test" };
 
@@ -64,7 +59,10 @@ describe("getAdminSession", () => {
   it.each([null, { role: "editor" }, { role: "owner" }])(
     "returns null when the profile is not an administrator: %o",
     async (profile) => {
-      mockedSupabase.auth.getSession.mockResolvedValue({ data: { session: { user } }, error: null });
+      mockedSupabase.auth.getSession.mockResolvedValue({
+        data: { session: { user } },
+        error: null,
+      });
       stubProfile({ data: profile, error: null });
 
       await expect(getAdminSession()).resolves.toBeNull();

@@ -81,9 +81,10 @@ trasy administracyjne zachowują meta `robots=noindex`.
 
 `src/routes/admin.login.tsx` tworzy trasę `/admin/login`. Plik
 `routeTree.gen.ts` pozostaje generowany przez wtyczkę TanStack Router i nie
-jest edytowany ręcznie. Root route otrzyma wyłącznie potrzebne ustawienie
-zachowania nagłówka/SSR dla obszaru admina, bez uruchamiania odczytu sesji na
-serwerze i bez wprowadzania globalnego magazynu autoryzacji.
+jest edytowany ręcznie. Root route przestaje wypisywać pełny obiekt błędu w
+kliencie; dzięki temu nie ujawnia szczegółu ewentualnego błędu Auth, który
+przedostałby się do error boundary. Nie uruchamia odczytu sesji na serwerze i
+nie wprowadza globalnego magazynu autoryzacji.
 
 ## Obsługa błędów
 
