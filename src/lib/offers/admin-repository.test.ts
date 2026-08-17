@@ -22,6 +22,7 @@ import {
 
 const offerId = "a0f8e810-1df3-42d9-90df-2a1a69ad9a2c";
 const heroPath = `offers/${offerId}/hero.jpg`;
+const updatedAt = "2026-08-17T12:34:56.000Z";
 
 const completeInput: EditableOfferInput = {
   slug: "atlantic-surf-week",
@@ -67,6 +68,7 @@ const draftRow = {
   booking_url: completeInput.bookingUrl,
   hero_image: completeInput.heroImagePath,
   status: "draft",
+  updated_at: updatedAt,
 };
 
 const publishedRow = {
@@ -126,8 +128,26 @@ describe("administrator offer repository", () => {
     });
     mockedSupabase.from.mockReturnValue(query);
 
-    await expect(listAdminOffers()).resolves.toHaveLength(3);
+    await expect(listAdminOffers()).resolves.toMatchObject([
+      { status: "draft", updatedAt },
+      { status: "published", updatedAt },
+      { status: "archived", updatedAt },
+    ]);
+    expect(query.select).toHaveBeenCalledWith(expect.stringContaining("updated_at"));
     expect(query.eq).not.toHaveBeenCalledWith("status", "published");
+  });
+
+  it("rejects a malformed administrator list update timestamp", async () => {
+    const query = createQuery({
+      data: [{ ...draftRow, updated_at: "not-an-iso-timestamp" }],
+      error: null,
+    });
+    mockedSupabase.from.mockReturnValue(query);
+
+    await expect(listAdminOffers()).rejects.toMatchObject({
+      name: "OfferRepositoryError",
+      message: "Nie udało się odczytać danych oferty.",
+    });
   });
 
   it("maps only PostgreSQL 23505 to the duplicate-slug message", async () => {
@@ -265,12 +285,16 @@ describe("administrator offer repository", () => {
   });
 
   it("archives with an update and never deletes an offer", async () => {
-    const mutationQuery = createMutationQuery({ data: archivedRow, error: null });
+    const mutationQuery = createMutationQuery({ data: null, error: null });
     mockedSupabase.from.mockReturnValue(mutationQuery);
 
-    await expect(archiveOffer(offerId)).resolves.toMatchObject({ status: "archived" });
+    const result: void = await archiveOffer(offerId);
+
+    expect(result).toBeUndefined();
     expect(mutationQuery.update).toHaveBeenCalledWith({ status: "archived" });
     expect(mutationQuery.eq).toHaveBeenCalledWith("id", offerId);
+    expect(mutationQuery.select).not.toHaveBeenCalled();
+    expect(mutationQuery.single).not.toHaveBeenCalled();
     expect(mutationQuery.delete).not.toHaveBeenCalled();
   });
 

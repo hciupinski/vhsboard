@@ -1,4 +1,5 @@
 import { supabase } from "../supabase";
+import { z } from "zod";
 import {
   editorOfferInputSchema,
   type EditableOffer,
@@ -9,9 +10,13 @@ import type { OfferStatus } from "./types";
 
 const ADMIN_COLUMNS =
   "id,slug,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
+const ADMIN_LIST_COLUMNS = `${ADMIN_COLUMNS},updated_at`;
 const OFFER_IMAGES_BUCKET = "offer-images";
 const SIGNED_URL_TTL_SECONDS = 3600;
 const PUBLISH_READINESS_MESSAGE = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
+const updatedAtSchema = z.string().datetime({ offset: true });
+
+export type AdminOfferListItem = EditableOffer & { updatedAt: string };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -94,6 +99,19 @@ const toEditableOffer = (value: unknown): EditableOffer => {
   };
 };
 
+const toAdminOfferListItem = (value: unknown): AdminOfferListItem => {
+  const offer = toEditableOffer(value);
+  const parsedUpdatedAt = updatedAtSchema.safeParse(isRecord(value) ? value.updated_at : undefined);
+
+  if (!parsedUpdatedAt.success) {
+    throw new OfferRepositoryError("Nie udało się odczytać danych oferty.", {
+      cause: parsedUpdatedAt.error,
+    });
+  }
+
+  return { ...offer, updatedAt: parsedUpdatedAt.data };
+};
+
 const toOfferRow = (input: EditableOfferInput) => ({
   slug: input.slug,
   activity: input.activity,
@@ -113,15 +131,15 @@ const toOfferRow = (input: EditableOfferInput) => ({
   hero_image: input.heroImagePath,
 });
 
-export const listAdminOffers = async (): Promise<EditableOffer[]> => {
+export const listAdminOffers = async (): Promise<AdminOfferListItem[]> => {
   try {
-    const { data, error } = await supabase.from("offers").select(ADMIN_COLUMNS);
+    const { data, error } = await supabase.from("offers").select(ADMIN_LIST_COLUMNS);
 
     if (error) {
       throw new OfferRepositoryError("Nie udało się pobrać ofert.", { cause: error });
     }
 
-    return ensureRows(data, "Nie udało się odczytać ofert.").map(toEditableOffer);
+    return ensureRows(data, "Nie udało się odczytać ofert.").map(toAdminOfferListItem);
   } catch (error) {
     return throwRepositoryError(error, "Nie udało się pobrać ofert.");
   }
@@ -266,8 +284,17 @@ export const setOfferStatus = async (
   return updateOfferStatus(id, status, "Nie udało się zmienić statusu oferty.");
 };
 
-export const archiveOffer = async (id: string): Promise<EditableOffer> =>
-  updateOfferStatus(id, "archived", "Nie udało się zarchiwizować oferty.");
+export const archiveOffer = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase.from("offers").update({ status: "archived" }).eq("id", id);
+
+    if (error) {
+      throw new OfferRepositoryError("Nie udało się zarchiwizować oferty.", { cause: error });
+    }
+  } catch (error) {
+    return throwRepositoryError(error, "Nie udało się zarchiwizować oferty.");
+  }
+};
 
 export const resolveAdminImageUrls = async (paths: string[]): Promise<Map<string, string>> => {
   if (typeof window === "undefined") {
