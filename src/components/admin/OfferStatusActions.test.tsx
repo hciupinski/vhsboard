@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -54,9 +54,15 @@ describe("OfferStatusActions", () => {
     expect(screen.queryByRole("button", { name: "Cofnij publikację" })).not.toBeInTheDocument();
   });
 
-  it("prevents a second status action while a callback is pending", async () => {
+  it("blocks a second status action while its callback remains pending", async () => {
     const user = userEvent.setup();
-    const onSaveDraft = vi.fn();
+    let resolveSaveDraft: (() => void) | undefined;
+    const onSaveDraft = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSaveDraft = resolve;
+        }),
+    );
     const props = {
       status: "draft" as const,
       canPublish: true,
@@ -64,14 +70,40 @@ describe("OfferStatusActions", () => {
       onPublish: vi.fn(),
       onUnpublish: vi.fn(),
     };
-    const { rerender } = render(<OfferStatusActions {...props} isSubmitting={false} />);
+    render(<OfferStatusActions {...props} isSubmitting={false} />);
 
     await user.click(screen.getByRole("button", { name: "Zapisz szkic" }));
-    rerender(<OfferStatusActions {...props} isSubmitting />);
     await user.click(screen.getByRole("button", { name: "Zapisz szkic" }));
 
     expect(onSaveDraft).toHaveBeenCalledOnce();
     expect(screen.getByRole("button", { name: "Zapisz szkic" })).toBeDisabled();
+
+    resolveSaveDraft?.();
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Zapisz szkic" })).not.toBeDisabled();
+    });
+  });
+
+  it("respects an externally pending status submission", async () => {
+    const user = userEvent.setup();
+    const onSaveDraft = vi.fn();
+
+    render(
+      <OfferStatusActions
+        status="draft"
+        isSubmitting
+        canPublish
+        onSaveDraft={onSaveDraft}
+        onPublish={vi.fn()}
+        onUnpublish={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Zapisz szkic" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Zapisz szkic" }));
+    expect(onSaveDraft).not.toHaveBeenCalled();
   });
 });
