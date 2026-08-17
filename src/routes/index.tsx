@@ -1,7 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/Brand";
-import { trips } from "@/lib/trips";
+import { OfferListState } from "@/components/offers/OfferListState";
+import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
 import heroSurf from "@/assets/hero-surf.jpg";
 import aboutCrew from "@/assets/about-crew.jpg";
 
@@ -27,8 +29,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const offers = trips;
-
 const values = [
   {
     title: "Jeździmy, nie sprzedajemy",
@@ -49,6 +49,13 @@ const values = [
 ];
 
 function Index() {
+  const {
+    data: offers = [],
+    isPending,
+    isError,
+    refetch,
+  } = useQuery(publishedOffersQueryOptions());
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur">
@@ -164,44 +171,12 @@ function Index() {
             <h2 className="mt-3 max-w-xl text-4xl leading-tight sm:text-5xl">
               Wybierz sezon, resztą zajmiemy się my
             </h2>
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
-              {offers.map((o) => (
-                <article
-                  key={o.title}
-                  className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-transform duration-300 hover:-translate-y-1 hover:shadow-warm"
-                >
-                  <div className="relative h-52 overflow-hidden">
-                    <img
-                      src={o.image}
-                      alt={`${o.title} — ${o.place}`}
-                      loading="lazy"
-                      width={1200}
-                      height={900}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <span className="absolute left-4 top-4 rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground">
-                      {o.tag}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 flex-col p-6">
-                    <h3 className="text-2xl">{o.title}</h3>
-                    <p className="text-sm font-medium text-accent">{o.place}</p>
-                    <p className="mt-3 flex-1 text-sm text-muted-foreground">{o.text}</p>
-                    <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                        {o.days}
-                      </span>
-                      <span className="font-display text-xl text-primary">{o.price}</span>
-                    </div>
-                    <Button asChild className="mt-4 w-full rounded-full" variant="secondary">
-                      <Link to="/trips/$slug" params={{ slug: o.slug }}>
-                        Zobacz szczegóły wyjazdu
-                      </Link>
-                    </Button>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <OfferListState
+              offers={offers}
+              isPending={isPending}
+              isError={isError}
+              onRetry={() => void refetch()}
+            />
             <p className="mt-8 text-sm text-muted-foreground">
               Masz własną ekipę, klub albo drużynę? Budujemy prywatne wyjazdy od zera — napisz nam
               terminy i klimat.
@@ -212,72 +187,31 @@ function Index() {
         {/* Contact */}
         <section id="contact" className="mx-auto max-w-6xl px-5 py-20 sm:py-28">
           <div className="overflow-hidden rounded-3xl bg-sunset-gradient p-8 text-primary-foreground shadow-warm sm:p-12">
-            <div className="grid gap-10 lg:grid-cols-2">
-              <div>
-                <h2 className="text-4xl leading-tight sm:text-5xl">
-                  Napisz do nas, odpowiadamy szybko
-                </h2>
-                <p className="mt-4 max-w-md text-primary-foreground/90">
-                  Napisz, kto jedzie, mniej więcej kiedy i co lubicie robić. Wrócimy z planem i
-                  uczciwą ceną — bez broszur i gadki sprzedażowej.
+            <div className="max-w-2xl">
+              <h2 className="text-4xl leading-tight sm:text-5xl">
+                Napisz do nas, odpowiadamy szybko
+              </h2>
+              <p className="mt-4 text-primary-foreground/90">
+                Masz własną ekipę, klub albo drużynę? Daj znać, jaki termin i klimat macie w głowie.
+                Wrócimy z konkretną odpowiedzią.
+              </p>
+              <div className="mt-8 space-y-2 text-primary-foreground/95">
+                <p>
+                  <span className="font-semibold">E-mail</span> ·{" "}
+                  <a href="mailto:czesc@vhsboard.pl" className="underline-offset-4 hover:underline">
+                    czesc@vhsboard.pl
+                  </a>
                 </p>
-                <div className="mt-8 space-y-2 text-primary-foreground/95">
-                  <p>
-                    <span className="font-semibold">E-mail</span> ·{" "}
-                    <a
-                      href="mailto:czesc@vhsboard.pl"
-                      className="underline-offset-4 hover:underline"
-                    >
-                      czesc@vhsboard.pl
-                    </a>
-                  </p>
-                  <p>
-                    <span className="font-semibold">WhatsApp</span> ·{" "}
-                    <a href="tel:+48512448010" className="underline-offset-4 hover:underline">
-                      +48 512 448 010
-                    </a>
-                  </p>
-                  <p>
-                    <span className="font-semibold">Baza</span> · ul. Nadmorska 14, Gdynia
-                  </p>
-                </div>
+                <p>
+                  <span className="font-semibold">WhatsApp</span> ·{" "}
+                  <a href="tel:+48512448010" className="underline-offset-4 hover:underline">
+                    +48 512 448 010
+                  </a>
+                </p>
+                <p>
+                  <span className="font-semibold">Baza</span> · ul. Nadmorska 14, Gdynia
+                </p>
               </div>
-              <form
-                className="rounded-2xl bg-card p-6 text-card-foreground"
-                onSubmit={(e) => e.preventDefault()}
-              >
-                <div className="grid gap-4">
-                  <label className="text-sm font-medium">
-                    Imię
-                    <input
-                      type="text"
-                      required
-                      className="mt-1.5 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                      placeholder="Alex i ekipa"
-                    />
-                  </label>
-                  <label className="text-sm font-medium">
-                    E-mail
-                    <input
-                      type="email"
-                      required
-                      className="mt-1.5 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                      placeholder="ty@email.pl"
-                    />
-                  </label>
-                  <label className="text-sm font-medium">
-                    Wielkość grupy i wymarzony wyjazd
-                    <textarea
-                      rows={4}
-                      className="mt-1.5 w-full resize-none rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                      placeholder="Jest nas 14, snowboard, gdzieś w lutym…"
-                    />
-                  </label>
-                  <Button type="submit" size="lg" className="w-full rounded-full">
-                    Wyślij
-                  </Button>
-                </div>
-              </form>
             </div>
           </div>
         </section>

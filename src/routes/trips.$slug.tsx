@@ -1,14 +1,31 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Check, X, ArrowLeft, MapPin, Users, Wallet } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, CalendarDays, MapPin, Wallet } from "lucide-react";
+
 import { Brand } from "@/components/Brand";
-import { getTrip, trips } from "@/lib/trips";
+import { OfferFacts } from "@/components/offers/OfferFacts";
+import { OfferGallery } from "@/components/offers/OfferGallery";
+import { Button } from "@/components/ui/button";
+import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
+import { publishedOfferQueryOptions } from "@/lib/offers/query-options";
+import type { PublicOffer } from "@/lib/offers/types";
+
+const activityLabels: Record<PublicOffer["activity"], string> = {
+  surf: "Surf",
+  snow: "Snowboard",
+  combo: "Surf + snowboard",
+};
 
 export const Route = createFileRoute("/trips/$slug")({
-  loader: ({ params }) => {
-    const trip = getTrip(params.slug);
-    if (!trip) throw notFound();
-    return { trip };
+  loader: async ({ context, params }) => {
+    const offer = await context.queryClient.ensureQueryData(
+      publishedOfferQueryOptions(params.slug),
+    );
+    if (offer === null) {
+      throw notFound();
+    }
+
+    return { offer, slug: params.slug };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -19,14 +36,15 @@ export const Route = createFileRoute("/trips/$slug")({
         ],
       };
     }
-    const { trip } = loaderData;
-    const title = `${trip.title} — ${trip.place} | VHSBOARD`;
+
+    const { offer } = loaderData;
+    const title = `${offer.title} — ${offer.location} | VHSBOARD`;
     return {
       meta: [
         { title },
-        { name: "description", content: trip.intro },
+        { name: "description", content: offer.shortDescription },
         { property: "og:title", content: title },
-        { property: "og:description", content: trip.intro },
+        { property: "og:description", content: offer.shortDescription },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
@@ -36,8 +54,15 @@ export const Route = createFileRoute("/trips/$slug")({
 });
 
 function TripDetail() {
-  const { trip } = Route.useLoaderData();
-  const others = trips.filter((t) => t.slug !== trip.slug);
+  const { slug } = Route.useLoaderData();
+  const { data: offer } = useSuspenseQuery(publishedOfferQueryOptions(slug));
+
+  if (offer === null) {
+    throw notFound();
+  }
+
+  const { content } = offer;
+  const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,171 +80,170 @@ function TripDetail() {
       </header>
 
       <main>
-        <section className="relative isolate overflow-hidden">
-          <img
-            src={trip.image}
-            alt={`${trip.title} — ${trip.place}`}
-            width={1600}
-            height={1104}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+        <section className="relative isolate overflow-hidden bg-foreground">
+          {offer.heroImageUrl ? (
+            <img
+              src={offer.heroImageUrl}
+              alt=""
+              width={1600}
+              height={1104}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <div aria-hidden="true" className="absolute inset-0 bg-sunset-gradient opacity-35" />
+          )}
           <div className="absolute inset-0 bg-foreground/55" />
           <div className="relative mx-auto max-w-6xl px-5 pb-14 pt-16 sm:pb-20 sm:pt-24">
             <span className="inline-block rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground">
-              {trip.tag}
+              {activityLabels[offer.activity]}
             </span>
             <h1 className="mt-4 max-w-2xl text-5xl leading-[0.95] text-background sm:text-7xl">
-              {trip.title}
+              {offer.title}
             </h1>
-            <p className="mt-4 max-w-xl text-background/85">{trip.intro}</p>
+            {offer.subtitle ? (
+              <p className="mt-4 max-w-xl text-lg text-background/90">{offer.subtitle}</p>
+            ) : null}
+            {offer.shortDescription ? (
+              <p className="mt-3 max-w-xl text-background/85">{offer.shortDescription}</p>
+            ) : null}
             <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-background/90">
               <span className="flex items-center gap-2">
                 <MapPin className="size-4" />
-                {trip.place}
+                {offer.location}
               </span>
               <span className="flex items-center gap-2">
-                <Users className="size-4" />
-                {trip.days}
+                <CalendarDays className="size-4" />
+                {formatTripDates(offer.startDate, offer.endDate)}
               </span>
               <span className="flex items-center gap-2">
                 <Wallet className="size-4" />
-                {trip.price} od osoby
+                {formatPriceFrom(offer.priceFrom, offer.currency)} od osoby
               </span>
             </div>
           </div>
         </section>
 
-        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 lg:grid-cols-[1.6fr_1fr] sm:py-20">
-          <div>
-            <h2 className="text-3xl sm:text-4xl">O wyjeździe</h2>
-            {trip.description.map((p) => (
-              <p key={p.slice(0, 24)} className="mt-4 text-muted-foreground">
-                {p}
-              </p>
-            ))}
-
-            <h2 className="mt-12 text-3xl sm:text-4xl">Najlepsze momenty</h2>
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-              {trip.highlights.map((h) => (
-                <li key={h} className="rounded-2xl border border-border bg-card px-4 py-3 text-sm">
-                  {h}
-                </li>
-              ))}
-            </ul>
-
-            <h2 className="mt-12 text-3xl sm:text-4xl">Jak wyglądają dni</h2>
-            <ol className="mt-4 space-y-4 border-l border-border pl-5">
-              {trip.schedule.map((s) => (
-                <li key={s.day} className="relative">
-                  <span className="absolute -left-[27px] top-1.5 size-3 rounded-full bg-sunset-gradient" />
-                  <p className="font-display text-xl text-foreground">{s.day}</p>
-                  <p className="text-sm text-muted-foreground">{s.text}</p>
-                </li>
-              ))}
-            </ol>
-
-            <h2 className="mt-12 text-3xl sm:text-4xl">Co jest w cenie</h2>
-            <div className="mt-4 grid gap-6 sm:grid-cols-2">
-              <ul className="space-y-2.5">
-                {trip.included.map((i) => (
-                  <li key={i} className="flex gap-2.5 text-sm">
-                    <Check className="mt-0.5 size-4 shrink-0 text-accent" />
-                    <span>{i}</span>
-                  </li>
+        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.6fr_1fr]">
+          <div className="min-w-0">
+            {content.paragraphs.length > 0 ? (
+              <section aria-labelledby="about-trip-title">
+                <h2 id="about-trip-title" className="text-3xl sm:text-4xl">
+                  O wyjeździe
+                </h2>
+                {content.paragraphs.map((paragraph, index) => (
+                  <p
+                    key={`${index}-${paragraph.slice(0, 24)}`}
+                    className="mt-4 text-muted-foreground"
+                  >
+                    {paragraph}
+                  </p>
                 ))}
-              </ul>
-              <ul className="space-y-2.5">
-                <p className="font-display text-xl text-muted-foreground">Poza ceną</p>
-                {trip.notIncluded.map((i) => (
-                  <li key={i} className="flex gap-2.5 text-sm text-muted-foreground">
-                    <X className="mt-0.5 size-4 shrink-0 text-destructive" />
-                    <span>{i}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              </section>
+            ) : null}
+
+            {content.highlights.length > 0 ? (
+              <section
+                className={content.paragraphs.length > 0 ? "mt-12" : undefined}
+                aria-labelledby="highlights-title"
+              >
+                <h2 id="highlights-title" className="text-3xl sm:text-4xl">
+                  Najlepsze momenty
+                </h2>
+                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {content.highlights.map((highlight) => (
+                    <li
+                      key={highlight}
+                      className="rounded-2xl border border-border bg-card px-4 py-3 text-sm"
+                    >
+                      {highlight}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            {content.schedule.length > 0 ? (
+              <section
+                className={
+                  content.paragraphs.length > 0 || content.highlights.length > 0
+                    ? "mt-12"
+                    : undefined
+                }
+                aria-labelledby="schedule-title"
+              >
+                <h2 id="schedule-title" className="text-3xl sm:text-4xl">
+                  Jak wyglądają dni
+                </h2>
+                <ol className="mt-4 space-y-4 border-l border-border pl-5">
+                  {content.schedule.map((scheduleItem) => (
+                    <li key={`${scheduleItem.day}-${scheduleItem.text}`} className="relative">
+                      <span className="absolute -left-[27px] top-1.5 size-3 rounded-full bg-sunset-gradient" />
+                      <p className="font-display text-xl text-foreground">{scheduleItem.day}</p>
+                      <p className="text-sm text-muted-foreground">{scheduleItem.text}</p>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ) : null}
+
+            {hasPriceDetails ? (
+              <section
+                className={
+                  content.paragraphs.length > 0 ||
+                  content.highlights.length > 0 ||
+                  content.schedule.length > 0
+                    ? "mt-12"
+                    : undefined
+                }
+                aria-labelledby="price-details-title"
+              >
+                <h2 id="price-details-title" className="text-3xl sm:text-4xl">
+                  W cenie
+                </h2>
+                <div className="mt-4 grid gap-6 sm:grid-cols-2">
+                  {content.included.length > 0 ? (
+                    <ul className="space-y-2.5">
+                      {content.included.map((item) => (
+                        <li key={item} className="flex gap-2.5 text-sm">
+                          <span
+                            aria-hidden="true"
+                            className="mt-1 size-2 shrink-0 rounded-full bg-accent"
+                          />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {content.excluded.length > 0 ? (
+                    <div>
+                      <h3 className="font-display text-xl text-muted-foreground">Poza ceną</h3>
+                      <ul className="mt-2.5 space-y-2.5">
+                        {content.excluded.map((item) => (
+                          <li key={item} className="flex gap-2.5 text-sm text-muted-foreground">
+                            <span
+                              aria-hidden="true"
+                              className="mt-1 size-2 shrink-0 rounded-full bg-destructive"
+                            />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              </section>
+            ) : null}
           </div>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                Cena od osoby
-              </p>
-              <p className="font-display text-4xl text-primary">{trip.price}</p>
-              <dl className="mt-5 space-y-2 text-sm">
-                <div className="flex justify-between border-b border-border pb-2">
-                  <dt className="text-muted-foreground">Gdzie</dt>
-                  <dd className="font-medium">{trip.place}</dd>
-                </div>
-                <div className="flex justify-between border-b border-border pb-2">
-                  <dt className="text-muted-foreground">Grupa</dt>
-                  <dd className="font-medium">{trip.days}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-muted-foreground">Poziom</dt>
-                  <dd className="font-medium">Każdy poziom</dd>
-                </div>
-              </dl>
-              <Button asChild size="lg" className="mt-6 w-full rounded-full">
-                <Link to="/" hash="contact">
-                  Zapytaj o ten wyjazd
-                </Link>
-              </Button>
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                Zaliczka 700 zł · pełny zwrot do 45 dni przed wyjazdem
-              </p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Twój wyjazd</p>
+              <OfferFacts offer={offer} />
             </div>
           </aside>
         </div>
 
-        <section className="bg-secondary/60 py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl px-5">
-            <h2 className="text-3xl sm:text-4xl">Zdjęcia z poprzednich wyjazdów</h2>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {trip.gallery.map((g) => (
-                <img
-                  key={g.alt}
-                  src={g.src}
-                  alt={g.alt}
-                  loading="lazy"
-                  width={1200}
-                  height={900}
-                  className="h-56 w-full rounded-2xl object-cover transition-transform duration-300 hover:-translate-y-1 hover:shadow-warm"
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-5 py-16">
-          <h2 className="text-3xl sm:text-4xl">Inne wyjazdy</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            {others.map((o) => (
-              <Link
-                key={o.slug}
-                to="/trips/$slug"
-                params={{ slug: o.slug }}
-                className="group flex gap-4 rounded-3xl border border-border bg-card p-4 transition-transform hover:-translate-y-1 hover:shadow-warm"
-              >
-                <img
-                  src={o.image}
-                  alt={o.title}
-                  loading="lazy"
-                  width={1200}
-                  height={900}
-                  className="size-24 shrink-0 rounded-2xl object-cover"
-                />
-                <div>
-                  <h3 className="text-xl">{o.title}</h3>
-                  <p className="text-sm text-accent">{o.place}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {o.days} · {o.price}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+        {offer.images.length > 0 ? <OfferGallery images={offer.images} /> : null}
       </main>
 
       <footer className="border-t border-border py-8">
