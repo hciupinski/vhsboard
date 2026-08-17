@@ -24,11 +24,11 @@ const validateHttpsUrl = (url: string): void => {
 export const getPublicSupabaseConfig = (): PublicSupabaseConfig => {
   const url = requirePublicEnvironmentVariable(
     "VITE_SUPABASE_URL",
-    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env["VITE_SUPABASE_URL"],
   );
   const anonKey = requirePublicEnvironmentVariable(
     "VITE_SUPABASE_ANON_KEY",
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
+    import.meta.env["VITE_SUPABASE_ANON_KEY"],
   );
 
   validateHttpsUrl(url);
