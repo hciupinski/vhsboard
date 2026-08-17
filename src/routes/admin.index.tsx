@@ -4,6 +4,7 @@ import { Plus, Pencil, Trash2, ExternalLink, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Brand } from "@/components/Brand";
+import { AdminGuard, AdminSignOutButton } from "@/components/admin/AdminGuard";
 import { deleteOffer, loadOffers, type OfferDraft } from "@/lib/adminStore";
 
 export const Route = createFileRoute("/admin/")({
@@ -25,6 +26,14 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function AdminList() {
+  return (
+    <AdminGuard>
+      <AdminListContent />
+    </AdminGuard>
+  );
+}
+
+function AdminListContent() {
   const [offers, setOffers] = useState<OfferDraft[]>([]);
 
   useEffect(() => setOffers(loadOffers()), []);
@@ -46,11 +55,14 @@ function AdminList() {
               CMS ofert
             </span>
           </div>
-          <Button asChild size="sm" className="rounded-full">
-            <Link to="/admin/$slug" params={{ slug: "new" }}>
-              <Plus className="mr-1 size-4" /> Nowa oferta
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <AdminSignOutButton />
+            <Button asChild size="sm" className="rounded-full">
+              <Link to="/admin/$slug" params={{ slug: "new" }}>
+                <Plus className="mr-1 size-4" /> Nowa oferta
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
 
