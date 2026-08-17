@@ -1,13 +1,13 @@
-import { supabase } from "../supabase";
-
 export type AdminSession = { userId: string; email: string; role: "admin" };
 export type AdminPath = "/admin" | `/admin/${string}`;
 
 const applicationOrigin = "https://vhsboard.local";
 const adminPathPattern = /^\/admin(?:\/[^/?#]+)?$/;
+const getSupabase = async () => (await import("../supabase")).supabase;
 
 export const getAdminSession = async (): Promise<AdminSession | null> => {
   try {
+    const supabase = await getSupabase();
     const { data: authData, error: authError } = await supabase.auth.getSession();
     const user = authError ? null : authData.session?.user;
 
@@ -32,6 +32,7 @@ export const getAdminSession = async (): Promise<AdminSession | null> => {
 };
 
 export const signInWithPassword = async (email: string, password: string): Promise<void> => {
+  const supabase = await getSupabase();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
@@ -40,6 +41,7 @@ export const signInWithPassword = async (email: string, password: string): Promi
 };
 
 export const signOut = async (): Promise<void> => {
+  const supabase = await getSupabase();
   const { error } = await supabase.auth.signOut();
 
   if (error) {
