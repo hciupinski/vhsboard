@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export function ListField({ label, hint, values, multiline, placeholder, error, onChange }: Props) {
+  const listId = useId();
   const set = (i: number, v: string) => onChange(values.map((x, j) => (j === i ? v : x)));
   const remove = (i: number) => onChange(values.filter((_, j) => j !== i));
 
@@ -27,15 +29,24 @@ export function ListField({ label, hint, values, multiline, placeholder, error, 
       <div className="space-y-2">
         {values.map((v, i) => (
           <div key={i} className="flex items-start gap-2">
+            <Label htmlFor={`${listId}-item-${i}`} className="sr-only">
+              {label} {i + 1}
+            </Label>
             {multiline ? (
               <Textarea
+                id={`${listId}-item-${i}`}
                 value={v}
                 placeholder={placeholder}
                 onChange={(e) => set(i, e.target.value)}
                 className="min-h-24"
               />
             ) : (
-              <Input value={v} placeholder={placeholder} onChange={(e) => set(i, e.target.value)} />
+              <Input
+                id={`${listId}-item-${i}`}
+                value={v}
+                placeholder={placeholder}
+                onChange={(e) => set(i, e.target.value)}
+              />
             )}
             <Button
               type="button"

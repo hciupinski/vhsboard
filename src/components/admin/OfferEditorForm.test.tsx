@@ -84,6 +84,18 @@ describe("OfferEditorForm", () => {
     expect(completeInput.content.paragraphs).toEqual(["Tekst o wyjeździe."]);
   });
 
+  it("labels repeated list controls in Polish", async () => {
+    const user = userEvent.setup();
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={vi.fn()} />,
+    );
+
+    await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
+
+    expect(screen.getByLabelText("Akapity opisu 1")).toHaveValue("Tekst o wyjeździe.");
+    expect(screen.getByLabelText("Najlepsze momenty 1")).toHaveValue("Dwie sesje dziennie");
+  });
+
   it("updates only the selected schedule row", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
