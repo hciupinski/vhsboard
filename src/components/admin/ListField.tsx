@@ -10,10 +10,11 @@ type Props = {
   values: string[];
   multiline?: boolean;
   placeholder?: string;
+  error?: string;
   onChange: (values: string[]) => void;
 };
 
-export function ListField({ label, hint, values, multiline, placeholder, onChange }: Props) {
+export function ListField({ label, hint, values, multiline, placeholder, error, onChange }: Props) {
   const set = (i: number, v: string) => onChange(values.map((x, j) => (j === i ? v : x)));
   const remove = (i: number) => onChange(values.filter((_, j) => j !== i));
 
@@ -40,7 +41,7 @@ export function ListField({ label, hint, values, multiline, placeholder, onChang
               type="button"
               variant="ghost"
               size="icon"
-              aria-label={`Remove ${label} item ${i + 1}`}
+              aria-label={`Usuń pozycję „${label}” ${i + 1}`}
               onClick={() => remove(i)}
               className="mt-1 shrink-0 text-muted-foreground hover:text-destructive"
             >
@@ -56,8 +57,13 @@ export function ListField({ label, hint, values, multiline, placeholder, onChang
         className="rounded-full"
         onClick={() => onChange([...values, ""])}
       >
-        <Plus className="mr-1 size-4" /> Add item
+        <Plus className="mr-1 size-4" /> Dodaj pozycję
       </Button>
+      {error ? (
+        <p className="text-sm font-medium text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }
