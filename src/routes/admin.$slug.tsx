@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AdminGuard, AdminSignOutButton } from "@/components/admin/AdminGuard";
 import {
   Select,
   SelectContent,
@@ -36,6 +37,14 @@ export const Route = createFileRoute("/admin/$slug")({
 });
 
 function OfferEditor() {
+  return (
+    <AdminGuard>
+      <OfferEditorContent />
+    </AdminGuard>
+  );
+}
+
+function OfferEditorContent() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
   const isNew = slug === "new";
@@ -85,6 +94,7 @@ function OfferEditor() {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
+            <AdminSignOutButton />
             {saved ? <span className="text-xs text-muted-foreground">Zapisano</span> : null}
             <Button
               size="sm"
