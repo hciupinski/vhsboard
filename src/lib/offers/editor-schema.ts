@@ -26,21 +26,83 @@ export type EditableOffer = Omit<PublicOffer, "heroImageUrl" | "images"> & {
   heroImagePath: string | null;
 };
 
-const trimmedText = (minimum: number, maximum: number) =>
-  z.string().trim().min(minimum).max(maximum);
+const textField = (requiredMessage: string) =>
+  z.string({ required_error: requiredMessage, invalid_type_error: requiredMessage });
 
-const nullableText = z.preprocess(
+const trimmedText = (label: string, minimum: number, maximum: number) =>
+  textField(`${label} jest wymagany.`)
+    .trim()
+    .min(minimum, `${label} musi mieć od ${minimum} do ${maximum} znaków.`)
+    .max(maximum, `${label} musi mieć od ${minimum} do ${maximum} znaków.`);
+
+const nullableText = (message: string) =>
+  z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? null : value),
+    textField(message).trim().min(1, message).nullable(),
+  );
+
+const dateSchema = z.preprocess(
   (value) => (typeof value === "string" && value.trim() === "" ? null : value),
-  z.string().trim().min(1).nullable(),
+  textField("Data musi mieć format RRRR-MM-DD.")
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Data musi mieć format RRRR-MM-DD.")
+    .nullable(),
 );
 
-const nonEmptyList = z.array(z.string().trim().min(1)).min(1);
+const listItemSchema = textField("Pozycja listy musi być tekstem.")
+  .trim()
+  .min(1, "Pozycja listy nie może być pusta.");
+
+const nonEmptyList = z
+  .array(listItemSchema, {
+    required_error: "Dodaj co najmniej jedną pozycję.",
+    invalid_type_error: "Lista musi zawierać pozycje tekstowe.",
+  })
+  .min(1, "Dodaj co najmniej jedną pozycję.");
+
+const scheduleSchema = z
+  .array(
+    z.object(
+      {
+        day: textField("Nazwa dnia jest wymagana.").trim().min(1, "Nazwa dnia jest wymagana."),
+        text: textField("Opis dnia jest wymagany.").trim().min(1, "Opis dnia jest wymagany."),
+      },
+      {
+        required_error: "Uzupełnij harmonogram wyjazdu.",
+        invalid_type_error: "Uzupełnij harmonogram wyjazdu.",
+      },
+    ),
+    {
+      required_error: "Dodaj co najmniej jeden dzień harmonogramu.",
+      invalid_type_error: "Harmonogram musi zawierać dni wyjazdu.",
+    },
+  )
+  .min(1, "Dodaj co najmniej jeden dzień harmonogramu.");
+
+const groupSizeSchema = (label: string) =>
+  z
+    .number({
+      required_error: `${label} jest wymagana.`,
+      invalid_type_error: `${label} musi być liczbą.`,
+    })
+    .int(`${label} musi być liczbą całkowitą.`)
+    .min(1, `${label} musi wynosić co najmniej 1.`)
+    .max(99, `${label} nie może być większa niż 99.`)
+    .nullable();
+
+const isHttpsUrl = (value: string) => {
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
+};
 
 const trimValue = (value: unknown) => (typeof value === "string" ? value.trim() : value);
 
 const normalizeList = (value: unknown) =>
   Array.isArray(value)
-    ? value.map(trimValue).filter((item): item is string => typeof item === "string" && item !== "")
+    ? value.map(trimValue).filter((item) => typeof item !== "string" || item !== "")
     : value;
 
 const normalizeNullableText = (value: unknown) => {
@@ -93,40 +155,67 @@ export function normalizeEditableOfferInput(input: EditableOfferInput): Editable
 export const editorOfferInputSchema = z.preprocess(
   normalizeEditorOfferInput,
   z
-    .object({
-      slug: z
-        .string()
-        .trim()
-        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-      activity: z.enum(["surf", "snow", "combo"]),
-      title: trimmedText(3, 120),
-      subtitle: trimmedText(3, 280),
-      shortDescription: trimmedText(20, 500),
-      content: z.object({
-        paragraphs: nonEmptyList,
-        highlights: nonEmptyList,
-        included: nonEmptyList,
-        excluded: nonEmptyList,
-        schedule: z
-          .array(z.object({ day: z.string().trim().min(1), text: z.string().trim().min(1) }))
-          .min(1),
-      }),
-      location: trimmedText(2, 120),
-      startDate: nullableText.refine(
-        (value) => value === null || /^\d{4}-\d{2}-\d{2}$/.test(value),
-      ),
-      endDate: nullableText.refine((value) => value === null || /^\d{4}-\d{2}-\d{2}$/.test(value)),
-      durationDays: z.number().int().min(1).max(60),
-      groupSizeMin: z.number().int().min(1).max(99).nullable(),
-      groupSizeMax: z.number().int().min(1).max(99).nullable(),
-      priceFrom: z.number().int().positive(),
-      currency: z.literal("PLN"),
-      bookingUrl: z
-        .string()
-        .url()
-        .refine((value) => new URL(value).protocol === "https:"),
-      heroImagePath: nullableText,
-    })
+    .object(
+      {
+        slug: textField("Adres oferty jest wymagany.")
+          .trim()
+          .regex(
+            /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+            "Adres oferty może zawierać małe litery, cyfry i łączniki.",
+          ),
+        activity: z.enum(["surf", "snow", "combo"], {
+          errorMap: () => ({ message: "Wybierz rodzaj wyjazdu." }),
+        }),
+        title: trimmedText("Tytuł", 3, 120),
+        subtitle: trimmedText("Podtytuł", 3, 280),
+        shortDescription: trimmedText("Krótki opis", 20, 500),
+        content: z.object(
+          {
+            paragraphs: nonEmptyList,
+            highlights: nonEmptyList,
+            included: nonEmptyList,
+            excluded: nonEmptyList,
+            schedule: scheduleSchema,
+          },
+          {
+            required_error: "Uzupełnij opis oferty.",
+            invalid_type_error: "Uzupełnij opis oferty.",
+          },
+        ),
+        location: trimmedText("Lokalizacja", 2, 120),
+        startDate: dateSchema,
+        endDate: dateSchema,
+        durationDays: z
+          .number({
+            required_error: "Czas trwania jest wymagany.",
+            invalid_type_error: "Czas trwania musi być liczbą.",
+          })
+          .int("Czas trwania musi być liczbą całkowitą.")
+          .min(1, "Czas trwania musi wynosić co najmniej 1 dzień.")
+          .max(60, "Czas trwania nie może być dłuższy niż 60 dni."),
+        groupSizeMin: groupSizeSchema("Minimalna liczba uczestników"),
+        groupSizeMax: groupSizeSchema("Maksymalna liczba uczestników"),
+        priceFrom: z
+          .number({
+            required_error: "Cena od jest wymagana.",
+            invalid_type_error: "Cena od musi być liczbą.",
+          })
+          .int("Cena od musi być liczbą całkowitą.")
+          .positive("Cena od musi być większa od zera."),
+        currency: z.literal("PLN", {
+          errorMap: () => ({ message: "Waluta musi być ustawiona na PLN." }),
+        }),
+        bookingUrl: textField("Wpisz poprawny adres rezerwacji.")
+          .trim()
+          .url("Wpisz poprawny adres rezerwacji.")
+          .refine(isHttpsUrl, { message: "Adres rezerwacji musi używać HTTPS." }),
+        heroImagePath: nullableText("Ścieżka obrazu głównego musi być tekstem."),
+      },
+      {
+        required_error: "Uzupełnij dane oferty.",
+        invalid_type_error: "Uzupełnij dane oferty.",
+      },
+    )
     .superRefine((offer, ctx) => {
       if (offer.startDate && offer.endDate && offer.endDate < offer.startDate) {
         ctx.addIssue({

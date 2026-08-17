@@ -39,7 +39,7 @@ const mergeInput = (patch: Partial<EditableOfferInput>): EditableOfferInput => (
   content: { ...completeInput.content, ...patch.content },
 });
 
-const fieldErrorsFor = (input: EditableOfferInput) => {
+const fieldErrorsFor = (input: unknown) => {
   const result = editorOfferInputSchema.safeParse(input);
   expect(result.success).toBe(false);
   return getEditorFieldErrors(result.success ? undefined : result.error);
@@ -152,5 +152,75 @@ describe("editor offer input schema", () => {
         schedule: [{ day: "", text: "" }],
       },
     });
+  });
+
+  it.each([
+    ["malformed", "nie jest adresem"],
+    ["blank", "   "],
+  ])(
+    "returns a Polish validation error for a %s booking URL without throwing",
+    (_name, bookingUrl) => {
+      expect(() => editorOfferInputSchema.safeParse(mergeInput({ bookingUrl }))).not.toThrow();
+      expect(fieldErrorsFor(mergeInput({ bookingUrl }))).toMatchObject({
+        bookingUrl: "Wpisz poprawny adres rezerwacji.",
+      });
+    },
+  );
+
+  it.each([
+    ["title", { title: "aa" }, "title", "Tytuł musi mieć od 3 do 120 znaków."],
+    ["subtitle", { subtitle: "aa" }, "subtitle", "Podtytuł musi mieć od 3 do 280 znaków."],
+    [
+      "short description",
+      { shortDescription: "Za krótko" },
+      "shortDescription",
+      "Krótki opis musi mieć od 20 do 500 znaków.",
+    ],
+    ["location", { location: "A" }, "location", "Lokalizacja musi mieć od 2 do 120 znaków."],
+    [
+      "slug",
+      { slug: "Zła Oferta" },
+      "slug",
+      "Adres oferty może zawierać małe litery, cyfry i łączniki.",
+    ],
+    ["date format", { startDate: "12-09-2026" }, "startDate", "Data musi mieć format RRRR-MM-DD."],
+    [
+      "blank list",
+      { content: { ...completeInput.content, highlights: ["  "] } },
+      "content.highlights",
+      "Dodaj co najmniej jedną pozycję.",
+    ],
+  ] satisfies Array<[string, Partial<EditableOfferInput>, string, string]>)(
+    "returns a Polish message for %s validation",
+    (_name, patch, path, message) => {
+      expect(fieldErrorsFor(mergeInput(patch))).toMatchObject({ [path]: message });
+    },
+  );
+
+  it.each([
+    ["duration lower bound", { durationDays: 0 }, "durationDays"],
+    ["minimum group lower bound", { groupSizeMin: 0 }, "groupSizeMin"],
+    ["maximum group lower bound", { groupSizeMax: 0 }, "groupSizeMax"],
+    ["fractional duration", { durationDays: 1.5 }, "durationDays"],
+    ["fractional minimum group", { groupSizeMin: 1.5 }, "groupSizeMin"],
+    ["fractional maximum group", { groupSizeMax: 1.5 }, "groupSizeMax"],
+    ["fractional price", { priceFrom: 1.5 }, "priceFrom"],
+    ["malformed end date", { endDate: "18/06/2026" }, "endDate"],
+  ] satisfies Array<[string, Partial<EditableOfferInput>, string]>)(
+    "rejects %s with a Polish field error",
+    (_name, patch, path) => {
+      const errors = fieldErrorsFor(mergeInput(patch));
+      expect(errors).toHaveProperty(path);
+      expect(errors[path]).toMatch(/[ąćęłńóśźż]/i);
+    },
+  );
+
+  it("rejects non-string list items instead of silently dropping them", () => {
+    const errors = fieldErrorsFor({
+      ...completeInput,
+      content: { ...completeInput.content, highlights: ["Dwie sesje dziennie", 123] },
+    });
+
+    expect(errors).toHaveProperty("content.highlights.1");
   });
 });
