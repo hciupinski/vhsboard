@@ -152,8 +152,25 @@ describe("OfferEditorForm", () => {
 
     await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
 
-    expect(screen.getByText("Obraz główny jest przypisany.")).toBeInTheDocument();
-    expect(screen.getByText(/Task 060/)).toBeInTheDocument();
+    expect(screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).toBeInTheDocument();
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+  });
+
+  it("renders the supplied saved-offer image manager in the photos tab", async () => {
+    const user = userEvent.setup();
+    render(
+      <OfferEditorForm
+        value={completeInput}
+        errors={{}}
+        disabled={false}
+        onChange={vi.fn()}
+        imageManager={<p>Panel zarządzania zdjęciami</p>}
+      />,
+    );
+
+    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+
+    expect(screen.getByText("Panel zarządzania zdjęciami")).toBeInTheDocument();
+    expect(screen.queryByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).not.toBeInTheDocument();
   });
 });
