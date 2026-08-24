@@ -50,6 +50,7 @@ export function OfferImageManager({
   onImagesChanged,
 }: OfferImageManagerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageRequestVersion = useRef(0);
   const [altText, setAltText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [images, setImages] = useState<OfferImage[]>([]);
@@ -60,25 +61,31 @@ export function OfferImageManager({
   const [isRetryingCleanup, setIsRetryingCleanup] = useState(false);
 
   const refreshImages = async () => {
+    const requestVersion = ++imageRequestVersion.current;
     const nextImages = await listOfferImages(offerId);
-    setImages([...nextImages].sort((first, second) => first.position - second.position));
+    if (requestVersion === imageRequestVersion.current) {
+      setImages([...nextImages].sort((first, second) => first.position - second.position));
+    }
   };
 
   useEffect(() => {
     let isCurrent = true;
+    const requestVersion = ++imageRequestVersion.current;
     setIsLoading(true);
     void listOfferImages(offerId)
       .then((nextImages) => {
-        if (isCurrent) {
+        if (isCurrent && requestVersion === imageRequestVersion.current) {
           setImages([...nextImages].sort((first, second) => first.position - second.position));
           setError(null);
         }
       })
       .catch(() => {
-        if (isCurrent) setError("Nie udało się pobrać zdjęć oferty.");
+        if (isCurrent && requestVersion === imageRequestVersion.current) {
+          setError("Nie udało się pobrać zdjęć oferty.");
+        }
       })
       .finally(() => {
-        if (isCurrent) setIsLoading(false);
+        if (isCurrent && requestVersion === imageRequestVersion.current) setIsLoading(false);
       });
 
     return () => {

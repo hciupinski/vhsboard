@@ -38,6 +38,7 @@ vi.mock("@/lib/images/repository", async (importOriginal) => {
 
 const offerId = "a0f8e810-1df3-42d9-90df-2a1a69ad9a2c";
 const jpegFile = new File(["image"], "surfer.jpeg", { type: "image/jpeg" });
+const secondJpegFile = new File(["image two"], "surfer-two.jpeg", { type: "image/jpeg" });
 const imageOne: OfferImage = {
   id: "b0f8e810-1df3-42d9-90df-2a1a69ad9a2c",
   path: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/b0f8e810-1df3-42d9-90df-2a1a69ad9a2c.jpeg",
@@ -51,6 +52,14 @@ const imageTwo: OfferImage = {
   alt: "Deski stoją przy surf housie.",
   position: 1,
   signedUrl: "https://example.test/private-image-two",
+};
+
+const createDeferred = <Value,>() => {
+  let resolve!: (value: Value) => void;
+  const promise = new Promise<Value>((promiseResolve) => {
+    resolve = promiseResolve;
+  });
+  return { promise, resolve };
 };
 
 const renderManager = (heroImagePath: string | null = null) => {
@@ -116,6 +125,41 @@ describe("OfferImageManager", () => {
       expect(mockedUploadOfferImage).toHaveBeenCalledWith(offerId, jpegFile, imageOne.alt, 0),
     );
     expect(screen.getByLabelText("Opis alternatywny (wymagany)")).toHaveValue("");
+  });
+
+  it("keeps the refreshed gallery when a stale initial load resolves after upload", async () => {
+    const user = userEvent.setup();
+    const initialLoad = createDeferred<OfferImage[]>();
+    mockedListOfferImages
+      .mockReturnValueOnce(initialLoad.promise)
+      .mockResolvedValueOnce([imageOne])
+      .mockResolvedValueOnce([imageOne, imageTwo]);
+    mockedUploadOfferImage.mockResolvedValueOnce(imageOne).mockResolvedValueOnce(imageTwo);
+    renderManager();
+
+    await user.upload(screen.getByLabelText("Wybierz plik obrazu"), jpegFile);
+    await user.type(screen.getByLabelText("Opis alternatywny (wymagany)"), imageOne.alt);
+    await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+    await screen.findByText(imageOne.alt);
+
+    initialLoad.resolve([
+      imageTwo,
+      { ...imageTwo, id: "d0f8e810-1df3-42d9-90df-2a1a69ad9a2c", position: 2 },
+    ]);
+    await waitFor(() => expect(screen.getByText(imageOne.alt)).toBeInTheDocument());
+
+    await user.upload(screen.getByLabelText("Wybierz plik obrazu"), secondJpegFile);
+    await user.type(screen.getByLabelText("Opis alternatywny (wymagany)"), imageTwo.alt);
+    await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+
+    await waitFor(() =>
+      expect(mockedUploadOfferImage).toHaveBeenLastCalledWith(
+        offerId,
+        secondJpegFile,
+        imageTwo.alt,
+        1,
+      ),
+    );
   });
 
   it("uses an empty alt for a private thumbnail and presents its description alongside it", async () => {
