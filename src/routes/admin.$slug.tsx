@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { AdminGuard, AdminSignOutButton } from "@/components/admin/AdminGuard";
 import { OfferEditorForm } from "@/components/admin/OfferEditorForm";
+import { OfferImageManager } from "@/components/admin/OfferImageManager";
 import { OfferStatusActions } from "@/components/admin/OfferStatusActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,7 @@ function OfferEditorContent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isNew = slug === "new";
+  const isFormDirty = useRef(false);
   const [formValue, setFormValue] = useState<EditableOfferInput>(() =>
     createEmptyEditableOfferInput(),
   );
@@ -100,7 +102,11 @@ function OfferEditorContent() {
     if (isNew || !offerQuery.data) return;
 
     setPersistedOffer(offerQuery.data);
-    setFormValue(toEditableInput(offerQuery.data));
+    setFormValue((current) =>
+      isFormDirty.current
+        ? { ...current, heroImagePath: offerQuery.data.heroImagePath }
+        : toEditableInput(offerQuery.data),
+    );
   }, [isNew, offerQuery.data]);
 
   const currentStatus = persistedOffer?.status ?? "draft";
@@ -166,12 +172,32 @@ function OfferEditorContent() {
     ]);
   };
 
+  const invalidateImageDependentCaches = async () => {
+    if (!persistedOffer) return;
+
+    await Promise.all([
+      invalidateAdminCaches(persistedOffer.slug),
+      queryClient.invalidateQueries({
+        queryKey: ["admin-offer-publish-readiness", persistedOffer.id],
+      }),
+      invalidatePublicCaches(persistedOffer.slug),
+    ]);
+  };
+
+  const handleHeroChanged = (heroImagePath: string) => {
+    setPersistedOffer((current) => (current ? { ...current, heroImagePath } : current));
+    setFormValue((current) => ({ ...current, heroImagePath }));
+    setActionError(null);
+    setSaved(true);
+  };
+
   const persistInput = async (input: EditableOfferInput) => {
     const offer = persistedOffer
       ? await updateMutation.mutateAsync({ id: persistedOffer.id, input })
       : await createMutation.mutateAsync(input);
 
     setPersistedOffer(offer);
+    isFormDirty.current = false;
     setFormValue(toEditableInput(offer));
     setSaved(true);
     await invalidateAdminCaches(offer.slug);
@@ -321,10 +347,22 @@ function OfferEditorContent() {
           errors={fieldErrors}
           disabled={isSubmitting || currentStatus === "archived"}
           onChange={(value) => {
+            isFormDirty.current = true;
             setFormValue(value);
             setActionError(null);
             setSaved(false);
           }}
+          imageManager={
+            persistedOffer ? (
+              <OfferImageManager
+                offerId={persistedOffer.id}
+                heroImagePath={persistedOffer.heroImagePath}
+                disabled={isSubmitting || currentStatus === "archived"}
+                onHeroChanged={handleHeroChanged}
+                onImagesChanged={invalidateImageDependentCaches}
+              />
+            ) : undefined
+          }
         />
       </main>
     </div>

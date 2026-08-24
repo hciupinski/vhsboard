@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Check, ImagePlus, Plus, Trash2, X } from "lucide-react";
+import { Check, Plus, Trash2, X } from "lucide-react";
 
 import { ListField } from "@/components/admin/ListField";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ type OfferEditorFormProps = {
   errors: Record<string, string>;
   disabled: boolean;
   onChange: (value: EditableOfferInput) => void;
+  imageManager?: ReactNode;
 };
 
 type FieldProps = {
@@ -56,7 +57,13 @@ function Field({ id, label, hint, error, children }: FieldProps) {
   );
 }
 
-export function OfferEditorForm({ value, errors, disabled, onChange }: OfferEditorFormProps) {
+export function OfferEditorForm({
+  value,
+  errors,
+  disabled,
+  onChange,
+  imageManager,
+}: OfferEditorFormProps) {
   const setField = <Key extends keyof EditableOfferInput>(
     key: Key,
     nextValue: EditableOfferInput[Key],
@@ -432,28 +439,13 @@ export function OfferEditorForm({ value, errors, disabled, onChange }: OfferEdit
       </TabsContent>
 
       <TabsContent value="photos" className="mt-6">
-        <section className="space-y-4 rounded-2xl border border-border/70 bg-background p-6">
-          <div className="flex items-center gap-3 rounded-xl bg-secondary/40 p-4">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-background text-primary">
-              <ImagePlus className="size-5" aria-hidden="true" />
-            </div>
-            <div>
-              <p className="font-semibold">Gotowość obrazu głównego</p>
-              <p className="text-sm text-muted-foreground">
-                {value.heroImagePath ? "Obraz główny jest przypisany." : "Brak obrazu głównego."}
-              </p>
-            </div>
-          </div>
-          {errors.heroImagePath ? (
-            <p className="text-sm font-medium text-destructive" role="alert">
-              {errors.heroImagePath}
+        {imageManager ?? (
+          <section className="rounded-2xl border border-border/70 bg-background p-6">
+            <p className="text-sm text-muted-foreground">
+              Najpierw zapisz szkic, aby dodać zdjęcia.
             </p>
-          ) : null}
-          <p className="text-sm text-muted-foreground">
-            Walidowane przesyłanie i zarządzanie zdjęciami zostanie dodane w Task 060. Ten formularz
-            nie zapisuje ręcznie adresów ani ścieżek obrazów.
-          </p>
-        </section>
+          </section>
+        )}
       </TabsContent>
     </Tabs>
   );

@@ -6,24 +6,34 @@ do $$
 declare
   admin_id constant uuid := '10000000-0000-0000-0000-000000000001';
   editor_id constant uuid := '10000000-0000-0000-0000-000000000002';
+  bucket_is_public boolean;
+  bucket_limit bigint;
+  allowed_types text[];
   draft_offer_id uuid;
   published_offer_id uuid;
   archived_offer_id uuid;
   managed_offer_id uuid;
+  managed_image_id uuid;
+  managed_jpeg_image_id uuid;
+  managed_png_image_id uuid;
   published_path text;
   draft_path text;
   managed_path text;
+  managed_jpeg_path text;
+  managed_png_path text;
+  malformed_delete_path text;
+  out_of_scope_delete_path text;
   affected_rows integer;
 begin
-  if not exists (
-    select 1
-    from storage.buckets
-    where id = 'offer-images'
-      and public = false
-      and file_size_limit = 52428800
-      and allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp', 'image/avif']::text[]
-  ) then
-    raise exception 'offer-images bucket must enforce image MIME types and a 50 MiB size limit';
+  select public, file_size_limit, allowed_mime_types
+    into bucket_is_public, bucket_limit, allowed_types
+  from storage.buckets
+  where id = 'offer-images';
+
+  if bucket_is_public
+     or bucket_limit <> 8388608
+     or allowed_types <> array['image/jpeg', 'image/png', 'image/webp']::text[] then
+    raise exception 'offer-images must accept only the Task 060 image contract';
   end if;
 
   insert into auth.users (id)
@@ -71,7 +81,7 @@ begin
       5,
       1800,
       'https://tripahead.example.test/opublikowana',
-      'published'
+      'draft'
     ),
     (
       'testowa-archiwalna',
@@ -112,6 +122,11 @@ begin
   values
     (published_offer_id, published_path, 'Testowe zdjęcie opublikowanej oferty', 0),
     (draft_offer_id, draft_path, 'Testowe zdjęcie szkicu oferty', 0);
+
+  update public.offers
+  set hero_image = published_path,
+      status = 'published'
+  where id = published_offer_id;
 
   insert into storage.objects (bucket_id, name)
   values
@@ -182,6 +197,13 @@ begin
   if (select count(*) from public.offers) <> 1 then
     raise exception 'ordinary authenticated users must see published offers only';
   end if;
+
+  begin
+    perform public.reorder_offer_images(published_offer_id, array[]::uuid[]);
+    raise exception 'ordinary authenticated users must not reorder offer images';
+  exception
+    when insufficient_privilege then null;
+  end;
 
   begin
     insert into public.offers (
@@ -295,19 +317,54 @@ begin
   )
   returning id into managed_offer_id;
 
-  update public.offers
-  set status = 'published'
-  where id = managed_offer_id;
+  begin
+    insert into public.offers (
+      slug,
+      activity,
+      title,
+      subtitle,
+      short_description,
+      location,
+      duration_days,
+      price_from,
+      booking_url,
+      status
+    )
+    values (
+      'bezposrednio-opublikowana',
+      'surf',
+      'Nieprawidłowa oferta',
+      'Bez obrazu głównego nie wolno publikować',
+      'Wystarczająco długi opis nieprawidłowej publikacji administratora.',
+      'Peniche',
+      6,
+      1900,
+      'https://tripahead.example.test/bezposrednia-publikacja',
+      'published'
+    );
+    raise exception 'administrator must not insert an offer as published without a hero';
+  exception
+    when check_violation then null;
+  end;
 
-  if not exists (
-    select 1
-    from public.offers
-    where id = managed_offer_id
-      and status = 'published'
-      and published_at is not null
-  ) then
-    raise exception 'administrator publication must set published_at';
-  end if;
+  begin
+    update public.offers
+    set status = 'published'
+    where id = managed_offer_id;
+    raise exception 'administrator must not publish without a matching hero image';
+  exception
+    when check_violation then null;
+  end;
+
+  begin
+    update public.offers
+    set hero_image = draft_path,
+        status = 'published'
+    where id = managed_offer_id;
+    raise exception 'administrator must not publish with another offer image';
+  exception
+    when check_violation then null;
+  end;
 
   update public.offers
   set title = 'Opublikowana oferta administratora'
@@ -323,6 +380,16 @@ begin
     managed_offer_id,
     '20000000-0000-0000-0000-000000000004'
   );
+  managed_jpeg_path := format(
+    'offers/%s/%s.jpeg',
+    managed_offer_id,
+    '20000000-0000-0000-0000-000000000009'
+  );
+  managed_png_path := format(
+    'offers/%s/%s.png',
+    managed_offer_id,
+    '20000000-0000-0000-0000-000000000010'
+  );
 
   insert into public.offer_images (offer_id, storage_path, alt_text, position)
   values (
@@ -330,12 +397,99 @@ begin
     managed_path,
     'Zdjęcie dodane do oferty przez administratora',
     0
+  )
+  returning id into managed_image_id;
+
+  insert into public.offer_images (offer_id, storage_path, alt_text, position)
+  values (
+    managed_offer_id,
+    managed_jpeg_path,
+    'Surfer wychodzi z wody po porannej sesji',
+    1
+  )
+  returning id into managed_jpeg_image_id;
+
+  insert into public.offer_images (offer_id, storage_path, alt_text, position)
+  values (
+    managed_offer_id,
+    managed_png_path,
+    'Deski czekają przed wejściem na plażę',
+    2
+  )
+  returning id into managed_png_image_id;
+
+  update public.offers
+  set hero_image = managed_path,
+      status = 'published'
+  where id = managed_offer_id;
+
+  if not exists (
+    select 1
+    from public.offers
+    where id = managed_offer_id
+      and status = 'published'
+      and published_at is not null
+  ) then
+    raise exception 'administrator publication must require a matching hero and set published_at';
+  end if;
+
+  perform public.reorder_offer_images(
+    managed_offer_id,
+    array[managed_png_image_id, managed_image_id, managed_jpeg_image_id]
   );
+
+  if not exists (
+    select 1
+    from public.offer_images
+    where id = managed_png_image_id and position = 0
+  ) or not exists (
+    select 1
+    from public.offer_images
+    where id = managed_image_id and position = 1
+  ) or not exists (
+    select 1
+    from public.offer_images
+    where id = managed_jpeg_image_id and position = 2
+  ) then
+    raise exception 'administrator reorder must persist the complete requested order';
+  end if;
+
+  begin
+    perform public.reorder_offer_images(
+      managed_offer_id,
+      array[managed_image_id, managed_jpeg_image_id, draft_offer_id]
+    );
+    raise exception 'reorder must reject an image outside the offer';
+  exception
+    when invalid_parameter_value then null;
+  end;
+
+  if not exists (
+    select 1
+    from public.offer_images
+    where id = managed_png_image_id and position = 0
+  ) or not exists (
+    select 1
+    from public.offer_images
+    where id = managed_image_id and position = 1
+  ) or not exists (
+    select 1
+    from public.offer_images
+    where id = managed_jpeg_image_id and position = 2
+  ) then
+    raise exception 'rejected reorder must leave every position unchanged';
+  end if;
 
   insert into storage.objects (bucket_id, name)
   values (
     'offer-images',
     managed_path
+  ), (
+    'offer-images',
+    managed_jpeg_path
+  ), (
+    'offer-images',
+    managed_png_path
   );
 
   update storage.objects
@@ -360,12 +514,56 @@ begin
     insert into storage.objects (bucket_id, name)
     values (
       'offer-images',
+      format('offers/%s/%s.gif', managed_offer_id, '20000000-0000-0000-0000-000000000008')
+    );
+    raise exception 'administrator storage path must use an allowed image extension';
+  exception
+    when insufficient_privilege then null;
+  end;
+
+  begin
+    insert into storage.objects (bucket_id, name)
+    values (
+      'offer-images',
       'offers/30000000-0000-0000-0000-000000000001/20000000-0000-0000-0000-000000000005.jpg'
     );
     raise exception 'administrator storage path must reference an existing offer';
   exception
     when insufficient_privilege then null;
   end;
+
+  perform set_config('storage.allow_delete_query', 'true', true);
+  delete from storage.objects
+  where bucket_id = 'offer-images'
+    and name in (managed_path, managed_jpeg_path, managed_png_path);
+  get diagnostics affected_rows = row_count;
+
+  if affected_rows <> 3 then
+    raise exception 'administrator must delete correctly scoped JPEG, PNG, and WebP objects';
+  end if;
+
+  malformed_delete_path := format(
+    'offers/%s/not-a-uuid.jpeg',
+    managed_offer_id
+  );
+  out_of_scope_delete_path :=
+    'offers/30000000-0000-0000-0000-000000000001/20000000-0000-0000-0000-000000000011.png';
+
+  execute 'set local role none';
+  insert into storage.objects (bucket_id, name)
+  values
+    ('offer-images', malformed_delete_path),
+    ('offer-images', out_of_scope_delete_path);
+  execute 'set local role authenticated';
+
+  delete from storage.objects
+  where bucket_id = 'offer-images'
+    and name in (malformed_delete_path, out_of_scope_delete_path);
+  get diagnostics affected_rows = row_count;
+
+  if affected_rows <> 0 then
+    raise exception 'administrator must not delete malformed or out-of-scope objects';
+  end if;
 
   delete from public.offer_images
   where offer_id = managed_offer_id;
