@@ -141,7 +141,7 @@ const fillEditor = async (value: EditableOfferInput) => {
   setValue("Liczba dni", String(value.durationDays));
   setValue("Cena od", String(value.priceFrom));
   setValue("Krótki opis", value.shortDescription);
-  setValue("Adres rezerwacji TripAhead", value.bookingUrl);
+  setValue("Adres rezerwacji", value.bookingUrl);
 
   await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
   setValue("Zdanie wprowadzające", value.subtitle);

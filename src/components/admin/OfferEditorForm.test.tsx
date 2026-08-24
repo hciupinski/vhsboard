@@ -129,12 +129,34 @@ describe("OfferEditorForm", () => {
     expect(value.content.schedule[1].text).toBe("Pierwsza sesja.");
   });
 
+  it("adds a numbered part rather than a pre-grouped day", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+
+    await user.click(screen.getByRole("tab", { name: "Dzień po dniu" }));
+    await user.click(screen.getByRole("button", { name: "Dodaj dzień" }));
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...completeInput,
+      content: {
+        ...completeInput.content,
+        schedule: [
+          { day: "Dzień 1", text: "Przyjazd." },
+          { day: "Część 2", text: "" },
+        ],
+      },
+    });
+  });
+
   it("disables native editing controls in every content section", async () => {
     const user = userEvent.setup();
     render(<OfferEditorForm value={completeInput} errors={{}} disabled onChange={vi.fn()} />);
 
     expect(screen.getByLabelText("Tytuł wyjazdu")).toBeDisabled();
-    expect(screen.getByLabelText("Adres rezerwacji TripAhead")).toBeDisabled();
+    expect(screen.getByLabelText("Adres rezerwacji")).toBeDisabled();
     expect(screen.getByLabelText("Rodzaj wyjazdu")).toBeDisabled();
 
     await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));

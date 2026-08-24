@@ -251,7 +251,7 @@ export function OfferEditorForm({
             />
           </Field>
 
-          <Field id="booking-url" label="Adres rezerwacji TripAhead" error={errors.bookingUrl}>
+          <Field id="booking-url" label="Adres rezerwacji" error={errors.bookingUrl}>
             <Input
               id="booking-url"
               type="url"
@@ -429,7 +429,7 @@ export function OfferEditorForm({
             onClick={() =>
               setContent("schedule", [
                 ...value.content.schedule,
-                { day: `Dzień ${value.content.schedule.length + 1}`, text: "" },
+                { day: `Część ${value.content.schedule.length + 1}`, text: "" },
               ])
             }
           >

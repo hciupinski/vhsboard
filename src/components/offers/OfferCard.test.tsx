@@ -83,6 +83,17 @@ describe("public offer components", () => {
     expect(screen.getByRole("img", { name: image.alt })).toHaveAttribute("src", image.signedUrl);
   });
 
+  it("opens a selected gallery image in an accessible lightbox", async () => {
+    const user = userEvent.setup();
+    render(<OfferGallery images={[image]} />);
+
+    await user.click(screen.getByRole("button", { name: `Powiększ zdjęcie: ${image.alt}` }));
+
+    const dialog = screen.getByRole("dialog", { name: `Powiększone zdjęcie: ${image.alt}` });
+    expect(dialog).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: image.alt })).toHaveAttribute("src", image.signedUrl);
+  });
+
   it("does not use HTML injection in the offer card", async () => {
     const { container } = await renderOfferCard({
       ...offer,
