@@ -41,6 +41,17 @@ const isValidAltText = (altText: string) => {
 };
 
 const imageActionError = "Nie udało się wykonać tej operacji na zdjęciu. Spróbuj ponownie.";
+const imageSyncWarning =
+  "Zmiana została zapisana, ale nie udało się odświeżyć widoku. Odśwież stronę.";
+
+const synchronizeImageState = async (
+  tasks: Array<() => void | Promise<void>>,
+): Promise<boolean> => {
+  const results = await Promise.allSettled(
+    tasks.map((task) => Promise.resolve().then(() => task())),
+  );
+  return results.every((result) => result.status === "fulfilled");
+};
 
 export function OfferImageManager({
   offerId,
@@ -56,6 +67,7 @@ export function OfferImageManager({
   const [images, setImages] = useState<OfferImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGalleryReady, setIsGalleryReady] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [pendingCleanupPath, setPendingCleanupPath] = useState<string | null>(null);
   const [isRetryingCleanup, setIsRetryingCleanup] = useState(false);
@@ -71,11 +83,13 @@ export function OfferImageManager({
   useEffect(() => {
     let isCurrent = true;
     const requestVersion = ++imageRequestVersion.current;
+    setIsGalleryReady(false);
     setIsLoading(true);
     void listOfferImages(offerId)
       .then((nextImages) => {
         if (isCurrent && requestVersion === imageRequestVersion.current) {
           setImages([...nextImages].sort((first, second) => first.position - second.position));
+          setIsGalleryReady(true);
           setError(null);
         }
       })
@@ -111,29 +125,42 @@ export function OfferImageManager({
 
     setError(null);
     setIsUploading(true);
+    const nextPosition =
+      images.reduce((maximum, image) => Math.max(maximum, image.position), -1) + 1;
+    let uploadedImage: OfferImage;
     try {
-      await uploadOfferImage(offerId, selectedFile, altText.trim(), images.length);
-      await refreshImages();
-      await onImagesChanged();
-      setSelectedFile(null);
-      setAltText("");
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      uploadedImage = await uploadOfferImage(offerId, selectedFile, altText.trim(), nextPosition);
     } catch {
       setError("Nie udało się dodać zdjęcia. Spróbuj ponownie.");
-    } finally {
       setIsUploading(false);
+      return;
     }
+
+    setImages((current) =>
+      [...current, uploadedImage].sort((first, second) => first.position - second.position),
+    );
+    setSelectedFile(null);
+    setAltText("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    const synchronized = await synchronizeImageState([refreshImages, onImagesChanged]);
+    if (!synchronized) setError(imageSyncWarning);
+    setIsUploading(false);
   };
 
   const handleSetHero = async (image: OfferImage) => {
     setError(null);
     try {
       await setOfferHeroImage(offerId, image.id);
-      await onHeroChanged(image.path);
-      await onImagesChanged();
     } catch {
       setError("Nie udało się wybrać obrazu głównego. Spróbuj ponownie.");
+      return;
     }
+
+    const synchronized = await synchronizeImageState([
+      () => onHeroChanged(image.path),
+      onImagesChanged,
+    ]);
+    if (!synchronized) setError(imageSyncWarning);
   };
 
   const handleMove = async (imageId: string, direction: -1 | 1) => {
@@ -152,11 +179,14 @@ export function OfferImageManager({
         offerId,
         reordered.map((image) => image.id),
       );
-      setImages(reordered.map((image, position) => ({ ...image, position })));
-      await onImagesChanged();
     } catch {
       setError("Nie udało się zmienić kolejności zdjęć. Spróbuj ponownie.");
+      return;
     }
+
+    setImages(reordered.map((image, position) => ({ ...image, position })));
+    const synchronized = await synchronizeImageState([onImagesChanged]);
+    if (!synchronized) setError(imageSyncWarning);
   };
 
   const handleDelete = async (image: OfferImage) => {
@@ -169,8 +199,6 @@ export function OfferImageManager({
     setPendingCleanupPath(null);
     try {
       await deleteOfferImage(image.id);
-      setImages((current) => current.filter((currentImage) => currentImage.id !== image.id));
-      await onImagesChanged();
     } catch (caught) {
       if (caught instanceof ImageCleanupPendingError) {
         setImages((current) => current.filter((currentImage) => currentImage.id !== image.id));
@@ -184,7 +212,12 @@ export function OfferImageManager({
         return;
       }
       setError(imageActionError);
+      return;
     }
+
+    setImages((current) => current.filter((currentImage) => currentImage.id !== image.id));
+    const synchronized = await synchronizeImageState([onImagesChanged]);
+    if (!synchronized) setError(imageSyncWarning);
   };
 
   const handleRetryCleanup = async () => {
@@ -227,7 +260,7 @@ export function OfferImageManager({
               id="image-file"
               type="file"
               accept="image/jpeg,image/png,image/webp"
-              disabled={disabled || isUploading}
+              disabled={disabled || isUploading || !isGalleryReady}
               onChange={(event) => {
                 setSelectedFile(event.target.files?.[0] ?? null);
                 setError(null);
@@ -243,7 +276,10 @@ export function OfferImageManager({
               id="image-alt"
               value={altText}
               aria-describedby="image-alt-hint"
-              disabled={disabled || isUploading}
+              required
+              minLength={5}
+              maxLength={180}
+              disabled={disabled || isUploading || !isGalleryReady}
               onChange={(event) => {
                 setAltText(event.target.value);
                 setError(null);
@@ -253,7 +289,7 @@ export function OfferImageManager({
         </div>
         <Button
           type="button"
-          disabled={disabled || isUploading}
+          disabled={disabled || isUploading || !isGalleryReady}
           onClick={() => void handleUpload()}
         >
           {isUploading ? "Dodawanie zdjęcia…" : "Dodaj zdjęcie"}
@@ -312,6 +348,7 @@ export function OfferImageManager({
                     type="button"
                     variant="outline"
                     size="sm"
+                    aria-label={`Ustaw jako obraz główny: ${image.alt}`}
                     disabled={disabled || isHero}
                     onClick={() => void handleSetHero(image)}
                   >
@@ -321,7 +358,7 @@ export function OfferImageManager({
                     type="button"
                     variant="outline"
                     size="sm"
-                    aria-label="Przesuń wyżej"
+                    aria-label={`Przesuń wyżej: ${image.alt}`}
                     disabled={disabled || index === 0}
                     onClick={() => void handleMove(image.id, -1)}
                   >
@@ -331,7 +368,7 @@ export function OfferImageManager({
                     type="button"
                     variant="outline"
                     size="sm"
-                    aria-label="Przesuń niżej"
+                    aria-label={`Przesuń niżej: ${image.alt}`}
                     disabled={disabled || index === images.length - 1}
                     onClick={() => void handleMove(image.id, 1)}
                   >
@@ -342,6 +379,7 @@ export function OfferImageManager({
                       type="button"
                       variant="destructive"
                       size="sm"
+                      aria-label={`Usuń zdjęcie: ${image.alt}`}
                       disabled={disabled}
                       onClick={() => void handleDelete(image)}
                     >
@@ -350,7 +388,13 @@ export function OfferImageManager({
                   ) : (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button type="button" variant="destructive" size="sm" disabled={disabled}>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          aria-label={`Usuń zdjęcie: ${image.alt}`}
+                          disabled={disabled}
+                        >
                           <Trash2 aria-hidden="true" /> Usuń zdjęcie
                         </Button>
                       </AlertDialogTrigger>

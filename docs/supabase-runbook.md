@@ -58,22 +58,34 @@ po autoryzowanym `SELECT`; nie używa `getPublicUrl`. Każdy obiekt musi mieć
 offers/<offer-id>/<uuid>.<ext>
 ```
 
-Bucket odrzuca pliki większe niż 50 MiB oraz MIME inne niż `image/jpeg`,
-`image/png`, `image/webp` i `image/avif`. Walidacja w przeglądarce nadal
-powinna przekazać administratorowi zrozumiały błąd przed uploadem, ale granica
-bezpieczeństwa jest egzekwowana również przez Storage.
+Bucket odrzuca pliki większe niż 8 MiB oraz MIME inne niż `image/jpeg`,
+`image/png` i `image/webp`. Dozwolone rozszerzenia ścieżki to dokładnie
+`.jpeg`, `.png` i `.webp`. Walidacja w przeglądarce nadal przekazuje
+administratorowi zrozumiały błąd przed uploadem, ale granica bezpieczeństwa
+jest egzekwowana również przez Storage.
 
 Drugi segment musi odpowiadać istniejącemu `public.offers.id`. Obiekt staje się
 czytelny publicznie dopiero wtedy, gdy jego pełna ścieżka znajduje się w
 `public.offer_images.storage_path`, a powiązana oferta ma status `published`.
 Szkice i archiwum nie mogą otrzymać publicznego URL-a.
 
-Przed skasowaniem przestarzałego obiektu sprawdź, czy żaden zachowany rekord
-metadanych go nie wskazuje:
+PostgreSQL odrzuca zmianę statusu na `published`, jeżeli `hero_image` nie
+wskazuje rekordu `offer_images` tej samej oferty z opisem alternatywnym mającym
+po `trim()` od 5 do 180 znaków. To zabezpieczenie działa również dla
+bezpośrednich zapytań administratora, niezależnie od formularza. Kolejność
+galerii zmieniaj wyłącznie przez RPC `reorder_offer_images`; funkcja sprawdza
+pełną permutację i zapisuje wszystkie pozycje w jednej transakcji.
+
+Przed skasowaniem przestarzałego obiektu sprawdź, czy nie wskazuje go ani hero,
+ani żaden zachowany rekord metadanych:
 
 ```sql
 select not exists (
-  select 1
+  select hero_image as storage_path
+  from public.offers
+  where hero_image = 'offers/<offer-id>/<uuid>.<ext>'
+  union all
+  select storage_path
   from public.offer_images
   where storage_path = 'offers/<offer-id>/<uuid>.<ext>'
 ) as safe_to_delete;

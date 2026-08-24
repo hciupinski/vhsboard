@@ -292,48 +292,26 @@ export const retryOfferImageObjectCleanup = async (storagePath: string): Promise
   await removeObjectOrThrowCleanupPending(storagePath);
 };
 
-const updateImagePosition = async (
-  offerId: string,
-  imageId: string,
-  position: number,
-): Promise<void> => {
-  const { error } = await supabase
-    .from("offer_images")
-    .update({ position })
-    .eq("id", imageId)
-    .eq("offer_id", offerId);
-  if (error) throw error;
-};
-
 export const reorderOfferImages = async (
   offerId: string,
   orderedImageIds: string[],
 ): Promise<void> => {
-  const currentRows = await getImageRows(offerId);
-  const currentIds = new Set(currentRows.map((row) => row.id));
+  ensureUuid(offerId, "Nieprawidłowy identyfikator oferty.");
+  for (const imageId of orderedImageIds) {
+    ensureUuid(imageId, "Nieprawidłowy identyfikator obrazu.");
+  }
   const orderedIds = new Set(orderedImageIds);
-  if (
-    orderedImageIds.length !== currentRows.length ||
-    orderedIds.size !== orderedImageIds.length ||
-    [...orderedIds].some((id) => !currentIds.has(id))
-  ) {
+  if (orderedIds.size !== orderedImageIds.length) {
     throw new ImageRepositoryError("Kolejność musi zawierać wszystkie obrazy oferty.");
   }
 
-  const maxPosition = currentRows.reduce((max, row) => Math.max(max, row.position), -1);
-  try {
-    for (const [index, imageId] of orderedImageIds.entries()) {
-      await updateImagePosition(offerId, imageId, maxPosition + orderedImageIds.length + index + 1);
-    }
-    for (const [index, imageId] of orderedImageIds.entries()) {
-      await updateImagePosition(offerId, imageId, index);
-    }
-  } catch {
-    try {
-      await getImageRows(offerId);
-    } catch {
-      // The mutation error remains the actionable result even if refresh also fails.
-    }
-    throw new ImageRepositoryError("Nie udało się zmienić kolejności obrazów.");
+  const { error } = await supabase.rpc("reorder_offer_images", {
+    p_offer_id: offerId,
+    p_ordered_image_ids: orderedImageIds,
+  });
+  if (error) {
+    throw new ImageRepositoryError("Nie udało się zmienić kolejności obrazów.", {
+      cause: error,
+    });
   }
 };

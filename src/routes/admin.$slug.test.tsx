@@ -269,6 +269,27 @@ describe("admin offer editor route", () => {
     expect(mockedUpdateOffer).toHaveBeenCalledWith(draftOffer.id, selectedHeroInput);
   });
 
+  it("preserves unsaved form fields when an image change refetches the offer", async () => {
+    const user = userEvent.setup();
+    const selectedHeroPath = "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/selected-hero.jpeg";
+    mockedGetAdminOffer.mockResolvedValueOnce(draftOffer).mockResolvedValue({
+      ...draftOffer,
+      heroImagePath: selectedHeroPath,
+      status: "archived",
+    });
+    await renderAdminEditor({ slug: draftOffer.slug });
+    const titleInput = screen.getByLabelText("Tytuł wyjazdu");
+
+    await user.clear(titleInput);
+    await user.type(titleInput, "Tytuł zapisany tylko w formularzu");
+    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+    await user.click(await screen.findByRole("button", { name: "Ustaw testowy obraz główny" }));
+
+    expect(await screen.findByText("Zarchiwizowana")).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Podstawy" }));
+    expect(screen.getByLabelText("Tytuł wyjazdu")).toHaveValue("Tytuł zapisany tylko w formularzu");
+  });
+
   it("disables publishing for an invalid local form without mutating", async () => {
     const user = userEvent.setup();
     mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);

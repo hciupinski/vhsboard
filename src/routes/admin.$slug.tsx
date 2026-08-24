@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
@@ -83,6 +83,7 @@ function OfferEditorContent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isNew = slug === "new";
+  const isFormDirty = useRef(false);
   const [formValue, setFormValue] = useState<EditableOfferInput>(() =>
     createEmptyEditableOfferInput(),
   );
@@ -101,7 +102,11 @@ function OfferEditorContent() {
     if (isNew || !offerQuery.data) return;
 
     setPersistedOffer(offerQuery.data);
-    setFormValue(toEditableInput(offerQuery.data));
+    setFormValue((current) =>
+      isFormDirty.current
+        ? { ...current, heroImagePath: offerQuery.data.heroImagePath }
+        : toEditableInput(offerQuery.data),
+    );
   }, [isNew, offerQuery.data]);
 
   const currentStatus = persistedOffer?.status ?? "draft";
@@ -192,6 +197,7 @@ function OfferEditorContent() {
       : await createMutation.mutateAsync(input);
 
     setPersistedOffer(offer);
+    isFormDirty.current = false;
     setFormValue(toEditableInput(offer));
     setSaved(true);
     await invalidateAdminCaches(offer.slug);
@@ -341,6 +347,7 @@ function OfferEditorContent() {
           errors={fieldErrors}
           disabled={isSubmitting || currentStatus === "archived"}
           onChange={(value) => {
+            isFormDirty.current = true;
             setFormValue(value);
             setActionError(null);
             setSaved(false);

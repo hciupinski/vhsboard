@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockedSupabase = vi.hoisted(() => ({
   from: vi.fn(),
+  rpc: vi.fn(),
   storage: { from: vi.fn() },
 }));
 
@@ -374,54 +375,36 @@ describe("offer image repository lifecycle", () => {
     expect(storageRemove).not.toHaveBeenCalled();
   });
 
-  it("reorders through temporary positive positions above the current maximum", async () => {
-    const currentRows = [imageRow, secondImageRow];
-    const listQuery = createQuery({ data: currentRows, error: null });
-    const updates = Array.from({ length: 4 }, () => createQuery({ data: null, error: null }));
-    mockedSupabase.from
-      .mockReturnValueOnce(listQuery)
-      .mockReturnValueOnce(updates[0])
-      .mockReturnValueOnce(updates[1])
-      .mockReturnValueOnce(updates[2])
-      .mockReturnValueOnce(updates[3]);
+  it("reorders the complete image permutation through one atomic database call", async () => {
+    mockedSupabase.rpc.mockResolvedValue({ data: null, error: null });
 
     await expect(
       reorderOfferImages(offerId, [secondImageRow.id, imageRow.id]),
     ).resolves.toBeUndefined();
 
-    expect(updates[0]!.update).toHaveBeenCalledWith({ position: 4 });
-    expect(updates[0]!.eq).toHaveBeenCalledWith("id", secondImageRow.id);
-    expect(updates[1]!.update).toHaveBeenCalledWith({ position: 5 });
-    expect(updates[1]!.eq).toHaveBeenCalledWith("id", imageRow.id);
-    expect(updates[2]!.update).toHaveBeenCalledWith({ position: 0 });
-    expect(updates[3]!.update).toHaveBeenCalledWith({ position: 1 });
-    for (const update of updates) {
-      expect(update.eq).toHaveBeenCalledWith("offer_id", offerId);
-    }
+    expect(mockedSupabase.rpc).toHaveBeenCalledOnce();
+    expect(mockedSupabase.rpc).toHaveBeenCalledWith("reorder_offer_images", {
+      p_offer_id: offerId,
+      p_ordered_image_ids: [secondImageRow.id, imageRow.id],
+    });
+    expect(mockedSupabase.from).not.toHaveBeenCalled();
   });
 
-  it("rejects reorder unless the supplied ids are exactly the offer's complete image set", async () => {
-    const listQuery = createQuery({ data: [imageRow, secondImageRow], error: null });
-    mockedSupabase.from.mockReturnValue(listQuery);
+  it("rejects malformed reorder identifiers before contacting the database", async () => {
+    mockedSupabase.rpc.mockResolvedValue({ data: null, error: null });
 
-    await expect(reorderOfferImages(offerId, [imageRow.id])).rejects.toMatchObject({
+    await expect(reorderOfferImages("invalid-offer", [imageRow.id])).rejects.toMatchObject({
       name: "ImageRepositoryError",
     });
     await expect(reorderOfferImages(offerId, [imageRow.id, imageRow.id])).rejects.toMatchObject({
       name: "ImageRepositoryError",
     });
 
-    expect(mockedSupabase.from).toHaveBeenCalledTimes(2);
+    expect(mockedSupabase.rpc).not.toHaveBeenCalled();
   });
 
-  it("refreshes database order after a reorder update fails", async () => {
-    const listQuery = createQuery({ data: [imageRow, secondImageRow], error: null });
-    const failedUpdate = createQuery({ data: null, error: { code: "23505" } });
-    const refreshedList = createQuery({ data: [imageRow, secondImageRow], error: null });
-    mockedSupabase.from
-      .mockReturnValueOnce(listQuery)
-      .mockReturnValueOnce(failedUpdate)
-      .mockReturnValueOnce(refreshedList);
+  it("reports an atomic reorder rejection without issuing follow-up mutations", async () => {
+    mockedSupabase.rpc.mockResolvedValue({ data: null, error: { code: "22023" } });
 
     await expect(
       reorderOfferImages(offerId, [secondImageRow.id, imageRow.id]),
@@ -430,6 +413,7 @@ describe("offer image repository lifecycle", () => {
       message: "Nie udało się zmienić kolejności obrazów.",
     });
 
-    expect(refreshedList.order).toHaveBeenCalledWith("position", { ascending: true });
+    expect(mockedSupabase.rpc).toHaveBeenCalledOnce();
+    expect(mockedSupabase.from).not.toHaveBeenCalled();
   });
 });

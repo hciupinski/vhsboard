@@ -13,6 +13,9 @@ declare
   published_offer_id uuid;
   archived_offer_id uuid;
   managed_offer_id uuid;
+  managed_image_id uuid;
+  managed_jpeg_image_id uuid;
+  managed_png_image_id uuid;
   published_path text;
   draft_path text;
   managed_path text;
@@ -78,7 +81,7 @@ begin
       5,
       1800,
       'https://tripahead.example.test/opublikowana',
-      'published'
+      'draft'
     ),
     (
       'testowa-archiwalna',
@@ -119,6 +122,11 @@ begin
   values
     (published_offer_id, published_path, 'Testowe zdjęcie opublikowanej oferty', 0),
     (draft_offer_id, draft_path, 'Testowe zdjęcie szkicu oferty', 0);
+
+  update public.offers
+  set hero_image = published_path,
+      status = 'published'
+  where id = published_offer_id;
 
   insert into storage.objects (bucket_id, name)
   values
@@ -189,6 +197,13 @@ begin
   if (select count(*) from public.offers) <> 1 then
     raise exception 'ordinary authenticated users must see published offers only';
   end if;
+
+  begin
+    perform public.reorder_offer_images(published_offer_id, array[]::uuid[]);
+    raise exception 'ordinary authenticated users must not reorder offer images';
+  exception
+    when insufficient_privilege then null;
+  end;
 
   begin
     insert into public.offers (
@@ -302,19 +317,54 @@ begin
   )
   returning id into managed_offer_id;
 
-  update public.offers
-  set status = 'published'
-  where id = managed_offer_id;
+  begin
+    insert into public.offers (
+      slug,
+      activity,
+      title,
+      subtitle,
+      short_description,
+      location,
+      duration_days,
+      price_from,
+      booking_url,
+      status
+    )
+    values (
+      'bezposrednio-opublikowana',
+      'surf',
+      'Nieprawidłowa oferta',
+      'Bez obrazu głównego nie wolno publikować',
+      'Wystarczająco długi opis nieprawidłowej publikacji administratora.',
+      'Peniche',
+      6,
+      1900,
+      'https://tripahead.example.test/bezposrednia-publikacja',
+      'published'
+    );
+    raise exception 'administrator must not insert an offer as published without a hero';
+  exception
+    when check_violation then null;
+  end;
 
-  if not exists (
-    select 1
-    from public.offers
-    where id = managed_offer_id
-      and status = 'published'
-      and published_at is not null
-  ) then
-    raise exception 'administrator publication must set published_at';
-  end if;
+  begin
+    update public.offers
+    set status = 'published'
+    where id = managed_offer_id;
+    raise exception 'administrator must not publish without a matching hero image';
+  exception
+    when check_violation then null;
+  end;
+
+  begin
+    update public.offers
+    set hero_image = draft_path,
+        status = 'published'
+    where id = managed_offer_id;
+    raise exception 'administrator must not publish with another offer image';
+  exception
+    when check_violation then null;
+  end;
 
   update public.offers
   set title = 'Opublikowana oferta administratora'
@@ -347,7 +397,88 @@ begin
     managed_path,
     'Zdjęcie dodane do oferty przez administratora',
     0
+  )
+  returning id into managed_image_id;
+
+  insert into public.offer_images (offer_id, storage_path, alt_text, position)
+  values (
+    managed_offer_id,
+    managed_jpeg_path,
+    'Surfer wychodzi z wody po porannej sesji',
+    1
+  )
+  returning id into managed_jpeg_image_id;
+
+  insert into public.offer_images (offer_id, storage_path, alt_text, position)
+  values (
+    managed_offer_id,
+    managed_png_path,
+    'Deski czekają przed wejściem na plażę',
+    2
+  )
+  returning id into managed_png_image_id;
+
+  update public.offers
+  set hero_image = managed_path,
+      status = 'published'
+  where id = managed_offer_id;
+
+  if not exists (
+    select 1
+    from public.offers
+    where id = managed_offer_id
+      and status = 'published'
+      and published_at is not null
+  ) then
+    raise exception 'administrator publication must require a matching hero and set published_at';
+  end if;
+
+  perform public.reorder_offer_images(
+    managed_offer_id,
+    array[managed_png_image_id, managed_image_id, managed_jpeg_image_id]
   );
+
+  if not exists (
+    select 1
+    from public.offer_images
+    where id = managed_png_image_id and position = 0
+  ) or not exists (
+    select 1
+    from public.offer_images
+    where id = managed_image_id and position = 1
+  ) or not exists (
+    select 1
+    from public.offer_images
+    where id = managed_jpeg_image_id and position = 2
+  ) then
+    raise exception 'administrator reorder must persist the complete requested order';
+  end if;
+
+  begin
+    perform public.reorder_offer_images(
+      managed_offer_id,
+      array[managed_image_id, managed_jpeg_image_id, draft_offer_id]
+    );
+    raise exception 'reorder must reject an image outside the offer';
+  exception
+    when invalid_parameter_value then null;
+  end;
+
+  if not exists (
+    select 1
+    from public.offer_images
+    where id = managed_png_image_id and position = 0
+  ) or not exists (
+    select 1
+    from public.offer_images
+    where id = managed_image_id and position = 1
+  ) or not exists (
+    select 1
+    from public.offer_images
+    where id = managed_jpeg_image_id and position = 2
+  ) then
+    raise exception 'rejected reorder must leave every position unchanged';
+  end if;
 
   insert into storage.objects (bucket_id, name)
   values (
