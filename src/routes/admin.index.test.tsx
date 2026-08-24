@@ -85,7 +85,7 @@ const renderAdminList = async () => {
   });
   const tripRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/trips/$slug",
+    path: "/wyjazdy/$slug",
     component: () => null,
   });
   const homeRoute = createRoute({
@@ -167,7 +167,7 @@ describe("admin offer list route", () => {
     expect(screen.getByText("Opublikowana")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /podgląd/i })).toHaveAttribute(
       "href",
-      `/trips/${offer.slug}`,
+      `/wyjazdy/${offer.slug}`,
     );
   });
 

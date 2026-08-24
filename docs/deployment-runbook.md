@@ -23,6 +23,14 @@ w Cloudflare.
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
    - `VITE_SITE_URL`
+   - `VITE_CONTACT_EMAIL`
+   - `VITE_CONTACT_PHONE`
+   - `VITE_BUSINESS_NAME`
+   - `VITE_BUSINESS_STREET`
+   - `VITE_BUSINESS_POSTAL_CODE`
+   - `VITE_BUSINESS_CITY`
+   - `VITE_BUSINESS_NIP`
+   - `VITE_BUSINESS_REGON`
    - `CLOUDFLARE_PAGES_PROJECT`
 
 4. W środowisku GitHub `production` dodaj wyłącznie poniższe sekrety. Ich

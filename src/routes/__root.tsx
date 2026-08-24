@@ -22,10 +22,10 @@ function NotFoundComponent() {
         </p>
         <div className="mt-6">
           <Link
-            to="/"
+            to="/wyjazdy"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Wróć na stronę główną
+            Zobacz wyjazdy
           </Link>
         </div>
       </div>
@@ -72,16 +72,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "VHSBOARD — Wyjazdy surfingowe i snowboardowe" },
+      { title: "VHSBOARD — wyjazdy, eventy i półkolonie" },
       {
         name: "description",
-        content: "Kameralne wyjazdy na surf i snowboard dla grup 10-20 osób.",
+        content: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i półkolonie.",
       },
       { name: "author", content: "VHSBOARD" },
-      { property: "og:title", content: "VHSBOARD — Wyjazdy surfingowe i snowboardowe" },
+      { property: "og:title", content: "VHSBOARD — wyjazdy, eventy i półkolonie" },
       {
         property: "og:description",
-        content: "Kameralne wyjazdy na surf i snowboard dla grup 10-20 osób.",
+        content: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i półkolonie.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

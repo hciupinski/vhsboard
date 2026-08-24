@@ -43,7 +43,7 @@ export function OfferCard({ offer }: { offer: PublicOffer }) {
           </span>
         </div>
         <Button asChild className="mt-4 w-full rounded-full" variant="secondary">
-          <Link to="/trips/$slug" params={{ slug: offer.slug }}>
+          <Link to="/wyjazdy/$slug" params={{ slug: offer.slug }}>
             Zobacz szczegóły wyjazdu
           </Link>
         </Button>

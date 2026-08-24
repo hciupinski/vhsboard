@@ -10,14 +10,40 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EventyRouteImport } from './routes/eventy'
+import { Route as KontaktRouteImport } from './routes/kontakt'
+import { Route as ONasRouteImport } from './routes/o-nas'
+import { Route as PolkolonieRouteImport } from './routes/polkolonie'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as TripsSlugRouteImport } from './routes/trips.$slug'
+import { Route as WyjazdyIndexRouteImport } from './routes/wyjazdy.index'
+import { Route as WyjazdySlugRouteImport } from './routes/wyjazdy.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventyRoute = EventyRouteImport.update({
+  id: '/eventy',
+  path: '/eventy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KontaktRoute = KontaktRouteImport.update({
+  id: '/kontakt',
+  path: '/kontakt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ONasRoute = ONasRouteImport.update({
+  id: '/o-nas',
+  path: '/o-nas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolkolonieRoute = PolkolonieRouteImport.update({
+  id: '/polkolonie',
+  path: '/polkolonie',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -40,49 +66,111 @@ const TripsSlugRoute = TripsSlugRouteImport.update({
   path: '/trips/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WyjazdyIndexRoute = WyjazdyIndexRouteImport.update({
+  id: '/wyjazdy/',
+  path: '/wyjazdy/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WyjazdySlugRoute = WyjazdySlugRouteImport.update({
+  id: '/wyjazdy/$slug',
+  path: '/wyjazdy/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/eventy': typeof EventyRoute
+  '/kontakt': typeof KontaktRoute
+  '/o-nas': typeof ONasRoute
+  '/polkolonie': typeof PolkolonieRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/login': typeof AdminLoginRoute
   '/trips/$slug': typeof TripsSlugRoute
+  '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/wyjazdy/': typeof WyjazdyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/eventy': typeof EventyRoute
+  '/kontakt': typeof KontaktRoute
+  '/o-nas': typeof ONasRoute
+  '/polkolonie': typeof PolkolonieRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/login': typeof AdminLoginRoute
   '/trips/$slug': typeof TripsSlugRoute
+  '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin': typeof AdminIndexRoute
+  '/wyjazdy': typeof WyjazdyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/eventy': typeof EventyRoute
+  '/kontakt': typeof KontaktRoute
+  '/o-nas': typeof ONasRoute
+  '/polkolonie': typeof PolkolonieRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/login': typeof AdminLoginRoute
   '/trips/$slug': typeof TripsSlugRoute
+  '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/wyjazdy/': typeof WyjazdyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin/$slug' | '/admin/login' | '/trips/$slug' | '/admin/'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/$slug' | '/admin/login' | '/trips/$slug' | '/admin'
-  id:
-    | '__root__'
+  fullPaths:
     | '/'
+    | '/eventy'
+    | '/kontakt'
+    | '/o-nas'
+    | '/polkolonie'
     | '/admin/$slug'
     | '/admin/login'
     | '/trips/$slug'
+    | '/wyjazdy/$slug'
     | '/admin/'
+    | '/wyjazdy/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/eventy'
+    | '/kontakt'
+    | '/o-nas'
+    | '/polkolonie'
+    | '/admin/$slug'
+    | '/admin/login'
+    | '/trips/$slug'
+    | '/wyjazdy/$slug'
+    | '/admin'
+    | '/wyjazdy'
+  id:
+    | '__root__'
+    | '/'
+    | '/eventy'
+    | '/kontakt'
+    | '/o-nas'
+    | '/polkolonie'
+    | '/admin/$slug'
+    | '/admin/login'
+    | '/trips/$slug'
+    | '/wyjazdy/$slug'
+    | '/admin/'
+    | '/wyjazdy/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EventyRoute: typeof EventyRoute
+  KontaktRoute: typeof KontaktRoute
+  ONasRoute: typeof ONasRoute
+  PolkolonieRoute: typeof PolkolonieRoute
   AdminSlugRoute: typeof AdminSlugRoute
   AdminLoginRoute: typeof AdminLoginRoute
   TripsSlugRoute: typeof TripsSlugRoute
+  WyjazdySlugRoute: typeof WyjazdySlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  WyjazdyIndexRoute: typeof WyjazdyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -92,6 +180,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventy': {
+      id: '/eventy'
+      path: '/eventy'
+      fullPath: '/eventy'
+      preLoaderRoute: typeof EventyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kontakt': {
+      id: '/kontakt'
+      path: '/kontakt'
+      fullPath: '/kontakt'
+      preLoaderRoute: typeof KontaktRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/o-nas': {
+      id: '/o-nas'
+      path: '/o-nas'
+      fullPath: '/o-nas'
+      preLoaderRoute: typeof ONasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/polkolonie': {
+      id: '/polkolonie'
+      path: '/polkolonie'
+      fullPath: '/polkolonie'
+      preLoaderRoute: typeof PolkolonieRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -122,15 +238,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wyjazdy/': {
+      id: '/wyjazdy/'
+      path: '/wyjazdy'
+      fullPath: '/wyjazdy/'
+      preLoaderRoute: typeof WyjazdyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wyjazdy/$slug': {
+      id: '/wyjazdy/$slug'
+      path: '/wyjazdy/$slug'
+      fullPath: '/wyjazdy/$slug'
+      preLoaderRoute: typeof WyjazdySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EventyRoute: EventyRoute,
+  KontaktRoute: KontaktRoute,
+  ONasRoute: ONasRoute,
+  PolkolonieRoute: PolkolonieRoute,
   AdminSlugRoute: AdminSlugRoute,
   AdminLoginRoute: AdminLoginRoute,
   TripsSlugRoute: TripsSlugRoute,
+  WyjazdySlugRoute: WyjazdySlugRoute,
   AdminIndexRoute: AdminIndexRoute,
+  WyjazdyIndexRoute: WyjazdyIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

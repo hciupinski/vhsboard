@@ -210,13 +210,13 @@ function AdminListContent() {
                   <time dateTime={o.updatedAt}>
                     {updatedAtFormatter.format(new Date(o.updatedAt))}
                   </time>
-                  {" · "}/trips/{o.slug}
+                  {" · "}/wyjazdy/{o.slug}
                 </p>
               </div>
               <div className="flex shrink-0 gap-2">
                 {o.status === "published" ? (
                   <Button asChild size="sm" variant="outline" className="rounded-full">
-                    <Link to="/trips/$slug" params={{ slug: o.slug }}>
+                    <Link to="/wyjazdy/$slug" params={{ slug: o.slug }}>
                       <ExternalLink className="mr-1 size-4" /> Podgląd
                     </Link>
                   </Button>
