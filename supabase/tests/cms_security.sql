@@ -6,6 +6,9 @@ do $$
 declare
   admin_id constant uuid := '10000000-0000-0000-0000-000000000001';
   editor_id constant uuid := '10000000-0000-0000-0000-000000000002';
+  bucket_is_public boolean;
+  bucket_limit bigint;
+  allowed_types text[];
   draft_offer_id uuid;
   published_offer_id uuid;
   archived_offer_id uuid;
@@ -15,15 +18,15 @@ declare
   managed_path text;
   affected_rows integer;
 begin
-  if not exists (
-    select 1
-    from storage.buckets
-    where id = 'offer-images'
-      and public = false
-      and file_size_limit = 52428800
-      and allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp', 'image/avif']::text[]
-  ) then
-    raise exception 'offer-images bucket must enforce image MIME types and a 50 MiB size limit';
+  select public, file_size_limit, allowed_mime_types
+    into bucket_is_public, bucket_limit, allowed_types
+  from storage.buckets
+  where id = 'offer-images';
+
+  if bucket_is_public
+     or bucket_limit <> 8388608
+     or allowed_types <> array['image/jpeg', 'image/png', 'image/webp']::text[] then
+    raise exception 'offer-images must accept only the Task 060 image contract';
   end if;
 
   insert into auth.users (id)
@@ -352,6 +355,17 @@ begin
     insert into storage.objects (bucket_id, name)
     values ('offer-images', format('offers/%s/not-uuid.jpg', managed_offer_id));
     raise exception 'administrator storage path must use a UUID filename';
+  exception
+    when insufficient_privilege then null;
+  end;
+
+  begin
+    insert into storage.objects (bucket_id, name)
+    values (
+      'offer-images',
+      format('offers/%s/%s.gif', managed_offer_id, '20000000-0000-0000-0000-000000000008')
+    );
+    raise exception 'administrator storage path must use an allowed image extension';
   exception
     when insufficient_privilege then null;
   end;
