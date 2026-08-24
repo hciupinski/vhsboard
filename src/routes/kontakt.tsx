@@ -1,0 +1,68 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+import { PublicFooter } from "@/components/public/PublicFooter";
+import { PublicHeader } from "@/components/public/PublicHeader";
+import { getPublicSiteConfig } from "@/lib/site-config";
+
+const toTelHref = (phone: string) => `tel:${phone.replace(/[^+0-9]/g, "")}`;
+
+export const Route = createFileRoute("/kontakt")({
+  head: () => ({
+    meta: [
+      { title: "Kontakt | VHSBOARD" },
+      { name: "description", content: "Skontaktuj się z VHSBOARD w sprawie wyjazdu lub eventu." },
+    ],
+  }),
+  component: ContactPage,
+});
+
+function ContactPage() {
+  const config = getPublicSiteConfig();
+
+  return (
+    <div className="min-h-screen bg-background">
+      <PublicHeader />
+      <main className="mx-auto max-w-4xl px-5 py-16 sm:py-24">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Kontakt</p>
+        <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">Porozmawiajmy o planie</h1>
+        <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+          Napisz lub zadzwoń, jeśli chcesz porozmawiać o wyjeździe, evencie albo półkoloniach.
+        </p>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2">
+          <section className="rounded-3xl bg-sunset-gradient p-7 text-primary-foreground shadow-warm">
+            <h2 className="text-3xl">Napisz lub zadzwoń</h2>
+            <p className="mt-4">
+              <a
+                className="underline-offset-4 hover:underline"
+                href={`mailto:${config.contactEmail}`}
+              >
+                {config.contactEmail}
+              </a>
+            </p>
+            <p className="mt-2">
+              <a
+                className="underline-offset-4 hover:underline"
+                href={toTelHref(config.contactPhone)}
+              >
+                {config.contactPhone}
+              </a>
+            </p>
+          </section>
+          <section className="rounded-3xl border border-border bg-card p-7">
+            <h2 className="text-3xl">Dane firmy</h2>
+            <address className="mt-4 not-italic text-muted-foreground">
+              <p>{config.businessName}</p>
+              <p>{config.businessStreet}</p>
+              <p>
+                {config.businessPostalCode} {config.businessCity}
+              </p>
+              <p className="mt-3">NIP: {config.businessNip}</p>
+              <p>REGON: {config.businessRegon}</p>
+            </address>
+          </section>
+        </div>
+      </main>
+      <PublicFooter />
+    </div>
+  );
+}

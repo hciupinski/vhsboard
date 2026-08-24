@@ -10,6 +10,9 @@ export default defineConfig({
     tsConfigPaths(),
     tanstackStart({
       server: { entry: "server" },
+      router: {
+        routeFileIgnorePattern: "\\.test\\.(ts|tsx)$",
+      },
       prerender: {
         enabled: true,
         autoStaticPathsDiscovery: false,

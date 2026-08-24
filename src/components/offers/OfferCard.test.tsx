@@ -72,7 +72,7 @@ describe("public offer components", () => {
     expect(screen.getByText(/3100\s*zł/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Zobacz szczegóły wyjazdu" })).toHaveAttribute(
       "href",
-      "/trips/atlantic-surf-week",
+      "/wyjazdy/atlantic-surf-week",
     );
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });

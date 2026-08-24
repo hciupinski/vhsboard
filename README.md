@@ -3,8 +3,9 @@
 ## Description
 
 VHSBOARD is a Polish marketing website for small-group surfing and snowboarding
-trips. It presents current offers and trip details, with a lightweight admin
-CMS prototype for managing offer content.
+trips, eventy z torem skimboardowym oraz półkolonie. It presents current
+offers and trip details, with a lightweight admin CMS prototype for managing
+offer content.
 
 Bookings are handled externally through TripAhead. VHSBOARD does not manage
 reservations, payments, availability, or participant data.
@@ -46,6 +47,13 @@ uruchomienie workflow rozpoczęte z `main`. Domena `vhsboard.pl` pozostaje poza
 zakresem tego wdrożenia i nadal obsługuje ją WordPress. Ręczną konfigurację oraz
 sprawdzenia pierwszego merge'a opisuje
 [runbook wdrożenia](docs/deployment-runbook.md).
+
+Do uruchomienia strony publicznej wymagane są również publiczne zmienne
+konfiguracyjne danych kontaktowych i firmy: `VITE_CONTACT_EMAIL`,
+`VITE_CONTACT_PHONE`, `VITE_BUSINESS_NAME`, `VITE_BUSINESS_STREET`,
+`VITE_BUSINESS_POSTAL_CODE`, `VITE_BUSINESS_CITY`, `VITE_BUSINESS_NIP` oraz
+`VITE_BUSINESS_REGON`. Wartości umieszczaj w zmiennych środowiskowych deployu,
+nigdy w repozytorium.
 
 ## Supabase lokalnie
 
