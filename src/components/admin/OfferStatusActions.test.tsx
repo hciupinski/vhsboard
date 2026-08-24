@@ -43,7 +43,8 @@ describe("OfferStatusActions", () => {
 
     rerender(<OfferStatusActions {...callbacks} status="published" />);
 
-    expect(screen.getByRole("button", { name: "Zapisz szkic" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Zapisz" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Zapisz szkic" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Opublikuj" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cofnij publikację" })).toBeInTheDocument();
 

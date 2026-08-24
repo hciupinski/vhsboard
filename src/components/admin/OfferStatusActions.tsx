@@ -56,7 +56,7 @@ export function OfferStatusActions({
         disabled={isBusy}
         onClick={() => runAction(onSaveDraft)}
       >
-        Zapisz szkic
+        {status === "published" ? "Zapisz" : "Zapisz szkic"}
       </Button>
       {status === "draft" ? (
         <Button type="button" disabled={isBusy || !canPublish} onClick={() => runAction(onPublish)}>
