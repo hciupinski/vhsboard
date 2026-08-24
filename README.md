@@ -18,9 +18,8 @@ reservations, payments, availability, or participant data.
 - Radix UI primitives
 - Bun
 
-The current CMS prototype stores data in browser `localStorage`. The planned
-production architecture uses Cloudflare for hosting and Supabase for database,
-authentication, storage, and Row Level Security.
+The CMS uses Supabase for its database, authentication, private image storage,
+and Row Level Security. Cloudflare hosts the static frontend.
 
 ## How to run
 
