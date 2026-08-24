@@ -36,6 +36,31 @@ vi.mock("@/lib/offers/admin-repository", () => ({
   updateOffer: mockedUpdateOffer,
 }));
 
+vi.mock("@/components/admin/OfferImageManager", () => ({
+  OfferImageManager: ({
+    disabled,
+    onHeroChanged,
+    onImagesChanged,
+  }: {
+    disabled: boolean;
+    onHeroChanged: (path: string) => void | Promise<void>;
+    onImagesChanged: () => void | Promise<void>;
+  }) => (
+    <section aria-label="Zdjęcia oferty">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => {
+          void onHeroChanged("offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/selected-hero.jpeg");
+          void onImagesChanged();
+        }}
+      >
+        Ustaw testowy obraz główny
+      </button>
+    </section>
+  ),
+}));
+
 vi.mock("@/components/admin/AdminGuard", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/components/admin/AdminGuard")>();
   return {
@@ -189,6 +214,61 @@ afterEach(() => {
 });
 
 describe("admin offer editor route", () => {
+  it("does not offer Storage upload for an unsaved draft", async () => {
+    const user = userEvent.setup();
+    await renderAdminEditor({ slug: "new", initialValue: completeInput });
+
+    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+
+    expect(screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Wybierz plik obrazu")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Ustaw testowy obraz główny" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("uses a selected gallery hero for publication and refreshes image-dependent caches", async () => {
+    const user = userEvent.setup();
+    const selectedHeroPath = "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/selected-hero.jpeg";
+    const selectedHeroInput = { ...completeInput, heroImagePath: selectedHeroPath };
+    const selectedHeroDraft = { ...draftOffer, ...selectedHeroInput };
+    const selectedHeroPublished = { ...selectedHeroDraft, status: "published" as const };
+    mockedGetAdminOffer.mockResolvedValueOnce(draftOffer).mockResolvedValue(selectedHeroDraft);
+    mockedCanPublishOffer.mockResolvedValueOnce(false);
+    mockedUpdateOffer.mockResolvedValue(selectedHeroDraft);
+    mockedSetOfferStatus.mockResolvedValue(selectedHeroPublished);
+    const { queryClient } = await renderAdminEditor({ slug: draftOffer.slug });
+    const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+
+    expect(await screen.findByText(publishReadinessMessage)).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+    await user.click(await screen.findByRole("button", { name: "Ustaw testowy obraz główny" }));
+
+    await waitFor(() =>
+      expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["admin-offers"] }),
+    );
+    expect(mockedUpdateOffer).not.toHaveBeenCalled();
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["admin-offer", draftOffer.slug],
+    });
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["admin-offer-publish-readiness", draftOffer.id],
+    });
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["published-offers"] });
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["published-offer", draftOffer.slug],
+    });
+    queryClient.setQueryData(["admin-offer-publish-readiness", draftOffer.id], true);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+
+    await user.click(screen.getByRole("button", { name: "Opublikuj" }));
+
+    await waitFor(() =>
+      expect(mockedSetOfferStatus).toHaveBeenCalledWith(draftOffer.id, "published"),
+    );
+    expect(mockedUpdateOffer).toHaveBeenCalledWith(draftOffer.id, selectedHeroInput);
+  });
+
   it("disables publishing for an invalid local form without mutating", async () => {
     const user = userEvent.setup();
     mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
