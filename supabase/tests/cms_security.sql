@@ -16,6 +16,10 @@ declare
   published_path text;
   draft_path text;
   managed_path text;
+  managed_jpeg_path text;
+  managed_png_path text;
+  malformed_delete_path text;
+  out_of_scope_delete_path text;
   affected_rows integer;
 begin
   select public, file_size_limit, allowed_mime_types
@@ -326,6 +330,16 @@ begin
     managed_offer_id,
     '20000000-0000-0000-0000-000000000004'
   );
+  managed_jpeg_path := format(
+    'offers/%s/%s.jpeg',
+    managed_offer_id,
+    '20000000-0000-0000-0000-000000000009'
+  );
+  managed_png_path := format(
+    'offers/%s/%s.png',
+    managed_offer_id,
+    '20000000-0000-0000-0000-000000000010'
+  );
 
   insert into public.offer_images (offer_id, storage_path, alt_text, position)
   values (
@@ -339,6 +353,12 @@ begin
   values (
     'offer-images',
     managed_path
+  ), (
+    'offer-images',
+    managed_jpeg_path
+  ), (
+    'offer-images',
+    managed_png_path
   );
 
   update storage.objects
@@ -380,6 +400,39 @@ begin
   exception
     when insufficient_privilege then null;
   end;
+
+  perform set_config('storage.allow_delete_query', 'true', true);
+  delete from storage.objects
+  where bucket_id = 'offer-images'
+    and name in (managed_path, managed_jpeg_path, managed_png_path);
+  get diagnostics affected_rows = row_count;
+
+  if affected_rows <> 3 then
+    raise exception 'administrator must delete correctly scoped JPEG, PNG, and WebP objects';
+  end if;
+
+  malformed_delete_path := format(
+    'offers/%s/not-a-uuid.jpeg',
+    managed_offer_id
+  );
+  out_of_scope_delete_path :=
+    'offers/30000000-0000-0000-0000-000000000001/20000000-0000-0000-0000-000000000011.png';
+
+  execute 'set local role none';
+  insert into storage.objects (bucket_id, name)
+  values
+    ('offer-images', malformed_delete_path),
+    ('offer-images', out_of_scope_delete_path);
+  execute 'set local role authenticated';
+
+  delete from storage.objects
+  where bucket_id = 'offer-images'
+    and name in (malformed_delete_path, out_of_scope_delete_path);
+  get diagnostics affected_rows = row_count;
+
+  if affected_rows <> 0 then
+    raise exception 'administrator must not delete malformed or out-of-scope objects';
+  end if;
 
   delete from public.offer_images
   where offer_id = managed_offer_id;
