@@ -65,9 +65,9 @@ function TripDetail() {
   const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <main>
+      <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground">
           {offer.heroImageUrl ? (
             <img

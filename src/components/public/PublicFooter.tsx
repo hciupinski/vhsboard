@@ -9,22 +9,22 @@ export function PublicFooter() {
   const config = getPublicSiteConfig();
 
   return (
-    <footer className="border-t border-border bg-secondary/35 py-10">
+    <footer className="border-t border-border bg-secondary/35 py-6 sm:py-10">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 text-sm text-muted-foreground sm:grid-cols-[1fr_auto]">
-        <div>
+        <div className="text-center sm:text-left">
           <Link
             to="/"
-            className="inline-flex text-foreground"
+            className="hidden text-foreground sm:inline-flex"
             aria-label="VHSBOARD — strona główna"
           >
             <Brand />
           </Link>
-          <p className="mt-3 max-w-md">
+          <p className="mt-3 hidden max-w-md sm:block">
             Wyjazdy, wydarzenia i aktywności prowadzone w dobrym rytmie.
           </p>
-          <p className="mt-4">© {new Date().getFullYear()} VHSBOARD.</p>
+          <p className="sm:mt-4">© {new Date().getFullYear()} VHSBOARD.</p>
         </div>
-        <address className="not-italic sm:text-right">
+        <address className="hidden not-italic sm:block sm:text-right">
           <p className="font-medium text-foreground">{config.businessName}</p>
           <p>{config.businessStreet}</p>
           <p>

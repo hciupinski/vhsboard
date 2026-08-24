@@ -19,9 +19,9 @@ export const Route = createFileRoute("/o-nas")({
 
 function AboutPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <main>
+      <main className="flex-1">
         <section className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-24 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">O nas</p>

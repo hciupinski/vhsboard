@@ -18,9 +18,9 @@ export const Route = createFileRoute("/polkolonie")({
 
 function HalfDayCampsPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <main>
+      <main className="flex-1">
         <section className="bg-secondary/55 py-16 sm:py-24">
           <div className="mx-auto max-w-4xl px-5">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
