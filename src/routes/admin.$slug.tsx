@@ -197,7 +197,10 @@ function OfferEditorContent() {
       });
       setPersistedOffer(publishedOffer);
       setSaved(true);
-      await invalidatePublicCaches(publishedOffer.slug);
+      await Promise.all([
+        invalidateAdminCaches(publishedOffer.slug),
+        invalidatePublicCaches(publishedOffer.slug),
+      ]);
       await navigateAfterFirstSave(publishedOffer);
     } catch {
       setActionError("Nie udało się opublikować oferty. Spróbuj ponownie.");

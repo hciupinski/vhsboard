@@ -78,6 +78,20 @@ const createDeferred = <Value,>() => {
   return { promise, resolve };
 };
 
+const expectInvalidationAfterStatusChange = (
+  invalidateQueries: ReturnType<typeof vi.spyOn>,
+  queryKey: string[],
+) => {
+  const statusCallOrder = mockedSetOfferStatus.mock.invocationCallOrder[0];
+  const matchingInvalidationOrders = invalidateQueries.mock.calls.flatMap(([filters], index) =>
+    JSON.stringify(filters.queryKey) === JSON.stringify(queryKey)
+      ? [invalidateQueries.mock.invocationCallOrder[index]]
+      : [],
+  );
+
+  expect(matchingInvalidationOrders.some((order) => order > statusCallOrder)).toBe(true);
+};
+
 const setValue = (label: string | RegExp, value: string) => {
   fireEvent.change(screen.getByLabelText(label), { target: { value } });
 };
@@ -196,6 +210,8 @@ describe("admin offer editor route", () => {
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ["admin-offer", publishedOffer.slug],
     });
+    expectInvalidationAfterStatusChange(invalidateQueries, ["admin-offers"]);
+    expectInvalidationAfterStatusChange(invalidateQueries, ["admin-offer", publishedOffer.slug]);
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["published-offers"] });
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ["published-offer", publishedOffer.slug],
@@ -223,6 +239,9 @@ describe("admin offer editor route", () => {
       queryKey: ["admin-offer", draftOffer.slug],
     });
     expect(invalidateQueries).not.toHaveBeenCalledWith({ queryKey: ["published-offers"] });
+    expect(invalidateQueries).not.toHaveBeenCalledWith({
+      queryKey: ["published-offer", draftOffer.slug],
+    });
   });
 
   it("keeps the saved draft values and publish error after first-save navigation", async () => {
