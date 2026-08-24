@@ -28,9 +28,9 @@ function TripsPage() {
   } = useQuery(publishedOffersQueryOptions());
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <main className="bg-secondary/55 py-16 sm:py-24">
+      <main className="flex-1 bg-secondary/55 py-16 sm:py-24">
         <section className="mx-auto max-w-6xl px-5">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Wyjazdy</p>
           <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">Wyjazdy</h1>

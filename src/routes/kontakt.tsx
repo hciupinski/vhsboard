@@ -20,9 +20,9 @@ function ContactPage() {
   const config = getPublicSiteConfig();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <main className="mx-auto max-w-4xl px-5 py-16 sm:py-24">
+      <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-16 sm:py-24">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Kontakt</p>
         <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">Porozmawiajmy o planie</h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground">

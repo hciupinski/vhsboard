@@ -44,9 +44,9 @@ const entryPoints = [
 
 function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <main>
+      <main className="flex-1">
         <section className="relative isolate overflow-hidden">
           <img
             src={heroSurf}

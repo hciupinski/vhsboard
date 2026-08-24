@@ -60,12 +60,20 @@ afterEach(() => {
 });
 
 describe("static public pages", () => {
-  it("explains the event format and directs enquiries to contact", async () => {
+  it("explains the mobile skimboard track format and directs enquiries to contact", async () => {
     await renderRoute("/eventy", EventsRoute);
 
     expect(
-      screen.getByRole("heading", { name: /eventy z torem skimboardowym/i }),
+      screen.getByRole("heading", { name: /tor skimboardowy.*wynajem na eventy/i }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /skimboarding/i })).toHaveAttribute(
+      "href",
+      "https://www.youtube.com/watch?v=85_CDXNlPmg&t=1s",
+    );
+    expect(
+      screen.getByText(/integracjach firmowych i piknikach pracowniczych/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/15, 20 i 30 metrów/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /zapytaj o event/i })).toHaveAttribute(
       "href",
       "/kontakt",
