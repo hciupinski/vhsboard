@@ -40,12 +40,18 @@ const statusLabels: Record<OfferStatus, string> = {
   published: "Opublikowana",
   archived: "Zarchiwizowana",
 };
+const publishReadinessMessage = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
 
 const toEditableInput = ({ id: _id, status: _status, ...input }: EditableOffer) => input;
 
 const getAdminOffer = async (slug: string) => {
   const repository = await import("@/lib/offers/admin-repository");
   return repository.getAdminOffer(slug);
+};
+
+const canPublishOffer = async (id: string) => {
+  const repository = await import("@/lib/offers/admin-repository");
+  return repository.canPublishOffer(id);
 };
 
 const createOffer = async (input: EditableOfferInput) => {
@@ -97,6 +103,12 @@ function OfferEditorContent() {
     setFormValue(toEditableInput(offerQuery.data));
   }, [isNew, offerQuery.data]);
 
+  const currentStatus = persistedOffer?.status ?? "draft";
+  const readinessQuery = useQuery({
+    queryKey: ["admin-offer-publish-readiness", persistedOffer?.id],
+    queryFn: () => canPublishOffer(persistedOffer!.id),
+    enabled: !isNew && persistedOffer !== null && currentStatus === "draft",
+  });
   const createMutation = useMutation({ mutationFn: createOffer });
   const updateMutation = useMutation({
     mutationFn: ({ id, input }: { id: string; input: EditableOfferInput }) =>
@@ -108,7 +120,14 @@ function OfferEditorContent() {
   });
   const isSubmitting =
     createMutation.isPending || updateMutation.isPending || statusMutation.isPending;
-  const currentStatus = persistedOffer?.status ?? "draft";
+  const isFormValid = editorOfferInputSchema.safeParse(formValue).success;
+  const canPublish =
+    !isNew && persistedOffer !== null && isFormValid && readinessQuery.data === true;
+  const visibleError =
+    actionError ??
+    (!isNew && persistedOffer !== null && currentStatus === "draft" && readinessQuery.data === false
+      ? publishReadinessMessage
+      : null);
 
   const validateForm = () => {
     const result = editorOfferInputSchema.safeParse(formValue);
@@ -159,8 +178,8 @@ function OfferEditorContent() {
     return offer;
   };
 
-  const navigateAfterFirstSave = async (offer: EditableOffer) => {
-    if (!isNew) return;
+  const navigateAfterPersistence = async (offer: EditableOffer) => {
+    if (offer.slug === slug) return;
     await navigate({ to: "/admin/$slug", params: { slug: offer.slug }, replace: true });
   };
 
@@ -170,13 +189,15 @@ function OfferEditorContent() {
 
     try {
       const offer = await persistInput(input);
-      await navigateAfterFirstSave(offer);
+      await navigateAfterPersistence(offer);
     } catch {
       setActionError("Nie udało się zapisać oferty. Spróbuj ponownie.");
     }
   };
 
   const handlePublish = async () => {
+    if (!canPublish) return;
+
     const input = validateForm();
     if (!input) return;
 
@@ -201,10 +222,14 @@ function OfferEditorContent() {
         invalidateAdminCaches(publishedOffer.slug),
         invalidatePublicCaches(publishedOffer.slug),
       ]);
-      await navigateAfterFirstSave(publishedOffer);
-    } catch {
-      setActionError("Nie udało się opublikować oferty. Spróbuj ponownie.");
-      if (savedOffer) await navigateAfterFirstSave(savedOffer);
+      await navigateAfterPersistence(publishedOffer);
+    } catch (error) {
+      setActionError(
+        error instanceof Error && error.message === publishReadinessMessage
+          ? publishReadinessMessage
+          : "Nie udało się opublikować oferty. Spróbuj ponownie.",
+      );
+      if (savedOffer) await navigateAfterPersistence(savedOffer);
     }
   };
 
@@ -273,7 +298,7 @@ function OfferEditorContent() {
             <OfferStatusActions
               status={currentStatus}
               isSubmitting={isSubmitting}
-              canPublish
+              canPublish={canPublish}
               onSaveDraft={handleSaveDraft}
               onPublish={handlePublish}
               onUnpublish={handleUnpublish}
@@ -283,12 +308,12 @@ function OfferEditorContent() {
       </header>
 
       <main className="mx-auto max-w-5xl px-5 py-8">
-        {actionError ? (
+        {visibleError ? (
           <p
             role="alert"
             className="mb-5 rounded-xl bg-destructive/10 p-4 text-sm text-destructive"
           >
-            {actionError}
+            {visibleError}
           </p>
         ) : null}
         <OfferEditorForm

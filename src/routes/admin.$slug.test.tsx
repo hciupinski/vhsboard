@@ -9,20 +9,27 @@ import {
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentType, PropsWithChildren } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { EditableOffer, EditableOfferInput } from "@/lib/offers/editor-schema";
 import { Route as AdminEditorRoute } from "./admin.$slug";
 
-const { mockedCreateOffer, mockedGetAdminOffer, mockedSetOfferStatus, mockedUpdateOffer } =
-  vi.hoisted(() => ({
-    mockedCreateOffer: vi.fn(),
-    mockedGetAdminOffer: vi.fn(),
-    mockedSetOfferStatus: vi.fn(),
-    mockedUpdateOffer: vi.fn(),
-  }));
+const {
+  mockedCanPublishOffer,
+  mockedCreateOffer,
+  mockedGetAdminOffer,
+  mockedSetOfferStatus,
+  mockedUpdateOffer,
+} = vi.hoisted(() => ({
+  mockedCanPublishOffer: vi.fn(),
+  mockedCreateOffer: vi.fn(),
+  mockedGetAdminOffer: vi.fn(),
+  mockedSetOfferStatus: vi.fn(),
+  mockedUpdateOffer: vi.fn(),
+}));
 
 vi.mock("@/lib/offers/admin-repository", () => ({
+  canPublishOffer: mockedCanPublishOffer,
   createOffer: mockedCreateOffer,
   getAdminOffer: mockedGetAdminOffer,
   setOfferStatus: mockedSetOfferStatus,
@@ -69,6 +76,11 @@ const draftOffer: EditableOffer = {
 };
 
 const publishedOffer: EditableOffer = { ...draftOffer, status: "published" };
+const readyHeroImagePath = "offers/atlantic-surf-week/hero.jpg";
+const readyInput: EditableOfferInput = { ...completeInput, heroImagePath: readyHeroImagePath };
+const readyDraftOffer: EditableOffer = { ...draftOffer, ...readyInput };
+const readyPublishedOffer: EditableOffer = { ...readyDraftOffer, status: "published" };
+const publishReadinessMessage = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
 
 const createDeferred = <Value,>() => {
   let resolve!: (value: Value) => void;
@@ -167,55 +179,66 @@ const renderAdminEditor = async ({
   return { queryClient, router, ...rendered };
 };
 
+beforeEach(() => {
+  mockedCanPublishOffer.mockResolvedValue(true);
+});
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
 });
 
 describe("admin offer editor route", () => {
-  it("does not send a published status for an invalid local form", async () => {
+  it("disables publishing for an invalid local form without mutating", async () => {
     const user = userEvent.setup();
-    await renderAdminEditor({ slug: "new" });
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+    await renderAdminEditor({ slug: readyDraftOffer.slug });
+    const titleInput = screen.getByLabelText("Tytuł wyjazdu");
 
-    await user.click(screen.getByRole("button", { name: "Opublikuj" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+    await user.clear(titleInput);
 
-    expect(await screen.findByText("Tytuł musi mieć od 3 do 120 znaków.")).toBeInTheDocument();
+    const publishButton = screen.getByRole("button", { name: "Opublikuj" });
+    expect(publishButton).toBeDisabled();
+    await user.click(publishButton);
+    expect(mockedUpdateOffer).not.toHaveBeenCalled();
+    expect(mockedSetOfferStatus).not.toHaveBeenCalled();
+  });
+
+  it("keeps publishing disabled for a complete but unsaved offer", async () => {
+    const user = userEvent.setup();
+    await renderAdminEditor({ slug: "new", initialValue: completeInput });
+
+    const publishButton = screen.getByRole("button", { name: "Opublikuj" });
+    expect(publishButton).toBeDisabled();
+    await user.click(publishButton);
+    expect(mockedCanPublishOffer).not.toHaveBeenCalled();
     expect(mockedCreateOffer).not.toHaveBeenCalled();
     expect(mockedSetOfferStatus).not.toHaveBeenCalled();
   });
 
-  it("creates a draft before setting published status after valid submission", async () => {
+  it("disables publishing and explains missing persisted hero readiness", async () => {
     const user = userEvent.setup();
-    mockedCreateOffer.mockResolvedValue(draftOffer);
-    mockedGetAdminOffer.mockResolvedValue(publishedOffer);
-    mockedSetOfferStatus.mockResolvedValue(publishedOffer);
-    const { queryClient, router } = await renderAdminEditor({
-      slug: "new",
-      initialValue: completeInput,
-    });
-    const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+    mockedCanPublishOffer.mockResolvedValue(false);
 
-    await user.click(screen.getByRole("button", { name: "Opublikuj" }));
+    await renderAdminEditor({ slug: readyDraftOffer.slug });
 
-    await waitFor(() =>
-      expect(mockedSetOfferStatus).toHaveBeenCalledWith(draftOffer.id, "published"),
-    );
-    expect(mockedCreateOffer.mock.invocationCallOrder[0]).toBeLessThan(
-      mockedSetOfferStatus.mock.invocationCallOrder[0],
-    );
-    await waitFor(() =>
-      expect(router.state.location.pathname).toBe(`/admin/${publishedOffer.slug}`),
-    );
-    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["admin-offers"] });
-    expect(invalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["admin-offer", publishedOffer.slug],
-    });
-    expectInvalidationAfterStatusChange(invalidateQueries, ["admin-offers"]);
-    expectInvalidationAfterStatusChange(invalidateQueries, ["admin-offer", publishedOffer.slug]);
-    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["published-offers"] });
-    expect(invalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["published-offer", publishedOffer.slug],
-    });
+    expect(await screen.findByText(publishReadinessMessage)).toHaveAttribute("role", "alert");
+    const publishButton = screen.getByRole("button", { name: "Opublikuj" });
+    expect(publishButton).toBeDisabled();
+    await user.click(publishButton);
+    expect(mockedUpdateOffer).not.toHaveBeenCalled();
+    expect(mockedSetOfferStatus).not.toHaveBeenCalled();
+  });
+
+  it("enables publishing for a complete persisted offer with ready hero metadata", async () => {
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+
+    await renderAdminEditor({ slug: readyDraftOffer.slug });
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+    expect(mockedCanPublishOffer).toHaveBeenCalledWith(readyDraftOffer.id);
   });
 
   it("saves a new draft, navigates to its slug, and leaves public caches untouched", async () => {
@@ -244,42 +267,49 @@ describe("admin offer editor route", () => {
     });
   });
 
-  it("keeps the saved draft values and publish error after first-save navigation", async () => {
+  it("preserves the specific readiness message when status publication is rejected", async () => {
     const user = userEvent.setup();
-    mockedCreateOffer.mockResolvedValue(draftOffer);
-    mockedGetAdminOffer.mockResolvedValue(draftOffer);
-    mockedSetOfferStatus.mockRejectedValue(new Error("raw backend details"));
-    const { router } = await renderAdminEditor({ slug: "new", initialValue: completeInput });
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+    mockedUpdateOffer.mockResolvedValue(readyDraftOffer);
+    mockedSetOfferStatus.mockRejectedValue(new Error(publishReadinessMessage));
+    await renderAdminEditor({ slug: readyDraftOffer.slug });
 
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
     await user.click(screen.getByRole("button", { name: "Opublikuj" }));
 
-    await waitFor(() => expect(router.state.location.pathname).toBe(`/admin/${draftOffer.slug}`));
-    await waitFor(() => expect(mockedGetAdminOffer).toHaveBeenCalledWith(draftOffer.slug));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
-    expect(screen.getByRole("alert")).toHaveTextContent("Nie udało się opublikować oferty");
-    expect(screen.getByRole("alert")).not.toHaveTextContent("raw backend details");
-
-    await user.click(screen.getByRole("tab", { name: "Podstawy" }));
-    expect(screen.getByLabelText("Tytuł wyjazdu")).toHaveValue(completeInput.title);
+    expect(await screen.findByRole("alert")).toHaveTextContent(publishReadinessMessage);
+    expect(screen.getByRole("alert")).not.toHaveTextContent("Nie udało się opublikować oferty");
+    expect(mockedSetOfferStatus).toHaveBeenCalledWith(readyDraftOffer.id, "published");
   });
 
   it("updates an existing draft before publishing it", async () => {
     const user = userEvent.setup();
-    mockedGetAdminOffer.mockResolvedValue(draftOffer);
-    mockedUpdateOffer.mockResolvedValue(draftOffer);
-    mockedSetOfferStatus.mockResolvedValue(publishedOffer);
-    await renderAdminEditor({ slug: draftOffer.slug });
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+    mockedUpdateOffer.mockResolvedValue(readyDraftOffer);
+    mockedSetOfferStatus.mockResolvedValue(readyPublishedOffer);
+    const { queryClient } = await renderAdminEditor({ slug: readyDraftOffer.slug });
+    const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
 
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
     await user.click(screen.getByRole("button", { name: "Opublikuj" }));
 
     await waitFor(() =>
-      expect(mockedSetOfferStatus).toHaveBeenCalledWith(draftOffer.id, "published"),
+      expect(mockedSetOfferStatus).toHaveBeenCalledWith(readyDraftOffer.id, "published"),
     );
-    expect(mockedUpdateOffer).toHaveBeenCalledWith(draftOffer.id, completeInput);
+    expect(mockedUpdateOffer).toHaveBeenCalledWith(readyDraftOffer.id, readyInput);
     expect(mockedCreateOffer).not.toHaveBeenCalled();
     expect(mockedUpdateOffer.mock.invocationCallOrder[0]).toBeLessThan(
       mockedSetOfferStatus.mock.invocationCallOrder[0],
     );
+    expectInvalidationAfterStatusChange(invalidateQueries, ["admin-offers"]);
+    expectInvalidationAfterStatusChange(invalidateQueries, [
+      "admin-offer",
+      readyPublishedOffer.slug,
+    ]);
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["published-offers"] });
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["published-offer", readyPublishedOffer.slug],
+    });
   });
 
   it("unpublishes an existing offer and invalidates public caches", async () => {
@@ -335,6 +365,33 @@ describe("admin offer editor route", () => {
 
     deferredUpdate.resolve(draftOffer);
     await waitFor(() => expect(screen.getByRole("button", { name: "Zapisz szkic" })).toBeEnabled());
+  });
+
+  it("navigates to the returned slug and queries the new route key after editing a slug", async () => {
+    const user = userEvent.setup();
+    const renamedInput = { ...completeInput, slug: "nowy-atlantic-surf-week" };
+    const renamedOffer = { ...draftOffer, ...renamedInput };
+    mockedGetAdminOffer.mockImplementation(async (requestedSlug) =>
+      requestedSlug === renamedOffer.slug ? renamedOffer : draftOffer,
+    );
+    mockedUpdateOffer.mockResolvedValue(renamedOffer);
+    const { queryClient, router } = await renderAdminEditor({ slug: draftOffer.slug });
+    const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+
+    const slugInput = screen.getByLabelText("Adres oferty");
+    await user.clear(slugInput);
+    await user.type(slugInput, renamedInput.slug);
+    await user.click(screen.getByRole("button", { name: "Zapisz szkic" }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe(`/admin/${renamedOffer.slug}`));
+    await waitFor(() => expect(mockedGetAdminOffer).toHaveBeenCalledWith(renamedOffer.slug));
+    expect(mockedUpdateOffer).toHaveBeenCalledWith(draftOffer.id, renamedInput);
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["admin-offer", draftOffer.slug],
+    });
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["admin-offer", renamedOffer.slug],
+    });
   });
 
   it("renders a not-found state when the persisted offer does not exist", async () => {
