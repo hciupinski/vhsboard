@@ -21,6 +21,7 @@ import {
 } from "./admin-repository";
 
 const offerId = "a0f8e810-1df3-42d9-90df-2a1a69ad9a2c";
+const otherOfferId = "d3f8e810-1df3-42d9-90df-2a1a69ad9a2c";
 const heroPath = `offers/${offerId}/hero.jpg`;
 const updatedAt = "2026-08-17T12:34:56.000Z";
 
@@ -111,6 +112,28 @@ const createMutationQuery = (result: QueryResult) => {
   query.insert.mockReturnValue(query);
   query.update.mockReturnValue(query);
   query.single.mockReturnValue(query);
+  return query;
+};
+
+const createFilteredImageLookup = (rows: Array<Record<string, unknown>>) => {
+  const predicates: Array<[string, unknown]> = [];
+  const query = {
+    select: vi.fn(),
+    eq: vi.fn(),
+    maybeSingle: vi.fn(),
+  };
+  query.select.mockReturnValue(query);
+  query.eq.mockImplementation((column: string, value: unknown) => {
+    predicates.push([column, value]);
+    return query;
+  });
+  query.maybeSingle.mockImplementation(() =>
+    Promise.resolve({
+      data:
+        rows.find((row) => predicates.every(([column, value]) => row[column] === value)) ?? null,
+      error: null,
+    }),
+  );
   return query;
 };
 
@@ -233,6 +256,23 @@ describe("administrator offer repository", () => {
     expect(offerQuery.eq).toHaveBeenCalledWith("id", offerId);
     expect(imageQuery.eq).toHaveBeenCalledWith("offer_id", offerId);
     expect(imageQuery.eq).toHaveBeenCalledWith("storage_path", heroPath);
+  });
+
+  it("rejects publication when the matching hero path exists only on another offer", async () => {
+    const offerQuery = createQuery({ data: draftRow, error: null });
+    const imageQuery = createFilteredImageLookup([
+      {
+        offer_id: otherOfferId,
+        storage_path: heroPath,
+        alt_text: "Opis zdjęcia należącego do innej oferty",
+      },
+    ]);
+    mockedSupabase.from.mockReturnValueOnce(offerQuery).mockReturnValueOnce(imageQuery);
+
+    await expect(canPublishOffer(offerId)).resolves.toBe(false);
+
+    expect(imageQuery.eq).toHaveBeenNthCalledWith(1, "offer_id", offerId);
+    expect(imageQuery.eq).toHaveBeenNthCalledWith(2, "storage_path", heroPath);
   });
 
   it("does not mark an offer as published without a matching hero image alt", async () => {
