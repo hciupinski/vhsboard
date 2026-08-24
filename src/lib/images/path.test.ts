@@ -45,4 +45,13 @@ describe("createImagePath", () => {
       createImagePath(offerId, new File(["x"], "photo.gif", { type: "image/gif" }), uploadId),
     ).toThrow("Nieprawidłowy typ obrazu.");
   });
+
+  it.each(["constructor", "__proto__"])(
+    "rejects inherited MIME key %s instead of creating a path",
+    (type) => {
+      expect(() =>
+        createImagePath(offerId, new File(["x"], "photo.jpg", { type }), uploadId),
+      ).toThrow("Nieprawidłowy typ obrazu.");
+    },
+  );
 });

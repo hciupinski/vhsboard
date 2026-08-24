@@ -9,19 +9,25 @@ export type ImageValidationError = {
   message: string;
 };
 
-const IMAGE_EXTENSIONS: Record<(typeof ACCEPTED_IMAGE_MIME_TYPES)[number], string> = {
-  "image/jpeg": "jpeg",
-  "image/png": "png",
-  "image/webp": "webp",
-};
+type ImageExtension = "jpeg" | "png" | "webp";
 
 const error = (
   code: ImageValidationError["code"],
   message: string,
 ): Result<void, ImageValidationError> => ({ ok: false, error: { code, message } });
 
-export const imageExtensionForMimeType = (mimeType: string): string | undefined =>
-  IMAGE_EXTENSIONS[mimeType as keyof typeof IMAGE_EXTENSIONS];
+export const imageExtensionForMimeType = (mimeType: string): ImageExtension | undefined => {
+  switch (mimeType) {
+    case "image/jpeg":
+      return "jpeg";
+    case "image/png":
+      return "png";
+    case "image/webp":
+      return "webp";
+    default:
+      return undefined;
+  }
+};
 
 export const validateImageFile = (file: File): Result<void, ImageValidationError> => {
   if (!file.type) return error("typ", "Plik nie ma określonego typu MIME.");

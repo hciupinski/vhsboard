@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { ACCEPTED_IMAGE_MIME_TYPES, MAX_IMAGE_BYTES, validateImageFile } from "./validation";
+import {
+  ACCEPTED_IMAGE_MIME_TYPES,
+  imageExtensionForMimeType,
+  MAX_IMAGE_BYTES,
+  validateImageFile,
+} from "./validation";
 
 describe("validateImageFile", () => {
   it.each([
@@ -47,4 +52,11 @@ describe("validateImageFile", () => {
   it("exposes only the supported MIME types", () => {
     expect(ACCEPTED_IMAGE_MIME_TYPES).toEqual(["image/jpeg", "image/png", "image/webp"]);
   });
+
+  it.each(["constructor", "__proto__"])(
+    "does not resolve inherited MIME key %s to an extension",
+    (mimeType) => {
+      expect(imageExtensionForMimeType(mimeType)).toBeUndefined();
+    },
+  );
 });
