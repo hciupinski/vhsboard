@@ -34,23 +34,8 @@ jobs:
       - run: bun run lint
   build:
     runs-on: ubuntu-latest
-    env:
-      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
-      VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
-      VITE_SEO_INDEXING: ${{ vars.VITE_SEO_INDEXING }}
-      VITE_CONTACT_EMAIL: kontakt@example.test
-      VITE_CONTACT_PHONE: +48123456789
-      VITE_BUSINESS_NAME: Testowa firma
-      VITE_BUSINESS_STREET: ul. Przykładowa 1
-      VITE_BUSINESS_POSTAL_CODE: 00-001
-      VITE_BUSINESS_CITY: Warszawa
-      VITE_BUSINESS_NIP: "1234567890"
-      VITE_BUSINESS_REGON: "123456789"
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
       - run: bun install --frozen-lockfile
-      - run: bun run build
-      - run: bun run check:seo
-      - run: test -s .output/public/index.html
+      - run: bun run build:ci

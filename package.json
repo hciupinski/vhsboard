@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && bun run generate:sitemap",
+    "build:ci": "VHSBOARD_BUILD_ONLY=true vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",

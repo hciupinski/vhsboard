@@ -8,6 +8,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 
 import { getPublicSupabaseConfigFrom, getSeoConfigFrom } from "./src/lib/env";
 import { publishedOfferSeoRowSchema } from "./src/lib/offers/schema";
+import { isBuildOnly } from "./scripts/build-mode";
 
 const staticPublicPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
 
@@ -34,8 +35,12 @@ const getPublishedOfferPaths = async (environment: Record<string, string>): Prom
 
 export default defineConfig(async ({ mode }) => {
   const environment = loadEnv(mode, process.cwd(), "");
-  const publishedOfferPaths = mode === "test" ? [] : await getPublishedOfferPaths(environment);
+  const buildOnly = isBuildOnly(environment);
+  const publishedOfferPaths = buildOnly ? [] : await getPublishedOfferPaths(environment);
   const allowedPaths = new Set([...staticPublicPaths, ...publishedOfferPaths]);
+  const prerenderPages = buildOnly
+    ? []
+    : [...staticPublicPaths, ...publishedOfferPaths].map((path) => ({ path }));
 
   return {
     plugins: [
@@ -46,7 +51,7 @@ export default defineConfig(async ({ mode }) => {
           routeFileIgnorePattern: "\\.test\\.(ts|tsx)$",
         },
         prerender: {
-          enabled: true,
+          enabled: !buildOnly,
           autoSubfolderIndex: true,
           autoStaticPathsDiscovery: true,
           crawlLinks: true,
@@ -56,7 +61,7 @@ export default defineConfig(async ({ mode }) => {
           failOnError: true,
           filter: ({ path }) => allowedPaths.has(path),
         },
-        pages: [...staticPublicPaths, ...publishedOfferPaths].map((path) => ({ path })),
+        pages: prerenderPages,
       }),
       nitro(),
       viteReact(),

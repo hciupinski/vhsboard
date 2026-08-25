@@ -52,7 +52,8 @@ w Cloudflare.
    `main`.
 2. W zakładce Actions otwórz uruchomienie **Deploy production** dla merge
    commitu. Zweryfikuj kolejność zakończonych zadań:
-   `verify`, potem `deploy-supabase`, a na końcu `deploy-cloudflare`.
+   `verify` (testy i lint), potem `deploy-supabase`, a na końcu
+   `deploy-cloudflare` (pełny build, kontrola SEO i upload do Pages).
 3. W podsumowaniu zadania wdrożenia otwórz adres Pages `*.pages.dev` zwrócony
    przez krok `pages_deploy`. Potwierdź, że korzysta z HTTPS, ładuje stronę
    główną oraz zawiera właśnie zmergowaną zmianę.
@@ -81,7 +82,10 @@ w Cloudflare.
 
 ## Rutynowe użycie
 
-Pull requesty do `main` uruchamiają nieuprzywilejowany workflow **Verify**.
-Merge do `main` ponownie wykonuje testy, lintowanie i build, następnie wdraża
-migracje Supabase, a dopiero potem statyczny frontend do Pages. Ręczne
+Pull requesty do `main` uruchamiają nieuprzywilejowany workflow **Verify**:
+testy, lintowanie i kompilację aplikacji bez prerenderingu. Ten build celowo
+nie odpyta produkcyjnego Supabase ani nie tworzy sitemapy. Merge do `main`
+ponownie wykonuje testy i lintowanie, następnie wdraża migracje Supabase, a
+dopiero potem wykonuje pełny prerender, kontrolę SEO i wdrożenie statycznego
+frontendu do Pages. Ręczne
 uruchomienie workflow z innej gałęzi nie wykonuje zadań produkcyjnych.
