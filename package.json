@@ -5,14 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && bun run generate:sitemap",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "generate:sitemap": "bun scripts/generate-sitemap.ts",
+    "check:seo": "bun scripts/check-seo-build.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.8.0",

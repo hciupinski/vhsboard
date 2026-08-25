@@ -3,17 +3,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import aboutCrew from "@/assets/about-crew.jpg";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
+import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/o-nas")({
-  head: () => ({
-    meta: [
-      { title: "O VHSBOARD" },
-      {
-        name: "description",
-        content: "Poznaj VHSBOARD — ludzi i aktywności, które stoją za naszymi wyjazdami.",
-      },
-    ],
-  }),
+  head: () =>
+    createPageMetadata({
+      path: "/o-nas",
+      title: "O nas | VHSBOARD",
+      description: "Poznaj VHSBOARD — ludzi i aktywności, które stoją za naszymi wyjazdami.",
+    }),
   component: AboutPage,
 });
 
@@ -21,6 +20,7 @@ function AboutPage() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
+      <PublicJsonLd path="/o-nas" label="O nas" />
       <main className="flex-1">
         <section className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-24 lg:grid-cols-2 lg:items-center">
           <div>

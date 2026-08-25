@@ -56,6 +56,11 @@ export const offerImageRowSchema = z.object({
   position: z.number().int().nonnegative(),
 });
 
+export const publishedOfferSeoRowSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  updated_at: z.string().datetime({ offset: true }),
+});
+
 export type OfferListRow = z.infer<typeof offerListRowSchema>;
 export type OfferDetailRow = z.infer<typeof offerDetailRowSchema>;
 export type OfferImageRow = z.infer<typeof offerImageRowSchema>;

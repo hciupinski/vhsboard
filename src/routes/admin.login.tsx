@@ -9,7 +9,10 @@ export const Route = createFileRoute("/admin/login")({
     next: typeof search.next === "string" ? search.next : undefined,
   }),
   head: () => ({
-    meta: [{ title: "Logowanie do panelu — VHSBOARD" }, { name: "robots", content: "noindex" }],
+    meta: [
+      { title: "Logowanie do panelu — VHSBOARD" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: AdminLogin,
 });

@@ -19,10 +19,13 @@ export function PublicFooter() {
           >
             <Brand />
           </Link>
-          <p className="mt-3 hidden max-w-md sm:block">
-            Robione między falami a opadami śniegu.
+          <p className="mt-3 hidden max-w-md sm:block">Robione między falami a opadami śniegu.</p>
+          <p className="sm:mt-4">
+            © {new Date().getFullYear()}{" "}
+            <a href="https://theconstruct.ing" className="hover:text-primary hover:underline">
+              theconstruct.ing
+            </a>
           </p>
-          <p className="sm:mt-4">© {new Date().getFullYear()} <a href="https://theconstruct.ing" className="hover:text-primary hover:underline">theconstruct.ing</a></p>
         </div>
         <address className="hidden not-italic sm:block sm:text-right">
           <p className="font-medium text-foreground">{config.businessName}</p>

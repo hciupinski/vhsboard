@@ -3,18 +3,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import wakeparkCampImage from "@/assets/polkolonie-wakepark.png";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
+import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/polkolonie")({
-  head: () => ({
-    meta: [
-      { title: "Półkolonie sportowe | VHSBOARD" },
-      {
-        name: "description",
-        content:
-          "Półkolonie letnie i zimowe VHSBOARD: wakepark, skimboard, skateboarding i snowboard.",
-      },
-    ],
-  }),
+  head: () =>
+    createPageMetadata({
+      path: "/polkolonie",
+      title: "Półkolonie sportowe | VHSBOARD",
+      description:
+        "Półkolonie letnie i zimowe VHSBOARD: wakepark, skimboard, skateboarding i snowboard.",
+    }),
   component: HalfDayCampsPage,
 });
 
@@ -22,6 +21,7 @@ function HalfDayCampsPage() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
+      <PublicJsonLd path="/polkolonie" label="Półkolonie" />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden">
           <img

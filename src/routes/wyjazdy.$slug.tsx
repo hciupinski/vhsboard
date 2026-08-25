@@ -6,9 +6,11 @@ import { OfferFacts } from "@/components/offers/OfferFacts";
 import { OfferGallery } from "@/components/offers/OfferGallery";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
 import { publishedOfferQueryOptions } from "@/lib/offers/query-options";
 import type { PublicOffer } from "@/lib/offers/types";
+import { createPageMetadata } from "@/lib/seo";
 
 const activityLabels: Record<PublicOffer["activity"], string> = {
   surf: "Surf",
@@ -29,26 +31,22 @@ export const Route = createFileRoute("/wyjazdy/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return {
-        meta: [
-          { title: "Nie znaleziono wyjazdu — VHSBOARD" },
-          { name: "robots", content: "noindex" },
-        ],
-      };
+      return createPageMetadata({
+        path: "/wyjazdy",
+        title: "Nie znaleziono wyjazdu — VHSBOARD",
+        description: "Nie znaleziono wskazanego wyjazdu VHSBOARD.",
+        indexable: false,
+      });
     }
 
     const { offer } = loaderData;
     const title = `${offer.title} — ${offer.location} | VHSBOARD`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: offer.shortDescription },
-        { property: "og:title", content: title },
-        { property: "og:description", content: offer.shortDescription },
-        { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-    };
+    return createPageMetadata({
+      path: `/wyjazdy/${offer.slug}`,
+      title,
+      description: offer.shortDescription,
+      ogType: "article",
+    });
   },
   component: TripDetail,
 });
@@ -67,6 +65,7 @@ function TripDetail() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
+      <PublicJsonLd path={`/wyjazdy/${offer.slug}`} label={offer.title} offer={offer} />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground">
           {offer.heroImageUrl ? (

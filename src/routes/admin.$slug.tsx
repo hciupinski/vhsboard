@@ -26,7 +26,7 @@ export const Route = createFileRoute("/admin/$slug")({
         name: "description",
         content: "Napisz ofertę wyjazdu: opis, cena, co w cenie, plan dnia i galeria.",
       },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "Edycja oferty — panel VHSBOARD" },
       { property: "og:description", content: "Napisz ofertę wyjazdu dla VHSBOARD." },
       { property: "og:type", content: "website" },

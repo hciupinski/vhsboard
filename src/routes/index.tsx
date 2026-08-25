@@ -6,21 +6,17 @@ import skimboardingTrackImage from "@/assets/eventy-tor-skimboardowy.jpg";
 import heroSurf from "@/assets/hero-surf.jpg";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { Button } from "@/components/ui/button";
+import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "VHSBOARD — wyjazdy, eventy i półkolonie" },
-      {
-        name: "description",
-        content: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i półkolonie.",
-      },
-      { property: "og:title", content: "VHSBOARD — wyjazdy, eventy i półkolonie" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () =>
+    createPageMetadata({
+      path: "/",
+      title: "VHSBOARD — wyjazdy, eventy i półkolonie",
+      description: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i półkolonie.",
+    }),
   component: HomePage,
 });
 
@@ -59,6 +55,7 @@ function HomePage() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
+      <PublicJsonLd path="/" label="VHSBOARD" includeSite />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden">
           <img

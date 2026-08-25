@@ -8,8 +8,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      VITE_SUPABASE_URL: https://test.supabase.co
-      VITE_SUPABASE_ANON_KEY: test-anon-key
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+      VITE_SEO_INDEXING: ${{ vars.VITE_SEO_INDEXING }}
       VITE_CONTACT_EMAIL: kontakt@example.test
       VITE_CONTACT_PHONE: +48123456789
       VITE_BUSINESS_NAME: Testowa firma
@@ -33,8 +35,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VITE_SUPABASE_URL: https://test.supabase.co
-      VITE_SUPABASE_ANON_KEY: test-anon-key
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+      VITE_SEO_INDEXING: ${{ vars.VITE_SEO_INDEXING }}
       VITE_CONTACT_EMAIL: kontakt@example.test
       VITE_CONTACT_PHONE: +48123456789
       VITE_BUSINESS_NAME: Testowa firma
@@ -48,4 +52,5 @@ jobs:
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
       - run: bun install --frozen-lockfile
       - run: bun run build
+      - run: bun run check:seo
       - run: test -s .output/public/index.html

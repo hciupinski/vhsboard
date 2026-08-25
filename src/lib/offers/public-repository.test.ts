@@ -9,6 +9,7 @@ vi.mock("../supabase", () => ({ supabase: mockedSupabase }));
 
 import {
   getPublishedOfferBySlug,
+  listPublishedOfferSeoRecords,
   listPublishedOffers,
   OfferRepositoryError,
   resolvePublishedImageUrls,
@@ -85,6 +86,25 @@ afterEach(() => {
 });
 
 describe("public offer repository", () => {
+  it("returns only published slugs and timestamps for static SEO generation", async () => {
+    const query = createQuery({
+      data: [
+        {
+          slug: "atlantic-surf-week",
+          updated_at: "2026-01-02T10:30:00.000Z",
+        },
+      ],
+      error: null,
+    });
+    mockedSupabase.from.mockReturnValue(query);
+
+    await expect(listPublishedOfferSeoRecords()).resolves.toEqual([
+      { slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z" },
+    ]);
+    expect(query.select).toHaveBeenCalledWith("slug,updated_at");
+    expect(query.eq).toHaveBeenCalledWith("status", "published");
+  });
+
   it("lists only published offers without fetching long descriptions", async () => {
     const offerQuery = createQuery({ data: [listRow], error: null });
     mockedSupabase.from.mockReturnValue(offerQuery);

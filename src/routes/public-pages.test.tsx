@@ -16,6 +16,8 @@ import { Route as HalfDayCampsRoute } from "./polkolonie";
 import { Route as HomeRoute } from "./index";
 
 const publicSiteEnv = {
+  VITE_SITE_URL: "https://vhsboard.pages.dev",
+  VITE_SEO_INDEXING: "false",
   VITE_CONTACT_EMAIL: "kontakt@example.test",
   VITE_CONTACT_PHONE: "+48123456789",
   VITE_BUSINESS_NAME: "Testowa firma",
@@ -63,6 +65,10 @@ afterEach(() => {
 describe("static public pages", () => {
   it("presents the three main areas as photo-led entry points", async () => {
     await renderRoute("/", HomeRoute);
+
+    const structuredData = document.querySelector('script[type="application/ld+json"]');
+    expect(structuredData?.textContent).toContain('"Organization"');
+    expect(structuredData?.textContent).toContain('"WebSite"');
 
     expect(
       screen.getByRole("heading", { name: /wybierz, od czego zaczynasz/i }),
@@ -169,6 +175,6 @@ describe("static public pages", () => {
       "href",
       "mailto:kontakt@example.test",
     );
-    expect(screen.getAllByText("NIP: 1234567890")).toHaveLength(2);
+    expect(screen.getAllByText("NIP: 1234567890")).toHaveLength(1);
   });
 });
