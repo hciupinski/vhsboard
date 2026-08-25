@@ -300,6 +300,7 @@ describe("admin offer editor route", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
     await user.clear(titleInput);
 
+    expect(await screen.findByText("Tytuł musi mieć od 3 do 120 znaków.")).toBeInTheDocument();
     const publishButton = screen.getByRole("button", { name: "Opublikuj" });
     expect(publishButton).toBeDisabled();
     await user.click(publishButton);

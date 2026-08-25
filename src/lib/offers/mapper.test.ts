@@ -63,7 +63,6 @@ describe("offer row mappers", () => {
         included: ["Opieka instruktorów"],
         excluded: ["Dojazd we własnym zakresie"],
         dayProgram: [{ time: "09:00", text: "Rozgrzewka i odprawa." }],
-        activityPlan: [{ title: "Wakeboard", text: "Nauka startu i pływania." }],
         venueDescription: "Wakepark z zapleczem dla dzieci.",
         parentInfo: {
           ageRange: "7–12 lat",
@@ -75,11 +74,11 @@ describe("offer row mappers", () => {
             label: "Turnus 1",
             startDate: "2026-07-06",
             endDate: "2026-07-10",
+            bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-1",
             priceOptions: [
               {
                 label: "Wariant podstawowy",
                 price: 1200,
-                bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-1",
               },
             ],
           },

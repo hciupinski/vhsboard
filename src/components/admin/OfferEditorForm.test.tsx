@@ -42,7 +42,6 @@ const dayCampInput: EditableOfferInput = {
     excluded: ["Dojazd"],
     venueDescription: "Wakepark z wydzieloną strefą dla początkujących.",
     dayProgram: [{ time: "09:00", text: "Rozgrzewka." }],
-    activityPlan: [{ title: "Wakeboard", text: "Nauka startów i skrętów." }],
     parentInfo: {
       ageRange: "8–14 lat",
       supervision: "Opieka przez cały dzień.",
@@ -54,11 +53,11 @@ const dayCampInput: EditableOfferInput = {
         label: "Turnus lipcowy",
         startDate: "2026-07-06",
         endDate: "2026-07-10",
+        bookingUrl: "https://zapisy.example/wake-lipiec",
         priceOptions: [
           {
             label: "Cena standardowa",
             price: 1290,
-            bookingUrl: "https://zapisy.example/wake-lipiec",
           },
         ],
       },
@@ -239,12 +238,25 @@ describe("OfferEditorForm", () => {
 
     expect(screen.getByText("Turnusy i warianty cen")).toBeInTheDocument();
     expect(screen.getByLabelText("Turnus 1, wariant 1 — cena")).toHaveValue(1290);
-    expect(screen.getByLabelText("Turnus 1, wariant 1 — adres zapisów")).toHaveValue(
+    expect(screen.getByLabelText("Turnus 1 — adres zapisów")).toHaveValue(
       "https://zapisy.example/wake-lipiec",
     );
+    expect(screen.queryByText("Plan zajęć")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("tab", { name: "Program i opieka" }));
     expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("09:00");
+    expect(screen.getByText("5/120 znaków")).toBeInTheDocument();
     expect(screen.getByLabelText("Transport")).toHaveValue("Dojazd własny.");
+  });
+
+  it("shows character limits next to limited text fields", () => {
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={vi.fn()} />,
+    );
+
+    expect(screen.getByText(`${completeInput.title.length}/120 znaków`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`${completeInput.shortDescription.length}/500 znaków`),
+    ).toBeInTheDocument();
   });
 });

@@ -246,9 +246,7 @@ const tripEditorOfferInputSchema = z
     }
   });
 
-const timeSchema = textField("Godzina jest wymagana.")
-  .trim()
-  .regex(/^\d{2}:\d{2}$/, "Godzina musi mieć format GG:MM.");
+const timeSchema = trimmedText("Godzina", 1, 120);
 
 const dayCampTermSchema = z
   .object({
@@ -259,15 +257,15 @@ const dayCampTermSchema = z
     endDate: textField("Data zakończenia turnusu jest wymagana.")
       .trim()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Data musi mieć format RRRR-MM-DD."),
+    bookingUrl: textField("Wpisz poprawny adres zapisów.")
+      .trim()
+      .url("Wpisz poprawny adres zapisów.")
+      .refine(isHttpsUrl, { message: "Adres zapisów musi używać HTTPS." }),
     priceOptions: z
       .array(
         z.object({
           label: trimmedText("Nazwa wariantu ceny", 1, 120),
           price: z.number().int().positive("Cena musi być większa od zera."),
-          bookingUrl: textField("Wpisz poprawny adres zapisów.")
-            .trim()
-            .url("Wpisz poprawny adres zapisów.")
-            .refine(isHttpsUrl, { message: "Adres zapisów musi używać HTTPS." }),
         }),
       )
       .min(1, "Dodaj co najmniej jeden wariant ceny."),
@@ -290,14 +288,6 @@ const dayCampContentSchema = z.object({
   dayProgram: z
     .array(z.object({ time: timeSchema, text: trimmedText("Opis programu dnia", 1, 500) }))
     .min(1, "Dodaj co najmniej jedną pozycję programu dnia."),
-  activityPlan: z
-    .array(
-      z.object({
-        title: trimmedText("Nazwa zajęć", 1, 120),
-        text: trimmedText("Opis zajęć", 1, 500),
-      }),
-    )
-    .min(1, "Dodaj co najmniej jedną pozycję planu zajęć."),
   venueDescription: trimmedText("Opis miejsca", 3, 500),
   parentInfo: z.object({
     ageRange: trimmedText("Wiek uczestników", 2, 120),
@@ -346,9 +336,11 @@ const dayCampEditorOfferInputSchema = z
   })
   .transform((offer) => {
     const terms = offer.content.terms;
-    const prices = terms.flatMap((term) => term.priceOptions);
-    const cheapest = prices.reduce((current, option) =>
-      option.price < current.price ? option : current,
+    const cheapest = terms.reduce((current, term) =>
+      Math.min(...term.priceOptions.map((option) => option.price)) <
+      Math.min(...current.priceOptions.map((option) => option.price))
+        ? term
+        : current,
     );
     return {
       ...offer,
@@ -363,7 +355,7 @@ const dayCampEditorOfferInputSchema = z
       durationDays: Math.max(...terms.map((term) => daysInTerm(term.startDate, term.endDate))),
       groupSizeMin: null,
       groupSizeMax: null,
-      priceFrom: cheapest.price,
+      priceFrom: Math.min(...cheapest.priceOptions.map((option) => option.price)),
       bookingUrl: cheapest.bookingUrl,
     };
   });
@@ -431,7 +423,6 @@ const createEmptyDayCampContent = (): DayCampContent => ({
   included: [""],
   excluded: [""],
   dayProgram: [{ time: "", text: "" }],
-  activityPlan: [{ title: "", text: "" }],
   venueDescription: "",
   parentInfo: {
     ageRange: "",
@@ -445,7 +436,8 @@ const createEmptyDayCampContent = (): DayCampContent => ({
       label: "Turnus 1",
       startDate: "",
       endDate: "",
-      priceOptions: [{ label: "Cena standardowa", price: 0, bookingUrl: "" }],
+      bookingUrl: "",
+      priceOptions: [{ label: "Cena standardowa", price: 0 }],
     },
   ],
 });

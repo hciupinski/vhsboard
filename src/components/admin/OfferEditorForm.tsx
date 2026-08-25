@@ -34,6 +34,7 @@ type FieldProps = {
   id: string;
   label: string;
   hint?: string | undefined;
+  characterCount?: { value: string; max: number } | undefined;
   error?: string | undefined;
   children: ReactNode;
 };
@@ -41,14 +42,23 @@ const errorFor = (errors: Record<string, string>, path: string) =>
   errors[path] ?? Object.entries(errors).find(([key]) => key.startsWith(`${path}.`))?.[1];
 const nullableNumber = (value: string) => (value === "" ? null : Number(value));
 
-function Field({ id, label, hint, error, children }: FieldProps) {
+function CharacterCounter({ value, max }: { value: string; max: number }) {
+  return (
+    <span className="block text-right text-xs text-muted-foreground">{`${value.length}/${max} znaków`}</span>
+  );
+}
+
+function Field({ id, label, hint, characterCount, error, children }: FieldProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between gap-3">
         <Label htmlFor={id} className="text-sm font-semibold">
           {label}
         </Label>
-        {hint ? <span className="text-xs text-muted-foreground">{hint}</span> : null}
+        <span className="flex shrink-0 gap-2 text-xs text-muted-foreground">
+          {hint ? <span>{hint}</span> : null}
+          {characterCount ? <CharacterCounter {...characterCount} /> : null}
+        </span>
       </div>
       {children}
       {error ? (
@@ -120,11 +130,13 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
             <Field
               id="title"
               label={dayCamp ? "Tytuł półkolonii" : "Tytuł wyjazdu"}
+              characterCount={{ value: value.title, max: 120 }}
               error={errors.title}
             >
               <Input
                 id="title"
                 value={value.title}
+                maxLength={120}
                 disabled={disabled}
                 {...state("title")}
                 onChange={(event) => set("title", event.target.value)}
@@ -173,10 +185,16 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
                 </SelectContent>
               </Select>
             </Field>
-            <Field id="location" label="Miejsce" error={errors.location}>
+            <Field
+              id="location"
+              label="Miejsce"
+              characterCount={{ value: value.location, max: 120 }}
+              error={errors.location}
+            >
               <Input
                 id="location"
                 value={value.location}
+                maxLength={120}
                 disabled={disabled}
                 {...state("location")}
                 onChange={(event) => set("location", event.target.value)}
@@ -187,11 +205,13 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
             id="short-description"
             label="Krótki opis"
             hint="Widoczny na liście ofert"
+            characterCount={{ value: value.shortDescription, max: 500 }}
             error={errors.shortDescription}
           >
             <Textarea
               id="short-description"
               value={value.shortDescription}
+              maxLength={500}
               className="min-h-24"
               disabled={disabled}
               {...state("shortDescription", "short-description")}
@@ -220,11 +240,13 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
             id="subtitle"
             label="Zdanie wprowadzające"
             hint="Pod tytułem oferty"
+            characterCount={{ value: value.subtitle, max: 280 }}
             error={errors.subtitle}
           >
             <Textarea
               id="subtitle"
               value={value.subtitle}
+              maxLength={280}
               className="min-h-20"
               disabled={disabled}
               {...state("subtitle")}
@@ -251,11 +273,13 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
             <Field
               id="venue-description"
               label="Opis miejsca zajęć"
+              characterCount={{ value: dayCamp.venueDescription, max: 500 }}
               error={errorFor(errors, "content.venueDescription")}
             >
               <Textarea
                 id="venue-description"
                 value={dayCamp.venueDescription}
+                maxLength={500}
                 className="min-h-24"
                 onChange={(event) =>
                   setDayCamp({ ...dayCamp, venueDescription: event.target.value })
@@ -453,7 +477,7 @@ function TermsEditor({
       <div>
         <h2 className="text-xl font-semibold">Turnusy i warianty cen</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Każdy wariant prowadzi do własnego systemu zapisów.
+          Każdy turnus ma własny adres zapisów i może mieć kilka wariantów cenowych.
         </p>
       </div>
       {content.terms.map((term, termIndex) => (
@@ -476,11 +500,13 @@ function TermsEditor({
             <Field
               id={`term-label-${termIndex}`}
               label="Nazwa turnusu"
+              characterCount={{ value: term.label, max: 120 }}
               error={errorFor(errors, `content.terms.${termIndex}.label`)}
             >
               <Input
                 id={`term-label-${termIndex}`}
                 value={term.label}
+                maxLength={120}
                 onChange={(event) => update(termIndex, { ...term, label: event.target.value })}
               />
             </Field>
@@ -500,24 +526,46 @@ function TermsEditor({
                 onChange={(event) => update(termIndex, { ...term, endDate: event.target.value })}
               />
             </Field>
+            <div className="sm:col-span-3">
+              <Field
+                id={`term-booking-url-${termIndex}`}
+                label="Adres zapisów"
+                error={errorFor(errors, `content.terms.${termIndex}.bookingUrl`)}
+              >
+                <Input
+                  id={`term-booking-url-${termIndex}`}
+                  aria-label={`Turnus ${termIndex + 1} — adres zapisów`}
+                  type="url"
+                  value={term.bookingUrl}
+                  placeholder="https://zapisy.example/turnus"
+                  onChange={(event) =>
+                    update(termIndex, { ...term, bookingUrl: event.target.value })
+                  }
+                />
+              </Field>
+            </div>
           </div>
           {term.priceOptions.map((option, optionIndex) => (
             <div
               key={optionIndex}
-              className="grid gap-3 rounded-lg bg-muted/40 p-3 sm:grid-cols-[1fr_8rem_1fr_auto]"
+              className="grid gap-3 rounded-lg bg-muted/40 p-3 sm:grid-cols-[1fr_8rem_auto]"
             >
-              <Input
-                aria-label={`Turnus ${termIndex + 1}, wariant ${optionIndex + 1} — nazwa`}
-                value={option.label}
-                onChange={(event) =>
-                  update(termIndex, {
-                    ...term,
-                    priceOptions: term.priceOptions.map((item, index) =>
-                      index === optionIndex ? { ...item, label: event.target.value } : item,
-                    ),
-                  })
-                }
-              />
+              <div className="min-w-0">
+                <Input
+                  aria-label={`Turnus ${termIndex + 1}, wariant ${optionIndex + 1} — nazwa`}
+                  value={option.label}
+                  maxLength={120}
+                  onChange={(event) =>
+                    update(termIndex, {
+                      ...term,
+                      priceOptions: term.priceOptions.map((item, index) =>
+                        index === optionIndex ? { ...item, label: event.target.value } : item,
+                      ),
+                    })
+                  }
+                />
+                <CharacterCounter value={option.label} max={120} />
+              </div>
               <Input
                 aria-label={`Turnus ${termIndex + 1}, wariant ${optionIndex + 1} — cena`}
                 type="number"
@@ -528,20 +576,6 @@ function TermsEditor({
                     ...term,
                     priceOptions: term.priceOptions.map((item, index) =>
                       index === optionIndex ? { ...item, price: Number(event.target.value) } : item,
-                    ),
-                  })
-                }
-              />
-              <Input
-                aria-label={`Turnus ${termIndex + 1}, wariant ${optionIndex + 1} — adres zapisów`}
-                type="url"
-                value={option.bookingUrl}
-                placeholder="https://zapisy.example/turnus"
-                onChange={(event) =>
-                  update(termIndex, {
-                    ...term,
-                    priceOptions: term.priceOptions.map((item, index) =>
-                      index === optionIndex ? { ...item, bookingUrl: event.target.value } : item,
                     ),
                   })
                 }
@@ -572,7 +606,7 @@ function TermsEditor({
             onClick={() =>
               update(termIndex, {
                 ...term,
-                priceOptions: [...term.priceOptions, { label: "", price: 0, bookingUrl: "" }],
+                priceOptions: [...term.priceOptions, { label: "", price: 0 }],
               })
             }
           >
@@ -594,7 +628,8 @@ function TermsEditor({
                 label: `Turnus ${content.terms.length + 1}`,
                 startDate: "",
                 endDate: "",
-                priceOptions: [{ label: "Cena standardowa", price: 0, bookingUrl: "" }],
+                bookingUrl: "",
+                priceOptions: [{ label: "Cena standardowa", price: 0 }],
               },
             ])
           }
@@ -721,31 +756,39 @@ function DayCampProgramEditor({
         <h2 className="text-xl font-semibold">Plan dnia</h2>
         {content.dayProgram.map((item, index) => (
           <div key={index} className="mt-3 grid gap-3 sm:grid-cols-[8rem_1fr_auto]">
-            <Input
-              aria-label={`Plan dnia ${index + 1} — godzina`}
-              value={item.time}
-              placeholder="09:00"
-              onChange={(event) =>
-                onChange({
-                  ...content,
-                  dayProgram: content.dayProgram.map((entry, entryIndex) =>
-                    entryIndex === index ? { ...entry, time: event.target.value } : entry,
-                  ),
-                })
-              }
-            />
-            <Input
-              aria-label={`Plan dnia ${index + 1} — opis`}
-              value={item.text}
-              onChange={(event) =>
-                onChange({
-                  ...content,
-                  dayProgram: content.dayProgram.map((entry, entryIndex) =>
-                    entryIndex === index ? { ...entry, text: event.target.value } : entry,
-                  ),
-                })
-              }
-            />
+            <div className="min-w-0">
+              <Input
+                aria-label={`Plan dnia ${index + 1} — godzina`}
+                value={item.time}
+                placeholder="np. 08:00 lub 09:00–10:00"
+                maxLength={120}
+                onChange={(event) =>
+                  onChange({
+                    ...content,
+                    dayProgram: content.dayProgram.map((entry, entryIndex) =>
+                      entryIndex === index ? { ...entry, time: event.target.value } : entry,
+                    ),
+                  })
+                }
+              />
+              <CharacterCounter value={item.time} max={120} />
+            </div>
+            <div className="min-w-0">
+              <Input
+                aria-label={`Plan dnia ${index + 1} — opis`}
+                value={item.text}
+                maxLength={500}
+                onChange={(event) =>
+                  onChange({
+                    ...content,
+                    dayProgram: content.dayProgram.map((entry, entryIndex) =>
+                      entryIndex === index ? { ...entry, text: event.target.value } : entry,
+                    ),
+                  })
+                }
+              />
+              <CharacterCounter value={item.text} max={500} />
+            </div>
             <Button
               type="button"
               variant="ghost"
@@ -781,78 +824,17 @@ function DayCampProgramEditor({
           </p>
         ) : null}
       </div>
-      <div>
-        <h2 className="text-xl font-semibold">Plan zajęć</h2>
-        {content.activityPlan.map((item, index) => (
-          <div key={index} className="mt-3 grid gap-3 sm:grid-cols-[1fr_2fr_auto]">
-            <Input
-              aria-label={`Plan zajęć ${index + 1} — nazwa`}
-              value={item.title}
-              onChange={(event) =>
-                onChange({
-                  ...content,
-                  activityPlan: content.activityPlan.map((entry, entryIndex) =>
-                    entryIndex === index ? { ...entry, title: event.target.value } : entry,
-                  ),
-                })
-              }
-            />
-            <Input
-              aria-label={`Plan zajęć ${index + 1} — opis`}
-              value={item.text}
-              onChange={(event) =>
-                onChange({
-                  ...content,
-                  activityPlan: content.activityPlan.map((entry, entryIndex) =>
-                    entryIndex === index ? { ...entry, text: event.target.value } : entry,
-                  ),
-                })
-              }
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label={`Usuń pozycję planu zajęć ${index + 1}`}
-              disabled={disabled}
-              onClick={() =>
-                onChange({
-                  ...content,
-                  activityPlan: content.activityPlan.filter(
-                    (_, entryIndex) => entryIndex !== index,
-                  ),
-                })
-              }
-            >
-              <Trash2 className="size-4" />
-            </Button>
-          </div>
-        ))}
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="mt-3 rounded-full"
-          disabled={disabled}
-          onClick={() =>
-            onChange({
-              ...content,
-              activityPlan: [...content.activityPlan, { title: "", text: "" }],
-            })
-          }
-        >
-          <Plus className="mr-1 size-4" /> Dodaj zajęcia
-        </Button>
-      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
           id="parent-age-range"
           label="Wiek uczestników"
+          characterCount={{ value: content.parentInfo.ageRange, max: 120 }}
           error={errorFor(errors, "content.parentInfo.ageRange")}
         >
           <Input
             id="parent-age-range"
             value={content.parentInfo.ageRange}
+            maxLength={120}
             onChange={(event) =>
               onChange({
                 ...content,
@@ -861,10 +843,16 @@ function DayCampProgramEditor({
             }
           />
         </Field>
-        <Field id="parent-transport" label="Transport" hint="Opcjonalnie">
+        <Field
+          id="parent-transport"
+          label="Transport"
+          hint="Opcjonalnie"
+          characterCount={{ value: content.parentInfo.transport ?? "", max: 500 }}
+        >
           <Textarea
             id="parent-transport"
             value={content.parentInfo.transport ?? ""}
+            maxLength={500}
             onChange={(event) =>
               onChange({
                 ...content,
@@ -876,11 +864,13 @@ function DayCampProgramEditor({
         <Field
           id="parent-supervision"
           label="Opieka"
+          characterCount={{ value: content.parentInfo.supervision, max: 500 }}
           error={errorFor(errors, "content.parentInfo.supervision")}
         >
           <Textarea
             id="parent-supervision"
             value={content.parentInfo.supervision}
+            maxLength={500}
             onChange={(event) =>
               onChange({
                 ...content,
@@ -892,11 +882,13 @@ function DayCampProgramEditor({
         <Field
           id="parent-safety"
           label="Bezpieczeństwo"
+          characterCount={{ value: content.parentInfo.safety, max: 500 }}
           error={errorFor(errors, "content.parentInfo.safety")}
         >
           <Textarea
             id="parent-safety"
             value={content.parentInfo.safety}
+            maxLength={500}
             onChange={(event) =>
               onChange({
                 ...content,
@@ -906,10 +898,16 @@ function DayCampProgramEditor({
           />
         </Field>
         <div className="sm:col-span-2">
-          <Field id="parent-meals" label="Wyżywienie" hint="Opcjonalnie">
+          <Field
+            id="parent-meals"
+            label="Wyżywienie"
+            hint="Opcjonalnie"
+            characterCount={{ value: content.parentInfo.meals ?? "", max: 500 }}
+          >
             <Textarea
               id="parent-meals"
               value={content.parentInfo.meals ?? ""}
+              maxLength={500}
               onChange={(event) =>
                 onChange({
                   ...content,

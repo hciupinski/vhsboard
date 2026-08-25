@@ -136,17 +136,6 @@ function DayCampDetail() {
             </ol>
           </section>
           <section className="mt-12">
-            <h2 className="text-3xl">Plan zajęć</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {content.activityPlan.map((item) => (
-                <article key={item.title} className="rounded-2xl border border-border bg-card p-5">
-                  <h3 className="text-xl">{item.title}</h3>
-                  <p className="mt-2 text-muted-foreground">{item.text}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-          <section className="mt-12">
             <h2 className="text-3xl">Turnusy i ceny</h2>
             <div className="mt-4 grid gap-5 md:grid-cols-2">
               {content.terms.map((term) => (
@@ -161,13 +150,13 @@ function DayCampDetail() {
                       <p className="mt-1 font-display text-2xl text-primary">
                         {formatPriceFrom(option.price, "PLN")}
                       </p>
-                      <Button asChild className="mt-3 w-full rounded-full">
-                        <a href={option.bookingUrl} target="_blank" rel="noopener noreferrer">
-                          Przejdź do zapisów
-                        </a>
-                      </Button>
                     </div>
                   ))}
+                  <Button asChild className="mt-5 w-full rounded-full">
+                    <a href={term.bookingUrl} target="_blank" rel="noopener noreferrer">
+                      Przejdź do zapisów
+                    </a>
+                  </Button>
                 </article>
               ))}
             </div>

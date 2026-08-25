@@ -67,6 +67,21 @@ describe("AdminSignInForm", () => {
     expect(screen.queryByText("Invalid login credentials")).not.toBeInTheDocument();
   });
 
+  it("explains when a valid account has no administrator role", async () => {
+    mockedSession.signInWithPassword.mockResolvedValue(undefined);
+    mockedSession.getAdminSession.mockResolvedValue(null);
+    const user = userEvent.setup();
+
+    render(<AdminSignInForm next="/admin" onSuccess={vi.fn()} />);
+    await fillCredentials(user);
+    await user.click(screen.getByRole("button", { name: "Zaloguj się" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "To konto nie ma uprawnień administratora.",
+    );
+    expect(mockedSession.signOut).toHaveBeenCalledTimes(1);
+  });
+
   it("returns a verified administrator to the sanitized internal path", async () => {
     mockedSession.signInWithPassword.mockResolvedValue(undefined);
     mockedSession.getAdminSession.mockResolvedValue({

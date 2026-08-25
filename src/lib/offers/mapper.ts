@@ -29,7 +29,6 @@ const emptyDayCampContent: DayCampContent = {
   included: [],
   excluded: [],
   dayProgram: [],
-  activityPlan: [],
   venueDescription: "",
   parentInfo: { ageRange: "", supervision: "", safety: "" },
   terms: [],

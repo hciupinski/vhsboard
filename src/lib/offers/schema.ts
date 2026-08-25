@@ -29,16 +29,15 @@ export const dayCampContentSchema = z.object({
   included: z.array(requiredTextSchema).min(1),
   excluded: z.array(requiredTextSchema).min(1),
   dayProgram: z
-    .array(z.object({ time: z.string().regex(/^\d{2}:\d{2}$/), text: requiredTextSchema }))
+    .array(z.object({ time: requiredTextSchema.max(120), text: requiredTextSchema.max(500) }))
     .min(1),
-  activityPlan: z.array(z.object({ title: requiredTextSchema, text: requiredTextSchema })).min(1),
-  venueDescription: requiredTextSchema,
+  venueDescription: requiredTextSchema.max(500),
   parentInfo: z.object({
-    ageRange: requiredTextSchema,
-    supervision: requiredTextSchema,
-    safety: requiredTextSchema,
-    transport: requiredTextSchema.optional(),
-    meals: requiredTextSchema.optional(),
+    ageRange: requiredTextSchema.max(120),
+    supervision: requiredTextSchema.max(500),
+    safety: requiredTextSchema.max(500),
+    transport: requiredTextSchema.max(500).optional(),
+    meals: requiredTextSchema.max(500).optional(),
   }),
   terms: z
     .array(
@@ -47,12 +46,12 @@ export const dayCampContentSchema = z.object({
           label: requiredTextSchema,
           startDate: dateSchema,
           endDate: dateSchema,
+          bookingUrl: bookingUrlSchema,
           priceOptions: z
             .array(
               z.object({
                 label: requiredTextSchema,
                 price: z.number().int().positive(),
-                bookingUrl: bookingUrlSchema,
               }),
             )
             .min(1),
