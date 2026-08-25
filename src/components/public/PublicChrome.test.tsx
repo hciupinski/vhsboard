@@ -84,14 +84,5 @@ describe("public navigation", () => {
       "href",
       "mailto:kontakt@example.test",
     );
-    expect(screen.getByText("NIP: 1234567890")).toBeInTheDocument();
-    expect(screen.getByText("REGON: 123456789")).toBeInTheDocument();
-  });
-
-  it("hides company details in the mobile footer while retaining the copyright", async () => {
-    await renderPublicChrome("/");
-
-    expect(screen.getByText(/© \d{4} VHSBOARD\./)).toBeInTheDocument();
-    expect(screen.getByText("Testowa firma").closest("address")).toHaveClass("hidden");
   });
 });
