@@ -2,8 +2,6 @@ import {
   offerDetailRowSchema,
   offerImageRowSchema,
   offerListRowSchema,
-  dayCampContentSchema,
-  offerContentSchema,
   type OfferImageRow,
   type OfferListRow,
 } from "./schema";
@@ -121,7 +119,7 @@ const mapOffer = (
       ...base,
       offerKind: "day_camp" as const,
       activity: row.activity,
-      content: dayCampContentSchema.parse(content),
+      content: content as DayCampContent,
     };
   }
 
@@ -131,7 +129,7 @@ const mapOffer = (
     ...base,
     offerKind: "trip" as const,
     activity: row.activity,
-    content: offerContentSchema.parse(content),
+    content: content as TripOfferContent,
   };
 };
 
