@@ -203,9 +203,9 @@
     padding-inline-end: clamp(1rem, 1.2vw, 1.5rem);
     padding-inline-start: clamp(1.5rem, 4vw, 5rem);
     border-radius: 0 var(--radius) var(--radius) 0;
-    background: oklch(0.22 0.03 60 / 0.5);
+    background: oklch(0.22 0.03 60 / 0.1);
     box-shadow: 0 16px 32px -22px oklch(0.1 0.02 60 / 0.9);
-    backdrop-filter: blur(0.375rem);
+    backdrop-filter: blur(0.15rem);
     text-align: end;
   }
 
