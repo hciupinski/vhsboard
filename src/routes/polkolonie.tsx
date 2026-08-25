@@ -10,8 +10,6 @@ import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/polkolonie")({
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData(publishedOffersQueryOptions("day_camp")),
   head: () =>
     createPageMetadata({
       path: "/polkolonie",

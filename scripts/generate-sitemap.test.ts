@@ -10,16 +10,7 @@ const directories: string[] = [];
 const createOutputDirectory = async () => {
   const outputDirectory = await mkdtemp(join(tmpdir(), "vhsboard-sitemap-"));
   directories.push(outputDirectory);
-  const paths = [
-    "/",
-    "/o-nas",
-    "/wyjazdy",
-    "/eventy",
-    "/polkolonie",
-    "/kontakt",
-    "/wyjazdy/atlantic-surf-week",
-    "/polkolonie/wakeboardowe-lato",
-  ];
+  const paths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
   for (const path of paths) {
     const filename =
       path === "/"
@@ -36,46 +27,28 @@ afterEach(async () => {
 });
 
 describe("generateSitemap", () => {
-  it("writes only canonical URLs whose static artifacts exist", async () => {
+  it("writes only canonical URLs for static marketing pages", async () => {
     const outputDirectory = await createOutputDirectory();
 
     await generateSitemap({
       outputDirectory,
       siteUrl: "https://vhsboard.pages.dev",
-      offerRecords: [
-        { slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z", offerKind: "trip" },
-        {
-          slug: "wakeboardowe-lato",
-          updatedAt: "2026-01-03T10:30:00.000Z",
-          offerKind: "day_camp",
-        },
-      ],
     });
 
     const sitemap = await readFile(join(outputDirectory, "sitemap.xml"), "utf8");
     const robots = await readFile(join(outputDirectory, "robots.txt"), "utf8");
-    expect(sitemap).toContain("https://vhsboard.pages.dev/wyjazdy/atlantic-surf-week");
-    expect(sitemap).toContain("https://vhsboard.pages.dev/polkolonie/wakeboardowe-lato");
-    expect(sitemap).toContain("2026-01-02T10:30:00.000Z");
+    expect(sitemap).toContain("https://vhsboard.pages.dev/polkolonie");
+    expect(sitemap).not.toContain("/wyjazdy/atlantic-surf-week");
     expect(sitemap).not.toContain("/admin");
     expect(robots).toContain("Disallow: /admin");
     expect(robots).toContain("Sitemap: https://vhsboard.pages.dev/sitemap.xml");
   });
 
-  it("rejects a missing output artifact or non-HTTPS origin", async () => {
+  it("rejects a non-HTTPS origin", async () => {
     const outputDirectory = await createOutputDirectory();
 
     await expect(
-      generateSitemap({
-        outputDirectory,
-        siteUrl: "https://vhsboard.pages.dev",
-        offerRecords: [
-          { slug: "missing-trip", updatedAt: "2026-01-02T10:30:00.000Z", offerKind: "trip" },
-        ],
-      }),
-    ).rejects.toThrow(/brakuje/i);
-    await expect(
-      generateSitemap({ outputDirectory, siteUrl: "http://vhsboard.pages.dev", offerRecords: [] }),
+      generateSitemap({ outputDirectory, siteUrl: "http://vhsboard.pages.dev" }),
     ).rejects.toThrow("originem HTTPS");
   });
 

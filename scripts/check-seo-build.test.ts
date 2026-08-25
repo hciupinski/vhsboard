@@ -8,10 +8,6 @@ import { checkSeoBuild } from "./check-seo-build";
 const directories: string[] = [];
 const siteUrl = "https://vhsboard.pages.dev";
 const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
-const offerRecords = [
-  { slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z", offerKind: "trip" },
-  { slug: "wakeboardowe-lato", updatedAt: "2026-01-03T10:30:00.000Z", offerKind: "day_camp" },
-];
 
 const outputFile = (outputDirectory: string, path: string) =>
   path === "/" ? join(outputDirectory, "index.html") : join(outputDirectory, path, "index.html");
@@ -27,19 +23,11 @@ const html = (path: string, body = "Pełna treść strony.") => `<!doctype html>
 const createOutput = async () => {
   const outputDirectory = await mkdtemp(join(tmpdir(), "vhsboard-seo-check-"));
   directories.push(outputDirectory);
-  const paths = [...staticPaths, "/wyjazdy/atlantic-surf-week", "/polkolonie/wakeboardowe-lato"];
+  const paths = staticPaths;
   for (const path of paths) {
     const file = outputFile(outputDirectory, path);
     await mkdir(join(file, ".."), { recursive: true });
-    await writeFile(
-      file,
-      html(
-        path,
-        path.includes("atlantic") || path.includes("wakeboardowe")
-          ? "Pełna treść oferty."
-          : undefined,
-      ),
-    );
+    await writeFile(file, html(path));
   }
   await writeFile(
     join(outputDirectory, "sitemap.xml"),
@@ -49,6 +37,8 @@ const createOutput = async () => {
     join(outputDirectory, "robots.txt"),
     `User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${siteUrl}/sitemap.xml\n`,
   );
+  await writeFile(join(outputDirectory, "_shell.html"), '<!doctype html><html lang="pl"></html>');
+  await writeFile(join(outputDirectory, "_redirects"), "/* /_shell.html 200\n");
   return outputDirectory;
 };
 
@@ -61,7 +51,7 @@ describe("checkSeoBuild", () => {
     const outputDirectory = await createOutput();
 
     await expect(
-      checkSeoBuild({ outputDirectory, siteUrl, indexing: false, offerRecords }),
+      checkSeoBuild({ outputDirectory, siteUrl, indexing: false }),
     ).resolves.toBeUndefined();
   });
 
@@ -75,8 +65,17 @@ describe("checkSeoBuild", () => {
     const content = html("/wyjazdy").replace(source, replacement);
     await writeFile(file, content);
 
-    await expect(
-      checkSeoBuild({ outputDirectory, siteUrl, indexing: false, offerRecords }),
-    ).rejects.toThrow();
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow();
+  });
+
+  it("rejects a prerendered offer detail", async () => {
+    const outputDirectory = await createOutput();
+    const offerFile = outputFile(outputDirectory, "/polkolonie/wakeboard-2026");
+    await mkdir(join(offerFile, ".."), { recursive: true });
+    await writeFile(offerFile, html("/polkolonie/wakeboard-2026"));
+
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow(
+      "statycznych szczegółów ofert",
+    );
   });
 });

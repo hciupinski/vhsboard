@@ -14,6 +14,7 @@ import { Route as EventyRouteImport } from './routes/eventy'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as ONasRouteImport } from './routes/o-nas'
 import { Route as PolkolonieRouteImport } from './routes/polkolonie'
+import { Route as SpaShellRouteImport } from './routes/spa-shell'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 import { Route as AdminDokumentyRouteImport } from './routes/admin.dokumenty'
@@ -46,6 +47,11 @@ const ONasRoute = ONasRouteImport.update({
 const PolkolonieRoute = PolkolonieRouteImport.update({
   id: '/polkolonie',
   path: '/polkolonie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SpaShellRoute = SpaShellRouteImport.update({
+  id: '/spa-shell',
+  path: '/spa-shell',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
   '/polkolonie': typeof PolkolonieRouteWithChildren
+  '/spa-shell': typeof SpaShellRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
   '/polkolonie': typeof PolkolonieRouteWithChildren
+  '/spa-shell': typeof SpaShellRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
   '/polkolonie': typeof PolkolonieRouteWithChildren
+  '/spa-shell': typeof SpaShellRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/o-nas'
     | '/polkolonie'
+    | '/spa-shell'
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/o-nas'
     | '/polkolonie'
+    | '/spa-shell'
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/o-nas'
     | '/polkolonie'
+    | '/spa-shell'
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
@@ -189,6 +201,7 @@ export interface RootRouteChildren {
   KontaktRoute: typeof KontaktRoute
   ONasRoute: typeof ONasRoute
   PolkolonieRoute: typeof PolkolonieRouteWithChildren
+  SpaShellRoute: typeof SpaShellRoute
   AdminSlugRoute: typeof AdminSlugRoute
   AdminDokumentyRoute: typeof AdminDokumentyRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -233,6 +246,13 @@ declare module '@tanstack/react-router' {
       path: '/polkolonie'
       fullPath: '/polkolonie'
       preLoaderRoute: typeof PolkolonieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/spa-shell': {
+      id: '/spa-shell'
+      path: '/spa-shell'
+      fullPath: '/spa-shell'
+      preLoaderRoute: typeof SpaShellRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -312,6 +332,7 @@ const rootRouteChildren: RootRouteChildren = {
   KontaktRoute: KontaktRoute,
   ONasRoute: ONasRoute,
   PolkolonieRoute: PolkolonieRouteWithChildren,
+  SpaShellRoute: SpaShellRoute,
   AdminSlugRoute: AdminSlugRoute,
   AdminDokumentyRoute: AdminDokumentyRoute,
   AdminLoginRoute: AdminLoginRoute,
