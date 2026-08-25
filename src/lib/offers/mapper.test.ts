@@ -157,6 +157,24 @@ describe("offer row mappers", () => {
     });
   });
 
+  it("maps a day camp list row without its detail content", () => {
+    const { description: _description, ...listRow } = {
+      ...completeOfferRow,
+      slug: "wake-lato-2026",
+      offer_kind: "day_camp",
+      activity: "wake",
+      group_size_min: null,
+      group_size_max: null,
+    };
+
+    expect(mapOfferListRow(listRow, new Map())).toMatchObject({
+      offerKind: "day_camp",
+      activity: "wake",
+      content: { paragraphs: [], terms: [] },
+      images: [],
+    });
+  });
+
   it.each([
     ["a malformed description", { description: { paragraphs: "nie tablica" } }],
     ["a non-published status", { status: "draft" }],
