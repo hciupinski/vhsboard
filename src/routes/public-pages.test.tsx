@@ -13,6 +13,7 @@ import { Route as AboutRoute } from "./o-nas";
 import { Route as ContactRoute } from "./kontakt";
 import { Route as EventsRoute } from "./eventy";
 import { Route as HalfDayCampsRoute } from "./polkolonie";
+import { Route as HomeRoute } from "./index";
 
 const publicSiteEnv = {
   VITE_CONTACT_EMAIL: "kontakt@example.test",
@@ -60,6 +61,62 @@ afterEach(() => {
 });
 
 describe("static public pages", () => {
+  it("presents the three main areas as photo-led entry points", async () => {
+    await renderRoute("/", HomeRoute);
+
+    expect(
+      screen.getByRole("heading", { name: /wybierz, od czego zaczynasz/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("topic-selector")).toHaveClass("topic-selector");
+    expect(
+      screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__content"),
+    ).toHaveLength(3);
+    expect(
+      screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__content--contrast"),
+    ).toHaveLength(3);
+    expect(
+      screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__content--flush-left"),
+    ).toHaveLength(3);
+    expect(
+      screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__content--inset-left"),
+    ).toHaveLength(0);
+    expect(
+      screen
+        .getByTestId("topic-selector")
+        .querySelectorAll(".topic-selector__content--safe-text-inset"),
+    ).toHaveLength(3);
+    expect(
+      screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__item--mobile-stack"),
+    ).toHaveLength(3);
+    expect(
+      screen.getByTestId("topic-selector").querySelector(".topic-selector__content--2"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("topic-selector").querySelector(".topic-selector__content--3"),
+    ).toBeInTheDocument();
+
+    const entryPoints = [
+      {
+        href: "/wyjazdy",
+        imageAlt: "Uczestnicy wyjazdu VHSBOARD z deskami surfingowymi na plaży",
+      },
+      {
+        href: "/eventy",
+        imageAlt: "Uczestnik eventu na mobilnym torze skimboardowym VHSBOARD",
+      },
+      {
+        href: "/polkolonie",
+        imageAlt:
+          "Dziecko płynące na wakeboardzie podczas półkolonii VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+      },
+    ];
+
+    for (const entryPoint of entryPoints) {
+      const link = screen.getByRole("img", { name: entryPoint.imageAlt }).closest("a");
+      expect(link).toHaveAttribute("href", entryPoint.href);
+    }
+  });
+
   it("explains the mobile skimboard track format and directs enquiries to contact", async () => {
     await renderRoute("/eventy", EventsRoute);
 
@@ -80,10 +137,19 @@ describe("static public pages", () => {
     );
   });
 
-  it("keeps half-day camps as an evergreen page without a booking CTA", async () => {
+  it("explains seasonal half-day camps and communicates that new offers may appear soon", async () => {
     await renderRoute("/polkolonie", HalfDayCampsRoute);
 
     expect(screen.getByRole("heading", { name: /półkolonie aktywnie/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: /dziecko płynące na wakeboardzie podczas półkolonii/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/wakepark, skimboard i skateboarding/i)).toBeInTheDocument();
+    expect(screen.getByText(/śnieg i snowboard/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /aktualne półkolonie/i })).toBeInTheDocument();
+    expect(screen.getByText(/mogą pojawić się wkrótce/i)).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /rezerwuj|zapisz/i })).not.toBeInTheDocument();
   });
 

@@ -177,3 +177,75 @@
 @utility shadow-warm {
   box-shadow: var(--shadow-warm);
 }
+
+@layer components {
+  .topic-selector {
+    --topic-divider: clamp(0.75rem, 1.1vw, 1.25rem);
+    --topic-slant: clamp(2.25rem, 4vw, 5rem);
+    --topic-slant-double: clamp(4.5rem, 8vw, 10rem);
+
+    position: relative;
+    min-height: 27.5rem;
+  }
+
+  .topic-selector__item {
+    position: absolute;
+    inset-block: 0;
+  }
+
+  .topic-selector__content {
+    max-inline-size: min(100%, 28rem);
+    margin-block-start: auto;
+    margin-block-end: clamp(0.75rem, 1.2vw, 1.25rem);
+    margin-inline-start: 0;
+    margin-inline-end: auto;
+    padding-block: clamp(1rem, 1.2vw, 1.5rem);
+    padding-inline-end: clamp(1rem, 1.2vw, 1.5rem);
+    padding-inline-start: clamp(1.5rem, 4vw, 5rem);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: oklch(0.22 0.03 60 / 0.5);
+    box-shadow: 0 16px 32px -22px oklch(0.1 0.02 60 / 0.9);
+    backdrop-filter: blur(0.375rem);
+    text-align: end;
+  }
+
+  .topic-selector__item--1 {
+    inset-inline-start: 0;
+    inline-size: calc(33.333% + var(--topic-slant));
+    clip-path: polygon(0 0, 100% 0, calc(100% - var(--topic-slant-double)) 100%, 0 100%);
+  }
+
+  .topic-selector__item--2 {
+    inset-inline-start: calc(33.333% - var(--topic-slant) + var(--topic-divider));
+    inline-size: calc(33.334% + var(--topic-slant-double) - var(--topic-divider));
+    clip-path: polygon(
+      var(--topic-slant-double) 0,
+      100% 0,
+      calc(100% - var(--topic-slant-double)) 100%,
+      0 100%
+    );
+  }
+
+  .topic-selector__item--3 {
+    inset-inline-start: calc(66.667% - var(--topic-slant) + var(--topic-divider));
+    inline-size: calc(33.333% + var(--topic-slant) - var(--topic-divider));
+    clip-path: polygon(var(--topic-slant-double) 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  @media (max-width: 767px) {
+    .topic-selector {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .topic-selector__item--mobile-stack {
+      position: relative;
+      inset: auto;
+      flex: none;
+      min-height: 20rem;
+      inline-size: 100%;
+      clip-path: none;
+    }
+  }
+}

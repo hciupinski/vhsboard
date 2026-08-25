@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowUpRight } from "lucide-react";
 
+import wakeparkCampImage from "@/assets/polkolonie-wakepark.png";
+import skimboardingTrackImage from "@/assets/eventy-tor-skimboardowy.jpg";
 import heroSurf from "@/assets/hero-surf.jpg";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -25,20 +28,30 @@ const entryPoints = [
   {
     to: "/wyjazdy",
     title: "Wyjazdy",
-    text: "Zobacz aktualne wyjazdy organizowane przez VHSBOARD.",
+    eyebrow: "01 / W drogę",
+    text: "Surf, snowboard i dobre ekipy — planujemy wyjazdy, do których chce się wracać.",
     action: "Zobacz wyjazdy",
+    image: heroSurf,
+    imageAlt: "Uczestnicy wyjazdu VHSBOARD z deskami surfingowymi na plaży",
   },
   {
     to: "/eventy",
     title: "Eventy",
-    text: "Sprawdź, jak może wyglądać event z mobilnym torem skimboardowym.",
+    eyebrow: "02 / W ruchu",
+    text: "Mobilny tor skimboardowy, który zamienia spotkanie w wspólne show.",
     action: "Poznaj eventy",
+    image: skimboardingTrackImage,
+    imageAlt: "Uczestnik eventu na mobilnym torze skimboardowym VHSBOARD",
   },
   {
     to: "/polkolonie",
     title: "Półkolonie",
-    text: "Dowiedz się więcej o sezonowych programach aktywnych dla dzieci.",
+    eyebrow: "03 / Dla młodych",
+    text: "Aktywne dni z deską, wodą i ludźmi, którzy wiedzą, jak złapać zajawkę.",
     action: "Poznaj półkolonie",
+    image: wakeparkCampImage,
+    imageAlt:
+      "Dziecko płynące na wakeboardzie podczas półkolonii VHSBOARD, obserwowane przez instruktora i grupę dzieci",
   },
 ] as const;
 
@@ -72,20 +85,53 @@ function HomePage() {
             </Button>
           </div>
         </section>
-        <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
-          <h2 className="text-4xl sm:text-5xl">Wybierz, od czego zaczynasz</h2>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {entryPoints.map(({ to, title, text, action }) => (
-              <article
+        <section className="py-16 sm:py-24" aria-labelledby="entry-points-heading">
+          <div className="mx-auto max-w-6xl px-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              Wybierz swój kierunek
+            </p>
+            <h2 id="entry-points-heading" className="mt-3 text-4xl leading-[0.95] sm:text-6xl">
+              Wybierz, od czego zaczynasz
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
+              Trzy różne sposoby na czas poza codziennym planem. Wejdź tam, gdzie właśnie ciągnie
+              Cię najbardziej.
+            </p>
+          </div>
+          <div
+            data-testid="topic-selector"
+            className="topic-selector mt-8 overflow-hidden bg-background sm:mt-10"
+          >
+            {entryPoints.map(({ to, title, eyebrow, text, action, image, imageAlt }, index) => (
+              <Link
                 key={to}
-                className="flex flex-col rounded-3xl border border-border bg-card p-6 shadow-warm"
+                to={to}
+                className={`topic-selector__item topic-selector__item--${index + 1} topic-selector__item--mobile-stack group isolate flex overflow-hidden py-8 text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:py-10`}
               >
-                <h3 className="text-3xl">{title}</h3>
-                <p className="mt-3 flex-1 text-muted-foreground">{text}</p>
-                <Button asChild variant="secondary" className="mt-6 w-full rounded-full">
-                  <Link to={to}>{action}</Link>
-                </Button>
-              </article>
+                <img
+                  src={image}
+                  alt={imageAlt}
+                  className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-105"
+                />
+                <div className="absolute inset-0 -z-10 bg-gradient-to-t from-foreground/90 via-foreground/25 to-foreground/5" />
+                <div
+                  className={`topic-selector__content topic-selector__content--contrast topic-selector__content--flush-left topic-selector__content--safe-text-inset topic-selector__content--${index + 1}`}
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
+                    {eyebrow}
+                  </p>
+                  <h3 className="mt-3 text-4xl leading-[0.9] sm:text-5xl">{title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-background/85 sm:text-base">
+                    {text}
+                  </p>
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
+                    {action}
+                    <span className="grid size-7 place-items-center rounded-full bg-background/15 transition duration-200 motion-reduce:transition-none group-hover:translate-x-1 group-hover:bg-primary">
+                      <ArrowUpRight aria-hidden="true" className="size-4" />
+                    </span>
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
         </section>
