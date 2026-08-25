@@ -48,7 +48,7 @@ export function OfferFacts({
       {showBookingCta && isBookingUrlValid ? (
         <Button asChild size="lg" className="mt-6 w-full rounded-full">
           <a href={offer.bookingUrl} target="_blank" rel="noopener noreferrer">
-            Przejdź do rezerwacji w TripAhead
+            Przejdź do zapisów
           </a>
         </Button>
       ) : null}

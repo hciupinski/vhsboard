@@ -12,12 +12,15 @@ declare
   draft_offer_id uuid;
   published_offer_id uuid;
   archived_offer_id uuid;
+  day_camp_draft_id uuid;
+  day_camp_published_id uuid;
   managed_offer_id uuid;
   managed_image_id uuid;
   managed_jpeg_image_id uuid;
   managed_png_image_id uuid;
   published_path text;
   draft_path text;
+  day_camp_published_path text;
   managed_path text;
   managed_jpeg_path text;
   managed_png_path text;
@@ -68,7 +71,7 @@ begin
       'Hel',
       7,
       1200,
-      'https://tripahead.example.test/szkic',
+      'https://zapisy.example.test/szkic',
       'draft'
     ),
     (
@@ -80,7 +83,7 @@ begin
       'Szczyrk',
       5,
       1800,
-      'https://tripahead.example.test/opublikowana',
+      'https://zapisy.example.test/opublikowana',
       'draft'
     ),
     (
@@ -92,7 +95,7 @@ begin
       'Fuerteventura',
       10,
       2500,
-      'https://tripahead.example.test/archiwalna',
+      'https://zapisy.example.test/archiwalna',
       'archived'
     );
   select id into published_offer_id
@@ -107,6 +110,126 @@ begin
   from public.offers
   where slug = 'testowa-archiwalna';
 
+  if (select offer_kind from public.offers where id = draft_offer_id) <> 'trip' then
+    raise exception 'existing offers must migrate to trip';
+  end if;
+
+  insert into public.offers (
+    slug,
+    offer_kind,
+    activity,
+    title,
+    subtitle,
+    short_description,
+    description,
+    location,
+    duration_days,
+    price_from,
+    booking_url,
+    status
+  )
+  values
+    (
+      'polkolonie-szkic',
+      'day_camp',
+      'wake',
+      'Szkic półkolonii wakeboardowej',
+      'Półkolonie niewidoczne publicznie',
+      'Wystarczająco długi opis szkicu półkolonii wakeboardowej.',
+      jsonb_build_object(
+        'paragraphs', jsonb_build_array('Opis półkolonii dla rodziców.'),
+        'highlights', jsonb_build_array('Wakeboard z instruktorami.'),
+        'included', jsonb_build_array('Opieka instruktorów.'),
+        'excluded', jsonb_build_array('Dojazd we własnym zakresie.'),
+        'dayProgram', jsonb_build_array(jsonb_build_object('time', '09:00', 'text', 'Rozgrzewka.')),
+        'activityPlan', jsonb_build_array(jsonb_build_object('title', 'Wakeboard', 'text', 'Nauka pływania.')),
+        'venueDescription', 'Wakepark z zapleczem dla dzieci.',
+        'parentInfo', jsonb_build_object(
+          'ageRange', '7–12 lat',
+          'supervision', 'Stała opieka instruktorów.',
+          'safety', 'Zajęcia w kamizelkach i kaskach.'
+        ),
+        'terms', jsonb_build_array(
+          jsonb_build_object(
+            'label', 'Turnus 1',
+            'startDate', '2026-07-06',
+            'endDate', '2026-07-10',
+            'priceOptions', jsonb_build_array(
+              jsonb_build_object(
+                'label', 'Wariant podstawowy',
+                'price', 1200,
+                'bookingUrl', 'https://zapisy.example.test/wake-lato-2026-turnus-1'
+              )
+            )
+          )
+        )
+      ),
+      'Wrocław',
+      5,
+      1200,
+      'https://zapisy.example.test/wake-lato-2026-turnus-1',
+      'draft'
+    ),
+    (
+      'polkolonie-opublikowane',
+      'day_camp',
+      'snow',
+      'Opublikowane półkolonie snowboardowe',
+      'Półkolonie widoczne publicznie',
+      'Wystarczająco długi opis opublikowanej półkolonii snowboardowej.',
+      jsonb_build_object(
+        'paragraphs', jsonb_build_array('Opis półkolonii dla rodziców.'),
+        'highlights', jsonb_build_array('Snowboard z instruktorami.'),
+        'included', jsonb_build_array('Opieka instruktorów.'),
+        'excluded', jsonb_build_array('Dojazd we własnym zakresie.'),
+        'dayProgram', jsonb_build_array(jsonb_build_object('time', '09:00', 'text', 'Rozgrzewka.')),
+        'activityPlan', jsonb_build_array(jsonb_build_object('title', 'Snowboard', 'text', 'Nauka jazdy.')),
+        'venueDescription', 'Stok z zapleczem dla dzieci.',
+        'parentInfo', jsonb_build_object(
+          'ageRange', '7–12 lat',
+          'supervision', 'Stała opieka instruktorów.',
+          'safety', 'Zajęcia w kaskach pod opieką instruktorów.'
+        ),
+        'terms', jsonb_build_array(
+          jsonb_build_object(
+            'label', 'Turnus 1',
+            'startDate', '2026-02-02',
+            'endDate', '2026-02-06',
+            'priceOptions', jsonb_build_array(
+              jsonb_build_object(
+                'label', 'Wariant podstawowy',
+                'price', 1400,
+                'bookingUrl', 'https://zapisy.example.test/snow-zima-2026-turnus-1'
+              )
+            )
+          )
+        )
+      ),
+      'Szczyrk',
+      5,
+      1400,
+      'https://zapisy.example.test/snow-zima-2026-turnus-1',
+      'draft'
+    );
+
+  select id into day_camp_draft_id
+  from public.offers
+  where slug = 'polkolonie-szkic';
+
+  select id into day_camp_published_id
+  from public.offers
+  where slug = 'polkolonie-opublikowane';
+
+  update public.offers
+  set description = jsonb_build_object(
+    'paragraphs', jsonb_build_array('Kompletny opis opublikowanego wyjazdu.'),
+    'highlights', jsonb_build_array('Najważniejszy moment wyjazdu.'),
+    'included', jsonb_build_array('Zakwaterowanie.'),
+    'excluded', jsonb_build_array('Dojazd.'),
+    'schedule', jsonb_build_array(jsonb_build_object('day', 'Dzień 1', 'text', 'Przyjazd.'))
+  )
+  where id = published_offer_id;
+
   published_path := format(
     'offers/%s/%s.jpg',
     published_offer_id,
@@ -117,37 +240,58 @@ begin
     draft_offer_id,
     '20000000-0000-0000-0000-000000000002'
   );
+  day_camp_published_path := format(
+    'offers/%s/%s.jpg',
+    day_camp_published_id,
+    '20000000-0000-0000-0000-000000000012'
+  );
 
   insert into public.offer_images (offer_id, storage_path, alt_text, position)
   values
     (published_offer_id, published_path, 'Testowe zdjęcie opublikowanej oferty', 0),
-    (draft_offer_id, draft_path, 'Testowe zdjęcie szkicu oferty', 0);
+    (draft_offer_id, draft_path, 'Testowe zdjęcie szkicu oferty', 0),
+    (
+      day_camp_published_id,
+      day_camp_published_path,
+      'Dzieci uczą się jazdy na snowboardzie z instruktorem',
+      0
+    );
 
   update public.offers
   set hero_image = published_path,
       status = 'published'
   where id = published_offer_id;
 
+  update public.offers
+  set hero_image = day_camp_published_path,
+      status = 'published'
+  where id = day_camp_published_id;
+
   insert into storage.objects (bucket_id, name)
   values
     ('offer-images', published_path),
-    ('offer-images', draft_path);
+    ('offer-images', draft_path),
+    ('offer-images', day_camp_published_path);
 
   execute 'set local role anon';
 
-  if (select count(*) from public.offers) <> 1 then
-    raise exception 'anon must see exactly one published offer';
+  if (select count(*) from public.offers) <> 2 then
+    raise exception 'anon must see exactly two published offers';
   end if;
 
-  if exists (select 1 from public.offers where id in (draft_offer_id, archived_offer_id)) then
+  if exists (select 1 from public.offers where id in (draft_offer_id, archived_offer_id, day_camp_draft_id)) then
     raise exception 'anon must not see draft or archived offers';
   end if;
 
-  if (select count(*) from public.offer_images) <> 1 then
+  if not exists (select 1 from public.offers where id = day_camp_published_id and offer_kind = 'day_camp') then
+    raise exception 'anon must see a published day camp';
+  end if;
+
+  if (select count(*) from public.offer_images) <> 2 then
     raise exception 'anon must see images from published offers only';
   end if;
 
-  if (select count(*) from storage.objects where bucket_id = 'offer-images') <> 1 then
+  if (select count(*) from storage.objects where bucket_id = 'offer-images') <> 2 then
     raise exception 'anon must read a private object only through published metadata';
   end if;
 
@@ -172,7 +316,7 @@ begin
       'Hel',
       4,
       1000,
-      'https://tripahead.example.test/anon-odmowa'
+      'https://zapisy.example.test/anon-odmowa'
     );
     raise exception 'anon must not create offers';
   exception
@@ -194,7 +338,7 @@ begin
   perform set_config('request.jwt.claim.sub', editor_id::text, true);
   execute 'set local role authenticated';
 
-  if (select count(*) from public.offers) <> 1 then
+  if (select count(*) from public.offers) <> 2 then
     raise exception 'ordinary authenticated users must see published offers only';
   end if;
 
@@ -226,7 +370,7 @@ begin
       'Hel',
       4,
       1000,
-      'https://tripahead.example.test/odmowa'
+      'https://zapisy.example.test/odmowa'
     );
     raise exception 'ordinary authenticated users must not create offers';
   exception
@@ -313,9 +457,19 @@ begin
     'Peniche',
     6,
     1900,
-    'https://tripahead.example.test/zarzadzany'
+    'https://zapisy.example.test/zarzadzany'
   )
   returning id into managed_offer_id;
+
+  update public.offers
+  set description = jsonb_build_object(
+    'paragraphs', jsonb_build_array('Kompletny opis szkicu administratora.'),
+    'highlights', jsonb_build_array('Najważniejszy moment wyjazdu.'),
+    'included', jsonb_build_array('Zakwaterowanie.'),
+    'excluded', jsonb_build_array('Dojazd.'),
+    'schedule', jsonb_build_array(jsonb_build_object('day', 'Dzień 1', 'text', 'Przyjazd.'))
+  )
+  where id = managed_offer_id;
 
   begin
     insert into public.offers (
@@ -339,7 +493,7 @@ begin
       'Peniche',
       6,
       1900,
-      'https://tripahead.example.test/bezposrednia-publikacja',
+      'https://zapisy.example.test/bezposrednia-publikacja',
       'published'
     );
     raise exception 'administrator must not insert an offer as published without a hero';

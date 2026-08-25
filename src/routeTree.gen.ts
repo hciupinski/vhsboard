@@ -17,6 +17,7 @@ import { Route as PolkolonieRouteImport } from './routes/polkolonie'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as PolkolonieSlugRouteImport } from './routes/polkolonie.$slug'
 import { Route as TripsSlugRouteImport } from './routes/trips.$slug'
 import { Route as WyjazdyIndexRouteImport } from './routes/wyjazdy.index'
 import { Route as WyjazdySlugRouteImport } from './routes/wyjazdy.$slug'
@@ -61,6 +62,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PolkolonieSlugRoute = PolkolonieSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PolkolonieRoute,
+} as any)
 const TripsSlugRoute = TripsSlugRouteImport.update({
   id: '/trips/$slug',
   path: '/trips/$slug',
@@ -82,9 +88,10 @@ export interface FileRoutesByFullPath {
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
-  '/polkolonie': typeof PolkolonieRoute
+  '/polkolonie': typeof PolkolonieRouteWithChildren
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/login': typeof AdminLoginRoute
+  '/polkolonie/$slug': typeof PolkolonieSlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -95,9 +102,10 @@ export interface FileRoutesByTo {
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
-  '/polkolonie': typeof PolkolonieRoute
+  '/polkolonie': typeof PolkolonieRouteWithChildren
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/login': typeof AdminLoginRoute
+  '/polkolonie/$slug': typeof PolkolonieSlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin': typeof AdminIndexRoute
@@ -109,9 +117,10 @@ export interface FileRoutesById {
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
-  '/polkolonie': typeof PolkolonieRoute
+  '/polkolonie': typeof PolkolonieRouteWithChildren
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/login': typeof AdminLoginRoute
+  '/polkolonie/$slug': typeof PolkolonieSlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/polkolonie'
     | '/admin/$slug'
     | '/admin/login'
+    | '/polkolonie/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin/'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/polkolonie'
     | '/admin/$slug'
     | '/admin/login'
+    | '/polkolonie/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/polkolonie'
     | '/admin/$slug'
     | '/admin/login'
+    | '/polkolonie/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin/'
@@ -164,7 +176,7 @@ export interface RootRouteChildren {
   EventyRoute: typeof EventyRoute
   KontaktRoute: typeof KontaktRoute
   ONasRoute: typeof ONasRoute
-  PolkolonieRoute: typeof PolkolonieRoute
+  PolkolonieRoute: typeof PolkolonieRouteWithChildren
   AdminSlugRoute: typeof AdminSlugRoute
   AdminLoginRoute: typeof AdminLoginRoute
   TripsSlugRoute: typeof TripsSlugRoute
@@ -231,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/polkolonie/$slug': {
+      id: '/polkolonie/$slug'
+      path: '/$slug'
+      fullPath: '/polkolonie/$slug'
+      preLoaderRoute: typeof PolkolonieSlugRouteImport
+      parentRoute: typeof PolkolonieRoute
+    }
     '/trips/$slug': {
       id: '/trips/$slug'
       path: '/trips/$slug'
@@ -255,12 +274,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface PolkolonieRouteChildren {
+  PolkolonieSlugRoute: typeof PolkolonieSlugRoute
+}
+
+const PolkolonieRouteChildren: PolkolonieRouteChildren = {
+  PolkolonieSlugRoute: PolkolonieSlugRoute,
+}
+
+const PolkolonieRouteWithChildren = PolkolonieRoute._addFileChildren(
+  PolkolonieRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EventyRoute: EventyRoute,
   KontaktRoute: KontaktRoute,
   ONasRoute: ONasRoute,
-  PolkolonieRoute: PolkolonieRoute,
+  PolkolonieRoute: PolkolonieRouteWithChildren,
   AdminSlugRoute: AdminSlugRoute,
   AdminLoginRoute: AdminLoginRoute,
   TripsSlugRoute: TripsSlugRoute,

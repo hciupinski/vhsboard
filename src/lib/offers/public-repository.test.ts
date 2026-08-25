@@ -33,7 +33,7 @@ const listRow = {
   group_size_max: 18,
   price_from: 3100,
   currency: "PLN",
-  booking_url: "https://tripahead.example/atlantic-surf-week",
+  booking_url: "https://zapisy.example/atlantic-surf-week",
   hero_image: heroPath,
   status: "published",
 };
@@ -99,9 +99,9 @@ describe("public offer repository", () => {
     mockedSupabase.from.mockReturnValue(query);
 
     await expect(listPublishedOfferSeoRecords()).resolves.toEqual([
-      { slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z" },
+      { slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z", offerKind: "trip" },
     ]);
-    expect(query.select).toHaveBeenCalledWith("slug,updated_at");
+    expect(query.select).toHaveBeenCalledWith("slug,updated_at,offer_kind");
     expect(query.eq).toHaveBeenCalledWith("status", "published");
   });
 
@@ -116,6 +116,7 @@ describe("public offer repository", () => {
     expect(offerQuery.select).toHaveBeenCalledOnce();
     expect(selectedColumns?.split(",")).not.toContain("description");
     expect(offerQuery.eq).toHaveBeenCalledWith("status", "published");
+    expect(offerQuery.eq).toHaveBeenCalledWith("offer_kind", "trip");
     expect(offers).toMatchObject([
       {
         slug: "atlantic-surf-week",
@@ -136,6 +137,7 @@ describe("public offer repository", () => {
 
     expect(offerQuery.eq).toHaveBeenCalledWith("slug", "atlantic-surf-week");
     expect(offerQuery.eq).toHaveBeenCalledWith("status", "published");
+    expect(offerQuery.eq).toHaveBeenCalledWith("offer_kind", "trip");
     expect(imageQuery.eq).toHaveBeenCalledWith("offer_id", offerId);
     expect(imageQuery.order).toHaveBeenCalledWith("position", { ascending: true });
     expect(offer?.images).toMatchObject([{ path: imageRow.storage_path, position: 0 }]);

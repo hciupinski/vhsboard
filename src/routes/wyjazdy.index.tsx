@@ -6,6 +6,7 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
+import type { TripOffer } from "@/lib/offers/types";
 import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/wyjazdy/")({
@@ -39,7 +40,7 @@ function TripsPage() {
             Zobacz aktualne kierunki i szczegóły wyjazdów organizowanych przez VHSBOARD.
           </p>
           <OfferListState
-            offers={offers}
+            offers={offers.filter((offer): offer is TripOffer => offer.offerKind === "trip")}
             isPending={isPending}
             isError={isError}
             onRetry={() => void refetch()}

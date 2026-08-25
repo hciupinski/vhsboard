@@ -2,17 +2,37 @@ import {
   offerDetailRowSchema,
   offerImageRowSchema,
   offerListRowSchema,
+  dayCampContentSchema,
+  offerContentSchema,
   type OfferImageRow,
   type OfferListRow,
 } from "./schema";
-import type { OfferContent, OfferImage, PublicOffer } from "./types";
+import type {
+  DayCampContent,
+  OfferContent,
+  OfferImage,
+  PublicOffer,
+  TripOfferContent,
+} from "./types";
 
-const emptyContent: OfferContent = {
+const emptyContent: TripOfferContent = {
   paragraphs: [],
   highlights: [],
   included: [],
   excluded: [],
   schedule: [],
+};
+
+const emptyDayCampContent: DayCampContent = {
+  paragraphs: [],
+  highlights: [],
+  included: [],
+  excluded: [],
+  dayProgram: [],
+  activityPlan: [],
+  venueDescription: "",
+  parentInfo: { ageRange: "", supervision: "", safety: "" },
+  terms: [],
 };
 
 const toSignedUrlOrNull = (path: string | null, signedUrls: Map<string, string>): string | null => {
@@ -75,10 +95,9 @@ const mapOffer = (
 ): PublicOffer => {
   validateGroupSize(row);
 
-  return {
+  const base = {
     id: row.id,
     slug: row.slug,
-    activity: row.activity,
     title: row.title,
     subtitle: row.subtitle,
     shortDescription: row.short_description,
@@ -95,12 +114,37 @@ const mapOffer = (
     heroImageUrl: toSignedUrlOrNull(row.hero_image, signedUrls),
     images,
   };
+
+  if (row.offer_kind === "day_camp") {
+    if (row.activity !== "wake" && row.activity !== "snow")
+      throw new Error("Aktywność nie pasuje do półkolonii.");
+    return {
+      ...base,
+      offerKind: "day_camp" as const,
+      activity: row.activity,
+      content: dayCampContentSchema.parse(content),
+    };
+  }
+
+  if (row.activity !== "surf" && row.activity !== "snow" && row.activity !== "combo")
+    throw new Error("Aktywność nie pasuje do wyjazdu.");
+  return {
+    ...base,
+    offerKind: "trip" as const,
+    activity: row.activity,
+    content: offerContentSchema.parse(content),
+  };
 };
 
 export const mapOfferListRow = (row: unknown, signedUrls: Map<string, string>): PublicOffer => {
   const parsedRow = offerListRowSchema.parse(row);
 
-  return mapOffer(parsedRow, emptyContent, [], signedUrls);
+  return mapOffer(
+    parsedRow,
+    parsedRow.offer_kind === "day_camp" ? emptyDayCampContent : emptyContent,
+    [],
+    signedUrls,
+  );
 };
 
 export const mapOfferDetailRow = (

@@ -26,7 +26,7 @@ const completeOfferRow = {
   group_size_max: 18,
   price_from: 3100,
   currency: "PLN",
-  booking_url: "https://tripahead.example/atlantic-surf-week",
+  booking_url: "https://zapisy.example/atlantic-surf-week",
   hero_image: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/hero.jpg",
   status: "published",
 };
@@ -49,6 +49,53 @@ const completeImageRows = [
 ];
 
 describe("offer row mappers", () => {
+  it("maps a published day camp without exposing trip-only group limits", () => {
+    const row = {
+      ...completeOfferRow,
+      slug: "wake-lato-2026",
+      offer_kind: "day_camp",
+      activity: "wake",
+      group_size_min: null,
+      group_size_max: null,
+      description: {
+        paragraphs: ["Półkolonie dla dzieci, które chcą spróbować wakeboardu."],
+        highlights: ["Codzienna nauka wakeboardu"],
+        included: ["Opieka instruktorów"],
+        excluded: ["Dojazd we własnym zakresie"],
+        dayProgram: [{ time: "09:00", text: "Rozgrzewka i odprawa." }],
+        activityPlan: [{ title: "Wakeboard", text: "Nauka startu i pływania." }],
+        venueDescription: "Wakepark z zapleczem dla dzieci.",
+        parentInfo: {
+          ageRange: "7–12 lat",
+          supervision: "Stała opieka instruktorów.",
+          safety: "Zajęcia w kamizelkach i kaskach.",
+        },
+        terms: [
+          {
+            label: "Turnus 1",
+            startDate: "2026-07-06",
+            endDate: "2026-07-10",
+            priceOptions: [
+              {
+                label: "Wariant podstawowy",
+                price: 1200,
+                bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-1",
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    expect(mapOfferDetailRow(row, [], new Map())).toMatchObject({
+      offerKind: "day_camp",
+      activity: "wake",
+      content: { terms: [{ label: "Turnus 1" }] },
+      groupSizeMin: null,
+      groupSizeMax: null,
+    });
+  });
+
   it("maps a complete published SQL row to the public domain contract", () => {
     const signedUrls = new Map([
       [completeOfferRow.hero_image, "https://signed.example/hero.jpg"],
@@ -59,6 +106,7 @@ describe("offer row mappers", () => {
     expect(mapOfferDetailRow(completeOfferRow, completeImageRows, signedUrls)).toEqual({
       id: offerId,
       slug: "atlantic-surf-week",
+      offerKind: "trip",
       activity: "surf",
       title: "Atlantycki tydzień surfingu",
       subtitle: "Siedem dni w Ericeirze.",
@@ -72,7 +120,7 @@ describe("offer row mappers", () => {
       groupSizeMax: 18,
       priceFrom: 3100,
       currency: "PLN",
-      bookingUrl: "https://tripahead.example/atlantic-surf-week",
+      bookingUrl: "https://zapisy.example/atlantic-surf-week",
       heroImageUrl: "https://signed.example/hero.jpg",
       images: [
         {
@@ -113,7 +161,7 @@ describe("offer row mappers", () => {
   it.each([
     ["a malformed description", { description: { paragraphs: "nie tablica" } }],
     ["a non-published status", { status: "draft" }],
-    ["a non-HTTPS booking URL", { booking_url: "http://tripahead.example/offer" }],
+    ["a non-HTTPS booking URL", { booking_url: "http://zapisy.example/offer" }],
   ])("rejects %s", (_reason, invalidFields) => {
     expect(() =>
       mapOfferDetailRow({ ...completeOfferRow, ...invalidFields }, completeImageRows, new Map()),

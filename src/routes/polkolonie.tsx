@@ -1,12 +1,17 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import wakeparkCampImage from "@/assets/polkolonie-wakepark.png";
+import { DayCampCard } from "@/components/offers/DayCampCard";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
+import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/polkolonie")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(publishedOffersQueryOptions("day_camp")),
   head: () =>
     createPageMetadata({
       path: "/polkolonie",
@@ -18,6 +23,12 @@ export const Route = createFileRoute("/polkolonie")({
 });
 
 function HalfDayCampsPage() {
+  const {
+    data: offers = [],
+    isPending,
+    isError,
+    refetch,
+  } = useQuery(publishedOffersQueryOptions("day_camp"));
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
@@ -84,10 +95,26 @@ function HalfDayCampsPage() {
             <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
               Aktualne półkolonie
             </h2>
-            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Nowe oferty półkolonii mogą pojawić się wkrótce. Zajrzyj ponownie, gdy ogłosimy
-              najbliższy sezon.
-            </p>
+            {isPending ? <p className="mt-4 text-muted-foreground">Ładowanie półkolonii…</p> : null}
+            {isError ? (
+              <button type="button" className="mt-4 underline" onClick={() => void refetch()}>
+                Nie udało się pobrać półkolonii. Spróbuj ponownie.
+              </button>
+            ) : null}
+            {!isPending && !isError && offers.length === 0 ? (
+              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                Nie mamy teraz otwartych półkolonii. Wróć do nas za chwilę.
+              </p>
+            ) : null}
+            {!isPending && !isError && offers.length > 0 ? (
+              <div className="mt-10 grid gap-6 md:grid-cols-3">
+                {offers.map((offer) =>
+                  offer.offerKind === "day_camp" ? (
+                    <DayCampCard key={offer.id} offer={offer} />
+                  ) : null,
+                )}
+              </div>
+            ) : null}
           </div>
         </section>
       </main>

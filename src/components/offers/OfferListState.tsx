@@ -1,10 +1,10 @@
 import { OfferCard } from "@/components/offers/OfferCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { PublicOffer } from "@/lib/offers/types";
+import type { TripOffer } from "@/lib/offers/types";
 
 type OfferListStateProps = {
-  offers: PublicOffer[];
+  offers: TripOffer[];
   isPending: boolean;
   isError: boolean;
   onRetry: () => void;

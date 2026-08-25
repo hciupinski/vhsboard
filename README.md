@@ -7,7 +7,7 @@ trips, eventy z torem skimboardowym oraz półkolonie. It presents current
 offers and trip details, with a lightweight admin CMS prototype for managing
 offer content.
 
-Bookings are handled externally through TripAhead. VHSBOARD does not manage
+Bookings are handled externally through a configured registration system. VHSBOARD does not manage
 reservations, payments, availability, or participant data.
 
 ## Tech stack

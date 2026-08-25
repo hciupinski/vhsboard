@@ -17,7 +17,7 @@ const getPublishedOfferPaths = async (environment: Record<string, string>): Prom
   const client = createClient(config.url, config.anonKey);
   const { data, error } = await client
     .from("offers")
-    .select("slug,updated_at")
+    .select("slug,updated_at,offer_kind")
     .eq("status", "published");
 
   if (error || !Array.isArray(data)) {
@@ -26,7 +26,10 @@ const getPublishedOfferPaths = async (environment: Record<string, string>): Prom
     });
   }
 
-  return data.map((row) => `/wyjazdy/${publishedOfferSeoRowSchema.parse(row).slug}`);
+  return data.map((row) => {
+    const offer = publishedOfferSeoRowSchema.parse(row);
+    return `${offer.offer_kind === "day_camp" ? "/polkolonie" : "/wyjazdy"}/${offer.slug}`;
+  });
 };
 
 export default defineConfig(async ({ mode }) => {

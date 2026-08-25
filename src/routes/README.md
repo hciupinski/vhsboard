@@ -18,4 +18,9 @@ is `src/routes/__root.tsx`.
 | `_layout.tsx`            | layout route (renders children via `<Outlet />`)        |
 | `__root.tsx`             | app shell — wraps every page; preserve `<Outlet />`     |
 
+Publiczne oferty mają rozdzielone ścieżki: `wyjazdy.index.tsx` i
+`wyjazdy.$slug.tsx` obsługują wyłącznie wyjazdy, a `polkolonie.tsx` oraz
+`polkolonie.$slug.tsx` wyłącznie półkolonie. Nie kieruj półkolonii przez
+`/wyjazdy/:slug`.
+
 `routeTree.gen.ts` is auto-generated. Don't edit it by hand.

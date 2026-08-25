@@ -1,8 +1,16 @@
 import { z } from "zod";
 
-import type { OfferActivity, OfferContent, OfferStatus, PublicOffer } from "./types";
+import type {
+  DayCampContent,
+  OfferActivity,
+  OfferContent,
+  OfferKind,
+  OfferStatus,
+  TripOfferContent,
+} from "./types";
 
 export type EditableOfferInput = {
+  offerKind?: OfferKind;
   slug: string;
   activity: OfferActivity;
   title: string;
@@ -21,9 +29,9 @@ export type EditableOfferInput = {
   heroImagePath: string | null;
 };
 
-export type EditableOffer = Omit<PublicOffer, "heroImageUrl" | "images"> & {
+export type EditableOffer = EditableOfferInput & {
+  id: string;
   status: OfferStatus;
-  heroImagePath: string | null;
 };
 
 const textField = (requiredMessage: string) =>
@@ -122,6 +130,7 @@ const normalizeEditorOfferInput = (input: unknown): unknown => {
 
   return {
     ...input,
+    offerKind: input.offerKind === "day_camp" ? "day_camp" : "trip",
     slug: trimValue(input.slug),
     title: trimValue(input.title),
     subtitle: trimValue(input.subtitle),
@@ -152,91 +161,229 @@ export function normalizeEditableOfferInput(input: EditableOfferInput): Editable
   return normalizeEditorOfferInput(input) as EditableOfferInput;
 }
 
+const tripEditorOfferInputSchema = z
+  .object(
+    {
+      offerKind: z.literal("trip"),
+      slug: textField("Adres oferty jest wymagany.")
+        .trim()
+        .regex(
+          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          "Adres oferty może zawierać małe litery, cyfry i łączniki.",
+        ),
+      activity: z.enum(["surf", "snow", "combo"], {
+        errorMap: () => ({ message: "Wybierz rodzaj wyjazdu." }),
+      }),
+      title: trimmedText("Tytuł", 3, 120),
+      subtitle: trimmedText("Podtytuł", 3, 280),
+      shortDescription: trimmedText("Krótki opis", 20, 500),
+      content: z.object(
+        {
+          paragraphs: nonEmptyList,
+          highlights: nonEmptyList,
+          included: nonEmptyList,
+          excluded: nonEmptyList,
+          schedule: scheduleSchema,
+        },
+        {
+          required_error: "Uzupełnij opis oferty.",
+          invalid_type_error: "Uzupełnij opis oferty.",
+        },
+      ),
+      location: trimmedText("Lokalizacja", 2, 120),
+      startDate: dateSchema,
+      endDate: dateSchema,
+      durationDays: z
+        .number({
+          required_error: "Czas trwania jest wymagany.",
+          invalid_type_error: "Czas trwania musi być liczbą.",
+        })
+        .int("Czas trwania musi być liczbą całkowitą.")
+        .min(1, "Czas trwania musi wynosić co najmniej 1 dzień.")
+        .max(60, "Czas trwania nie może być dłuższy niż 60 dni."),
+      groupSizeMin: groupSizeSchema("Minimalna liczba uczestników"),
+      groupSizeMax: groupSizeSchema("Maksymalna liczba uczestników"),
+      priceFrom: z
+        .number({
+          required_error: "Cena od jest wymagana.",
+          invalid_type_error: "Cena od musi być liczbą.",
+        })
+        .int("Cena od musi być liczbą całkowitą.")
+        .positive("Cena od musi być większa od zera."),
+      currency: z.literal("PLN", {
+        errorMap: () => ({ message: "Waluta musi być ustawiona na PLN." }),
+      }),
+      bookingUrl: textField("Wpisz poprawny adres rezerwacji.")
+        .trim()
+        .url("Wpisz poprawny adres rezerwacji.")
+        .refine(isHttpsUrl, { message: "Adres rezerwacji musi używać HTTPS." }),
+      heroImagePath: nullableText("Ścieżka obrazu głównego musi być tekstem."),
+    },
+    {
+      required_error: "Uzupełnij dane oferty.",
+      invalid_type_error: "Uzupełnij dane oferty.",
+    },
+  )
+  .superRefine((offer, ctx) => {
+    if (offer.startDate && offer.endDate && offer.endDate < offer.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["endDate"],
+        message: "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.",
+      });
+    }
+
+    if (
+      offer.groupSizeMin !== null &&
+      offer.groupSizeMax !== null &&
+      offer.groupSizeMin > offer.groupSizeMax
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["groupSizeMax"],
+        message: "Maksymalna liczba uczestników nie może być mniejsza niż minimalna.",
+      });
+    }
+  });
+
+const timeSchema = textField("Godzina jest wymagana.")
+  .trim()
+  .regex(/^\d{2}:\d{2}$/, "Godzina musi mieć format GG:MM.");
+
+const dayCampTermSchema = z
+  .object({
+    label: trimmedText("Nazwa turnusu", 1, 120),
+    startDate: textField("Data rozpoczęcia turnusu jest wymagana.")
+      .trim()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Data musi mieć format RRRR-MM-DD."),
+    endDate: textField("Data zakończenia turnusu jest wymagana.")
+      .trim()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Data musi mieć format RRRR-MM-DD."),
+    priceOptions: z
+      .array(
+        z.object({
+          label: trimmedText("Nazwa wariantu ceny", 1, 120),
+          price: z.number().int().positive("Cena musi być większa od zera."),
+          bookingUrl: textField("Wpisz poprawny adres zapisów.")
+            .trim()
+            .url("Wpisz poprawny adres zapisów.")
+            .refine(isHttpsUrl, { message: "Adres zapisów musi używać HTTPS." }),
+        }),
+      )
+      .min(1, "Dodaj co najmniej jeden wariant ceny."),
+  })
+  .superRefine((term, ctx) => {
+    if (term.endDate < term.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["endDate"],
+        message: "Data zakończenia turnusu nie może być wcześniejsza niż data rozpoczęcia.",
+      });
+    }
+  });
+
+const dayCampContentSchema = z.object({
+  paragraphs: nonEmptyList,
+  highlights: nonEmptyList,
+  included: nonEmptyList,
+  excluded: nonEmptyList,
+  dayProgram: z
+    .array(z.object({ time: timeSchema, text: trimmedText("Opis programu dnia", 1, 500) }))
+    .min(1, "Dodaj co najmniej jedną pozycję programu dnia."),
+  activityPlan: z
+    .array(
+      z.object({
+        title: trimmedText("Nazwa zajęć", 1, 120),
+        text: trimmedText("Opis zajęć", 1, 500),
+      }),
+    )
+    .min(1, "Dodaj co najmniej jedną pozycję planu zajęć."),
+  venueDescription: trimmedText("Opis miejsca", 3, 500),
+  parentInfo: z.object({
+    ageRange: trimmedText("Wiek uczestników", 2, 120),
+    supervision: trimmedText("Informacja o opiece", 3, 500),
+    safety: trimmedText("Informacja o bezpieczeństwie", 3, 500),
+    transport: z.string().trim().min(1).max(500).optional(),
+    meals: z.string().trim().min(1).max(500).optional(),
+  }),
+  terms: z
+    .array(dayCampTermSchema)
+    .min(1, "Dodaj co najmniej jeden turnus.")
+    .max(2, "Możesz dodać najwyżej dwa turnusy."),
+});
+
+const daysInTerm = (startDate: string, endDate: string): number =>
+  Math.round(
+    (Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${startDate}T00:00:00Z`)) / 86_400_000,
+  ) + 1;
+
+const dayCampEditorOfferInputSchema = z
+  .object({
+    offerKind: z.literal("day_camp"),
+    slug: textField("Adres oferty jest wymagany.")
+      .trim()
+      .regex(
+        /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+        "Adres oferty może zawierać małe litery, cyfry i łączniki.",
+      ),
+    activity: z.enum(["wake", "snow"], {
+      errorMap: () => ({ message: "Wybierz aktywność półkolonii." }),
+    }),
+    title: trimmedText("Tytuł", 3, 120),
+    subtitle: trimmedText("Podtytuł", 3, 280),
+    shortDescription: trimmedText("Krótki opis", 20, 500),
+    content: dayCampContentSchema,
+    location: trimmedText("Lokalizacja", 2, 120),
+    startDate: z.unknown(),
+    endDate: z.unknown(),
+    durationDays: z.unknown(),
+    groupSizeMin: z.unknown(),
+    groupSizeMax: z.unknown(),
+    priceFrom: z.unknown(),
+    currency: z.literal("PLN"),
+    bookingUrl: z.unknown(),
+    heroImagePath: nullableText("Ścieżka obrazu głównego musi być tekstem."),
+  })
+  .transform((offer) => {
+    const terms = offer.content.terms;
+    const prices = terms.flatMap((term) => term.priceOptions);
+    const cheapest = prices.reduce((current, option) =>
+      option.price < current.price ? option : current,
+    );
+    return {
+      ...offer,
+      startDate: terms.reduce(
+        (current, term) => (term.startDate < current ? term.startDate : current),
+        terms[0]!.startDate,
+      ),
+      endDate: terms.reduce(
+        (current, term) => (term.endDate > current ? term.endDate : current),
+        terms[0]!.endDate,
+      ),
+      durationDays: Math.max(...terms.map((term) => daysInTerm(term.startDate, term.endDate))),
+      groupSizeMin: null,
+      groupSizeMax: null,
+      priceFrom: cheapest.price,
+      bookingUrl: cheapest.bookingUrl,
+    };
+  });
+
+const schemaForOfferKind = (value: unknown) =>
+  isRecord(value) && value.offerKind === "day_camp"
+    ? dayCampEditorOfferInputSchema
+    : tripEditorOfferInputSchema;
+
 export const editorOfferInputSchema = z.preprocess(
   normalizeEditorOfferInput,
   z
-    .object(
-      {
-        slug: textField("Adres oferty jest wymagany.")
-          .trim()
-          .regex(
-            /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-            "Adres oferty może zawierać małe litery, cyfry i łączniki.",
-          ),
-        activity: z.enum(["surf", "snow", "combo"], {
-          errorMap: () => ({ message: "Wybierz rodzaj wyjazdu." }),
-        }),
-        title: trimmedText("Tytuł", 3, 120),
-        subtitle: trimmedText("Podtytuł", 3, 280),
-        shortDescription: trimmedText("Krótki opis", 20, 500),
-        content: z.object(
-          {
-            paragraphs: nonEmptyList,
-            highlights: nonEmptyList,
-            included: nonEmptyList,
-            excluded: nonEmptyList,
-            schedule: scheduleSchema,
-          },
-          {
-            required_error: "Uzupełnij opis oferty.",
-            invalid_type_error: "Uzupełnij opis oferty.",
-          },
-        ),
-        location: trimmedText("Lokalizacja", 2, 120),
-        startDate: dateSchema,
-        endDate: dateSchema,
-        durationDays: z
-          .number({
-            required_error: "Czas trwania jest wymagany.",
-            invalid_type_error: "Czas trwania musi być liczbą.",
-          })
-          .int("Czas trwania musi być liczbą całkowitą.")
-          .min(1, "Czas trwania musi wynosić co najmniej 1 dzień.")
-          .max(60, "Czas trwania nie może być dłuższy niż 60 dni."),
-        groupSizeMin: groupSizeSchema("Minimalna liczba uczestników"),
-        groupSizeMax: groupSizeSchema("Maksymalna liczba uczestników"),
-        priceFrom: z
-          .number({
-            required_error: "Cena od jest wymagana.",
-            invalid_type_error: "Cena od musi być liczbą.",
-          })
-          .int("Cena od musi być liczbą całkowitą.")
-          .positive("Cena od musi być większa od zera."),
-        currency: z.literal("PLN", {
-          errorMap: () => ({ message: "Waluta musi być ustawiona na PLN." }),
-        }),
-        bookingUrl: textField("Wpisz poprawny adres rezerwacji.")
-          .trim()
-          .url("Wpisz poprawny adres rezerwacji.")
-          .refine(isHttpsUrl, { message: "Adres rezerwacji musi używać HTTPS." }),
-        heroImagePath: nullableText("Ścieżka obrazu głównego musi być tekstem."),
-      },
-      {
-        required_error: "Uzupełnij dane oferty.",
-        invalid_type_error: "Uzupełnij dane oferty.",
-      },
-    )
-    .superRefine((offer, ctx) => {
-      if (offer.startDate && offer.endDate && offer.endDate < offer.startDate) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["endDate"],
-          message: "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.",
-        });
+    .unknown()
+    .superRefine((value, ctx) => {
+      const result = schemaForOfferKind(value).safeParse(value);
+      if (!result.success) {
+        for (const issue of result.error.issues) ctx.addIssue(issue);
       }
-
-      if (
-        offer.groupSizeMin !== null &&
-        offer.groupSizeMax !== null &&
-        offer.groupSizeMin > offer.groupSizeMax
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["groupSizeMax"],
-          message: "Maksymalna liczba uczestników nie może być mniejsza niż minimalna.",
-        });
-      }
-    }),
+    })
+    .transform((value) => schemaForOfferKind(value).parse(value)),
 );
 
 export function getEditorFieldErrors(
@@ -275,5 +422,71 @@ export function createEmptyEditableOfferInput(): EditableOfferInput {
     currency: "PLN",
     bookingUrl: "",
     heroImagePath: null,
+  };
+}
+
+const createEmptyDayCampContent = (): DayCampContent => ({
+  paragraphs: [""],
+  highlights: [""],
+  included: [""],
+  excluded: [""],
+  dayProgram: [{ time: "", text: "" }],
+  activityPlan: [{ title: "", text: "" }],
+  venueDescription: "",
+  parentInfo: {
+    ageRange: "",
+    supervision: "",
+    safety: "",
+    transport: "",
+    meals: "",
+  },
+  terms: [
+    {
+      label: "Turnus 1",
+      startDate: "",
+      endDate: "",
+      priceOptions: [{ label: "Cena standardowa", price: 0, bookingUrl: "" }],
+    },
+  ],
+});
+
+export function changeEditableOfferKind(
+  input: EditableOfferInput,
+  offerKind: OfferKind,
+): EditableOfferInput {
+  if (offerKind === "day_camp") {
+    return {
+      ...input,
+      offerKind,
+      activity: "wake",
+      content: createEmptyDayCampContent(),
+      startDate: null,
+      endDate: null,
+      durationDays: 1,
+      groupSizeMin: null,
+      groupSizeMax: null,
+      priceFrom: 0,
+      bookingUrl: "",
+    };
+  }
+
+  return {
+    ...input,
+    offerKind,
+    activity: "surf",
+    content: {
+      paragraphs: [""],
+      highlights: [""],
+      included: [""],
+      excluded: [""],
+      schedule: [{ day: "", text: "" }],
+    },
+    startDate: null,
+    endDate: null,
+    durationDays: 1,
+    groupSizeMin: null,
+    groupSizeMax: null,
+    priceFrom: 0,
+    bookingUrl: "",
   };
 }

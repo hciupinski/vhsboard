@@ -6,6 +6,7 @@ describe("trip detail route", () => {
   it("loads a published offer under /wyjazdy/:slug", async () => {
     const offer = {
       slug: "atlantic-surf-week",
+      offerKind: "trip",
       title: "Atlantycki tydzień surfingu",
       location: "Ericeira, Portugalia",
       shortDescription: "Siedem dni w Ericeirze.",

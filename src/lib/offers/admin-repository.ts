@@ -9,7 +9,7 @@ import { OfferRepositoryError } from "./public-repository";
 import type { OfferStatus } from "./types";
 
 const ADMIN_COLUMNS =
-  "id,slug,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
+  "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
 const ADMIN_LIST_COLUMNS = `${ADMIN_COLUMNS},updated_at`;
 const OFFER_IMAGES_BUCKET = "offer-images";
 const SIGNED_URL_TTL_SECONDS = 3600;
@@ -69,6 +69,7 @@ const isHttpsUrl = (value: string): boolean => {
 
 const toEditableOfferInput = (row: Record<string, unknown>): EditableOfferInput =>
   editorOfferInputSchema.parse({
+    offerKind: row.offer_kind,
     slug: row.slug,
     activity: row.activity,
     title: row.title,
@@ -113,6 +114,7 @@ const toAdminOfferListItem = (value: unknown): AdminOfferListItem => {
 };
 
 const toOfferRow = (input: EditableOfferInput) => ({
+  offer_kind: input.offerKind ?? "trip",
   slug: input.slug,
   activity: input.activity,
   title: input.title,

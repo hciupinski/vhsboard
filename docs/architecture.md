@@ -7,8 +7,8 @@ small-group surf and snowboard offers. A small internal CMS lets a handful of
 administrators maintain offers, images, and selected site content.
 
 VHSBOARD is not a reservation system. The authoritative booking flow remains
-in **TripAhead**. Every published offer must include a booking URL and a CTA
-that leaves VHSBOARD for the appropriate TripAhead flow. Do not add payments,
+in an external booking system. Every published offer must include a booking URL and a CTA
+that leaves VHSBOARD for the appropriate registration flow. Do not add payments,
 availability, bookings, participant data, or public user accounts here.
 
 ## Current implementation
@@ -87,7 +87,7 @@ not a mandatory migration that overrides an already better implementation.
 | `location`                                 | Destination label.                                    |
 | `start_date`, `end_date`                   | Optional trip period.                                 |
 | `price_from`                               | Starting price, represented consistently for display. |
-| `booking_url`                              | External TripAhead destination.                       |
+| `booking_url`                              | External registration destination.                    |
 | `hero_image`                               | Reference to a Storage object or primary image.       |
 | `status`                                   | `draft`, `published`, or `archived`.                  |
 | `published_at`, `created_at`, `updated_at` | Lifecycle and audit timestamps.                       |
@@ -162,7 +162,7 @@ flag is never sufficient.
 3. Introduce a typed offer data-access module and replace static public reads
    from `src/lib/trips.ts` with published-offer queries.
 4. Map the existing public cards and detail pages onto the persisted model,
-   including the external TripAhead `booking_url` CTA.
+   including the external `booking_url` CTA.
 5. Replace `src/lib/adminStore.ts` mutations with authenticated Supabase CMS
    operations and add explicit admin sign-in, role checks, loading, and error
    states.

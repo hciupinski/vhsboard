@@ -38,6 +38,7 @@ vi.mock("@/components/admin/AdminGuard", async (importOriginal) => {
 
 const offer: AdminOfferListItem = {
   id: "a0f8e810-1df3-42d9-90df-2a1a69ad9a2c",
+  offerKind: "trip",
   slug: "atlantic-surf-week",
   activity: "surf",
   title: "Atlantycki tydzień surfingu",
@@ -58,7 +59,7 @@ const offer: AdminOfferListItem = {
   groupSizeMax: 18,
   priceFrom: 3100,
   currency: "PLN",
-  bookingUrl: "https://tripahead.example/atlantic-surf-week",
+  bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImagePath: "offers/atlantic-surf-week/hero.jpg",
   status: "draft",
   updatedAt: "2026-08-17T08:30:00.000Z",

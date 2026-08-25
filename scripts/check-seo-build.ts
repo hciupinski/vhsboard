@@ -10,6 +10,9 @@ import type { PublishedOfferSeoRecord } from "../src/lib/offers/types";
 const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
 const signedUrlPattern = /(?:[?&]token=|x-amz-|\/object\/sign\/)/i;
 
+const pathForOffer = ({ slug, offerKind }: PublishedOfferSeoRecord): string =>
+  `${offerKind === "day_camp" ? "/polkolonie" : "/wyjazdy"}/${slug}`;
+
 type CheckSeoBuildInput = {
   outputDirectory: string;
   siteUrl: string;
@@ -75,7 +78,7 @@ export const checkSeoBuild = async ({
     VITE_SEO_INDEXING: indexing ? "true" : "false",
   });
   const expectedRobots = indexing ? "index, follow" : "noindex, nofollow";
-  const paths = [...staticPaths, ...offerRecords.map(({ slug }) => `/wyjazdy/${slug}`)];
+  const paths = [...staticPaths, ...offerRecords.map(pathForOffer)];
   const outputFiles = await listOutputFiles(outputDirectory);
 
   if (
@@ -114,7 +117,10 @@ export const checkSeoBuild = async ({
     if (signedUrlPattern.test(html)) {
       throw new Error(`${path}: HTML zawiera podpisany URL Storage.`);
     }
-    if (path.startsWith("/wyjazdy/") && /Ładowanie ofert|aria-label=["']Ładowanie/i.test(html)) {
+    if (
+      (path.startsWith("/wyjazdy/") || path.startsWith("/polkolonie/")) &&
+      /Ładowanie ofert|aria-label=["']Ładowanie/i.test(html)
+    ) {
       throw new Error(`${path}: szczegół oferty zawiera skeleton zamiast treści.`);
     }
   }
@@ -147,7 +153,7 @@ if (import.meta.main) {
   const { url, anonKey } = getPublicSupabaseConfig();
   const { data, error } = await createClient(url, anonKey)
     .from("offers")
-    .select("slug,updated_at")
+    .select("slug,updated_at,offer_kind")
     .eq("status", "published");
 
   if (error || !Array.isArray(data)) {
@@ -162,7 +168,7 @@ if (import.meta.main) {
     indexing: config.indexing,
     offerRecords: data.map((row) => {
       const parsed = publishedOfferSeoRowSchema.parse(row);
-      return { slug: parsed.slug, updatedAt: parsed.updated_at };
+      return { slug: parsed.slug, updatedAt: parsed.updated_at, offerKind: parsed.offer_kind };
     }),
   });
 }
