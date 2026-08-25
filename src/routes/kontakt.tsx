@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { ContactDocuments } from "@/components/public/ContactDocuments";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { getPublicSiteConfig } from "@/lib/site-config";
 import { createPageMetadata } from "@/lib/seo";
@@ -64,6 +65,7 @@ function ContactPage() {
             </address>
           </section>
         </div>
+        <ContactDocuments />
       </main>
       <PublicFooter />
     </div>
