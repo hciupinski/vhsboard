@@ -9,6 +9,10 @@ declare
   bucket_is_public boolean;
   bucket_limit bigint;
   allowed_types text[];
+  contact_document_id uuid;
+  contact_document_path text := 'documents/30000000-0000-0000-0000-000000000001.pdf';
+  unlinked_document_path text := 'documents/30000000-0000-0000-0000-000000000002.pdf';
+  admin_document_path text := 'documents/30000000-0000-0000-0000-000000000003.pdf';
   draft_offer_id uuid;
   published_offer_id uuid;
   archived_offer_id uuid;
@@ -37,6 +41,17 @@ begin
      or bucket_limit <> 8388608
      or allowed_types <> array['image/jpeg', 'image/png', 'image/webp']::text[] then
     raise exception 'offer-images must accept only the Task 060 image contract';
+  end if;
+
+  select public, file_size_limit, allowed_mime_types
+    into bucket_is_public, bucket_limit, allowed_types
+  from storage.buckets
+  where id = 'contact-documents';
+
+  if bucket_is_public
+     or bucket_limit <> 10485760
+     or allowed_types <> array['application/pdf']::text[] then
+    raise exception 'contact-documents must accept only the PDF document contract';
   end if;
 
   insert into auth.users (id)
@@ -273,6 +288,15 @@ begin
     ('offer-images', draft_path),
     ('offer-images', day_camp_published_path);
 
+  insert into public.contact_documents (title, storage_path, position)
+  values ('Regulamin wyjazdów', contact_document_path, 0)
+  returning id into contact_document_id;
+
+  insert into storage.objects (bucket_id, name)
+  values
+    ('contact-documents', contact_document_path),
+    ('contact-documents', unlinked_document_path);
+
   execute 'set local role anon';
 
   if (select count(*) from public.offers) <> 2 then
@@ -294,6 +318,30 @@ begin
   if (select count(*) from storage.objects where bucket_id = 'offer-images') <> 2 then
     raise exception 'anon must read a private object only through published metadata';
   end if;
+
+  if (select count(*) from public.contact_documents) <> 1 then
+    raise exception 'anon must read every published contact document row';
+  end if;
+
+  if (select count(*) from storage.objects where bucket_id = 'contact-documents') <> 1 then
+    raise exception 'anon must read a contact document object only through its metadata';
+  end if;
+
+  begin
+    insert into public.contact_documents (title, storage_path, position)
+    values ('Anonimowy dokument', admin_document_path, 1);
+    raise exception 'anon must not create contact documents';
+  exception
+    when insufficient_privilege then null;
+  end;
+
+  begin
+    insert into storage.objects (bucket_id, name)
+    values ('contact-documents', admin_document_path);
+    raise exception 'anon must not create contact document objects';
+  exception
+    when insufficient_privilege then null;
+  end;
 
   begin
     insert into public.offers (
@@ -341,6 +389,26 @@ begin
   if (select count(*) from public.offers) <> 2 then
     raise exception 'ordinary authenticated users must see published offers only';
   end if;
+
+  if (select count(*) from public.contact_documents) <> 1 then
+    raise exception 'ordinary authenticated users must read contact documents';
+  end if;
+
+  begin
+    insert into public.contact_documents (title, storage_path, position)
+    values ('Dokument zwykłego użytkownika', admin_document_path, 1);
+    raise exception 'ordinary authenticated users must not create contact documents';
+  exception
+    when insufficient_privilege then null;
+  end;
+
+  begin
+    insert into storage.objects (bucket_id, name)
+    values ('contact-documents', admin_document_path);
+    raise exception 'ordinary authenticated users must not create contact document objects';
+  exception
+    when insufficient_privilege then null;
+  end;
 
   begin
     perform public.reorder_offer_images(published_offer_id, array[]::uuid[]);
@@ -460,6 +528,21 @@ begin
     'https://zapisy.example.test/zarzadzany'
   )
   returning id into managed_offer_id;
+
+  insert into public.contact_documents (title, storage_path, position)
+  values ('Informacja dla uczestników', admin_document_path, 1);
+
+  insert into storage.objects (bucket_id, name)
+  values ('contact-documents', admin_document_path);
+
+  update public.contact_documents
+  set title = 'Informacja dla uczestników wyjazdu'
+  where id = contact_document_id;
+  get diagnostics affected_rows = row_count;
+
+  if affected_rows <> 1 then
+    raise exception 'administrator must update contact documents';
+  end if;
 
   update public.offers
   set description = jsonb_build_object(
