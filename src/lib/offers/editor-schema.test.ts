@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  changeEditableOfferKind,
   createEmptyEditableOfferInput,
   editorOfferInputSchema,
   getEditorFieldErrors,
@@ -29,7 +30,7 @@ const completeInput: EditableOfferInput = {
   groupSizeMax: 18,
   priceFrom: 3100,
   currency: "PLN",
-  bookingUrl: "https://tripahead.example/atlantic-surf-week",
+  bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImagePath: "offers/atlantic-surf-week/hero.jpg",
 };
 
@@ -39,6 +40,66 @@ const mergeInput = (patch: Partial<EditableOfferInput>): EditableOfferInput => (
   content: { ...completeInput.content, ...patch.content },
 });
 
+const completeDayCamp = {
+  offerKind: "day_camp",
+  slug: "wake-lato-2026",
+  activity: "wake",
+  title: "Wakeboardowe półkolonie lato 2026",
+  subtitle: "Pięć aktywnych dni na wodzie.",
+  shortDescription: "Wakeboard, ruch i opieka instruktorów przez pięć wakacyjnych dni.",
+  content: {
+    paragraphs: ["Półkolonie dla dzieci, które chcą spróbować wakeboardu."],
+    highlights: ["Codzienna nauka wakeboardu"],
+    included: ["Opieka instruktorów"],
+    excluded: ["Dojazd we własnym zakresie"],
+    dayProgram: [{ time: "09:00", text: "Rozgrzewka i odprawa." }],
+    activityPlan: [{ title: "Wakeboard", text: "Nauka startu i pływania." }],
+    venueDescription: "Wakepark z zapleczem dla dzieci i strefą odpoczynku.",
+    parentInfo: {
+      ageRange: "7–12 lat",
+      supervision: "Stała opieka instruktorów.",
+      safety: "Zajęcia w kamizelkach i kaskach.",
+      transport: "Dojazd we własnym zakresie.",
+    },
+    terms: [
+      {
+        label: "Turnus 1",
+        startDate: "2026-07-06",
+        endDate: "2026-07-10",
+        priceOptions: [
+          {
+            label: "Wariant podstawowy",
+            price: 1200,
+            bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-1",
+          },
+        ],
+      },
+      {
+        label: "Turnus 2",
+        startDate: "2026-07-20",
+        endDate: "2026-07-24",
+        priceOptions: [
+          {
+            label: "Wariant rozszerzony",
+            price: 1400,
+            bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-2",
+          },
+        ],
+      },
+    ],
+  },
+  location: "Wrocław",
+  startDate: null,
+  endDate: null,
+  durationDays: 1,
+  groupSizeMin: null,
+  groupSizeMax: null,
+  priceFrom: 0,
+  currency: "PLN",
+  bookingUrl: "",
+  heroImagePath: "offers/wake-lato-2026/hero.webp",
+};
+
 const fieldErrorsFor = (input: unknown) => {
   const result = editorOfferInputSchema.safeParse(input);
   expect(result.success).toBe(false);
@@ -46,6 +107,74 @@ const fieldErrorsFor = (input: unknown) => {
 };
 
 describe("editor offer input schema", () => {
+  it("replaces fields that belong only to the previously selected offer kind", () => {
+    const dayCamp = changeEditableOfferKind(completeInput, "day_camp");
+
+    expect(dayCamp).toMatchObject({
+      offerKind: "day_camp",
+      activity: "wake",
+      groupSizeMin: null,
+      groupSizeMax: null,
+      priceFrom: 0,
+      bookingUrl: "",
+    });
+    expect(dayCamp.content).not.toHaveProperty("schedule");
+    expect(dayCamp.content).toHaveProperty("terms");
+
+    const trip = changeEditableOfferKind(dayCamp, "trip");
+    expect(trip).toMatchObject({ offerKind: "trip", activity: "surf" });
+    expect(trip.content).toHaveProperty("schedule");
+    expect(trip.content).not.toHaveProperty("terms");
+  });
+
+  it("accepts a complete day camp and derives its public summary from terms", () => {
+    expect(editorOfferInputSchema.parse(completeDayCamp)).toMatchObject({
+      offerKind: "day_camp",
+      activity: "wake",
+      startDate: "2026-07-06",
+      endDate: "2026-07-24",
+      durationDays: 5,
+      priceFrom: 1200,
+      bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-1",
+      groupSizeMin: null,
+      groupSizeMax: null,
+    });
+  });
+
+  it.each([
+    ["an activity reserved for trips", { activity: "surf" }],
+    [
+      "a third term",
+      {
+        content: {
+          ...completeDayCamp.content,
+          terms: [...completeDayCamp.content.terms, completeDayCamp.content.terms[0]],
+        },
+      },
+    ],
+    [
+      "an insecure price-option URL",
+      {
+        content: {
+          ...completeDayCamp.content,
+          terms: [
+            {
+              ...completeDayCamp.content.terms[0],
+              priceOptions: [
+                {
+                  ...completeDayCamp.content.terms[0].priceOptions[0],
+                  bookingUrl: "http://zapisy.example.test/wake",
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  ])("rejects a day camp with %s", (_reason, patch) => {
+    expect(editorOfferInputSchema.safeParse({ ...completeDayCamp, ...patch }).success).toBe(false);
+  });
+
   it("accepts a complete editor offer and removes blank list entries", () => {
     const result = editorOfferInputSchema.parse({
       ...completeInput,
@@ -78,7 +207,7 @@ describe("editor offer input schema", () => {
   });
 
   it.each([
-    ["http booking URL", { bookingUrl: "http://tripahead.example/oferta" }, "bookingUrl"],
+    ["http booking URL", { bookingUrl: "http://zapisy.example/oferta" }, "bookingUrl"],
     ["non-kebab slug", { slug: "Zła Oferta" }, "slug"],
     ["reversed dates", { startDate: "2026-09-12", endDate: "2026-09-10" }, "endDate"],
     [

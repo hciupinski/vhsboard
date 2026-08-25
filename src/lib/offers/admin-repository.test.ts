@@ -46,7 +46,7 @@ const completeInput: EditableOfferInput = {
   groupSizeMax: 18,
   priceFrom: 3100,
   currency: "PLN",
-  bookingUrl: "https://tripahead.example/atlantic-surf-week",
+  bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImagePath: heroPath,
 };
 
@@ -202,7 +202,7 @@ describe("administrator offer repository", () => {
 
   it("rejects invalid input before contacting Supabase", async () => {
     await expect(
-      createOffer({ ...completeInput, bookingUrl: "http://tripahead.example/oferta" }),
+      createOffer({ ...completeInput, bookingUrl: "http://zapisy.example/oferta" }),
     ).rejects.toMatchObject({
       name: "OfferRepositoryError",
       message: "Nie udało się zapisać oferty.",

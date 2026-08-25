@@ -8,6 +8,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 
 import { getPublicSupabaseConfigFrom, getSeoConfigFrom } from "./src/lib/env";
 import { publishedOfferSeoRowSchema } from "./src/lib/offers/schema";
+import { isBuildOnly } from "./scripts/build-mode";
 
 const staticPublicPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
 
@@ -17,7 +18,7 @@ const getPublishedOfferPaths = async (environment: Record<string, string>): Prom
   const client = createClient(config.url, config.anonKey);
   const { data, error } = await client
     .from("offers")
-    .select("slug,updated_at")
+    .select("slug,updated_at,offer_kind")
     .eq("status", "published");
 
   if (error || !Array.isArray(data)) {
@@ -26,13 +27,20 @@ const getPublishedOfferPaths = async (environment: Record<string, string>): Prom
     });
   }
 
-  return data.map((row) => `/wyjazdy/${publishedOfferSeoRowSchema.parse(row).slug}`);
+  return data.map((row) => {
+    const offer = publishedOfferSeoRowSchema.parse(row);
+    return `${offer.offer_kind === "day_camp" ? "/polkolonie" : "/wyjazdy"}/${offer.slug}`;
+  });
 };
 
 export default defineConfig(async ({ mode }) => {
   const environment = loadEnv(mode, process.cwd(), "");
-  const publishedOfferPaths = mode === "test" ? [] : await getPublishedOfferPaths(environment);
+  const buildOnly = isBuildOnly(environment);
+  const publishedOfferPaths = buildOnly ? [] : await getPublishedOfferPaths(environment);
   const allowedPaths = new Set([...staticPublicPaths, ...publishedOfferPaths]);
+  const prerenderPages = buildOnly
+    ? []
+    : [...staticPublicPaths, ...publishedOfferPaths].map((path) => ({ path }));
 
   return {
     plugins: [
@@ -43,7 +51,7 @@ export default defineConfig(async ({ mode }) => {
           routeFileIgnorePattern: "\\.test\\.(ts|tsx)$",
         },
         prerender: {
-          enabled: true,
+          enabled: !buildOnly,
           autoSubfolderIndex: true,
           autoStaticPathsDiscovery: true,
           crawlLinks: true,
@@ -53,7 +61,7 @@ export default defineConfig(async ({ mode }) => {
           failOnError: true,
           filter: ({ path }) => allowedPaths.has(path),
         },
-        pages: [...staticPublicPaths, ...publishedOfferPaths].map((path) => ({ path })),
+        pages: prerenderPages,
       }),
       nitro(),
       viteReact(),

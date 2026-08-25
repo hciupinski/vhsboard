@@ -13,11 +13,12 @@ import { OfferCard } from "./OfferCard";
 import { OfferFacts } from "./OfferFacts";
 import { OfferGallery } from "./OfferGallery";
 import { OfferListState } from "./OfferListState";
-import type { OfferImage, PublicOffer } from "@/lib/offers/types";
+import type { OfferImage, TripOffer } from "@/lib/offers/types";
 
-const offer: PublicOffer = {
+const offer: TripOffer = {
   id: "a0f8e810-1df3-42d9-90df-2a1a69ad9a2c",
   slug: "atlantic-surf-week",
+  offerKind: "trip",
   activity: "surf",
   title: "Atlantycki tydzień surfingu",
   subtitle: "Siedem dni w Ericeirze.",
@@ -31,7 +32,7 @@ const offer: PublicOffer = {
   groupSizeMax: 18,
   priceFrom: 3100,
   currency: "PLN",
-  bookingUrl: "https://tripahead.example/atlantic-surf-week",
+  bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImageUrl: "https://signed.example/hero.jpg",
   images: [],
 };
@@ -44,7 +45,7 @@ const image: OfferImage = {
   signedUrl: "https://signed.example/gallery.jpg",
 };
 
-const renderOfferCard = async (cardOffer: PublicOffer) => {
+const renderOfferCard = async (cardOffer: TripOffer) => {
   const rootRoute = createRootRoute();
   const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -104,23 +105,23 @@ describe("public offer components", () => {
     expect(container.querySelector("strong")).toBeNull();
   });
 
-  it("uses the required external-link protection for the TripAhead CTA", () => {
+  it("uses the required external-link protection for the booking CTA", () => {
     render(<OfferFacts offer={offer} />);
 
-    expect(screen.getByRole("link", { name: "Przejdź do rezerwacji w TripAhead" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Przejdź do zapisów" })).toHaveAttribute(
       "target",
       "_blank",
     );
-    expect(screen.getByRole("link", { name: "Przejdź do rezerwacji w TripAhead" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Przejdź do zapisów" })).toHaveAttribute(
       "rel",
       "noopener noreferrer",
     );
   });
 
-  it("hides the TripAhead CTA for an unsafe protocol", () => {
-    render(<OfferFacts offer={{ ...offer, bookingUrl: "http://tripahead.example/offer" }} />);
+  it("hides the booking CTA for an unsafe protocol", () => {
+    render(<OfferFacts offer={{ ...offer, bookingUrl: "http://zapisy.example/offer" }} />);
 
-    expect(screen.queryByRole("link", { name: "Przejdź do rezerwacji w TripAhead" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Przejdź do zapisów" })).toBeNull();
   });
 
   it("announces a list error and retries from the keyboard", async () => {

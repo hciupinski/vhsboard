@@ -101,7 +101,7 @@ than a sales catalogue.
 - Avoid corporate superlatives, empty luxury language, urgency tricks, and
   generic phrases such as “an unforgettable adventure”.
 - Do not promise booking, live availability, or payment handling on VHSBOARD.
-  The booking action directs visitors to TripAhead.
+  The booking action directs visitors to the configured external registration system.
 
 ## Responsive and accessibility requirements
 
@@ -125,7 +125,7 @@ Before approving a UI change, check:
 2. Does it feel image-led and editorial on public pages, while remaining calm
    and practical in admin views?
 3. Does it work on a narrow viewport and with keyboard navigation?
-4. Is the Polish copy specific, human, and consistent with a TripAhead
+4. Is the Polish copy specific, human, and consistent with an external registration
    handoff?
 5. Has it reused an existing Radix primitive or focused component where one
    already exists?

@@ -9,6 +9,9 @@ import type { PublishedOfferSeoRecord } from "../src/lib/offers/types";
 
 const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
 
+const pathForOffer = ({ slug, offerKind }: PublishedOfferSeoRecord): string =>
+  `${offerKind === "day_camp" ? "/polkolonie" : "/wyjazdy"}/${slug}`;
+
 export const escapeXml = (value: string): string =>
   value.replace(/[<>&"']/g, (character) => {
     const escaped: Record<string, string> = {
@@ -51,15 +54,15 @@ export const generateSitemap = async ({
   offerRecords,
 }: GenerateSitemapInput): Promise<void> => {
   const origin = validateHttpsOrigin(siteUrl);
-  const paths = [...staticPaths, ...offerRecords.map(({ slug }) => `/wyjazdy/${slug}`)];
+  const paths = [...staticPaths, ...offerRecords.map(pathForOffer)];
 
   await Promise.all(paths.map((path) => ensureOutputExists(outputDirectory, path)));
 
   const urls = [
     ...staticPaths.map((path) => ({ loc: toCanonicalUrl(origin, path), lastmod: undefined })),
-    ...offerRecords.map(({ slug, updatedAt }) => ({
-      loc: toCanonicalUrl(origin, `/wyjazdy/${slug}`),
-      lastmod: updatedAt,
+    ...offerRecords.map((offer) => ({
+      loc: toCanonicalUrl(origin, pathForOffer(offer)),
+      lastmod: offer.updatedAt,
     })),
   ];
   const sitemap = [
@@ -91,7 +94,7 @@ const main = async () => {
   const { siteUrl } = getSeoConfigFrom(import.meta.env);
   const { data, error } = await createClient(url, anonKey)
     .from("offers")
-    .select("slug,updated_at")
+    .select("slug,updated_at,offer_kind")
     .eq("status", "published");
 
   if (error || !Array.isArray(data)) {
@@ -100,7 +103,7 @@ const main = async () => {
 
   const offerRecords = data.map((row) => {
     const parsed = publishedOfferSeoRowSchema.parse(row);
-    return { slug: parsed.slug, updatedAt: parsed.updated_at };
+    return { slug: parsed.slug, updatedAt: parsed.updated_at, offerKind: parsed.offer_kind };
   });
 
   await generateSitemap({ outputDirectory: ".output/public", siteUrl, offerRecords });

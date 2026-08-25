@@ -9,10 +9,10 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
 import { publishedOfferQueryOptions } from "@/lib/offers/query-options";
-import type { PublicOffer } from "@/lib/offers/types";
+import type { TripOffer } from "@/lib/offers/types";
 import { createPageMetadata } from "@/lib/seo";
 
-const activityLabels: Record<PublicOffer["activity"], string> = {
+const activityLabels: Record<TripOffer["activity"], string> = {
   surf: "Surf",
   snow: "Snowboard",
   combo: "Surf + snowboard",
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/wyjazdy/$slug")({
     const offer = await context.queryClient.ensureQueryData(
       publishedOfferQueryOptions(params.slug),
     );
-    if (offer === null) {
+    if (offer === null || offer.offerKind !== "trip") {
       throw notFound();
     }
 
@@ -55,7 +55,7 @@ function TripDetail() {
   const { slug } = Route.useLoaderData();
   const { data: offer } = useSuspenseQuery(publishedOfferQueryOptions(slug));
 
-  if (offer === null) {
+  if (offer === null || offer.offerKind !== "trip") {
     throw notFound();
   }
 

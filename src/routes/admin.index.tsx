@@ -7,7 +7,7 @@ import { AdminGuard, AdminSignOutButton } from "@/components/admin/AdminGuard";
 import { DeleteOfferDialog } from "@/components/admin/DeleteOfferDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { OfferActivity, OfferStatus } from "@/lib/offers/types";
+import type { OfferActivity, OfferKind, OfferStatus } from "@/lib/offers/types";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
@@ -39,6 +39,12 @@ const activityLabels: Record<OfferActivity, string> = {
   surf: "Surf",
   snow: "Snowboard",
   combo: "Surf + snowboard",
+  wake: "Wakeboard",
+};
+
+const offerKindLabels: Record<OfferKind, string> = {
+  trip: "Wyjazd",
+  day_camp: "Półkolonie",
 };
 
 const statusLabels: Record<OfferStatus, string> = {
@@ -202,6 +208,7 @@ function AdminListContent() {
                   <Badge variant={o.status === "published" ? "default" : "secondary"}>
                     {statusLabels[o.status]}
                   </Badge>
+                  <Badge variant="outline">{offerKindLabels[o.offerKind]}</Badge>
                   <Badge variant="outline">{activityLabels[o.activity]}</Badge>
                 </div>
                 <p className="mt-1 truncate text-sm text-muted-foreground">{o.location}</p>
@@ -210,13 +217,22 @@ function AdminListContent() {
                   <time dateTime={o.updatedAt}>
                     {updatedAtFormatter.format(new Date(o.updatedAt))}
                   </time>
-                  {" · "}/wyjazdy/{o.slug}
+                  {" · "}
+                  {o.offerKind === "day_camp" ? "/polkolonie/" : "/wyjazdy/"}
+                  {o.slug}
                 </p>
               </div>
               <div className="flex shrink-0 gap-2">
-                {o.status === "published" ? (
+                {o.status === "published" && o.offerKind === "trip" ? (
                   <Button asChild size="sm" variant="outline" className="rounded-full">
                     <Link to="/wyjazdy/$slug" params={{ slug: o.slug }}>
+                      <ExternalLink className="mr-1 size-4" /> Podgląd
+                    </Link>
+                  </Button>
+                ) : null}
+                {o.status === "published" && o.offerKind === "day_camp" ? (
+                  <Button asChild size="sm" variant="outline" className="rounded-full">
+                    <Link to="/polkolonie/$slug" params={{ slug: o.slug }}>
                       <ExternalLink className="mr-1 size-4" /> Podgląd
                     </Link>
                   </Button>

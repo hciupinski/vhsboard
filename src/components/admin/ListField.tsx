@@ -7,11 +7,11 @@ import { Label } from "@/components/ui/label";
 
 type Props = {
   label: string;
-  hint?: string;
+  hint?: string | undefined;
   values: string[];
   multiline?: boolean;
   placeholder?: string;
-  error?: string;
+  error?: string | undefined;
   onChange: (values: string[]) => void;
 };
 

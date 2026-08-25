@@ -27,8 +27,43 @@ const completeInput: EditableOfferInput = {
   groupSizeMax: 18,
   priceFrom: 3100,
   currency: "PLN",
-  bookingUrl: "https://tripahead.example/atlantic-surf-week",
+  bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImagePath: "offers/atlantic-surf-week/hero.jpg",
+};
+
+const dayCampInput: EditableOfferInput = {
+  ...completeInput,
+  offerKind: "day_camp",
+  activity: "wake",
+  content: {
+    paragraphs: ["Pięć dni na wodzie."],
+    highlights: ["Małe grupy"],
+    included: ["Opieka instruktora"],
+    excluded: ["Dojazd"],
+    venueDescription: "Wakepark z wydzieloną strefą dla początkujących.",
+    dayProgram: [{ time: "09:00", text: "Rozgrzewka." }],
+    activityPlan: [{ title: "Wakeboard", text: "Nauka startów i skrętów." }],
+    parentInfo: {
+      ageRange: "8–14 lat",
+      supervision: "Opieka przez cały dzień.",
+      safety: "Kamizelki i kaski są obowiązkowe.",
+      transport: "Dojazd własny.",
+    },
+    terms: [
+      {
+        label: "Turnus lipcowy",
+        startDate: "2026-07-06",
+        endDate: "2026-07-10",
+        priceOptions: [
+          {
+            label: "Cena standardowa",
+            price: 1290,
+            bookingUrl: "https://zapisy.example/wake-lipiec",
+          },
+        ],
+      },
+    ],
+  },
 };
 
 afterEach(cleanup);
@@ -156,7 +191,7 @@ describe("OfferEditorForm", () => {
     render(<OfferEditorForm value={completeInput} errors={{}} disabled onChange={vi.fn()} />);
 
     expect(screen.getByLabelText("Tytuł wyjazdu")).toBeDisabled();
-    expect(screen.getByLabelText("Adres rezerwacji")).toBeDisabled();
+    expect(screen.getByLabelText("Adres zapisów")).toBeDisabled();
     expect(screen.getByLabelText("Rodzaj wyjazdu")).toBeDisabled();
 
     await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
@@ -194,5 +229,22 @@ describe("OfferEditorForm", () => {
 
     expect(screen.getByText("Panel zarządzania zdjęciami")).toBeInTheDocument();
     expect(screen.queryByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).not.toBeInTheDocument();
+  });
+
+  it("edits terms, price variants and the day-camp programme", async () => {
+    const user = userEvent.setup();
+    render(
+      <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={vi.fn()} />,
+    );
+
+    expect(screen.getByText("Turnusy i warianty cen")).toBeInTheDocument();
+    expect(screen.getByLabelText("Turnus 1, wariant 1 — cena")).toHaveValue(1290);
+    expect(screen.getByLabelText("Turnus 1, wariant 1 — adres zapisów")).toHaveValue(
+      "https://zapisy.example/wake-lipiec",
+    );
+
+    await user.click(screen.getByRole("tab", { name: "Program i opieka" }));
+    expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("09:00");
+    expect(screen.getByLabelText("Transport")).toHaveValue("Dojazd własny.");
   });
 });

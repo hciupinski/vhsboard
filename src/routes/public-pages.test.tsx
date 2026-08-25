@@ -5,6 +5,7 @@ import {
   createRouter,
   RouterProvider,
 } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -54,7 +55,13 @@ const renderRoute = async (path: string, route: { options: { component?: unknown
   });
 
   await router.load();
-  return render(<RouterProvider router={router} />);
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  queryClient.setQueryData(["published-offers", "day_camp"], []);
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+  );
 };
 
 afterEach(() => {
@@ -155,7 +162,7 @@ describe("static public pages", () => {
     expect(screen.getByText(/wakepark, skimboard i skateboarding/i)).toBeInTheDocument();
     expect(screen.getByText(/śnieg i snowboard/i)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /aktualne półkolonie/i })).toBeInTheDocument();
-    expect(screen.getByText(/mogą pojawić się wkrótce/i)).toBeInTheDocument();
+    expect(screen.getByText(/nie mamy teraz otwartych półkolonii/i)).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /rezerwuj|zapisz/i })).not.toBeInTheDocument();
   });
 

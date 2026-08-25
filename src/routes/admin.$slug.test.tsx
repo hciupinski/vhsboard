@@ -70,6 +70,7 @@ vi.mock("@/components/admin/AdminGuard", async (importOriginal) => {
 });
 
 const completeInput: EditableOfferInput = {
+  offerKind: "trip",
   slug: "atlantic-surf-week",
   activity: "surf",
   title: "Atlantycki tydzień surfingu",
@@ -90,7 +91,7 @@ const completeInput: EditableOfferInput = {
   groupSizeMax: null,
   priceFrom: 3100,
   currency: "PLN",
-  bookingUrl: "https://tripahead.example/atlantic-surf-week",
+  bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImagePath: null,
 };
 
@@ -141,7 +142,7 @@ const fillEditor = async (value: EditableOfferInput) => {
   setValue("Liczba dni", String(value.durationDays));
   setValue("Cena od", String(value.priceFrom));
   setValue("Krótki opis", value.shortDescription);
-  setValue("Adres rezerwacji", value.bookingUrl);
+  setValue("Adres zapisów", value.bookingUrl);
 
   await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
   setValue("Zdanie wprowadzające", value.subtitle);

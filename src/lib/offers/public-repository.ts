@@ -1,16 +1,16 @@
 import { supabase } from "../supabase";
 import { mapOfferDetailRow, mapOfferListRow } from "./mapper";
 import { publishedOfferSeoRowSchema } from "./schema";
-import type { PublicOffer, PublishedOfferSeoRecord } from "./types";
+import type { OfferKind, PublicOffer, PublishedOfferSeoRecord } from "./types";
 
 const PUBLISHED_STATUS = "published";
 const OFFER_IMAGES_BUCKET = "offer-images";
 const SIGNED_URL_TTL_SECONDS = 3600;
 const LIST_COLUMNS =
-  "id,slug,activity,title,subtitle,short_description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
+  "id,slug,offer_kind,activity,title,subtitle,short_description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
 const DETAIL_COLUMNS = `${LIST_COLUMNS},description`;
 const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,position";
-const SEO_COLUMNS = "slug,updated_at";
+const SEO_COLUMNS = "slug,updated_at,offer_kind";
 
 export class OfferRepositoryError extends Error {
   constructor(message: string, options?: ErrorOptions) {
@@ -96,12 +96,13 @@ export const resolvePublishedImageUrls = async (paths: string[]): Promise<Map<st
   }
 };
 
-export const listPublishedOffers = async (): Promise<PublicOffer[]> => {
+export const listPublishedOffers = async (kind: OfferKind = "trip"): Promise<PublicOffer[]> => {
   try {
     const { data, error } = await supabase
       .from("offers")
       .select(LIST_COLUMNS)
-      .eq("status", PUBLISHED_STATUS);
+      .eq("status", PUBLISHED_STATUS)
+      .eq("offer_kind", kind);
 
     if (error) {
       throw new OfferRepositoryError("Nie udało się pobrać opublikowanych ofert.", {
@@ -131,20 +132,24 @@ export const listPublishedOfferSeoRecords = async (): Promise<PublishedOfferSeoR
 
     return ensureRows(data, "Nie udało się odczytać danych SEO ofert.").map((row) => {
       const parsed = publishedOfferSeoRowSchema.parse(row);
-      return { slug: parsed.slug, updatedAt: parsed.updated_at };
+      return { slug: parsed.slug, updatedAt: parsed.updated_at, offerKind: parsed.offer_kind };
     });
   } catch (error) {
     return rethrowAsRepositoryError(error, "Nie udało się pobrać danych SEO ofert.");
   }
 };
 
-export const getPublishedOfferBySlug = async (slug: string): Promise<PublicOffer | null> => {
+export const getPublishedOfferBySlug = async (
+  slug: string,
+  kind: OfferKind = "trip",
+): Promise<PublicOffer | null> => {
   try {
     const { data: offerData, error: offerError } = await supabase
       .from("offers")
       .select(DETAIL_COLUMNS)
       .eq("slug", slug)
       .eq("status", PUBLISHED_STATUS)
+      .eq("offer_kind", kind)
       .maybeSingle();
 
     if (offerError) {

@@ -1,16 +1,15 @@
 import { Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
-import { formatGroupSize, formatPriceFrom } from "@/lib/offers/formatters";
-import type { TripOffer } from "@/lib/offers/types";
+import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
+import type { DayCampOffer } from "@/lib/offers/types";
 
-const activityLabels: Record<TripOffer["activity"], string> = {
-  surf: "Surf",
+const activityLabels: Record<DayCampOffer["activity"], string> = {
+  wake: "Wakeboard",
   snow: "Snowboard",
-  combo: "Surf + snowboard",
 };
 
-export function OfferCard({ offer }: { offer: TripOffer }) {
+export function DayCampCard({ offer }: { offer: DayCampOffer }) {
   return (
     <article className="group flex min-w-0 flex-col overflow-hidden rounded-3xl border border-border bg-card transition-transform duration-300 hover:-translate-y-1 hover:shadow-warm">
       <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
@@ -36,15 +35,15 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
         <p className="mt-3 flex-1 text-sm text-muted-foreground">{offer.shortDescription}</p>
         <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border pt-4">
           <span className="text-xs uppercase tracking-widest text-muted-foreground">
-            {offer.durationDays} dni · {formatGroupSize(offer.groupSizeMin, offer.groupSizeMax)}
+            {formatTripDates(offer.startDate, offer.endDate)}
           </span>
           <span className="font-display text-xl text-primary">
             {formatPriceFrom(offer.priceFrom, offer.currency)}
           </span>
         </div>
         <Button asChild className="mt-4 w-full rounded-full" variant="secondary">
-          <Link to="/wyjazdy/$slug" params={{ slug: offer.slug }}>
-            Zobacz szczegóły wyjazdu
+          <Link to="/polkolonie/$slug" params={{ slug: offer.slug }}>
+            Zobacz szczegóły półkolonii
           </Link>
         </Button>
       </div>

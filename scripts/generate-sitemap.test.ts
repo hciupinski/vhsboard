@@ -18,6 +18,7 @@ const createOutputDirectory = async () => {
     "/polkolonie",
     "/kontakt",
     "/wyjazdy/atlantic-surf-week",
+    "/polkolonie/wakeboardowe-lato",
   ];
   for (const path of paths) {
     const filename =
@@ -41,12 +42,20 @@ describe("generateSitemap", () => {
     await generateSitemap({
       outputDirectory,
       siteUrl: "https://vhsboard.pages.dev",
-      offerRecords: [{ slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z" }],
+      offerRecords: [
+        { slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z", offerKind: "trip" },
+        {
+          slug: "wakeboardowe-lato",
+          updatedAt: "2026-01-03T10:30:00.000Z",
+          offerKind: "day_camp",
+        },
+      ],
     });
 
     const sitemap = await readFile(join(outputDirectory, "sitemap.xml"), "utf8");
     const robots = await readFile(join(outputDirectory, "robots.txt"), "utf8");
     expect(sitemap).toContain("https://vhsboard.pages.dev/wyjazdy/atlantic-surf-week");
+    expect(sitemap).toContain("https://vhsboard.pages.dev/polkolonie/wakeboardowe-lato");
     expect(sitemap).toContain("2026-01-02T10:30:00.000Z");
     expect(sitemap).not.toContain("/admin");
     expect(robots).toContain("Disallow: /admin");
@@ -60,7 +69,9 @@ describe("generateSitemap", () => {
       generateSitemap({
         outputDirectory,
         siteUrl: "https://vhsboard.pages.dev",
-        offerRecords: [{ slug: "missing-trip", updatedAt: "2026-01-02T10:30:00.000Z" }],
+        offerRecords: [
+          { slug: "missing-trip", updatedAt: "2026-01-02T10:30:00.000Z", offerKind: "trip" },
+        ],
       }),
     ).rejects.toThrow(/brakuje/i);
     await expect(

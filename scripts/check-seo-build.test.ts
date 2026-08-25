@@ -8,7 +8,10 @@ import { checkSeoBuild } from "./check-seo-build";
 const directories: string[] = [];
 const siteUrl = "https://vhsboard.pages.dev";
 const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
-const offerRecords = [{ slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z" }];
+const offerRecords = [
+  { slug: "atlantic-surf-week", updatedAt: "2026-01-02T10:30:00.000Z", offerKind: "trip" },
+  { slug: "wakeboardowe-lato", updatedAt: "2026-01-03T10:30:00.000Z", offerKind: "day_camp" },
+];
 
 const outputFile = (outputDirectory: string, path: string) =>
   path === "/" ? join(outputDirectory, "index.html") : join(outputDirectory, path, "index.html");
@@ -24,13 +27,18 @@ const html = (path: string, body = "Pełna treść strony.") => `<!doctype html>
 const createOutput = async () => {
   const outputDirectory = await mkdtemp(join(tmpdir(), "vhsboard-seo-check-"));
   directories.push(outputDirectory);
-  const paths = [...staticPaths, "/wyjazdy/atlantic-surf-week"];
+  const paths = [...staticPaths, "/wyjazdy/atlantic-surf-week", "/polkolonie/wakeboardowe-lato"];
   for (const path of paths) {
     const file = outputFile(outputDirectory, path);
     await mkdir(join(file, ".."), { recursive: true });
     await writeFile(
       file,
-      html(path, path.includes("atlantic") ? "Tekst o wyjeździe. Pełna treść oferty." : undefined),
+      html(
+        path,
+        path.includes("atlantic") || path.includes("wakeboardowe")
+          ? "Pełna treść oferty."
+          : undefined,
+      ),
     );
   }
   await writeFile(

@@ -23,10 +23,58 @@ export const offerContentSchema = z.object({
   ),
 });
 
+export const dayCampContentSchema = z.object({
+  paragraphs: z.array(requiredTextSchema).min(1),
+  highlights: z.array(requiredTextSchema).min(1),
+  included: z.array(requiredTextSchema).min(1),
+  excluded: z.array(requiredTextSchema).min(1),
+  dayProgram: z
+    .array(z.object({ time: z.string().regex(/^\d{2}:\d{2}$/), text: requiredTextSchema }))
+    .min(1),
+  activityPlan: z.array(z.object({ title: requiredTextSchema, text: requiredTextSchema })).min(1),
+  venueDescription: requiredTextSchema,
+  parentInfo: z.object({
+    ageRange: requiredTextSchema,
+    supervision: requiredTextSchema,
+    safety: requiredTextSchema,
+    transport: requiredTextSchema.optional(),
+    meals: requiredTextSchema.optional(),
+  }),
+  terms: z
+    .array(
+      z
+        .object({
+          label: requiredTextSchema,
+          startDate: dateSchema,
+          endDate: dateSchema,
+          priceOptions: z
+            .array(
+              z.object({
+                label: requiredTextSchema,
+                price: z.number().int().positive(),
+                bookingUrl: bookingUrlSchema,
+              }),
+            )
+            .min(1),
+        })
+        .superRefine((term, ctx) => {
+          if (term.endDate < term.startDate)
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["endDate"],
+              message: "Termin jest odwrócony.",
+            });
+        }),
+    )
+    .min(1)
+    .max(2),
+});
+
 const offerBaseRowSchema = z.object({
   id: z.string().uuid(),
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-  activity: z.enum(["surf", "snow", "combo"]),
+  offer_kind: z.enum(["trip", "day_camp"]).default("trip"),
+  activity: z.enum(["surf", "snow", "combo", "wake"]),
   title: requiredTextSchema.max(120),
   subtitle: requiredTextSchema.max(280),
   short_description: requiredTextSchema.max(500),
@@ -44,9 +92,38 @@ const offerBaseRowSchema = z.object({
 });
 
 export const offerListRowSchema = offerBaseRowSchema;
-export const offerDetailRowSchema = offerBaseRowSchema.extend({
-  description: offerContentSchema,
-});
+export const offerDetailRowSchema = offerBaseRowSchema
+  .extend({ description: z.union([offerContentSchema, dayCampContentSchema]) })
+  .superRefine((offer, ctx) => {
+    const isTrip =
+      offer.offer_kind === "trip" && ["surf", "snow", "combo"].includes(offer.activity);
+    const isDayCamp = offer.offer_kind === "day_camp" && ["wake", "snow"].includes(offer.activity);
+    const contentMatches =
+      offer.offer_kind === "trip"
+        ? offerContentSchema.safeParse(offer.description).success
+        : dayCampContentSchema.safeParse(offer.description).success;
+    if (!isTrip && !isDayCamp)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["activity"],
+        message: "Aktywność nie pasuje do rodzaju oferty.",
+      });
+    if (!contentMatches)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["description"],
+        message: "Treść nie pasuje do rodzaju oferty.",
+      });
+    if (
+      offer.offer_kind === "day_camp" &&
+      (offer.group_size_min !== null || offer.group_size_max !== null)
+    )
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["group_size_max"],
+        message: "Półkolonia nie może mieć limitu grupy.",
+      });
+  });
 
 export const offerImageRowSchema = z.object({
   id: z.string().uuid(),
@@ -59,6 +136,7 @@ export const offerImageRowSchema = z.object({
 export const publishedOfferSeoRowSchema = z.object({
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   updated_at: z.string().datetime({ offset: true }),
+  offer_kind: z.enum(["trip", "day_camp"]).default("trip"),
 });
 
 export type OfferListRow = z.infer<typeof offerListRowSchema>;

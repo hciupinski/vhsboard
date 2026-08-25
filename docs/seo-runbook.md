@@ -43,7 +43,7 @@ canonical i `noindex, nofollow` muszą być dostępne bez JavaScriptu. Otwórz t
 `/sitemap.xml` i `/robots.txt`; sitemap nie może zawierać `/admin`.
 
 Przed publikacją oferty potwierdź ręcznie rzeczywistą cenę PLN oraz działający
-link HTTPS TripAhead. Dane firmy w JSON-LD pochodzą wyłącznie z publicznej
+link HTTPS do zewnętrznego systemu zapisów. Dane firmy w JSON-LD pochodzą wyłącznie z publicznej
 konfiguracji deployu, więc muszą odpowiadać zatwierdzonym danym firmy.
 
 ## Przełączenie domeny w Tasku 100
