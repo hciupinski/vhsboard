@@ -128,6 +128,9 @@ function AdminListContent() {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <Button asChild size="sm" variant="outline" className="rounded-full">
+              <Link to="/admin/dokumenty">Dokumenty</Link>
+            </Button>
             <AdminSignOutButton />
             <Button asChild size="sm" className="rounded-full">
               <Link to="/admin/$slug" params={{ slug: "new" }}>
