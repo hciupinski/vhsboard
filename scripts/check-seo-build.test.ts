@@ -37,8 +37,7 @@ const createOutput = async () => {
     join(outputDirectory, "robots.txt"),
     `User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${siteUrl}/sitemap.xml\n`,
   );
-  await writeFile(join(outputDirectory, "_shell.html"), '<!doctype html><html lang="pl"></html>');
-  await writeFile(join(outputDirectory, "_redirects"), "/* /_shell.html 200\n");
+  await writeFile(join(outputDirectory, "_redirects"), "/trips/:slug /wyjazdy/:slug 301\n");
   return outputDirectory;
 };
 
@@ -47,7 +46,7 @@ afterEach(async () => {
 });
 
 describe("checkSeoBuild", () => {
-  it("accepts complete noindex Pages output", async () => {
+  it("accepts Pages output that relies on the native SPA fallback", async () => {
     const outputDirectory = await createOutput();
 
     await expect(

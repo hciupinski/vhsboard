@@ -120,12 +120,10 @@ export const checkSeoBuild = async ({
 
   const sitemapPath = join(outputDirectory, "sitemap.xml");
   const robotsPath = join(outputDirectory, "robots.txt");
-  const shellPath = join(outputDirectory, "_shell.html");
   const redirectsPath = join(outputDirectory, "_redirects");
   await Promise.all([
     ensureFile(sitemapPath, "sitemapy"),
     ensureFile(robotsPath, "robots.txt"),
-    ensureFile(shellPath, "shella SPA"),
     ensureFile(redirectsPath, "przekierowań"),
   ]);
   const [sitemap, robots] = await Promise.all([
@@ -146,9 +144,6 @@ export const checkSeoBuild = async ({
   }
   if (!robots.includes("Disallow: /admin") || !robots.includes(`Sitemap: ${origin}/sitemap.xml`)) {
     throw new Error("robots.txt nie zawiera wymaganej konfiguracji crawlerów.");
-  }
-  if (!redirects.includes("/* /_shell.html 200")) {
-    throw new Error("Przekierowania nie kierują dynamicznych adresów do shella SPA.");
   }
 };
 
