@@ -24,7 +24,6 @@ const offer = {
     included: ["Opieka"],
     excluded: ["Dojazd"],
     dayProgram: [{ time: "09:00", text: "Start." }],
-    activityPlan: [{ title: "Wake", text: "Nauka." }],
     venueDescription: "Wakepark.",
     parentInfo: { ageRange: "7–12 lat", supervision: "Opieka.", safety: "Kaski." },
     terms: [
@@ -32,9 +31,8 @@ const offer = {
         label: "Turnus 1",
         startDate: "2026-07-06",
         endDate: "2026-07-10",
-        priceOptions: [
-          { label: "Podstawowy", price: 1200, bookingUrl: "https://zapisy.example.test/wake" },
-        ],
+        bookingUrl: "https://zapisy.example.test/wake",
+        priceOptions: [{ label: "Podstawowy", price: 1200 }],
       },
     ],
   },

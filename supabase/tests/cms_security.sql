@@ -141,8 +141,7 @@ begin
         'highlights', jsonb_build_array('Wakeboard z instruktorami.'),
         'included', jsonb_build_array('Opieka instruktorów.'),
         'excluded', jsonb_build_array('Dojazd we własnym zakresie.'),
-        'dayProgram', jsonb_build_array(jsonb_build_object('time', '09:00', 'text', 'Rozgrzewka.')),
-        'activityPlan', jsonb_build_array(jsonb_build_object('title', 'Wakeboard', 'text', 'Nauka pływania.')),
+        'dayProgram', jsonb_build_array(jsonb_build_object('time', '09:00–10:00', 'text', 'Rozgrzewka.')),
         'venueDescription', 'Wakepark z zapleczem dla dzieci.',
         'parentInfo', jsonb_build_object(
           'ageRange', '7–12 lat',
@@ -154,11 +153,11 @@ begin
             'label', 'Turnus 1',
             'startDate', '2026-07-06',
             'endDate', '2026-07-10',
+            'bookingUrl', 'https://zapisy.example.test/wake-lato-2026-turnus-1',
             'priceOptions', jsonb_build_array(
               jsonb_build_object(
                 'label', 'Wariant podstawowy',
-                'price', 1200,
-                'bookingUrl', 'https://zapisy.example.test/wake-lato-2026-turnus-1'
+                'price', 1200
               )
             )
           )
@@ -182,8 +181,7 @@ begin
         'highlights', jsonb_build_array('Snowboard z instruktorami.'),
         'included', jsonb_build_array('Opieka instruktorów.'),
         'excluded', jsonb_build_array('Dojazd we własnym zakresie.'),
-        'dayProgram', jsonb_build_array(jsonb_build_object('time', '09:00', 'text', 'Rozgrzewka.')),
-        'activityPlan', jsonb_build_array(jsonb_build_object('title', 'Snowboard', 'text', 'Nauka jazdy.')),
+        'dayProgram', jsonb_build_array(jsonb_build_object('time', '09:00–10:00', 'text', 'Rozgrzewka.')),
         'venueDescription', 'Stok z zapleczem dla dzieci.',
         'parentInfo', jsonb_build_object(
           'ageRange', '7–12 lat',
@@ -195,11 +193,11 @@ begin
             'label', 'Turnus 1',
             'startDate', '2026-02-02',
             'endDate', '2026-02-06',
+            'bookingUrl', 'https://zapisy.example.test/snow-zima-2026-turnus-1',
             'priceOptions', jsonb_build_array(
               jsonb_build_object(
                 'label', 'Wariant podstawowy',
-                'price', 1400,
-                'bookingUrl', 'https://zapisy.example.test/snow-zima-2026-turnus-1'
+                'price', 1400
               )
             )
           )

@@ -19,7 +19,7 @@ export function AdminSignInForm({ next, onSuccess }: AdminSignInFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [errorKind, setErrorKind] = useState<"credentials" | "role" | null>(null);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,19 +29,21 @@ export function AdminSignInForm({ next, onSuccess }: AdminSignInFormProps) {
     }
 
     setIsSubmitting(true);
-    setHasError(false);
+    setErrorKind(null);
 
     try {
       await signInWithPassword(email, password);
 
       if (!(await getAdminSession())) {
-        throw new Error("Administrator role required");
+        await signOut().catch(() => undefined);
+        setErrorKind("role");
+        return;
       }
 
       onSuccess(sanitizeAdminNext(next));
     } catch {
       await signOut().catch(() => undefined);
-      setHasError(true);
+      setErrorKind("credentials");
     } finally {
       setIsSubmitting(false);
     }
@@ -73,12 +75,14 @@ export function AdminSignInForm({ next, onSuccess }: AdminSignInFormProps) {
           onChange={(event) => setPassword(event.target.value)}
         />
       </div>
-      {hasError ? (
+      {errorKind ? (
         <p
           role="alert"
           className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm"
         >
-          Nie udało się zalogować. Sprawdź dane i spróbuj ponownie.
+          {errorKind === "role"
+            ? "To konto nie ma uprawnień administratora."
+            : "Nie udało się zalogować. Sprawdź dane i spróbuj ponownie."}
         </p>
       ) : null}
       <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>

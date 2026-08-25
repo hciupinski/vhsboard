@@ -25,13 +25,13 @@ export type TripOfferContent = {
 export type DayCampPriceOption = {
   label: string;
   price: number;
-  bookingUrl: string;
 };
 
 export type DayCampTerm = {
   label: string;
   startDate: string;
   endDate: string;
+  bookingUrl: string;
   priceOptions: DayCampPriceOption[];
 };
 
@@ -41,7 +41,6 @@ export type DayCampContent = {
   included: string[];
   excluded: string[];
   dayProgram: Array<{ time: string; text: string }>;
-  activityPlan: Array<{ title: string; text: string }>;
   venueDescription: string;
   parentInfo: {
     ageRange: string;

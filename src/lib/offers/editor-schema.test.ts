@@ -53,7 +53,6 @@ const completeDayCamp = {
     included: ["Opieka instruktorów"],
     excluded: ["Dojazd we własnym zakresie"],
     dayProgram: [{ time: "09:00", text: "Rozgrzewka i odprawa." }],
-    activityPlan: [{ title: "Wakeboard", text: "Nauka startu i pływania." }],
     venueDescription: "Wakepark z zapleczem dla dzieci i strefą odpoczynku.",
     parentInfo: {
       ageRange: "7–12 lat",
@@ -66,11 +65,11 @@ const completeDayCamp = {
         label: "Turnus 1",
         startDate: "2026-07-06",
         endDate: "2026-07-10",
+        bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-1",
         priceOptions: [
           {
             label: "Wariant podstawowy",
             price: 1200,
-            bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-1",
           },
         ],
       },
@@ -78,11 +77,11 @@ const completeDayCamp = {
         label: "Turnus 2",
         startDate: "2026-07-20",
         endDate: "2026-07-24",
+        bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-2",
         priceOptions: [
           {
             label: "Wariant rozszerzony",
             price: 1400,
-            bookingUrl: "https://zapisy.example.test/wake-lato-2026-turnus-2",
           },
         ],
       },
@@ -153,17 +152,17 @@ describe("editor offer input schema", () => {
       },
     ],
     [
-      "an insecure price-option URL",
+      "an insecure term URL",
       {
         content: {
           ...completeDayCamp.content,
           terms: [
             {
               ...completeDayCamp.content.terms[0],
+              bookingUrl: "http://zapisy.example.test/wake",
               priceOptions: [
                 {
                   ...completeDayCamp.content.terms[0].priceOptions[0],
-                  bookingUrl: "http://zapisy.example.test/wake",
                 },
               ],
             },
@@ -173,6 +172,18 @@ describe("editor offer input schema", () => {
     ],
   ])("rejects a day camp with %s", (_reason, patch) => {
     expect(editorOfferInputSchema.safeParse({ ...completeDayCamp, ...patch }).success).toBe(false);
+  });
+
+  it("accepts a free-form time label in the day programme", () => {
+    const result = editorOfferInputSchema.parse({
+      ...completeDayCamp,
+      content: {
+        ...completeDayCamp.content,
+        dayProgram: [{ time: "09:00–10:00", text: "Zajęcia na wodzie." }],
+      },
+    });
+
+    expect(result.content).toMatchObject({ dayProgram: [{ time: "09:00–10:00" }] });
   });
 
   it("accepts a complete editor offer and removes blank list entries", () => {

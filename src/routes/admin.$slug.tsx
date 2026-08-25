@@ -349,6 +349,8 @@ function OfferEditorContent() {
           onChange={(value) => {
             isFormDirty.current = true;
             setFormValue(value);
+            const validation = editorOfferInputSchema.safeParse(value);
+            setFieldErrors(validation.success ? {} : getEditorFieldErrors(validation.error));
             setActionError(null);
             setSaved(false);
           }}
