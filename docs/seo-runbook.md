@@ -29,18 +29,20 @@ bun run build
 bun run check:seo
 ```
 
-`build` pobiera wyłącznie opublikowane rekordy i celowo kończy się błędem,
-jeżeli nie może otrzymać slugów potrzebnych do prerenderingu. Generuje
+`build` prerenderuje wyłącznie strony marketingowe i generuje
 `.output/public/sitemap.xml` oraz końcowy `.output/public/robots.txt`.
+Szczegóły ofert są pobierane w przeglądarce z Supabase, więc opublikowanie
+oferty w CMS nie wymaga nowego deployu.
 `check:seo` sprawdza meta dane, canonicale, język, robots, sitemapę, brak
-panelu admina, skeletonów oraz podpisanych URL-i Storage.
+panelu admina, statycznych szczegółów ofert oraz podpisanych URL-i Storage.
 
 ## Pierwszy merge i kontrola
 
-Po merge'u do `main` sprawdź view-source dla strony głównej, `/wyjazdy` i
-jednego opublikowanego `/wyjazdy/:slug`. Treść szczegółu, title, description,
-canonical i `noindex, nofollow` muszą być dostępne bez JavaScriptu. Otwórz też
-`/sitemap.xml` i `/robots.txt`; sitemap nie może zawierać `/admin`.
+Po merge'u do `main` sprawdź view-source dla strony głównej i `/wyjazdy`.
+Treść szczegółu oferty ładuje się po stronie przeglądarki, dlatego testuj ją
+normalnie po otwarciu adresu `/wyjazdy/:slug` albo `/polkolonie/:slug`.
+Otwórz też `/sitemap.xml` i `/robots.txt`; sitemap nie może zawierać `/admin`
+ani dynamicznych szczegółów ofert.
 
 Przed publikacją oferty potwierdź ręcznie rzeczywistą cenę PLN oraz działający
 link HTTPS do zewnętrznego systemu zapisów. Dane firmy w JSON-LD pochodzą wyłącznie z publicznej

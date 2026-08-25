@@ -1,16 +1,9 @@
 import { access, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import { createClient } from "@supabase/supabase-js";
-
-import { getPublicSupabaseConfig, getSeoConfigFrom } from "../src/lib/env";
-import { publishedOfferSeoRowSchema } from "../src/lib/offers/schema";
-import type { PublishedOfferSeoRecord } from "../src/lib/offers/types";
+import { getSeoConfigFrom } from "../src/lib/env";
 
 const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
-
-const pathForOffer = ({ slug, offerKind }: PublishedOfferSeoRecord): string =>
-  `${offerKind === "day_camp" ? "/polkolonie" : "/wyjazdy"}/${slug}`;
 
 export const escapeXml = (value: string): string =>
   value.replace(/[<>&"']/g, (character) => {
@@ -45,33 +38,20 @@ const toCanonicalUrl = (siteUrl: string, path: string): string => `${siteUrl}${p
 type GenerateSitemapInput = {
   outputDirectory: string;
   siteUrl: string;
-  offerRecords: PublishedOfferSeoRecord[];
 };
 
 export const generateSitemap = async ({
   outputDirectory,
   siteUrl,
-  offerRecords,
 }: GenerateSitemapInput): Promise<void> => {
   const origin = validateHttpsOrigin(siteUrl);
-  const paths = [...staticPaths, ...offerRecords.map(pathForOffer)];
+  await Promise.all(staticPaths.map((path) => ensureOutputExists(outputDirectory, path)));
 
-  await Promise.all(paths.map((path) => ensureOutputExists(outputDirectory, path)));
-
-  const urls = [
-    ...staticPaths.map((path) => ({ loc: toCanonicalUrl(origin, path), lastmod: undefined })),
-    ...offerRecords.map((offer) => ({
-      loc: toCanonicalUrl(origin, pathForOffer(offer)),
-      lastmod: offer.updatedAt,
-    })),
-  ];
+  const urls = staticPaths.map((path) => ({ loc: toCanonicalUrl(origin, path) }));
   const sitemap = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ...urls.map(
-      ({ loc, lastmod }) =>
-        `  <url><loc>${escapeXml(loc)}</loc>${lastmod ? `<lastmod>${escapeXml(lastmod)}</lastmod>` : ""}</url>`,
-    ),
+    ...urls.map(({ loc }) => `  <url><loc>${escapeXml(loc)}</loc></url>`),
     "</urlset>",
     "",
   ].join("\n");
@@ -90,23 +70,8 @@ export const generateSitemap = async ({
 };
 
 const main = async () => {
-  const { url, anonKey } = getPublicSupabaseConfig();
   const { siteUrl } = getSeoConfigFrom(import.meta.env);
-  const { data, error } = await createClient(url, anonKey)
-    .from("offers")
-    .select("slug,updated_at,offer_kind")
-    .eq("status", "published");
-
-  if (error || !Array.isArray(data)) {
-    throw new Error("Nie udało się pobrać opublikowanych ofert do mapy strony.", { cause: error });
-  }
-
-  const offerRecords = data.map((row) => {
-    const parsed = publishedOfferSeoRowSchema.parse(row);
-    return { slug: parsed.slug, updatedAt: parsed.updated_at, offerKind: parsed.offer_kind };
-  });
-
-  await generateSitemap({ outputDirectory: ".output/public", siteUrl, offerRecords });
+  await generateSitemap({ outputDirectory: ".output/public", siteUrl });
 };
 
 if (import.meta.main) {

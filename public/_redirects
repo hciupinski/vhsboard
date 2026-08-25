@@ -1,3 +1,2 @@
 /trips/:slug /wyjazdy/:slug 301
-/admin /index.html 200
-/admin/* /index.html 200
+/* /_shell.html 200

@@ -10,7 +10,6 @@ import type { TripOffer } from "@/lib/offers/types";
 import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/wyjazdy/")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(publishedOffersQueryOptions()),
   head: () =>
     createPageMetadata({
       path: "/wyjazdy",

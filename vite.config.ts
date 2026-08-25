@@ -1,46 +1,22 @@
 import tailwindcss from "@tailwindcss/vite";
-import { createClient } from "@supabase/supabase-js";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig, loadEnv } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
-import { getPublicSupabaseConfigFrom, getSeoConfigFrom } from "./src/lib/env";
-import { publishedOfferSeoRowSchema } from "./src/lib/offers/schema";
 import { isBuildOnly } from "./scripts/build-mode";
 
 const staticPublicPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
-
-const getPublishedOfferPaths = async (environment: Record<string, string>): Promise<string[]> => {
-  const config = getPublicSupabaseConfigFrom(environment);
-  getSeoConfigFrom(environment);
-  const client = createClient(config.url, config.anonKey);
-  const { data, error } = await client
-    .from("offers")
-    .select("slug,updated_at,offer_kind")
-    .eq("status", "published");
-
-  if (error || !Array.isArray(data)) {
-    throw new Error("Nie udało się pobrać opublikowanych slugów do prerenderingu.", {
-      cause: error,
-    });
-  }
-
-  return data.map((row) => {
-    const offer = publishedOfferSeoRowSchema.parse(row);
-    return `${offer.offer_kind === "day_camp" ? "/polkolonie" : "/wyjazdy"}/${offer.slug}`;
-  });
-};
+const spaShellMaskPath = "/spa-shell";
 
 export default defineConfig(async ({ mode }) => {
   const environment = loadEnv(mode, process.cwd(), "");
   const buildOnly = isBuildOnly(environment);
-  const publishedOfferPaths = buildOnly ? [] : await getPublishedOfferPaths(environment);
-  const allowedPaths = new Set([...staticPublicPaths, ...publishedOfferPaths]);
-  const prerenderPages = buildOnly
-    ? []
-    : [...staticPublicPaths, ...publishedOfferPaths].map((path) => ({ path }));
+  const allowedPaths = new Set(
+    buildOnly ? staticPublicPaths : [...staticPublicPaths, spaShellMaskPath],
+  );
+  const prerenderPages = buildOnly ? [] : staticPublicPaths.map((path) => ({ path }));
 
   return {
     plugins: [
@@ -49,6 +25,15 @@ export default defineConfig(async ({ mode }) => {
         server: { entry: "server" },
         router: {
           routeFileIgnorePattern: "\\.test\\.(ts|tsx)$",
+        },
+        // Detail routes receive a static SPA shell and then fetch the current
+        // published offer from Supabase in the browser. Marketing routes below
+        // remain prerendered as normal static HTML.
+        spa: {
+          enabled: !buildOnly,
+          // Keep / available for the prerendered home page. The internal route
+          // below exists only as a valid render target while the shell is made.
+          maskPath: spaShellMaskPath,
         },
         prerender: {
           enabled: !buildOnly,

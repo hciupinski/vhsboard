@@ -21,6 +21,8 @@ vi.mock("@/lib/offers/public-repository", () => ({
 }));
 
 const publicSiteEnv = {
+  VITE_SITE_URL: "https://vhsboard.pages.dev",
+  VITE_SEO_INDEXING: "false",
   VITE_CONTACT_EMAIL: "kontakt@example.test",
   VITE_CONTACT_PHONE: "+48123456789",
   VITE_BUSINESS_NAME: "Testowa firma",
@@ -67,12 +69,8 @@ afterEach(() => {
 });
 
 describe("trips list route", () => {
-  it("prefetches published offers before server rendering", async () => {
-    const ensureQueryData = vi.fn().mockResolvedValue([]);
-
-    await TripsRoute.options.loader?.({ context: { queryClient: { ensureQueryData } } } as never);
-
-    expect(ensureQueryData).toHaveBeenCalledOnce();
+  it("does not fetch offers while prerendering the marketing page", () => {
+    expect(TripsRoute.options.loader).toBeUndefined();
   });
 
   it("loads published offers on the dedicated /wyjazdy page", async () => {

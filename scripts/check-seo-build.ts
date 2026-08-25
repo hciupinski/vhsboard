@@ -1,23 +1,16 @@
 import { access, readdir, readFile } from "node:fs/promises";
 import { join, relative } from "node:path";
 
-import { createClient } from "@supabase/supabase-js";
-
-import { getPublicSupabaseConfig, getSeoConfigFrom } from "../src/lib/env";
-import { publishedOfferSeoRowSchema } from "../src/lib/offers/schema";
-import type { PublishedOfferSeoRecord } from "../src/lib/offers/types";
+import { getSeoConfigFrom } from "../src/lib/env";
 
 const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
 const signedUrlPattern = /(?:[?&]token=|x-amz-|\/object\/sign\/)/i;
-
-const pathForOffer = ({ slug, offerKind }: PublishedOfferSeoRecord): string =>
-  `${offerKind === "day_camp" ? "/polkolonie" : "/wyjazdy"}/${slug}`;
+const offerDetailOutputPattern = /^(?:wyjazdy|polkolonie)\/[^/]+\/index\.html$/;
 
 type CheckSeoBuildInput = {
   outputDirectory: string;
   siteUrl: string;
   indexing: boolean;
-  offerRecords: PublishedOfferSeoRecord[];
 };
 
 const outputFileForPath = (outputDirectory: string, path: string): string =>
@@ -71,20 +64,26 @@ export const checkSeoBuild = async ({
   outputDirectory,
   siteUrl,
   indexing,
-  offerRecords,
 }: CheckSeoBuildInput): Promise<void> => {
   const { siteUrl: origin } = getSeoConfigFrom({
     VITE_SITE_URL: siteUrl,
     VITE_SEO_INDEXING: indexing ? "true" : "false",
   });
   const expectedRobots = indexing ? "index, follow" : "noindex, nofollow";
-  const paths = [...staticPaths, ...offerRecords.map(pathForOffer)];
+  const paths = staticPaths;
   const outputFiles = await listOutputFiles(outputDirectory);
 
   if (
     outputFiles.some((filename) => relative(outputDirectory, filename).split("/").includes("admin"))
   ) {
     throw new Error("Artefakt builda nie może zawierać strony /admin.");
+  }
+  if (
+    outputFiles.some((filename) =>
+      offerDetailOutputPattern.test(relative(outputDirectory, filename)),
+    )
+  ) {
+    throw new Error("Artefakt builda nie może zawierać statycznych szczegółów ofert.");
   }
 
   for (const path of paths) {
@@ -117,21 +116,23 @@ export const checkSeoBuild = async ({
     if (signedUrlPattern.test(html)) {
       throw new Error(`${path}: HTML zawiera podpisany URL Storage.`);
     }
-    if (
-      (path.startsWith("/wyjazdy/") || path.startsWith("/polkolonie/")) &&
-      /Ładowanie ofert|aria-label=["']Ładowanie/i.test(html)
-    ) {
-      throw new Error(`${path}: szczegół oferty zawiera skeleton zamiast treści.`);
-    }
   }
 
   const sitemapPath = join(outputDirectory, "sitemap.xml");
   const robotsPath = join(outputDirectory, "robots.txt");
-  await Promise.all([ensureFile(sitemapPath, "sitemapy"), ensureFile(robotsPath, "robots.txt")]);
+  const shellPath = join(outputDirectory, "_shell.html");
+  const redirectsPath = join(outputDirectory, "_redirects");
+  await Promise.all([
+    ensureFile(sitemapPath, "sitemapy"),
+    ensureFile(robotsPath, "robots.txt"),
+    ensureFile(shellPath, "shella SPA"),
+    ensureFile(redirectsPath, "przekierowań"),
+  ]);
   const [sitemap, robots] = await Promise.all([
     readFile(sitemapPath, "utf8"),
     readFile(robotsPath, "utf8"),
   ]);
+  const redirects = await readFile(redirectsPath, "utf8");
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]!);
 
   if (
@@ -146,29 +147,16 @@ export const checkSeoBuild = async ({
   if (!robots.includes("Disallow: /admin") || !robots.includes(`Sitemap: ${origin}/sitemap.xml`)) {
     throw new Error("robots.txt nie zawiera wymaganej konfiguracji crawlerów.");
   }
+  if (!redirects.includes("/* /_shell.html 200")) {
+    throw new Error("Przekierowania nie kierują dynamicznych adresów do shella SPA.");
+  }
 };
 
 if (import.meta.main) {
   const config = getSeoConfigFrom(import.meta.env);
-  const { url, anonKey } = getPublicSupabaseConfig();
-  const { data, error } = await createClient(url, anonKey)
-    .from("offers")
-    .select("slug,updated_at,offer_kind")
-    .eq("status", "published");
-
-  if (error || !Array.isArray(data)) {
-    throw new Error("Nie udało się pobrać opublikowanych ofert do kontroli SEO.", {
-      cause: error,
-    });
-  }
-
   await checkSeoBuild({
     outputDirectory: ".output/public",
     siteUrl: config.siteUrl,
     indexing: config.indexing,
-    offerRecords: data.map((row) => {
-      const parsed = publishedOfferSeoRowSchema.parse(row);
-      return { slug: parsed.slug, updatedAt: parsed.updated_at, offerKind: parsed.offer_kind };
-    }),
   });
 }
