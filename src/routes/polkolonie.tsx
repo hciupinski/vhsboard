@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import wakeparkCampImage from "@/assets/polkolonie-wakepark.png";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 
@@ -9,7 +10,8 @@ export const Route = createFileRoute("/polkolonie")({
       { title: "Półkolonie sportowe | VHSBOARD" },
       {
         name: "description",
-        content: "Ogólne informacje o półkoloniach wakeowych i snowboardowych VHSBOARD.",
+        content:
+          "Półkolonie letnie i zimowe VHSBOARD: wakepark, skimboard, skateboarding i snowboard.",
       },
     ],
   }),
@@ -21,24 +23,72 @@ function HalfDayCampsPage() {
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
       <main className="flex-1">
-        <section className="bg-secondary/55 py-16 sm:py-24">
-          <div className="mx-auto max-w-4xl px-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+        <section className="relative isolate overflow-hidden">
+          <img
+            src={wakeparkCampImage}
+            alt="Dziecko płynące na wakeboardzie podczas półkolonii VHSBOARD, obserwowane przez instruktora i grupę dzieci"
+            width={1536}
+            height={1024}
+            className="absolute inset-0 -z-20 size-full object-cover"
+          />
+          <div className="absolute inset-0 -z-10 bg-foreground/65" />
+          <div className="mx-auto max-w-6xl px-5 py-24 sm:py-36">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
               Dla dzieci
             </p>
-            <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">Półkolonie aktywnie</h1>
-            <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-              Organizujemy półkolonie, które dają dzieciom czas na ruch, naukę i bycie razem.
-              Zależnie od sezonu skupiamy się na aktywnościach wakeowych albo snowboardowych.
+            <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] text-background sm:text-7xl">
+              Półkolonie aktywnie
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/85">
+              Organizujemy letnie i zimowe półkolonie dla dzieci, które lubią ruch, wodę, śnieg i
+              dobrą ekipę. Każdy dzień łączy naukę od podstaw z czasem spędzonym razem na świeżym
+              powietrzu.
             </p>
           </div>
         </section>
-        <section className="mx-auto max-w-4xl px-5 py-16 sm:py-20">
-          <h2 className="text-3xl sm:text-4xl">Informacje o aktualnych ofertach</h2>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
-            Aktualne półkolonie pojawią się tutaj, gdy ogłosimy dany sezon. Ta strona opisuje ogólny
-            charakter naszych programów; szczegóły konkretnych terminów będą publikowane osobno.
+        <section
+          className="mx-auto max-w-6xl px-5 py-16 sm:py-24"
+          aria-labelledby="program-heading"
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Przez cały rok
           </p>
+          <h2 id="program-heading" className="mt-3 max-w-2xl text-4xl leading-[0.95] sm:text-6xl">
+            Ruch, nauka i dobra zajawka
+          </h2>
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            Program dopasowujemy do sezonu i miejsca. Najważniejsze są bezpieczne pierwsze kroki,
+            uważna opieka instruktorów oraz radość z kolejnych prób.
+          </p>
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            <article className="rounded-3xl border border-border bg-card p-6 shadow-warm sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Lato</p>
+              <h3 className="mt-3 text-3xl sm:text-4xl">Woda i deska</h3>
+              <p className="mt-4 leading-relaxed text-muted-foreground">
+                Wakepark, skimboard i skateboarding uczą równowagi, odwagi i swobodnego ruchu.
+                Dzieci ćwiczą we własnym tempie, wspierane przez instruktorów i grupę.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-border bg-secondary/55 p-6 shadow-warm sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Zima</p>
+              <h3 className="mt-3 text-3xl sm:text-4xl">Śnieg i snowboard</h3>
+              <p className="mt-4 leading-relaxed text-muted-foreground">
+                Na stoku budujemy pewność krok po kroku. Od oswojenia z deską po pierwsze skręty,
+                zawsze z miejscem na zabawę i wspólne kibicowanie.
+              </p>
+            </article>
+          </div>
+        </section>
+        <section className="bg-secondary/55 py-16 sm:py-20" aria-labelledby="current-camps-heading">
+          <div className="mx-auto max-w-6xl px-5">
+            <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
+              Aktualne półkolonie
+            </h2>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              Nowe oferty półkolonii mogą pojawić się wkrótce. Zajrzyj ponownie, gdy ogłosimy
+              najbliższy sezon.
+            </p>
+          </div>
         </section>
       </main>
       <PublicFooter />
