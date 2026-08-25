@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ChangeEvent, ReactNode } from "react";
 import { Check, Plus, Trash2, X } from "lucide-react";
 
 import { ListField } from "@/components/admin/ListField";
@@ -15,6 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { changeEditableOfferKind, type EditableOfferInput } from "@/lib/offers/editor-schema";
+import { shouldCommitDateValue } from "@/lib/offers/date-input";
 import type {
   DayCampContent,
   DayCampTerm,
@@ -41,6 +42,9 @@ type FieldProps = {
 const errorFor = (errors: Record<string, string>, path: string) =>
   errors[path] ?? Object.entries(errors).find(([key]) => key.startsWith(`${path}.`))?.[1];
 const nullableNumber = (value: string) => (value === "" ? null : Number(value));
+
+const shouldUpdateDate = (event: ChangeEvent<HTMLInputElement>) =>
+  shouldCommitDateValue(event.currentTarget.value, event.currentTarget.validity.badInput);
 
 function CharacterCounter({ value, max }: { value: string; max: number }) {
   return (
@@ -93,14 +97,90 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
     dayCamp
       ? setDayCamp({ ...dayCamp, [field]: next })
       : trip && setTrip({ ...trip, [field]: next });
+  const tabHasError = (prefix: string) =>
+    Object.keys(errors).some((path) => path === prefix || path.startsWith(`${prefix}.`));
 
   return (
     <Tabs defaultValue="basics">
       <TabsList className="h-auto flex-wrap justify-start">
-        <TabsTrigger value="basics">Podstawy</TabsTrigger>
-        <TabsTrigger value="story">{dayCamp ? "O półkolonii" : "O wyjeździe"}</TabsTrigger>
-        <TabsTrigger value="inout">W cenie i poza</TabsTrigger>
-        <TabsTrigger value="days">{dayCamp ? "Program i opieka" : "Dzień po dniu"}</TabsTrigger>
+        <TabsTrigger
+          value="basics"
+          aria-label={
+            tabHasError("title") ||
+            tabHasError("slug") ||
+            tabHasError("location") ||
+            tabHasError("content.terms")
+              ? "Podstawy — zawiera błędy"
+              : "Podstawy"
+          }
+        >
+          Podstawy
+          {tabHasError("title") ||
+          tabHasError("slug") ||
+          tabHasError("location") ||
+          tabHasError("content.terms") ? (
+            <span aria-hidden="true" className="ml-1 text-destructive">
+              •
+            </span>
+          ) : null}
+        </TabsTrigger>
+        <TabsTrigger
+          value="story"
+          aria-label={
+            tabHasError("subtitle") ||
+            tabHasError("content.paragraphs") ||
+            tabHasError("content.highlights") ||
+            tabHasError("content.venueDescription")
+              ? `${dayCamp ? "O półkolonii" : "O wyjeździe"} — zawiera błędy`
+              : dayCamp
+                ? "O półkolonii"
+                : "O wyjeździe"
+          }
+        >
+          {dayCamp ? "O półkolonii" : "O wyjeździe"}
+          {tabHasError("subtitle") ||
+          tabHasError("content.paragraphs") ||
+          tabHasError("content.highlights") ||
+          tabHasError("content.venueDescription") ? (
+            <span aria-hidden="true" className="ml-1 text-destructive">
+              •
+            </span>
+          ) : null}
+        </TabsTrigger>
+        <TabsTrigger
+          value="inout"
+          aria-label={
+            tabHasError("content.included") || tabHasError("content.excluded")
+              ? "W cenie i poza — zawiera błędy"
+              : "W cenie i poza"
+          }
+        >
+          W cenie i poza
+          {tabHasError("content.included") || tabHasError("content.excluded") ? (
+            <span aria-hidden="true" className="ml-1 text-destructive">
+              •
+            </span>
+          ) : null}
+        </TabsTrigger>
+        <TabsTrigger
+          value="days"
+          aria-label={
+            tabHasError(dayCamp ? "content.dayProgram" : "content.schedule") ||
+            tabHasError("content.parentInfo")
+              ? `${dayCamp ? "Program i opieka" : "Dzień po dniu"} — zawiera błędy`
+              : dayCamp
+                ? "Program i opieka"
+                : "Dzień po dniu"
+          }
+        >
+          {dayCamp ? "Program i opieka" : "Dzień po dniu"}
+          {tabHasError(dayCamp ? "content.dayProgram" : "content.schedule") ||
+          tabHasError("content.parentInfo") ? (
+            <span aria-hidden="true" className="ml-1 text-destructive">
+              •
+            </span>
+          ) : null}
+        </TabsTrigger>
         <TabsTrigger value="photos">Zdjęcia</TabsTrigger>
       </TabsList>
 
@@ -373,7 +453,9 @@ function TripBasics({
           value={value.startDate ?? ""}
           disabled={disabled}
           {...state("startDate", "start-date")}
-          onChange={(event) => set("startDate", event.target.value || null)}
+          onChange={(event) => {
+            if (shouldUpdateDate(event)) set("startDate", event.target.value || null);
+          }}
         />
       </Field>
       <Field id="end-date" label="Data zakończenia" error={errors.endDate}>
@@ -383,7 +465,9 @@ function TripBasics({
           value={value.endDate ?? ""}
           disabled={disabled}
           {...state("endDate", "end-date")}
-          onChange={(event) => set("endDate", event.target.value || null)}
+          onChange={(event) => {
+            if (shouldUpdateDate(event)) set("endDate", event.target.value || null);
+          }}
         />
       </Field>
       <Field id="duration-days" label="Liczba dni" error={errors.durationDays}>
@@ -510,20 +594,36 @@ function TermsEditor({
                 onChange={(event) => update(termIndex, { ...term, label: event.target.value })}
               />
             </Field>
-            <Field id={`term-start-${termIndex}`} label="Od">
+            <Field
+              id={`term-start-${termIndex}`}
+              label="Od"
+              error={errorFor(errors, `content.terms.${termIndex}.startDate`)}
+            >
               <Input
                 id={`term-start-${termIndex}`}
                 type="date"
                 value={term.startDate}
-                onChange={(event) => update(termIndex, { ...term, startDate: event.target.value })}
+                onChange={(event) => {
+                  if (shouldUpdateDate(event)) {
+                    update(termIndex, { ...term, startDate: event.target.value });
+                  }
+                }}
               />
             </Field>
-            <Field id={`term-end-${termIndex}`} label="Do">
+            <Field
+              id={`term-end-${termIndex}`}
+              label="Do"
+              error={errorFor(errors, `content.terms.${termIndex}.endDate`)}
+            >
               <Input
                 id={`term-end-${termIndex}`}
                 type="date"
                 value={term.endDate}
-                onChange={(event) => update(termIndex, { ...term, endDate: event.target.value })}
+                onChange={(event) => {
+                  if (shouldUpdateDate(event)) {
+                    update(termIndex, { ...term, endDate: event.target.value });
+                  }
+                }}
               />
             </Field>
             <div className="sm:col-span-3">
@@ -848,6 +948,7 @@ function DayCampProgramEditor({
           label="Transport"
           hint="Opcjonalnie"
           characterCount={{ value: content.parentInfo.transport ?? "", max: 500 }}
+          error={errorFor(errors, "content.parentInfo.transport")}
         >
           <Textarea
             id="parent-transport"
@@ -903,6 +1004,7 @@ function DayCampProgramEditor({
             label="Wyżywienie"
             hint="Opcjonalnie"
             characterCount={{ value: content.parentInfo.meals ?? "", max: 500 }}
+            error={errorFor(errors, "content.parentInfo.meals")}
           >
             <Textarea
               id="parent-meals"

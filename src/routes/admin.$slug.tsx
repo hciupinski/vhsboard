@@ -16,6 +16,7 @@ import {
   type EditableOffer,
   type EditableOfferInput,
 } from "@/lib/offers/editor-schema";
+import { getLiveFieldErrors } from "@/lib/offers/live-validation";
 import type { OfferStatus } from "@/lib/offers/types";
 
 export const Route = createFileRoute("/admin/$slug")({
@@ -349,8 +350,7 @@ function OfferEditorContent() {
           onChange={(value) => {
             isFormDirty.current = true;
             setFormValue(value);
-            const validation = editorOfferInputSchema.safeParse(value);
-            setFieldErrors(validation.success ? {} : getEditorFieldErrors(validation.error));
+            setFieldErrors((current) => getLiveFieldErrors(formValue, value, current));
             setActionError(null);
             setSaved(false);
           }}

@@ -49,6 +49,12 @@ const nullableText = (message: string) =>
     textField(message).trim().min(1, message).nullable(),
   );
 
+const optionalText = (maximum: number) =>
+  z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().trim().min(1).max(maximum).optional(),
+  );
+
 const dateSchema = z.preprocess(
   (value) => (typeof value === "string" && value.trim() === "" ? null : value),
   textField("Data musi mieć format RRRR-MM-DD.")
@@ -293,8 +299,8 @@ const dayCampContentSchema = z.object({
     ageRange: trimmedText("Wiek uczestników", 2, 120),
     supervision: trimmedText("Informacja o opiece", 3, 500),
     safety: trimmedText("Informacja o bezpieczeństwie", 3, 500),
-    transport: z.string().trim().min(1).max(500).optional(),
-    meals: z.string().trim().min(1).max(500).optional(),
+    transport: optionalText(500),
+    meals: optionalText(500),
   }),
   terms: z
     .array(dayCampTermSchema)

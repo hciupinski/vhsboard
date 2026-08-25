@@ -186,6 +186,24 @@ describe("editor offer input schema", () => {
     expect(result.content).toMatchObject({ dayProgram: [{ time: "09:00–10:00" }] });
   });
 
+  it("accepts blank optional transport and meal details", () => {
+    const result = editorOfferInputSchema.parse({
+      ...completeDayCamp,
+      content: {
+        ...completeDayCamp.content,
+        parentInfo: {
+          ...completeDayCamp.content.parentInfo,
+          transport: "",
+          meals: "   ",
+        },
+      },
+    });
+
+    expect(result.content).toMatchObject({
+      parentInfo: { transport: undefined, meals: undefined },
+    });
+  });
+
   it("accepts a complete editor offer and removes blank list entries", () => {
     const result = editorOfferInputSchema.parse({
       ...completeInput,
