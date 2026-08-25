@@ -103,3 +103,19 @@ zaostrzenie constraintu wymaga sekwencji expand → migrate data → switch code
 contract w co najmniej dwóch merge’ach. Najpierw wdrażaj bazę, potem frontend;
 w trakcie przejścia publiczna aplikacja musi nadal mieć działający kontrakt i
 zwracać wyłącznie opublikowane oferty.
+
+## Dokumenty kontaktowe
+
+Bucket `contact-documents` jest prywatny i służy wyłącznie dokumentom z sekcji
+„Do pobrania” na stronie kontaktowej. Akceptuje tylko pliki PDF (`application/pdf`)
+o maksymalnym rozmiarze 10 MiB. Każdy obiekt musi otrzymać losową ścieżkę:
+
+```text
+documents/<uuid>.pdf
+```
+
+Publiczny odczyt obiektu jest możliwy wyłącznie wtedy, gdy dokładna ścieżka jest
+zapisana w `public.contact_documents`. Administrator może tworzyć, zmieniać i
+usuwać zarówno metadane, jak i obiekty; polityki RLS nie dają tych uprawnień
+zwykłemu zalogowanemu użytkownikowi. Aplikacja generuje podpisane adresy URL do
+wyświetlenia PDF w nowej karcie — nie używa `getPublicUrl`.

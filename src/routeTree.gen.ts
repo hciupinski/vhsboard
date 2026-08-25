@@ -16,6 +16,7 @@ import { Route as ONasRouteImport } from './routes/o-nas'
 import { Route as PolkolonieRouteImport } from './routes/polkolonie'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
+import { Route as AdminDokumentyRouteImport } from './routes/admin.dokumenty'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as PolkolonieSlugRouteImport } from './routes/polkolonie.$slug'
 import { Route as TripsSlugRouteImport } from './routes/trips.$slug'
@@ -57,6 +58,11 @@ const AdminSlugRoute = AdminSlugRouteImport.update({
   path: '/admin/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDokumentyRoute = AdminDokumentyRouteImport.update({
+  id: '/admin/dokumenty',
+  path: '/admin/dokumenty',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/o-nas': typeof ONasRoute
   '/polkolonie': typeof PolkolonieRouteWithChildren
   '/admin/$slug': typeof AdminSlugRoute
+  '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
   '/polkolonie/$slug': typeof PolkolonieSlugRoute
   '/trips/$slug': typeof TripsSlugRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/o-nas': typeof ONasRoute
   '/polkolonie': typeof PolkolonieRouteWithChildren
   '/admin/$slug': typeof AdminSlugRoute
+  '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
   '/polkolonie/$slug': typeof PolkolonieSlugRoute
   '/trips/$slug': typeof TripsSlugRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/o-nas': typeof ONasRoute
   '/polkolonie': typeof PolkolonieRouteWithChildren
   '/admin/$slug': typeof AdminSlugRoute
+  '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
   '/polkolonie/$slug': typeof PolkolonieSlugRoute
   '/trips/$slug': typeof TripsSlugRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/o-nas'
     | '/polkolonie'
     | '/admin/$slug'
+    | '/admin/dokumenty'
     | '/admin/login'
     | '/polkolonie/$slug'
     | '/trips/$slug'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/o-nas'
     | '/polkolonie'
     | '/admin/$slug'
+    | '/admin/dokumenty'
     | '/admin/login'
     | '/polkolonie/$slug'
     | '/trips/$slug'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/o-nas'
     | '/polkolonie'
     | '/admin/$slug'
+    | '/admin/dokumenty'
     | '/admin/login'
     | '/polkolonie/$slug'
     | '/trips/$slug'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   ONasRoute: typeof ONasRoute
   PolkolonieRoute: typeof PolkolonieRouteWithChildren
   AdminSlugRoute: typeof AdminSlugRoute
+  AdminDokumentyRoute: typeof AdminDokumentyRoute
   AdminLoginRoute: typeof AdminLoginRoute
   TripsSlugRoute: typeof TripsSlugRoute
   WyjazdySlugRoute: typeof WyjazdySlugRoute
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/$slug'
       fullPath: '/admin/$slug'
       preLoaderRoute: typeof AdminSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/dokumenty': {
+      id: '/admin/dokumenty'
+      path: '/admin/dokumenty'
+      fullPath: '/admin/dokumenty'
+      preLoaderRoute: typeof AdminDokumentyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -293,6 +313,7 @@ const rootRouteChildren: RootRouteChildren = {
   ONasRoute: ONasRoute,
   PolkolonieRoute: PolkolonieRouteWithChildren,
   AdminSlugRoute: AdminSlugRoute,
+  AdminDokumentyRoute: AdminDokumentyRoute,
   AdminLoginRoute: AdminLoginRoute,
   TripsSlugRoute: TripsSlugRoute,
   WyjazdySlugRoute: WyjazdySlugRoute,
