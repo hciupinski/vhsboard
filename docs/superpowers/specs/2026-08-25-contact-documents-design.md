@@ -31,7 +31,7 @@ Nowa migracja tworzy tabelę `public.contact_documents`:
 | --- | --- |
 | `id uuid primary key` | Stabilny identyfikator dokumentu. |
 | `title text not null` | Nazwa odnośnika dla odwiedzających; po trimie 3–160 znaków. |
-| `storage_path text not null unique` | Ścieżka obiektu w Supabase Storage. |
+| `storage_path text not null unique` | Ścieżka obiektu w Supabase Storage, zgodna z `documents/<uuid>.pdf`. |
 | `position integer not null unique` | Deterministyczna kolejność w sekcji do pobrania. |
 | `created_at timestamptz not null` | Data dodania. |
 
