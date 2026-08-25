@@ -1,6 +1,7 @@
 import { supabase } from "../supabase";
 import { mapOfferDetailRow, mapOfferListRow } from "./mapper";
-import type { PublicOffer } from "./types";
+import { publishedOfferSeoRowSchema } from "./schema";
+import type { PublicOffer, PublishedOfferSeoRecord } from "./types";
 
 const PUBLISHED_STATUS = "published";
 const OFFER_IMAGES_BUCKET = "offer-images";
@@ -9,6 +10,7 @@ const LIST_COLUMNS =
   "id,slug,activity,title,subtitle,short_description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
 const DETAIL_COLUMNS = `${LIST_COLUMNS},description`;
 const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,position";
+const SEO_COLUMNS = "slug,updated_at";
 
 export class OfferRepositoryError extends Error {
   constructor(message: string, options?: ErrorOptions) {
@@ -113,6 +115,26 @@ export const listPublishedOffers = async (): Promise<PublicOffer[]> => {
     return rows.map((row) => mapOfferListRow(row, signedUrls));
   } catch (error) {
     return rethrowAsRepositoryError(error, "Nie udało się pobrać opublikowanych ofert.");
+  }
+};
+
+export const listPublishedOfferSeoRecords = async (): Promise<PublishedOfferSeoRecord[]> => {
+  try {
+    const { data, error } = await supabase
+      .from("offers")
+      .select(SEO_COLUMNS)
+      .eq("status", PUBLISHED_STATUS);
+
+    if (error) {
+      throw new OfferRepositoryError("Nie udało się pobrać danych SEO ofert.", { cause: error });
+    }
+
+    return ensureRows(data, "Nie udało się odczytać danych SEO ofert.").map((row) => {
+      const parsed = publishedOfferSeoRowSchema.parse(row);
+      return { slug: parsed.slug, updatedAt: parsed.updated_at };
+    });
+  } catch (error) {
+    return rethrowAsRepositoryError(error, "Nie udało się pobrać danych SEO ofert.");
   }
 };
 

@@ -19,10 +19,13 @@ export function PublicFooter() {
           >
             <Brand />
           </Link>
-          <p className="mt-3 hidden max-w-md sm:block">
-            Wyjazdy, wydarzenia i aktywności prowadzone w dobrym rytmie.
+          <p className="mt-3 hidden max-w-md sm:block">Robione między falami a opadami śniegu.</p>
+          <p className="sm:mt-4">
+            © {new Date().getFullYear()}{" "}
+            <a href="https://theconstruct.ing" className="hover:text-primary hover:underline">
+              theconstruct.ing
+            </a>
           </p>
-          <p className="sm:mt-4">© {new Date().getFullYear()} VHSBOARD.</p>
         </div>
         <address className="hidden not-italic sm:block sm:text-right">
           <p className="font-medium text-foreground">{config.businessName}</p>
@@ -43,8 +46,6 @@ export function PublicFooter() {
               {config.contactPhone}
             </a>
           </p>
-          <p className="mt-3">NIP: {config.businessNip}</p>
-          <p>REGON: {config.businessRegon}</p>
         </address>
       </div>
     </footer>

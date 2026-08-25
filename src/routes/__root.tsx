@@ -73,18 +73,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "VHSBOARD — wyjazdy, eventy i półkolonie" },
-      {
-        name: "description",
-        content: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i półkolonie.",
-      },
-      { name: "author", content: "VHSBOARD" },
-      { property: "og:title", content: "VHSBOARD — wyjazdy, eventy i półkolonie" },
-      {
-        property: "og:description",
-        content: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i półkolonie.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

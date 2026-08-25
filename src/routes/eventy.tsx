@@ -4,18 +4,17 @@ import skimboardingLessonImage from "@/assets/eventy-nauka-skimboardingu.jpg";
 import skimboardingTrackImage from "@/assets/eventy-tor-skimboardowy.jpg";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { Button } from "@/components/ui/button";
+import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/eventy")({
-  head: () => ({
-    meta: [
-      { title: "Eventy z torem skimboardowym | VHSBOARD" },
-      {
-        name: "description",
-        content: "Eventy z mobilnym torem skimboardowym organizowane przez VHSBOARD.",
-      },
-    ],
-  }),
+  head: () =>
+    createPageMetadata({
+      path: "/eventy",
+      title: "Eventy z torem skimboardowym | VHSBOARD",
+      description: "Eventy z mobilnym torem skimboardowym organizowane przez VHSBOARD.",
+    }),
   component: EventsPage,
 });
 
@@ -23,6 +22,7 @@ function EventsPage() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
+      <PublicJsonLd path="/eventy" label="Eventy" />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground text-background">
           <img

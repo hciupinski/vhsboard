@@ -17,7 +17,7 @@ export const Route = createFileRoute("/admin/")({
         name: "description",
         content: "Twórz i edytuj oferty wyjazdów VHSBOARD: opis, cena, co w cenie i galeria.",
       },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "CMS ofert — panel VHSBOARD" },
       { property: "og:description", content: "Twórz i edytuj oferty wyjazdów VHSBOARD." },
       { property: "og:type", content: "website" },

@@ -4,18 +4,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { OfferListState } from "@/components/offers/OfferListState";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
+import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/wyjazdy/")({
-  head: () => ({
-    meta: [
-      { title: "Wyjazdy | VHSBOARD" },
-      {
-        name: "description",
-        content: "Aktualne wyjazdy organizowane przez VHSBOARD.",
-      },
-    ],
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(publishedOffersQueryOptions()),
+  head: () =>
+    createPageMetadata({
+      path: "/wyjazdy",
+      title: "Wyjazdy | VHSBOARD",
+      description: "Aktualne wyjazdy organizowane przez VHSBOARD.",
+    }),
   component: TripsPage,
 });
 
@@ -30,6 +30,7 @@ function TripsPage() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
+      <PublicJsonLd path="/wyjazdy" label="Wyjazdy" />
       <main className="flex-1 bg-secondary/55 py-16 sm:py-24">
         <section className="mx-auto max-w-6xl px-5">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Wyjazdy</p>

@@ -67,6 +67,14 @@ afterEach(() => {
 });
 
 describe("trips list route", () => {
+  it("prefetches published offers before server rendering", async () => {
+    const ensureQueryData = vi.fn().mockResolvedValue([]);
+
+    await TripsRoute.options.loader?.({ context: { queryClient: { ensureQueryData } } } as never);
+
+    expect(ensureQueryData).toHaveBeenCalledOnce();
+  });
+
   it("loads published offers on the dedicated /wyjazdy page", async () => {
     mockedListPublishedOffers.mockResolvedValue([]);
 

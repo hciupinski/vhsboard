@@ -38,3 +38,8 @@ export type PublicOffer = {
   heroImageUrl: string | null;
   images: OfferImage[];
 };
+
+export type PublishedOfferSeoRecord = {
+  slug: string;
+  updatedAt: string;
+};

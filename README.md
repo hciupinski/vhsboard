@@ -35,6 +35,7 @@ Useful commands:
 
 ```bash
 bun run build
+bun run check:seo
 bun run lint
 bun run format
 ```
@@ -54,6 +55,11 @@ konfiguracyjne danych kontaktowych i firmy: `VITE_CONTACT_EMAIL`,
 `VITE_BUSINESS_POSTAL_CODE`, `VITE_BUSINESS_CITY`, `VITE_BUSINESS_NIP` oraz
 `VITE_BUSINESS_REGON`. Wartości umieszczaj w zmiennych środowiskowych deployu,
 nigdy w repozytorium.
+
+Techniczne SEO wymaga też `VITE_SITE_URL` (dokładnego originu HTTPS) oraz
+`VITE_SEO_INDEXING` (`true` albo `false`). Dopóki adres Pages jest jedynym
+adresem wdrożenia, ustaw `VITE_SEO_INDEXING=false`; sitemapę i kontrolę
+statycznego outputu opisuje [runbook SEO](docs/seo-runbook.md).
 
 ## Supabase lokalnie
 
