@@ -34,6 +34,9 @@ export default defineConfig(async ({ mode }) => {
           // Keep / available for the prerendered home page. The internal route
           // below exists only as a valid render target while the shell is made.
           maskPath: spaShellMaskPath,
+          // Cloudflare Pages canonicalizes *.html URLs. Rewriting to this
+          // extension-less address serves _shell/app.html without a redirect.
+          prerender: { outputPath: "/_shell/app" },
         },
         prerender: {
           enabled: !buildOnly,
