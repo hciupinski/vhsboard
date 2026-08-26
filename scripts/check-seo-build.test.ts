@@ -37,7 +37,15 @@ const createOutput = async () => {
     join(outputDirectory, "robots.txt"),
     `User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${siteUrl}/sitemap.xml\n`,
   );
-  await writeFile(join(outputDirectory, "_redirects"), "/trips/:slug /wyjazdy/:slug 301\n");
+  await mkdir(join(outputDirectory, "_shell"), { recursive: true });
+  await writeFile(
+    join(outputDirectory, "_shell", "app.html"),
+    '<!doctype html><html lang="pl"></html>',
+  );
+  await writeFile(
+    join(outputDirectory, "_redirects"),
+    "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/polkolonie/:slug /_shell/app 200\n/admin /_shell/app 200\n/admin/* /_shell/app 200\n",
+  );
   return outputDirectory;
 };
 
@@ -46,12 +54,21 @@ afterEach(async () => {
 });
 
 describe("checkSeoBuild", () => {
-  it("accepts Pages output that relies on the native SPA fallback", async () => {
+  it("accepts Pages output with a dedicated SPA shell for dynamic routes", async () => {
     const outputDirectory = await createOutput();
 
     await expect(
       checkSeoBuild({ outputDirectory, siteUrl, indexing: false }),
     ).resolves.toBeUndefined();
+  });
+
+  it("rejects output without the SPA shell for dynamic routes", async () => {
+    const outputDirectory = await createOutput();
+    await rm(join(outputDirectory, "_shell", "app.html"));
+
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow(
+      "shella SPA",
+    );
   });
 
   it.each([
