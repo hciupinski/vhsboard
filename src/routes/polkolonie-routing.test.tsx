@@ -78,6 +78,12 @@ describe("day-camp route nesting", () => {
     expect(
       await screen.findByRole("heading", { name: "Wakeboardowe półkolonie" }),
     ).toBeInTheDocument();
+    expect(screen.getByText("Twoja półkolonia")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Wybierz turnus" })).toHaveAttribute(
+      "href",
+      "#turnusy",
+    );
+    expect(screen.getByRole("heading", { name: "Plan dnia" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Półkolonie aktywnie" })).not.toBeInTheDocument();
   });
 });
