@@ -19,6 +19,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 import { Route as AdminDokumentyRouteImport } from './routes/admin.dokumenty'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as PolkolonieIndexRouteImport } from './routes/polkolonie.index'
 import { Route as PolkolonieSlugRouteImport } from './routes/polkolonie.$slug'
 import { Route as TripsSlugRouteImport } from './routes/trips.$slug'
 import { Route as WyjazdyIndexRouteImport } from './routes/wyjazdy.index'
@@ -74,6 +75,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PolkolonieIndexRoute = PolkolonieIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PolkolonieRoute,
+} as any)
 const PolkolonieSlugRoute = PolkolonieSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/polkolonie/': typeof PolkolonieIndexRoute
   '/wyjazdy/': typeof WyjazdyIndexRoute
 }
 export interface FileRoutesByTo {
@@ -116,7 +123,6 @@ export interface FileRoutesByTo {
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
-  '/polkolonie': typeof PolkolonieRouteWithChildren
   '/spa-shell': typeof SpaShellRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
@@ -125,6 +131,7 @@ export interface FileRoutesByTo {
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin': typeof AdminIndexRoute
+  '/polkolonie': typeof PolkolonieIndexRoute
   '/wyjazdy': typeof WyjazdyIndexRoute
 }
 export interface FileRoutesById {
@@ -142,6 +149,7 @@ export interface FileRoutesById {
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/polkolonie/': typeof PolkolonieIndexRoute
   '/wyjazdy/': typeof WyjazdyIndexRoute
 }
 export interface FileRouteTypes {
@@ -160,6 +168,7 @@ export interface FileRouteTypes {
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin/'
+    | '/polkolonie/'
     | '/wyjazdy/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -167,7 +176,6 @@ export interface FileRouteTypes {
     | '/eventy'
     | '/kontakt'
     | '/o-nas'
-    | '/polkolonie'
     | '/spa-shell'
     | '/admin/$slug'
     | '/admin/dokumenty'
@@ -176,6 +184,7 @@ export interface FileRouteTypes {
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin'
+    | '/polkolonie'
     | '/wyjazdy'
   id:
     | '__root__'
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin/'
+    | '/polkolonie/'
     | '/wyjazdy/'
   fileRoutesById: FileRoutesById
 }
@@ -283,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/polkolonie/': {
+      id: '/polkolonie/'
+      path: '/'
+      fullPath: '/polkolonie/'
+      preLoaderRoute: typeof PolkolonieIndexRouteImport
+      parentRoute: typeof PolkolonieRoute
+    }
     '/polkolonie/$slug': {
       id: '/polkolonie/$slug'
       path: '/$slug'
@@ -316,10 +333,12 @@ declare module '@tanstack/react-router' {
 
 interface PolkolonieRouteChildren {
   PolkolonieSlugRoute: typeof PolkolonieSlugRoute
+  PolkolonieIndexRoute: typeof PolkolonieIndexRoute
 }
 
 const PolkolonieRouteChildren: PolkolonieRouteChildren = {
   PolkolonieSlugRoute: PolkolonieSlugRoute,
+  PolkolonieIndexRoute: PolkolonieIndexRoute,
 }
 
 const PolkolonieRouteWithChildren = PolkolonieRoute._addFileChildren(

@@ -13,7 +13,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { Route as AboutRoute } from "./o-nas";
 import { Route as ContactRoute } from "./kontakt";
 import { Route as EventsRoute } from "./eventy";
-import { Route as HalfDayCampsRoute } from "./polkolonie";
+import { Route as HalfDayCampsRoute } from "./polkolonie.index";
 import { Route as HomeRoute } from "./index";
 
 const publicSiteEnv = {
