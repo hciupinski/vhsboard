@@ -6,7 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import type { OfferImage } from "@/lib/offers/types";
 
-export function OfferGallery({ images }: { images: OfferImage[] }) {
+export function OfferGallery({
+  images,
+  title = "Zdjęcia z wyjazdu",
+}: {
+  images: OfferImage[];
+  title?: string;
+}) {
   const visibleImages = images.filter((image) => image.signedUrl !== null);
   const [selectedImage, setSelectedImage] = useState<OfferImage | null>(null);
 
@@ -18,7 +24,7 @@ export function OfferGallery({ images }: { images: OfferImage[] }) {
     <section className="bg-secondary/60 py-16 sm:py-20" aria-labelledby="offer-gallery-title">
       <div className="mx-auto max-w-6xl px-5">
         <h2 id="offer-gallery-title" className="text-3xl sm:text-4xl">
-          Zdjęcia z wyjazdu
+          {title}
         </h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {visibleImages.map((image) => (
@@ -59,7 +65,7 @@ export function OfferGallery({ images }: { images: OfferImage[] }) {
           <DialogContent className="w-[calc(100vw-2.5rem)] max-w-5xl border-border/40 bg-foreground p-3 text-background shadow-warm [&>button]:text-background sm:p-4">
             <DialogTitle>{`Powiększone zdjęcie: ${selectedImage.alt}`}</DialogTitle>
             <DialogDescription className="sr-only">
-              Pełny widok zdjęcia z wyjazdu. Naciśnij Escape, aby zamknąć.
+              Pełny widok zdjęcia oferty. Naciśnij Escape, aby zamknąć.
             </DialogDescription>
             <img
               src={selectedImage.signedUrl ?? undefined}
