@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { getSeoConfigFrom } from "../src/lib/env";
 
-const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
+const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
 
 export const escapeXml = (value: string): string =>
   value.replace(/[<>&"']/g, (character) => {

@@ -114,7 +114,7 @@ const mapOffer = (
 
   if (row.offer_kind === "day_camp") {
     if (row.activity !== "wake" && row.activity !== "snow")
-      throw new Error("Aktywność nie pasuje do półkolonii.");
+      throw new Error("Aktywność nie pasuje do obozów.");
     return {
       ...base,
       offerKind: "day_camp" as const,

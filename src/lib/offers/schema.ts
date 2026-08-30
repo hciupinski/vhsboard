@@ -120,7 +120,7 @@ export const offerDetailRowSchema = offerBaseRowSchema
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["group_size_max"],
-        message: "Półkolonia nie może mieć limitu grupy.",
+        message: "Obóz nie może mieć limitu grupy.",
       });
   });
 

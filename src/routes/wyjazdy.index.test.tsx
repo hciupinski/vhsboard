@@ -47,7 +47,7 @@ const renderTripsPage = async () => {
     path: "/wyjazdy",
     component: TripsPage,
   });
-  const emptyRoutes = ["/", "/wyjazdy/$slug", "/eventy", "/polkolonie", "/o-nas", "/kontakt"].map(
+  const emptyRoutes = ["/", "/wyjazdy/$slug", "/eventy", "/obozy", "/o-nas", "/kontakt"].map(
     (path) => createRoute({ getParentRoute: () => rootRoute, path, component: () => null }),
   );
   const router = createRouter({

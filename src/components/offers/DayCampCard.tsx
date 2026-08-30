@@ -42,8 +42,8 @@ export function DayCampCard({ offer }: { offer: DayCampOffer }) {
           </span>
         </div>
         <Button asChild className="mt-4 w-full rounded-full" variant="secondary">
-          <Link to="/polkolonie/$slug" params={{ slug: offer.slug }}>
-            Zobacz szczegóły półkolonii
+          <Link to="/obozy/$slug" params={{ slug: offer.slug }}>
+            Zobacz szczegóły obozów
           </Link>
         </Button>
       </div>

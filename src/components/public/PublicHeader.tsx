@@ -15,7 +15,7 @@ import {
 const navigationItems = [
   { to: "/wyjazdy", label: "Wyjazdy" },
   { to: "/eventy", label: "Eventy" },
-  { to: "/polkolonie", label: "Półkolonie" },
+  { to: "/obozy", label: "Obozy" },
   { to: "/o-nas", label: "O nas" },
   { to: "/kontakt", label: "Kontakt" },
 ] as const;

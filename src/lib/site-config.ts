@@ -7,6 +7,7 @@ export type PublicSiteConfig = {
   businessCity: string;
   businessNip: string;
   businessRegon: string;
+  businessBankAccount: string;
 };
 
 const requirePublicEnvironmentVariable = (name: string, value: string | undefined): string => {
@@ -68,6 +69,10 @@ export const getPublicSiteConfig = (): PublicSiteConfig => {
     businessRegon: requirePublicEnvironmentVariable(
       "VITE_BUSINESS_REGON",
       import.meta.env["VITE_BUSINESS_REGON"],
+    ),
+    businessBankAccount: requirePublicEnvironmentVariable(
+      "VITE_BUSINESS_BANK_ACCOUNT",
+      import.meta.env["VITE_BUSINESS_BANK_ACCOUNT"],
     ),
   };
 };

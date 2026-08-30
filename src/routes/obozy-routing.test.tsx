@@ -19,7 +19,7 @@ const dayCamp: DayCampOffer = {
   offerKind: "day_camp",
   activity: "wake",
   slug: "wakeboard-2026",
-  title: "Wakeboardowe półkolonie",
+  title: "Wakeboardowe obozy",
   subtitle: "Pięć dni ruchu na wodzie.",
   shortDescription: "Wakeboard i dobra ekipa.",
   location: "Central Wake Park, Głowno",
@@ -46,7 +46,7 @@ const dayCamp: DayCampOffer = {
         startDate: "2026-06-29",
         endDate: "2026-07-03",
         bookingUrl: "https://zapisy.example/wakeboard-2026",
-        priceOptions: [{ label: "Półkolonie", price: 1450 }],
+        priceOptions: [{ label: "Obozy", price: 1450 }],
       },
     ],
     parentInfo: {
@@ -69,21 +69,21 @@ describe("day-camp route nesting", () => {
     const router = createRouter({
       routeTree,
       context: { queryClient },
-      history: createMemoryHistory({ initialEntries: ["/polkolonie/wakeboard-2026"] }),
+      history: createMemoryHistory({ initialEntries: ["/obozy/wakeboard-2026"] }),
     });
 
     await router.load();
     render(<RouterProvider router={router} />);
 
     expect(
-      await screen.findByRole("heading", { name: "Wakeboardowe półkolonie" }),
+      await screen.findByRole("heading", { name: "Wakeboardowe obozy" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Twoja półkolonia")).toBeInTheDocument();
+    expect(screen.getByText("Twoja obóz")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Wybierz turnus" })).toHaveAttribute(
       "href",
       "#turnusy",
     );
     expect(screen.getByRole("heading", { name: "Plan dnia" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Półkolonie aktywnie" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Obozy aktywnie" })).not.toBeInTheDocument();
   });
 });

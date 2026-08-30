@@ -7,7 +7,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 
 import { isBuildOnly } from "./scripts/build-mode";
 
-const staticPublicPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
+const staticPublicPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
 const spaShellMaskPath = "/spa-shell";
 
 export default defineConfig(async ({ mode }) => {

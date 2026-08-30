@@ -131,13 +131,13 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
             tabHasError("content.paragraphs") ||
             tabHasError("content.highlights") ||
             tabHasError("content.venueDescription")
-              ? `${dayCamp ? "O półkolonii" : "O wyjeździe"} — zawiera błędy`
+              ? `${dayCamp ? "O obozów" : "O wyjeździe"} — zawiera błędy`
               : dayCamp
-                ? "O półkolonii"
+                ? "O obozów"
                 : "O wyjeździe"
           }
         >
-          {dayCamp ? "O półkolonii" : "O wyjeździe"}
+          {dayCamp ? "O obozów" : "O wyjeździe"}
           {tabHasError("subtitle") ||
           tabHasError("content.paragraphs") ||
           tabHasError("content.highlights") ||
@@ -203,13 +203,13 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="trip">Wyjazd</SelectItem>
-                  <SelectItem value="day_camp">Półkolonie</SelectItem>
+                  <SelectItem value="day_camp">Obozy</SelectItem>
                 </SelectContent>
               </Select>
             </Field>
             <Field
               id="title"
-              label={dayCamp ? "Tytuł półkolonii" : "Tytuł wyjazdu"}
+              label={dayCamp ? "Tytuł obozów" : "Tytuł wyjazdu"}
               characterCount={{ value: value.title, max: 120 }}
               error={errors.title}
             >

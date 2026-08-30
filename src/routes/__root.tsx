@@ -74,7 +74,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "VHSBOARD — wyjazdy, eventy i półkolonie" },
+      { title: "VHSBOARD — wyjazdy, eventy i obozy" },
       { name: "robots", content: "noindex, nofollow" },
     ],
     links: [

@@ -323,7 +323,7 @@ const dayCampEditorOfferInputSchema = z
         "Adres oferty może zawierać małe litery, cyfry i łączniki.",
       ),
     activity: z.enum(["wake", "snow"], {
-      errorMap: () => ({ message: "Wybierz aktywność półkolonii." }),
+      errorMap: () => ({ message: "Wybierz aktywność obozów." }),
     }),
     title: trimmedText("Tytuł", 3, 120),
     subtitle: trimmedText("Podtytuł", 3, 280),

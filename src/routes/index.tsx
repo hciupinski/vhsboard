@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 
-import wakeparkCampImage from "@/assets/polkolonie-wakepark.png";
+import wakeparkCampImage from "@/assets/obozy-wakepark.png";
 import skimboardingTrackImage from "@/assets/eventy-tor-skimboardowy.jpg";
 import heroSurf from "@/assets/hero-surf.jpg";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -14,8 +14,8 @@ export const Route = createFileRoute("/")({
   head: () =>
     createPageMetadata({
       path: "/",
-      title: "VHSBOARD — wyjazdy, eventy i półkolonie",
-      description: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i półkolonie.",
+      title: "VHSBOARD — wyjazdy, eventy i obozy",
+      description: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i obozy.",
     }),
   component: HomePage,
 });
@@ -24,8 +24,8 @@ const entryPoints = [
   {
     to: "/wyjazdy",
     title: "Wyjazdy",
-    eyebrow: "01 / W drogę",
-    text: "Surf, snowboard i dobre ekipy — planujemy wyjazdy, do których chce się wracać.",
+    eyebrow: "01 / W podróż",
+    text: "Surf, snowboard i dobra ekipa — wyjazdy, do których chce się wracać.",
     action: "Zobacz wyjazdy",
     image: heroSurf,
     imageAlt: "Uczestnicy wyjazdu VHSBOARD z deskami surfingowymi na plaży",
@@ -33,21 +33,21 @@ const entryPoints = [
   {
     to: "/eventy",
     title: "Eventy",
-    eyebrow: "02 / W ruchu",
-    text: "Mobilny tor skimboardowy, który zamienia spotkanie w wspólne show.",
-    action: "Poznaj eventy",
+    eyebrow: "02 / Ruch",
+    text: "Sport, dobra energia i aktywności, które przyciągają ludzi i rozkręcają wydarzenia.",
+    action: "Sprawdź eventy",
     image: skimboardingTrackImage,
     imageAlt: "Uczestnik eventu na mobilnym torze skimboardowym VHSBOARD",
   },
   {
-    to: "/polkolonie",
-    title: "Półkolonie",
+    to: "/obozy",
+    title: "Obozy",
     eyebrow: "03 / Dla młodych",
-    text: "Aktywne dni z deską, wodą i ludźmi, którzy wiedzą, jak złapać zajawkę.",
-    action: "Poznaj półkolonie",
+    text: "Wakacje po naszemu? Aktywne dni pełne sportu, zabawy i nowych doświadczeń.",
+    action: "Poznaj obozy",
     image: wakeparkCampImage,
     imageAlt:
-      "Dziecko płynące na wakeboardzie podczas półkolonii VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+      "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
   },
 ] as const;
 
@@ -68,14 +68,13 @@ function HomePage() {
           <div className="absolute inset-0 bg-foreground/55" />
           <div className="relative mx-auto max-w-6xl px-5 pb-20 pt-24 sm:pb-28 sm:pt-36">
             <p className="mb-4 inline-block rounded-full border border-background/40 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background">
-              Wyjazdy · Eventy · Półkolonie
+              Wyjazdy · Eventy · Obozy
             </p>
             <h1 className="max-w-3xl text-5xl leading-[0.95] text-background sm:text-7xl">
               Dobre rzeczy dzieją się poza codziennym planem
             </h1>
             <p className="mt-5 max-w-xl text-base text-background/85 sm:text-lg">
-              Tworzymy aktywności wokół sportów deskowych — od wyjazdów przez eventy po programy dla
-              dzieci.
+            Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach, eventach i podczas aktywności dla dzieci.
             </p>
             <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
               <Link to="/wyjazdy">Zobacz wyjazdy</Link>
@@ -88,11 +87,10 @@ function HomePage() {
               Wybierz swój kierunek
             </p>
             <h2 id="entry-points-heading" className="mt-3 text-4xl leading-[0.95] sm:text-6xl">
-              Wybierz, od czego zaczynasz
+              ZACZNIJ NOWĄ PRZYGODĘ
             </h2>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Trzy różne sposoby na czas poza codziennym planem. Wejdź tam, gdzie właśnie ciągnie
-              Cię najbardziej.
+              Trzy sposoby na czas poza codziennym planem. Wybierz ten, który najbardziej Cię kręci.
             </p>
           </div>
           <div

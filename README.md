@@ -3,7 +3,7 @@
 ## Description
 
 VHSBOARD is a Polish marketing website for small-group surfing and snowboarding
-trips, eventy z torem skimboardowym oraz półkolonie. It presents current
+trips, eventy z torem skimboardowym oraz obozy. It presents current
 offers and trip details, with a lightweight admin CMS prototype for managing
 offer content.
 

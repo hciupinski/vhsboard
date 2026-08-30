@@ -44,11 +44,11 @@ const completeDayCamp = {
   offerKind: "day_camp",
   slug: "wake-lato-2026",
   activity: "wake",
-  title: "Wakeboardowe półkolonie lato 2026",
+  title: "Wakeboardowe obozy lato 2026",
   subtitle: "Pięć aktywnych dni na wodzie.",
   shortDescription: "Wakeboard, ruch i opieka instruktorów przez pięć wakacyjnych dni.",
   content: {
-    paragraphs: ["Półkolonie dla dzieci, które chcą spróbować wakeboardu."],
+    paragraphs: ["Obozy dla dzieci, które chcą spróbować wakeboardu."],
     highlights: ["Codzienna nauka wakeboardu"],
     included: ["Opieka instruktorów"],
     excluded: ["Dojazd we własnym zakresie"],

@@ -44,7 +44,7 @@ const activityLabels: Record<OfferActivity, string> = {
 
 const offerKindLabels: Record<OfferKind, string> = {
   trip: "Wyjazd",
-  day_camp: "Półkolonie",
+  day_camp: "Obozy",
 };
 
 const statusLabels: Record<OfferStatus, string> = {
@@ -221,7 +221,7 @@ function AdminListContent() {
                     {updatedAtFormatter.format(new Date(o.updatedAt))}
                   </time>
                   {" · "}
-                  {o.offerKind === "day_camp" ? "/polkolonie/" : "/wyjazdy/"}
+                  {o.offerKind === "day_camp" ? "/obozy/" : "/wyjazdy/"}
                   {o.slug}
                 </p>
               </div>
@@ -235,7 +235,7 @@ function AdminListContent() {
                 ) : null}
                 {o.status === "published" && o.offerKind === "day_camp" ? (
                   <Button asChild size="sm" variant="outline" className="rounded-full">
-                    <Link to="/polkolonie/$slug" params={{ slug: o.slug }}>
+                    <Link to="/obozy/$slug" params={{ slug: o.slug }}>
                       <ExternalLink className="mr-1 size-4" /> Podgląd
                     </Link>
                   </Button>
