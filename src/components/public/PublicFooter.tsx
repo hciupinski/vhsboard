@@ -1,12 +1,14 @@
 import { Link } from "@tanstack/react-router";
 
 import { Brand } from "@/components/Brand";
+import { useCookieConsent } from "@/components/cookie-consent/useCookieConsent";
 import { getPublicSiteConfig } from "@/lib/site-config";
 
 const toTelHref = (phone: string) => `tel:${phone.replace(/[^+0-9]/g, "")}`;
 
 export function PublicFooter() {
   const config = getPublicSiteConfig();
+  const { openPreferences } = useCookieConsent();
 
   return (
     <footer className="border-t border-border bg-secondary/35 py-6 sm:py-10">
@@ -26,6 +28,13 @@ export function PublicFooter() {
               theconstruct.ing
             </a>
           </p>
+          <button
+            className="mt-3 rounded-sm font-medium text-foreground underline-offset-4 hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            onClick={openPreferences}
+            type="button"
+          >
+            Ustawienia cookies
+          </button>
         </div>
         <address className="hidden not-italic sm:block sm:text-right">
           <p className="font-medium text-foreground">{config.businessName}</p>

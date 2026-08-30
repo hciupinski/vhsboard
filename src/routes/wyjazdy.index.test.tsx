@@ -10,6 +10,8 @@ import { cleanup, render, screen } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
+
 import { Route as TripsRoute } from "./wyjazdy.index";
 
 const { mockedListPublishedOffers } = vi.hoisted(() => ({
@@ -57,7 +59,9 @@ const renderTripsPage = async () => {
   await router.load();
   return render(
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <CookieConsentProvider>
+        <RouterProvider router={router} />
+      </CookieConsentProvider>
     </QueryClientProvider>,
   );
 };

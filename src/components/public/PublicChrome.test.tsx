@@ -9,6 +9,8 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
+
 import { PublicFooter } from "./PublicFooter";
 import { PublicHeader } from "./PublicHeader";
 
@@ -34,10 +36,10 @@ const renderPublicChrome = async (initialEntry: string) => {
       getParentRoute: () => rootRoute,
       path,
       component: () => (
-        <>
+        <CookieConsentProvider>
           <PublicHeader />
           <PublicFooter />
-        </>
+        </CookieConsentProvider>
       ),
     }),
   );
@@ -84,5 +86,14 @@ describe("public navigation", () => {
       "href",
       "mailto:kontakt@example.test",
     );
+  });
+
+  it("reopens cookie preferences from the public footer", async () => {
+    const user = userEvent.setup();
+    await renderPublicChrome("/");
+
+    await user.click(screen.getByRole("button", { name: "Ustawienia cookies" }));
+
+    expect(await screen.findByRole("dialog", { name: "Ustawienia cookies" })).toBeInTheDocument();
   });
 });

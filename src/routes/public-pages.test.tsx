@@ -10,6 +10,8 @@ import { cleanup, render, screen } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
+
 import { Route as AboutRoute } from "./o-nas";
 import { Route as ContactRoute } from "./kontakt";
 import { Route as EventsRoute } from "./eventy";
@@ -59,7 +61,9 @@ const renderRoute = async (path: string, route: { options: { component?: unknown
   queryClient.setQueryData(["published-offers", "day_camp"], []);
   return render(
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <CookieConsentProvider>
+        <RouterProvider router={router} />
+      </CookieConsentProvider>
     </QueryClientProvider>,
   );
 };
