@@ -53,9 +53,14 @@ function ContactPage() {
             </p>
             <h3 className="mt-3">Sprawdź co u nas słychać i dołącz do społeczności VHS</h3>
             <p>
-              <a href="https://www.facebook.com/share/1E7xY7Ed2B" className="underline-offset-4 hover:underline">Facebook</a>
-              <> _ </>
-              <a href="https://www.instagram.com/vhsboard" className="underline-offset-4 hover:underline">Instagram</a>
+              <a href="https://www.facebook.com/share/1E7xY7Ed2B" className="underline-offset-4 hover:underline p-1 hover:invert-[.1]" target="_blank"
+                rel="noreferrer">
+                <img src="/facebook-black.png" alt="Facebook" className="inline-block h-6 w-6 invert" />
+              </a>
+              <a href="https://www.instagram.com/vhsboard" className="underline-offset-4 hover:underline p-1 hover:invert-[.1]" target="_blank"
+                rel="noreferrer">
+                <img src="/instagram-black.png" alt="Instagram" className="inline-block h-6 w-6 invert" />
+              </a>
             </p>
           </section>
           <section className="rounded-3xl border border-border bg-card p-7">
