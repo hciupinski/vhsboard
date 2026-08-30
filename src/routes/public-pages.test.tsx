@@ -81,9 +81,7 @@ describe("static public pages", () => {
     expect(structuredData?.textContent).toContain('"Organization"');
     expect(structuredData?.textContent).toContain('"WebSite"');
 
-    expect(
-      screen.getByRole("heading", { name: /wybierz, od czego zaczynasz/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /zacznij nową przygodę/i })).toBeInTheDocument();
     expect(screen.getByTestId("topic-selector")).toHaveClass("topic-selector");
     expect(
       screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__content"),
@@ -124,7 +122,7 @@ describe("static public pages", () => {
       {
         href: "/obozy",
         imageAlt:
-          "Dziecko płynące na wakeboardzie podczas obozów VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+          "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
       },
     ];
 

@@ -11,6 +11,7 @@ const publicSiteEnv = {
   VITE_BUSINESS_CITY: "Warszawa",
   VITE_BUSINESS_NIP: "1234567890",
   VITE_BUSINESS_REGON: "123456789",
+  VITE_BUSINESS_BANK_ACCOUNT: "12345678901234567890123456",
 };
 
 afterEach(() => {
@@ -32,6 +33,7 @@ describe("public site configuration", () => {
       businessCity: "Warszawa",
       businessNip: "1234567890",
       businessRegon: "123456789",
+      businessBankAccount: "12345678901234567890123456",
     });
   });
 
