@@ -30,7 +30,8 @@ function ContactPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Kontakt</p>
         <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">MASZ PYTANIA? POGADAJMY!</h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-          Napisz lub zadzwoń — chętnie odpowiemy na pytania dotyczące wyjazdów, eventów i obozów dla dzieci.
+          Napisz lub zadzwoń — chętnie odpowiemy na pytania dotyczące wyjazdów, eventów i obozów dla
+          dzieci.
         </p>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
           <section className="rounded-3xl bg-sunset-gradient p-7 text-primary-foreground shadow-warm">
@@ -53,13 +54,29 @@ function ContactPage() {
             </p>
             <h3 className="mt-3">Sprawdź co u nas słychać i dołącz do społeczności VHS</h3>
             <p>
-              <a href="https://www.facebook.com/share/1E7xY7Ed2B" className="underline-offset-4 hover:underline p-1 hover:invert-[.1]" target="_blank"
-                rel="noreferrer">
-                <img src="/facebook-black.png" alt="Facebook" className="inline-block h-6 w-6 invert" />
+              <a
+                href="https://www.facebook.com/share/1E7xY7Ed2B"
+                className="underline-offset-4 hover:underline p-1 hover:invert-[.1]"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src="/facebook-black.png"
+                  alt="Facebook"
+                  className="inline-block h-6 w-6 invert"
+                />
               </a>
-              <a href="https://www.instagram.com/vhsboard" className="underline-offset-4 hover:underline p-1 hover:invert-[.1]" target="_blank"
-                rel="noreferrer">
-                <img src="/instagram-black.png" alt="Instagram" className="inline-block h-6 w-6 invert" />
+              <a
+                href="https://www.instagram.com/vhsboard"
+                className="underline-offset-4 hover:underline p-1 hover:invert-[.1]"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src="/instagram-black.png"
+                  alt="Instagram"
+                  className="inline-block h-6 w-6 invert"
+                />
               </a>
             </p>
           </section>

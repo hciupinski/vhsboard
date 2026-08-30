@@ -75,9 +75,7 @@ describe("day-camp route nesting", () => {
     await router.load();
     render(<RouterProvider router={router} />);
 
-    expect(
-      await screen.findByRole("heading", { name: "Wakeboardowe obozy" }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Wakeboardowe obozy" })).toBeInTheDocument();
     expect(screen.getByText("Twoja obóz")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Wybierz turnus" })).toHaveAttribute(
       "href",

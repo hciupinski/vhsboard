@@ -49,8 +49,8 @@ function HalfDayCampsPage() {
               Obozy aktywnie
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/85">
-              Organizujemy letnie i zimowe obozy dla dzieci, które lubią ruch, wodę, śnieg i
-              dobrą ekipę. Każdy dzień łączy naukę od podstaw z czasem spędzonym razem na świeżym
+              Organizujemy letnie i zimowe obozy dla dzieci, które lubią ruch, wodę, śnieg i dobrą
+              ekipę. Każdy dzień łączy naukę od podstaw z czasem spędzonym razem na świeżym
               powietrzu.
             </p>
           </div>

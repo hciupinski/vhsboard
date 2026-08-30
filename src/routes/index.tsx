@@ -74,7 +74,8 @@ function HomePage() {
               Dobre rzeczy dzieją się poza codziennym planem
             </h1>
             <p className="mt-5 max-w-xl text-base text-background/85 sm:text-lg">
-            Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach, eventach i podczas aktywności dla dzieci.
+              Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
+              eventach i podczas aktywności dla dzieci.
             </p>
             <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
               <Link to="/wyjazdy">Zobacz wyjazdy</Link>
