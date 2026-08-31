@@ -53,8 +53,8 @@ Do uruchomienia strony publicznej wymagane są również publiczne zmienne
 konfiguracyjne danych kontaktowych i firmy: `VITE_CONTACT_EMAIL`,
 `VITE_CONTACT_PHONE`, `VITE_BUSINESS_NAME`, `VITE_BUSINESS_STREET`,
 `VITE_BUSINESS_POSTAL_CODE`, `VITE_BUSINESS_CITY`, `VITE_BUSINESS_NIP` oraz
-`VITE_BUSINESS_REGON`. Wartości umieszczaj w zmiennych środowiskowych deployu,
-nigdy w repozytorium.
+`VITE_BUSINESS_REGON` i `VITE_BUSINESS_BANK_ACCOUNT`. Wartości umieszczaj w
+zmiennych środowiskowych deployu, nigdy w repozytorium.
 
 Techniczne SEO wymaga też `VITE_SITE_URL` (dokładnego originu HTTPS) oraz
 `VITE_SEO_INDEXING` (`true` albo `false`). Dopóki adres Pages jest jedynym

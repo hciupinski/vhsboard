@@ -23,6 +23,7 @@ const publicSiteEnv = {
   VITE_BUSINESS_CITY: "Warszawa",
   VITE_BUSINESS_NIP: "1234567890",
   VITE_BUSINESS_REGON: "123456789",
+  VITE_BUSINESS_BANK_ACCOUNT: "12345678901234567890123456",
 };
 
 const renderPublicChrome = async (initialEntry: string) => {
