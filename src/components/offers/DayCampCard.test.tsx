@@ -15,7 +15,7 @@ const offer = {
   offerKind: "day_camp" as const,
   slug: "wake-lato-2026",
   activity: "wake" as const,
-  title: "Wakeboardowe półkolonie",
+  title: "Wakeboardowe obozy",
   subtitle: "Pięć dni na wodzie.",
   shortDescription: "Wakeboard i opieka instruktorów przez pięć wakacyjnych dni.",
   content: {
@@ -63,9 +63,9 @@ describe("DayCampCard", () => {
     });
     await router.load();
     render(<RouterProvider router={router} />);
-    expect(screen.getByRole("link", { name: "Zobacz szczegóły półkolonii" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Zobacz szczegóły obozów" })).toHaveAttribute(
       "href",
-      "/polkolonie/wake-lato-2026",
+      "/obozy/wake-lato-2026",
     );
   });
 });

@@ -7,7 +7,7 @@ import { checkSeoBuild } from "./check-seo-build";
 
 const directories: string[] = [];
 const siteUrl = "https://vhsboard.pages.dev";
-const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
+const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
 
 const outputFile = (outputDirectory: string, path: string) =>
   path === "/" ? join(outputDirectory, "index.html") : join(outputDirectory, path, "index.html");
@@ -44,7 +44,7 @@ const createOutput = async () => {
   );
   await writeFile(
     join(outputDirectory, "_redirects"),
-    "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/polkolonie/:slug /_shell/app 200\n/admin /_shell/app 200\n/admin/* /_shell/app 200\n",
+    "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/obozy/:slug /_shell/app 200\n/admin /_shell/app 200\n/admin/* /_shell/app 200\n",
   );
   return outputDirectory;
 };
@@ -86,9 +86,9 @@ describe("checkSeoBuild", () => {
 
   it("rejects a prerendered offer detail", async () => {
     const outputDirectory = await createOutput();
-    const offerFile = outputFile(outputDirectory, "/polkolonie/wakeboard-2026");
+    const offerFile = outputFile(outputDirectory, "/obozy/wakeboard-2026");
     await mkdir(join(offerFile, ".."), { recursive: true });
-    await writeFile(offerFile, html("/polkolonie/wakeboard-2026"));
+    await writeFile(offerFile, html("/obozy/wakeboard-2026"));
 
     await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow(
       "statycznych szczegółów ofert",

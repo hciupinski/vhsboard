@@ -17,7 +17,7 @@ const activityLabels = {
   snow: "Snowboard",
 } as const;
 
-export const Route = createFileRoute("/polkolonie/$slug")({
+export const Route = createFileRoute("/obozy/$slug")({
   loader: async ({ context, params }) => {
     const offer = await context.queryClient.ensureQueryData(
       publishedOfferQueryOptions(params.slug, "day_camp"),
@@ -28,15 +28,15 @@ export const Route = createFileRoute("/polkolonie/$slug")({
   head: ({ loaderData }) =>
     loaderData
       ? createPageMetadata({
-          path: `/polkolonie/${loaderData.offer.slug}`,
+          path: `/obozy/${loaderData.offer.slug}`,
           title: `${loaderData.offer.title} | VHSBOARD`,
           description: loaderData.offer.shortDescription,
           ogType: "article",
         })
       : createPageMetadata({
-          path: "/polkolonie",
-          title: "Nie znaleziono półkolonii — VHSBOARD",
-          description: "Nie znaleziono wskazanej półkolonii.",
+          path: "/obozy",
+          title: "Nie znaleziono obozów — VHSBOARD",
+          description: "Nie znaleziono wskazanego obozów.",
           indexable: false,
         }),
   component: DayCampDetail,
@@ -52,7 +52,7 @@ function DayCampDetail() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <PublicJsonLd path={`/polkolonie/${offer.slug}`} label={offer.title} offer={offer} />
+      <PublicJsonLd path={`/obozy/${offer.slug}`} label={offer.title} offer={offer} />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground">
           {offer.heroImageUrl ? (
@@ -97,7 +97,7 @@ function DayCampDetail() {
             {content.paragraphs.length > 0 || content.venueDescription ? (
               <section aria-labelledby="about-day-camp-title">
                 <h2 id="about-day-camp-title" className="text-3xl sm:text-4xl">
-                  O półkolonii
+                  O obozów
                 </h2>
                 {content.paragraphs.map((paragraph, index) => (
                   <p
@@ -293,8 +293,8 @@ function DayCampDetail() {
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                Twoja półkolonia
+              <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">
+                Twój obóz
               </p>
               <OfferFacts offer={offer} showBookingCta={!hasTerms} />
               {hasTerms ? (
@@ -306,7 +306,7 @@ function DayCampDetail() {
           </aside>
         </div>
         {offer.images.length > 0 ? (
-          <OfferGallery images={offer.images} title="Zdjęcia z półkolonii" />
+          <OfferGallery images={offer.images} title="Zdjęcia z obozów" />
         ) : null}
       </main>
       <PublicFooter />

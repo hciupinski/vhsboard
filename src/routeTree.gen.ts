@@ -13,14 +13,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventyRouteImport } from './routes/eventy'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as ONasRouteImport } from './routes/o-nas'
-import { Route as PolkolonieRouteImport } from './routes/polkolonie'
+import { Route as ObozyRouteImport } from './routes/obozy'
 import { Route as SpaShellRouteImport } from './routes/spa-shell'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 import { Route as AdminDokumentyRouteImport } from './routes/admin.dokumenty'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
-import { Route as PolkolonieIndexRouteImport } from './routes/polkolonie.index'
-import { Route as PolkolonieSlugRouteImport } from './routes/polkolonie.$slug'
+import { Route as ObozyIndexRouteImport } from './routes/obozy.index'
+import { Route as ObozySlugRouteImport } from './routes/obozy.$slug'
 import { Route as TripsSlugRouteImport } from './routes/trips.$slug'
 import { Route as WyjazdyIndexRouteImport } from './routes/wyjazdy.index'
 import { Route as WyjazdySlugRouteImport } from './routes/wyjazdy.$slug'
@@ -45,9 +45,9 @@ const ONasRoute = ONasRouteImport.update({
   path: '/o-nas',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PolkolonieRoute = PolkolonieRouteImport.update({
-  id: '/polkolonie',
-  path: '/polkolonie',
+const ObozyRoute = ObozyRouteImport.update({
+  id: '/obozy',
+  path: '/obozy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpaShellRoute = SpaShellRouteImport.update({
@@ -75,15 +75,15 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PolkolonieIndexRoute = PolkolonieIndexRouteImport.update({
+const ObozyIndexRoute = ObozyIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => PolkolonieRoute,
+  getParentRoute: () => ObozyRoute,
 } as any)
-const PolkolonieSlugRoute = PolkolonieSlugRouteImport.update({
+const ObozySlugRoute = ObozySlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
-  getParentRoute: () => PolkolonieRoute,
+  getParentRoute: () => ObozyRoute,
 } as any)
 const TripsSlugRoute = TripsSlugRouteImport.update({
   id: '/trips/$slug',
@@ -106,16 +106,16 @@ export interface FileRoutesByFullPath {
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
-  '/polkolonie': typeof PolkolonieRouteWithChildren
+  '/obozy': typeof ObozyRouteWithChildren
   '/spa-shell': typeof SpaShellRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
-  '/polkolonie/$slug': typeof PolkolonieSlugRoute
+  '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin/': typeof AdminIndexRoute
-  '/polkolonie/': typeof PolkolonieIndexRoute
+  '/obozy/': typeof ObozyIndexRoute
   '/wyjazdy/': typeof WyjazdyIndexRoute
 }
 export interface FileRoutesByTo {
@@ -127,11 +127,11 @@ export interface FileRoutesByTo {
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
-  '/polkolonie/$slug': typeof PolkolonieSlugRoute
+  '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin': typeof AdminIndexRoute
-  '/polkolonie': typeof PolkolonieIndexRoute
+  '/obozy': typeof ObozyIndexRoute
   '/wyjazdy': typeof WyjazdyIndexRoute
 }
 export interface FileRoutesById {
@@ -140,16 +140,16 @@ export interface FileRoutesById {
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
-  '/polkolonie': typeof PolkolonieRouteWithChildren
+  '/obozy': typeof ObozyRouteWithChildren
   '/spa-shell': typeof SpaShellRoute
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
-  '/polkolonie/$slug': typeof PolkolonieSlugRoute
+  '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
   '/admin/': typeof AdminIndexRoute
-  '/polkolonie/': typeof PolkolonieIndexRoute
+  '/obozy/': typeof ObozyIndexRoute
   '/wyjazdy/': typeof WyjazdyIndexRoute
 }
 export interface FileRouteTypes {
@@ -159,16 +159,16 @@ export interface FileRouteTypes {
     | '/eventy'
     | '/kontakt'
     | '/o-nas'
-    | '/polkolonie'
+    | '/obozy'
     | '/spa-shell'
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
-    | '/polkolonie/$slug'
+    | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin/'
-    | '/polkolonie/'
+    | '/obozy/'
     | '/wyjazdy/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -180,11 +180,11 @@ export interface FileRouteTypes {
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
-    | '/polkolonie/$slug'
+    | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin'
-    | '/polkolonie'
+    | '/obozy'
     | '/wyjazdy'
   id:
     | '__root__'
@@ -192,16 +192,16 @@ export interface FileRouteTypes {
     | '/eventy'
     | '/kontakt'
     | '/o-nas'
-    | '/polkolonie'
+    | '/obozy'
     | '/spa-shell'
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
-    | '/polkolonie/$slug'
+    | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
     | '/admin/'
-    | '/polkolonie/'
+    | '/obozy/'
     | '/wyjazdy/'
   fileRoutesById: FileRoutesById
 }
@@ -210,7 +210,7 @@ export interface RootRouteChildren {
   EventyRoute: typeof EventyRoute
   KontaktRoute: typeof KontaktRoute
   ONasRoute: typeof ONasRoute
-  PolkolonieRoute: typeof PolkolonieRouteWithChildren
+  ObozyRoute: typeof ObozyRouteWithChildren
   SpaShellRoute: typeof SpaShellRoute
   AdminSlugRoute: typeof AdminSlugRoute
   AdminDokumentyRoute: typeof AdminDokumentyRoute
@@ -251,11 +251,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ONasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/polkolonie': {
-      id: '/polkolonie'
-      path: '/polkolonie'
-      fullPath: '/polkolonie'
-      preLoaderRoute: typeof PolkolonieRouteImport
+    '/obozy': {
+      id: '/obozy'
+      path: '/obozy'
+      fullPath: '/obozy'
+      preLoaderRoute: typeof ObozyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/spa-shell': {
@@ -293,19 +293,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/polkolonie/': {
-      id: '/polkolonie/'
+    '/obozy/': {
+      id: '/obozy/'
       path: '/'
-      fullPath: '/polkolonie/'
-      preLoaderRoute: typeof PolkolonieIndexRouteImport
-      parentRoute: typeof PolkolonieRoute
+      fullPath: '/obozy/'
+      preLoaderRoute: typeof ObozyIndexRouteImport
+      parentRoute: typeof ObozyRoute
     }
-    '/polkolonie/$slug': {
-      id: '/polkolonie/$slug'
+    '/obozy/$slug': {
+      id: '/obozy/$slug'
       path: '/$slug'
-      fullPath: '/polkolonie/$slug'
-      preLoaderRoute: typeof PolkolonieSlugRouteImport
-      parentRoute: typeof PolkolonieRoute
+      fullPath: '/obozy/$slug'
+      preLoaderRoute: typeof ObozySlugRouteImport
+      parentRoute: typeof ObozyRoute
     }
     '/trips/$slug': {
       id: '/trips/$slug'
@@ -331,26 +331,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface PolkolonieRouteChildren {
-  PolkolonieSlugRoute: typeof PolkolonieSlugRoute
-  PolkolonieIndexRoute: typeof PolkolonieIndexRoute
+interface ObozyRouteChildren {
+  ObozySlugRoute: typeof ObozySlugRoute
+  ObozyIndexRoute: typeof ObozyIndexRoute
 }
 
-const PolkolonieRouteChildren: PolkolonieRouteChildren = {
-  PolkolonieSlugRoute: PolkolonieSlugRoute,
-  PolkolonieIndexRoute: PolkolonieIndexRoute,
+const ObozyRouteChildren: ObozyRouteChildren = {
+  ObozySlugRoute: ObozySlugRoute,
+  ObozyIndexRoute: ObozyIndexRoute,
 }
 
-const PolkolonieRouteWithChildren = PolkolonieRoute._addFileChildren(
-  PolkolonieRouteChildren,
-)
+const ObozyRouteWithChildren = ObozyRoute._addFileChildren(ObozyRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EventyRoute: EventyRoute,
   KontaktRoute: KontaktRoute,
   ONasRoute: ONasRoute,
-  PolkolonieRoute: PolkolonieRouteWithChildren,
+  ObozyRoute: ObozyRouteWithChildren,
   SpaShellRoute: SpaShellRoute,
   AdminSlugRoute: AdminSlugRoute,
   AdminDokumentyRoute: AdminDokumentyRoute,

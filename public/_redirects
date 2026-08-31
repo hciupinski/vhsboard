@@ -1,5 +1,5 @@
 /trips/:slug /wyjazdy/:slug 301
 /wyjazdy/:slug /_shell/app 200
-/polkolonie/:slug /_shell/app 200
+/obozy/:slug /_shell/app 200
 /admin /_shell/app 200
 /admin/* /_shell/app 200

@@ -34,6 +34,7 @@ export function ContactDocuments() {
 
   return (
     <section
+      id="dokumenty"
       className="mt-12 border-t-2 border-foreground pt-6"
       aria-labelledby="contact-documents-heading"
     >

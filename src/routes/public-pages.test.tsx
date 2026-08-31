@@ -15,7 +15,7 @@ import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsent
 import { Route as AboutRoute } from "./o-nas";
 import { Route as ContactRoute } from "./kontakt";
 import { Route as EventsRoute } from "./eventy";
-import { Route as HalfDayCampsRoute } from "./polkolonie.index";
+import { Route as HalfDayCampsRoute } from "./obozy.index";
 import { Route as HomeRoute } from "./index";
 
 const publicSiteEnv = {
@@ -42,7 +42,7 @@ const renderRoute = async (path: string, route: { options: { component?: unknown
     path,
     component: Component,
   });
-  const emptyRoutes = ["/", "/wyjazdy", "/eventy", "/polkolonie", "/o-nas", "/kontakt"]
+  const emptyRoutes = ["/", "/wyjazdy", "/eventy", "/obozy", "/o-nas", "/kontakt"]
     .filter((routePath) => routePath !== path)
     .map((routePath) =>
       createRoute({
@@ -81,9 +81,7 @@ describe("static public pages", () => {
     expect(structuredData?.textContent).toContain('"Organization"');
     expect(structuredData?.textContent).toContain('"WebSite"');
 
-    expect(
-      screen.getByRole("heading", { name: /wybierz, od czego zaczynasz/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /zacznij nową przygodę/i })).toBeInTheDocument();
     expect(screen.getByTestId("topic-selector")).toHaveClass("topic-selector");
     expect(
       screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__content"),
@@ -122,9 +120,9 @@ describe("static public pages", () => {
         imageAlt: "Uczestnik eventu na mobilnym torze skimboardowym VHSBOARD",
       },
       {
-        href: "/polkolonie",
+        href: "/obozy",
         imageAlt:
-          "Dziecko płynące na wakeboardzie podczas półkolonii VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+          "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
       },
     ];
 
@@ -155,18 +153,18 @@ describe("static public pages", () => {
   });
 
   it("explains seasonal half-day camps and communicates that new offers may appear soon", async () => {
-    await renderRoute("/polkolonie", HalfDayCampsRoute);
+    await renderRoute("/obozy", HalfDayCampsRoute);
 
-    expect(screen.getByRole("heading", { name: /półkolonie aktywnie/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /obozy aktywnie/i })).toBeInTheDocument();
     expect(
       screen.getByRole("img", {
-        name: /dziecko płynące na wakeboardzie podczas półkolonii/i,
+        name: /dziecko płynące na wakeboardzie podczas obozów/i,
       }),
     ).toBeInTheDocument();
     expect(screen.getByText(/wakepark, skimboard i skateboarding/i)).toBeInTheDocument();
     expect(screen.getByText(/śnieg i snowboard/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /aktualne półkolonie/i })).toBeInTheDocument();
-    expect(screen.getByText(/nie mamy teraz otwartych półkolonii/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /aktualne obozy/i })).toBeInTheDocument();
+    expect(screen.getByText(/nie mamy teraz otwartych obozów/i)).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /rezerwuj|zapisz/i })).not.toBeInTheDocument();
   });
 

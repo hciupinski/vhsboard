@@ -40,7 +40,7 @@ panelu admina, statycznych szczegółów ofert oraz podpisanych URL-i Storage.
 
 Po merge'u do `main` sprawdź view-source dla strony głównej i `/wyjazdy`.
 Treść szczegółu oferty ładuje się po stronie przeglądarki, dlatego testuj ją
-normalnie po otwarciu adresu `/wyjazdy/:slug` albo `/polkolonie/:slug`.
+normalnie po otwarciu adresu `/wyjazdy/:slug` albo `/obozy/:slug`.
 Otwórz też `/sitemap.xml` i `/robots.txt`; sitemap nie może zawierać `/admin`
 ani dynamicznych szczegółów ofert.
 

@@ -127,7 +127,7 @@ function EventsPage() {
               "piknikach rodzinnych i festynach",
               "dniach miasta i imprezach plenerowych",
               "eventach w galeriach handlowych",
-              "obozach i półkoloniach dla dzieci i młodzieży",
+              "obozach i obozach dla dzieci i młodzieży",
               "wydarzeniach sportowych, juwenaliach i targach",
             ].map((event) => (
               <li key={event} className="flex gap-3 text-foreground">

@@ -31,6 +31,7 @@ w Cloudflare.
    - `VITE_BUSINESS_CITY`
    - `VITE_BUSINESS_NIP`
    - `VITE_BUSINESS_REGON`
+   - `VITE_BUSINESS_BANK_ACCOUNT`
    - `CLOUDFLARE_PAGES_PROJECT`
 
 4. W środowisku GitHub `production` dodaj wyłącznie poniższe sekrety. Ich

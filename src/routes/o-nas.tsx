@@ -33,7 +33,7 @@ function AboutPage() {
             <p className="mt-4 text-muted-foreground">
               Nasze doświadczenie wyrasta z surfingu, snowboardingu i deskorolki oraz z działań
               wokół sportów deskowych. Dzisiaj skupiamy się na wyjazdach, eventach z torem
-              skimboardowym oraz półkoloniach.
+              skimboardowym oraz obozach.
             </p>
           </div>
           <img

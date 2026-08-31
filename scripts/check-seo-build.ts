@@ -3,9 +3,9 @@ import { join, relative } from "node:path";
 
 import { getSeoConfigFrom } from "../src/lib/env";
 
-const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/polkolonie", "/kontakt"];
+const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
 const signedUrlPattern = /(?:[?&]token=|x-amz-|\/object\/sign\/)/i;
-const offerDetailOutputPattern = /^(?:wyjazdy|polkolonie)\/[^/]+\/index\.html$/;
+const offerDetailOutputPattern = /^(?:wyjazdy|obozy)\/[^/]+\/index\.html$/;
 
 type CheckSeoBuildInput = {
   outputDirectory: string;
@@ -149,7 +149,7 @@ export const checkSeoBuild = async ({
   }
   const dynamicRouteRewrites = [
     "/wyjazdy/:slug /_shell/app 200",
-    "/polkolonie/:slug /_shell/app 200",
+    "/obozy/:slug /_shell/app 200",
     "/admin /_shell/app 200",
     "/admin/* /_shell/app 200",
   ];

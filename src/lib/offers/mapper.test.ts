@@ -58,7 +58,7 @@ describe("offer row mappers", () => {
       group_size_min: null,
       group_size_max: null,
       description: {
-        paragraphs: ["Półkolonie dla dzieci, które chcą spróbować wakeboardu."],
+        paragraphs: ["Obozy dla dzieci, które chcą spróbować wakeboardu."],
         highlights: ["Codzienna nauka wakeboardu"],
         included: ["Opieka instruktorów"],
         excluded: ["Dojazd we własnym zakresie"],

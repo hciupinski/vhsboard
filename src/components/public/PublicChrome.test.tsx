@@ -23,6 +23,7 @@ const publicSiteEnv = {
   VITE_BUSINESS_CITY: "Warszawa",
   VITE_BUSINESS_NIP: "1234567890",
   VITE_BUSINESS_REGON: "123456789",
+  VITE_BUSINESS_BANK_ACCOUNT: "12345678901234567890123456",
 };
 
 const renderPublicChrome = async (initialEntry: string) => {
@@ -31,7 +32,7 @@ const renderPublicChrome = async (initialEntry: string) => {
   }
 
   const rootRoute = createRootRoute();
-  const routes = ["/", "/wyjazdy", "/eventy", "/polkolonie", "/o-nas", "/kontakt"].map((path) =>
+  const routes = ["/", "/wyjazdy", "/eventy", "/obozy", "/o-nas", "/kontakt"].map((path) =>
     createRoute({
       getParentRoute: () => rootRoute,
       path,
@@ -65,7 +66,7 @@ describe("public navigation", () => {
     expect(screen.getByRole("link", { name: "Wyjazdy" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Kontakt" })).toHaveAttribute("href", "/kontakt");
     expect(screen.getByRole("link", { name: "Eventy" })).toHaveAttribute("href", "/eventy");
-    expect(screen.getByRole("link", { name: "Półkolonie" })).toHaveAttribute("href", "/polkolonie");
+    expect(screen.getByRole("link", { name: "Obozy" })).toHaveAttribute("href", "/obozy");
   });
 
   it("opens the same navigation in a labelled mobile menu", async () => {

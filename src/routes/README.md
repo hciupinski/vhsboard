@@ -19,9 +19,9 @@ is `src/routes/__root.tsx`.
 | `__root.tsx`             | app shell — wraps every page; preserve `<Outlet />`     |
 
 Publiczne oferty mają rozdzielone ścieżki: `wyjazdy.index.tsx` i
-`wyjazdy.$slug.tsx` obsługują wyłącznie wyjazdy, a `polkolonie.index.tsx` oraz
-`polkolonie.$slug.tsx` wyłącznie półkolonie. `polkolonie.tsx` jest wyłącznie
-układem tras i musi renderować `<Outlet />`. Nie kieruj półkolonii przez
+`wyjazdy.$slug.tsx` obsługują wyłącznie wyjazdy, a `obozy.index.tsx` oraz
+`obozy.$slug.tsx` wyłącznie obozy. `obozy.tsx` jest wyłącznie
+układem tras i musi renderować `<Outlet />`. Nie kieruj obozów przez
 `/wyjazdy/:slug`.
 
 `routeTree.gen.ts` is auto-generated. Don't edit it by hand.

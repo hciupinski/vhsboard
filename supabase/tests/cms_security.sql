@@ -145,14 +145,14 @@ begin
   )
   values
     (
-      'polkolonie-szkic',
+      'obozy-szkic',
       'day_camp',
       'wake',
-      'Szkic półkolonii wakeboardowej',
-      'Półkolonie niewidoczne publicznie',
-      'Wystarczająco długi opis szkicu półkolonii wakeboardowej.',
+      'Szkic obozów wakeboardowych',
+      'Obozy niewidoczne publicznie',
+      'Wystarczająco długi opis szkicu obozów wakeboardowych.',
       jsonb_build_object(
-        'paragraphs', jsonb_build_array('Opis półkolonii dla rodziców.'),
+        'paragraphs', jsonb_build_array('Opis obozów dla rodziców.'),
         'highlights', jsonb_build_array('Wakeboard z instruktorami.'),
         'included', jsonb_build_array('Opieka instruktorów.'),
         'excluded', jsonb_build_array('Dojazd we własnym zakresie.'),
@@ -185,14 +185,14 @@ begin
       'draft'
     ),
     (
-      'polkolonie-opublikowane',
+      'obozy-opublikowane',
       'day_camp',
       'snow',
-      'Opublikowane półkolonie snowboardowe',
-      'Półkolonie widoczne publicznie',
-      'Wystarczająco długi opis opublikowanej półkolonii snowboardowej.',
+      'Opublikowane obozy snowboardowe',
+      'Obozy widoczne publicznie',
+      'Wystarczająco długi opis opublikowanego obozu snowboardowego.',
       jsonb_build_object(
-        'paragraphs', jsonb_build_array('Opis półkolonii dla rodziców.'),
+        'paragraphs', jsonb_build_array('Opis obozów dla rodziców.'),
         'highlights', jsonb_build_array('Snowboard z instruktorami.'),
         'included', jsonb_build_array('Opieka instruktorów.'),
         'excluded', jsonb_build_array('Dojazd we własnym zakresie.'),
@@ -227,11 +227,11 @@ begin
 
   select id into day_camp_draft_id
   from public.offers
-  where slug = 'polkolonie-szkic';
+  where slug = 'obozy-szkic';
 
   select id into day_camp_published_id
   from public.offers
-  where slug = 'polkolonie-opublikowane';
+  where slug = 'obozy-opublikowane';
 
   update public.offers
   set description = jsonb_build_object(

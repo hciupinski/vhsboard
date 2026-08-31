@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import wakeparkCampImage from "@/assets/polkolonie-wakepark.png";
+import wakeparkCampImage from "@/assets/obozy-wakepark.png";
 import { DayCampCard } from "@/components/offers/DayCampCard";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -9,13 +9,13 @@ import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
-export const Route = createFileRoute("/polkolonie/")({
+export const Route = createFileRoute("/obozy/")({
   head: () =>
     createPageMetadata({
-      path: "/polkolonie",
-      title: "Półkolonie sportowe | VHSBOARD",
+      path: "/obozy",
+      title: "Obozy sportowe | VHSBOARD",
       description:
-        "Półkolonie letnie i zimowe VHSBOARD: wakepark, skimboard, skateboarding i snowboard.",
+        "Obozy letnie i zimowe VHSBOARD: wakepark, skimboard, skateboarding i snowboard.",
     }),
   component: HalfDayCampsPage,
 });
@@ -30,12 +30,12 @@ function HalfDayCampsPage() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <PublicJsonLd path="/polkolonie" label="Półkolonie" />
+      <PublicJsonLd path="/obozy" label="Obozy" />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden">
           <img
             src={wakeparkCampImage}
-            alt="Dziecko płynące na wakeboardzie podczas półkolonii VHSBOARD, obserwowane przez instruktora i grupę dzieci"
+            alt="Dziecko płynące na wakeboardzie podczas obozów VHSBOARD, obserwowane przez instruktora i grupę dzieci"
             width={1536}
             height={1024}
             className="absolute inset-0 -z-20 size-full object-cover"
@@ -46,11 +46,11 @@ function HalfDayCampsPage() {
               Dla dzieci
             </p>
             <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] text-background sm:text-7xl">
-              Półkolonie aktywnie
+              Obozy aktywnie
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/85">
-              Organizujemy letnie i zimowe półkolonie dla dzieci, które lubią ruch, wodę, śnieg i
-              dobrą ekipę. Każdy dzień łączy naukę od podstaw z czasem spędzonym razem na świeżym
+              Organizujemy letnie i zimowe obozy dla dzieci, które lubią ruch, wodę, śnieg i dobrą
+              ekipę. Każdy dzień łączy naukę od podstaw z czasem spędzonym razem na świeżym
               powietrzu.
             </p>
           </div>
@@ -91,17 +91,17 @@ function HalfDayCampsPage() {
         <section className="bg-secondary/55 py-16 sm:py-20" aria-labelledby="current-camps-heading">
           <div className="mx-auto max-w-6xl px-5">
             <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
-              Aktualne półkolonie
+              Aktualne obozy
             </h2>
-            {isPending ? <p className="mt-4 text-muted-foreground">Ładowanie półkolonii…</p> : null}
+            {isPending ? <p className="mt-4 text-muted-foreground">Ładowanie obozów…</p> : null}
             {isError ? (
               <button type="button" className="mt-4 underline" onClick={() => void refetch()}>
-                Nie udało się pobrać półkolonii. Spróbuj ponownie.
+                Nie udało się pobrać obozów. Spróbuj ponownie.
               </button>
             ) : null}
             {!isPending && !isError && offers.length === 0 ? (
               <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                Nie mamy teraz otwartych półkolonii. Wróć do nas za chwilę.
+                Nie mamy teraz otwartych obozów. Wróć do nas za chwilę.
               </p>
             ) : null}
             {!isPending && !isError && offers.length > 0 ? (

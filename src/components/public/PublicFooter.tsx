@@ -35,6 +35,18 @@ export function PublicFooter() {
           >
             Ustawienia cookies
           </button>
+          <> | </>
+          <Link
+            to="/kontakt"
+            hash="dokumenty"
+            className="text-foreground font-medium hover:text-primary hover:underline"
+          >
+            Dokumenty do pobrania
+          </Link>
+          <p className="pt-1 text-xs text-foreground">
+            Jesteśmy legalnym biurem podróży posiadającym wpis do rejestru organizatorów turystyki o
+            nr. 26387.
+          </p>
         </div>
         <address className="hidden not-italic sm:block sm:text-right">
           <p className="font-medium text-foreground">{config.businessName}</p>

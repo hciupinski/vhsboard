@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { Route } from "./polkolonie.$slug";
+import { Route } from "./obozy.$slug";
 
 describe("day-camp detail route", () => {
-  it("loads only a published day camp under /polkolonie/:slug", async () => {
+  it("loads only a published day camp under /obozy/:slug", async () => {
     const offer = {
       slug: "wakeboardowe-lato",
       offerKind: "day_camp",
