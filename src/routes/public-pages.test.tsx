@@ -157,7 +157,11 @@ describe("static public pages", () => {
     await renderRoute("/obozy", HalfDayCampsRoute);
 
     expect(screen.getByRole("heading", { name: /zajawkowe obozy/i })).toBeInTheDocument();
-    expect(screen.getByText(/wakeboard, skimboard, deskorolka i sup/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /wakeboard, skimboard, deskorolka, sup i masa aktywności, które dzieciaki kochają najbardziej/i,
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /najbliższe terminy/i })).toBeInTheDocument();
     expect(screen.queryByText(/półkoloni/i)).not.toBeInTheDocument();
   });

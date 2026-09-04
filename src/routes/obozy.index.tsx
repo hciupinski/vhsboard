@@ -69,7 +69,7 @@ function HalfDayCampsPage() {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Lato</p>
               <h3 className="mt-3 text-3xl sm:text-4xl">WODA | WAKEBOARD</h3>
               <p className="mt-4 leading-relaxed text-muted-foreground">
-                Wakeboard, skimboard, deskorolka i SUP oraz masa aktywności, które dzieciaki kochają
+                Wakeboard, skimboard, deskorolka, SUP i masa aktywności, które dzieciaki kochają
                 najbardziej! Małe grupy, 100% czasu na świeżym powietrzu i program, w którym jest
                 miejsce zarówno na naukę, jak i dobrą zabawę.
               </p>
