@@ -83,7 +83,13 @@ describe("trips list route", () => {
 
     await renderTripsPage();
 
-    expect(screen.getByRole("heading", { name: "Wyjazdy" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /wyjazdy, do których chce się wracać/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/kameralne grupy, dobra ekipa i dużo czasu na desce/i),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /aktualne kierunki/i })).toBeInTheDocument();
     expect(
       await screen.findByText("Nie mamy teraz opublikowanych wyjazdów. Wróć do nas za chwilę."),
     ).toBeInTheDocument();
