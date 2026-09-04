@@ -133,24 +133,26 @@ describe("static public pages", () => {
     }
   });
 
-  it("explains the mobile skimboard track format and directs enquiries to contact", async () => {
+  it("presents the mobile skimboard track format and directs enquiries to contact", async () => {
     await renderRoute("/eventy", EventsRoute);
 
     expect(
-      screen.getByRole("heading", { name: /tor skimboardowy.*wynajem na eventy/i }),
+      screen.getByRole("heading", { name: /przyciąga ludzi.*wciąga do zabawy/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /skimboarding/i })).toHaveAttribute(
-      "href",
-      "https://www.youtube.com/watch?v=85_CDXNlPmg&t=1s",
-    );
+    expect(screen.getByRole("heading", { name: /strefa skate/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /strefa letnia w centrum handlowym/i }),
+    ).toBeInTheDocument();
     expect(
       screen.getByText(/integracjach firmowych i piknikach pracowniczych/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/15, 20 i 30 metrów/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /zapytaj o event/i })).toHaveAttribute(
-      "href",
-      "/kontakt",
-    );
+    expect(screen.getByText(/15 m, 20 m, 22 m, 30 m/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/^Zdjęcie zastępcze:/)).not.toHaveLength(0);
+    expect(screen.getByRole("heading", { name: /zobacz nas w akcji/i })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /plan dnia/i })).not.toBeInTheDocument();
+    for (const eventLink of screen.getAllByRole("link", { name: /zapytaj o event/i })) {
+      expect(eventLink).toHaveAttribute("href", "/kontakt");
+    }
   });
 
   it("presents active camps with current seasonal copy", async () => {
