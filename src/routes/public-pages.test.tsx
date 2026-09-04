@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -146,8 +146,55 @@ describe("static public pages", () => {
     expect(
       screen.getByText(/integracjach firmowych i piknikach pracowniczych/i),
     ).toBeInTheDocument();
+    expect(screen.getByText("obozach dla dzieci i młodzieży")).toBeInTheDocument();
+    expect(screen.queryByText("obozach i obozach dla dzieci i młodzieży")).not.toBeInTheDocument();
     expect(screen.getByText(/15 m, 20 m, 22 m, 30 m/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/^Zdjęcie zastępcze:/)).not.toHaveLength(0);
+    expect(screen.getAllByText(/^Zdjęcie zastępcze:/)).toHaveLength(6);
+    expect(
+      screen.getAllByText("Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu."),
+    ).toHaveLength(3);
+
+    const expectPlaceholderImage = (caption: string, alt: string) => {
+      const figure = screen.getByText(caption).closest("figure");
+      if (!figure) {
+        throw new Error(`Nie znaleziono figury dla podpisu: ${caption}`);
+      }
+
+      expect(within(figure).getByRole("img")).toHaveAccessibleName(alt);
+    };
+
+    expectPlaceholderImage(
+      "Zdjęcie zastępcze: strefa skate z deskorolką, rolkami i warsztatami.",
+      "Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze",
+    );
+    expectPlaceholderImage(
+      "Zdjęcie zastępcze: letnia strefa z torem skimboardowym w centrum handlowym.",
+      "Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu",
+    );
+    expectPlaceholderImage(
+      "Zdjęcie zastępcze: mobilne tory skimboardowe w różnych długościach.",
+      "Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze",
+    );
+
+    const gallery = screen.getByRole("heading", { name: /zobacz nas w akcji/i }).closest("section");
+    if (!gallery) {
+      throw new Error("Nie znaleziono sekcji galerii Eventów");
+    }
+    expect(
+      within(gallery).getByRole("img", {
+        name: "Uczestnik korzystający z mobilnego toru skimboardowego podczas eventu",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(gallery).getByRole("img", {
+        name: "Dziecko uczące się skimboardingu pod opieką instruktora",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(gallery).getAllByText(
+        "Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu.",
+      ),
+    ).toHaveLength(2);
     expect(screen.getByRole("heading", { name: /zobacz nas w akcji/i })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: /plan dnia/i })).not.toBeInTheDocument();
     for (const eventLink of screen.getAllByRole("link", { name: /zapytaj o event/i })) {

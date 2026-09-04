@@ -75,7 +75,7 @@ function EventsPage() {
           </div>
           <EventPlaceholderFigure
             src={skimboardingLessonImage}
-            alt="Strefa skate z deskorolką, rolkami i warsztatami podczas eventu"
+            alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
             caption="Zdjęcie zastępcze: strefa skate z deskorolką, rolkami i warsztatami."
           />
         </section>
@@ -97,7 +97,7 @@ function EventsPage() {
               "piknikach rodzinnych i festynach",
               "dniach miasta i imprezach plenerowych",
               "eventach w galeriach handlowych",
-              "obozach i obozach dla dzieci i młodzieży",
+              "obozach dla dzieci i młodzieży",
               "wydarzeniach sportowych, juwenaliach i targach",
               "eventach miejskich, festiwalach i wydarzeniach w galeriach handlowych",
             ]}
@@ -145,7 +145,7 @@ function EventsPage() {
           </div>
           <EventPlaceholderFigure
             src={skimboardingTrackImage}
-            alt="Letnia strefa z torem skimboardowym w centrum handlowym"
+            alt="Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu"
             caption="Zdjęcie zastępcze: letnia strefa z torem skimboardowym w centrum handlowym."
           />
         </section>
@@ -171,7 +171,7 @@ function EventsPage() {
             </div>
             <EventPlaceholderFigure
               src={skimboardingLessonImage}
-              alt="Mobilne tory skimboardowe w różnych długościach"
+              alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
               caption="Zdjęcie zastępcze: mobilne tory skimboardowe w różnych długościach."
             />
           </div>
@@ -189,7 +189,7 @@ function EventsPage() {
             <EventPlaceholderFigure
               src={skimboardingLessonImage}
               alt="Dziecko uczące się skimboardingu pod opieką instruktora"
-              caption="Zdjęcie zastępcze: strefa skate z deskorolką, rolkami i warsztatami."
+              caption="Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu."
             />
           </div>
         </section>
