@@ -29,6 +29,7 @@ const publicSiteEnv = {
   VITE_BUSINESS_CITY: "Warszawa",
   VITE_BUSINESS_NIP: "1234567890",
   VITE_BUSINESS_REGON: "123456789",
+  VITE_BUSINESS_BANK_ACCOUNT: "12345678901234567890123456",
 };
 
 const renderRoute = async (path: string, route: { options: { component?: unknown } }) => {
@@ -152,20 +153,13 @@ describe("static public pages", () => {
     );
   });
 
-  it("explains seasonal half-day camps and communicates that new offers may appear soon", async () => {
+  it("presents active camps with current seasonal copy", async () => {
     await renderRoute("/obozy", HalfDayCampsRoute);
 
-    expect(screen.getByRole("heading", { name: /obozy aktywnie/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("img", {
-        name: /dziecko płynące na wakeboardzie podczas obozów/i,
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/wakepark, skimboard i skateboarding/i)).toBeInTheDocument();
-    expect(screen.getByText(/śnieg i snowboard/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /aktualne obozy/i })).toBeInTheDocument();
-    expect(screen.getByText(/nie mamy teraz otwartych obozów/i)).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /rezerwuj|zapisz/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /zajawkowe obozy/i })).toBeInTheDocument();
+    expect(screen.getByText(/wakeboard, skimboard, deskorolka i sup/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /najbliższe terminy/i })).toBeInTheDocument();
+    expect(screen.queryByText(/półkoloni/i)).not.toBeInTheDocument();
   });
 
   it("keeps discontinued services as company background rather than separate sales pages", async () => {
