@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 
-import wakeparkCampImage from "@/assets/obozy-wakepark.png";
-import skimboardingTrackImage from "@/assets/eventy-tor-skimboardowy.jpg";
+import obozy from "@/assets/obozy.jpg";
+import eventy from "@/assets/eventy.jpg";
 import heroSurf from "@/assets/hero-surf.jpg";
+import trips from "@/assets/wyjazdy.jpg";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
@@ -27,16 +28,16 @@ const entryPoints = [
     eyebrow: "01 / W podróż",
     text: "Surf, snowboard i dobra ekipa — wyjazdy, do których chce się wracać.",
     action: "Zobacz wyjazdy",
-    image: heroSurf,
+    image: trips,
     imageAlt: "Uczestnicy wyjazdu VHSBOARD z deskami surfingowymi na plaży",
   },
   {
     to: "/eventy",
     title: "Eventy",
     eyebrow: "02 / Ruch",
-    text: "Sport, dobra energia i aktywności, które przyciągają ludzi i rozkręcają wydarzenia.",
+    text: "Sport, energia i aktywności, które przyciągają ludzi i rozkręcają wydarzenia.",
     action: "Sprawdź eventy",
-    image: skimboardingTrackImage,
+    image: eventy,
     imageAlt: "Uczestnik eventu na mobilnym torze skimboardowym VHSBOARD",
   },
   {
@@ -45,7 +46,7 @@ const entryPoints = [
     eyebrow: "03 / Dla młodych",
     text: "Wakacje po naszemu? Aktywne dni pełne sportu, zabawy i nowych doświadczeń.",
     action: "Poznaj obozy",
-    image: wakeparkCampImage,
+    image: obozy,
     imageAlt:
       "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
   },
@@ -91,7 +92,8 @@ function HomePage() {
               ZACZNIJ NOWĄ PRZYGODĘ
             </h2>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Trzy sposoby na czas poza codziennym planem. Wybierz ten, który najbardziej Cię kręci.
+              Trzy sposoby na czas poza codziennym planem. <br /> Wybierz ten, który najbardziej Cię
+              kręci.
             </p>
           </div>
           <div

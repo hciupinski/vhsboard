@@ -137,7 +137,7 @@ describe("static public pages", () => {
     await renderRoute("/eventy", EventsRoute);
 
     expect(
-      screen.getByRole("heading", { name: /przyciąga ludzi.*wciąga do zabawy/i }),
+      screen.getByRole("heading", { name: /przyciąga ludzi.*surfing dla każdego/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /strefa skate/i })).toBeInTheDocument();
     expect(
@@ -149,32 +149,6 @@ describe("static public pages", () => {
     expect(screen.getByText("obozach dla dzieci i młodzieży")).toBeInTheDocument();
     expect(screen.queryByText("obozach i obozach dla dzieci i młodzieży")).not.toBeInTheDocument();
     expect(screen.getByText(/15 m, 20 m, 22 m, 30 m/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/^Zdjęcie zastępcze:/)).toHaveLength(6);
-    expect(
-      screen.getAllByText("Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu."),
-    ).toHaveLength(3);
-
-    const expectPlaceholderImage = (caption: string, alt: string) => {
-      const figure = screen.getByText(caption).closest("figure");
-      if (!figure) {
-        throw new Error(`Nie znaleziono figury dla podpisu: ${caption}`);
-      }
-
-      expect(within(figure).getByRole("img")).toHaveAccessibleName(alt);
-    };
-
-    expectPlaceholderImage(
-      "Zdjęcie zastępcze: strefa skate z deskorolką, rolkami i warsztatami.",
-      "Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze",
-    );
-    expectPlaceholderImage(
-      "Zdjęcie zastępcze: letnia strefa z torem skimboardowym w centrum handlowym.",
-      "Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu",
-    );
-    expectPlaceholderImage(
-      "Zdjęcie zastępcze: mobilne tory skimboardowe w różnych długościach.",
-      "Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze",
-    );
 
     const gallery = screen.getByRole("heading", { name: /zobacz nas w akcji/i }).closest("section");
     if (!gallery) {
@@ -190,11 +164,6 @@ describe("static public pages", () => {
         name: "Dziecko uczące się skimboardingu pod opieką instruktora",
       }),
     ).toBeInTheDocument();
-    expect(
-      within(gallery).getAllByText(
-        "Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu.",
-      ),
-    ).toHaveLength(2);
     expect(screen.getByRole("heading", { name: /zobacz nas w akcji/i })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: /plan dnia/i })).not.toBeInTheDocument();
     for (const eventLink of screen.getAllByRole("link", { name: /zapytaj o event/i })) {
@@ -210,6 +179,16 @@ describe("static public pages", () => {
       screen.getByText(
         /wakeboard, skimboard, deskorolka, sup i masa aktywności, które dzieciaki kochają najbardziej/i,
       ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: /uczestnik obozu wakeboardowego na jeziorze podczas letnich zajęć/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: /uczestniczka obozu snowboardowego podczas zimowej jazdy w górach/i,
+      }),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /najbliższe terminy/i })).toBeInTheDocument();
     expect(screen.queryByText(/półkoloni/i)).not.toBeInTheDocument();
@@ -232,5 +211,16 @@ describe("static public pages", () => {
       "mailto:kontakt@example.test",
     );
     expect(screen.getAllByText("NIP: 1234567890")).toHaveLength(1);
+  });
+
+  it("keeps the social callout at the bottom of the contact card", async () => {
+    await renderRoute("/kontakt", ContactRoute);
+
+    const socialCallout = screen.getByRole("heading", {
+      name: /sprawdź co u nas słychać i dołącz do społeczności vhs/i,
+    });
+
+    expect(socialCallout).toHaveClass("mt-auto");
+    expect(socialCallout.closest("section")).toHaveClass("flex", "flex-col");
   });
 });

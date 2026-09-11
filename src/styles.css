@@ -146,6 +146,10 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+*:focus {
+  outline: none;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -247,5 +251,16 @@
       inline-size: 100%;
       clip-path: none;
     }
+  }
+}
+
+/* Hash links on trip pages keep section headings clear of both sticky bars. */
+[data-trip-detail] main section[id] {
+  scroll-margin-top: calc(var(--trip-header-height, 61px) + var(--trip-nav-height, 61px) + 16px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has([data-trip-detail]) {
+    scroll-behavior: smooth;
   }
 }

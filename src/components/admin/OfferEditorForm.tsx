@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { changeEditableOfferKind, type EditableOfferInput } from "@/lib/offers/editor-schema";
 import { shouldCommitDateValue } from "@/lib/offers/date-input";
+import { tripSections, type TripSection } from "@/lib/offers/trip-sections";
 import type {
   DayCampContent,
   DayCampTerm,
@@ -23,6 +24,8 @@ import type {
   OfferKind,
   TripOfferContent,
 } from "@/lib/offers/types";
+
+type EditorTab = "basics" | TripSection["editorTab"];
 
 type Props = {
   value: EditableOfferInput;
@@ -100,88 +103,102 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
   const tabHasError = (prefix: string) =>
     Object.keys(errors).some((path) => path === prefix || path.startsWith(`${prefix}.`));
 
+  const tabs: { editorTab: EditorTab; label: string }[] = dayCamp
+    ? [
+        { editorTab: "basics", label: "Podstawy" },
+        { editorTab: "story", label: "O obozów" },
+        { editorTab: "inout", label: "W cenie i poza" },
+        { editorTab: "days", label: "Program i opieka" },
+        { editorTab: "photos", label: "Zdjęcia" },
+      ]
+    : [{ editorTab: "basics", label: "Podstawy" }, ...tripSections];
+  const tabErrorPaths: Record<EditorTab, string[]> = {
+    basics: [
+      "offerKind",
+      "activity",
+      "title",
+      "slug",
+      "location",
+      "shortDescription",
+      ...(dayCamp
+        ? ["content.terms"]
+        : [
+            "subtitle",
+            "startDate",
+            "endDate",
+            "durationDays",
+            "groupSizeMin",
+            "groupSizeMax",
+            "priceFrom",
+            "currency",
+            "bookingUrl",
+          ]),
+    ],
+    story: [
+      "content.paragraphs",
+      ...(dayCamp ? ["subtitle", "content.highlights", "content.venueDescription"] : []),
+    ],
+    highlights: ["content.highlights"],
+    days: dayCamp ? ["content.dayProgram", "content.parentInfo"] : ["content.schedule"],
+    inout: ["content.included", "content.excluded"],
+    photos: ["heroImagePath"],
+  };
+  const subtitleField = (
+    <Field
+      id="subtitle"
+      label="Zdanie wprowadzające"
+      hint="Pod tytułem oferty"
+      characterCount={{ value: value.subtitle, max: 280 }}
+      error={errors.subtitle}
+    >
+      <Textarea
+        id="subtitle"
+        value={value.subtitle}
+        maxLength={280}
+        className="min-h-20"
+        disabled={disabled}
+        {...state("subtitle")}
+        onChange={(event) => set("subtitle", event.target.value)}
+      />
+    </Field>
+  );
+
   return (
-    <Tabs defaultValue="basics">
-      <TabsList className="h-auto flex-wrap justify-start">
-        <TabsTrigger
-          value="basics"
-          aria-label={
-            tabHasError("title") ||
-            tabHasError("slug") ||
-            tabHasError("location") ||
-            tabHasError("content.terms")
-              ? "Podstawy — zawiera błędy"
-              : "Podstawy"
+    <Tabs defaultValue="basics" className="min-w-0">
+      <TabsList
+        aria-label="Sekcje oferty"
+        className="flex h-auto w-full max-w-full justify-start overflow-x-auto"
+        onFocus={(event) => {
+          const tab = event.target;
+          if (tab.getAttribute("role") !== "tab") return;
+          const scroller = event.currentTarget;
+          const bounds = scroller.getBoundingClientRect();
+          const tabBounds = tab.getBoundingClientRect();
+          if (tabBounds.left < bounds.left) {
+            scroller.scrollLeft += tabBounds.left - bounds.left;
+          } else if (tabBounds.right > bounds.right) {
+            scroller.scrollLeft += tabBounds.right - bounds.right;
           }
-        >
-          Podstawy
-          {tabHasError("title") ||
-          tabHasError("slug") ||
-          tabHasError("location") ||
-          tabHasError("content.terms") ? (
-            <span aria-hidden="true" className="ml-1 text-destructive">
-              •
-            </span>
-          ) : null}
-        </TabsTrigger>
-        <TabsTrigger
-          value="story"
-          aria-label={
-            tabHasError("subtitle") ||
-            tabHasError("content.paragraphs") ||
-            tabHasError("content.highlights") ||
-            tabHasError("content.venueDescription")
-              ? `${dayCamp ? "O obozów" : "O wyjeździe"} — zawiera błędy`
-              : dayCamp
-                ? "O obozów"
-                : "O wyjeździe"
-          }
-        >
-          {dayCamp ? "O obozów" : "O wyjeździe"}
-          {tabHasError("subtitle") ||
-          tabHasError("content.paragraphs") ||
-          tabHasError("content.highlights") ||
-          tabHasError("content.venueDescription") ? (
-            <span aria-hidden="true" className="ml-1 text-destructive">
-              •
-            </span>
-          ) : null}
-        </TabsTrigger>
-        <TabsTrigger
-          value="inout"
-          aria-label={
-            tabHasError("content.included") || tabHasError("content.excluded")
-              ? "W cenie i poza — zawiera błędy"
-              : "W cenie i poza"
-          }
-        >
-          W cenie i poza
-          {tabHasError("content.included") || tabHasError("content.excluded") ? (
-            <span aria-hidden="true" className="ml-1 text-destructive">
-              •
-            </span>
-          ) : null}
-        </TabsTrigger>
-        <TabsTrigger
-          value="days"
-          aria-label={
-            tabHasError(dayCamp ? "content.dayProgram" : "content.schedule") ||
-            tabHasError("content.parentInfo")
-              ? `${dayCamp ? "Program i opieka" : "Dzień po dniu"} — zawiera błędy`
-              : dayCamp
-                ? "Program i opieka"
-                : "Dzień po dniu"
-          }
-        >
-          {dayCamp ? "Program i opieka" : "Dzień po dniu"}
-          {tabHasError(dayCamp ? "content.dayProgram" : "content.schedule") ||
-          tabHasError("content.parentInfo") ? (
-            <span aria-hidden="true" className="ml-1 text-destructive">
-              •
-            </span>
-          ) : null}
-        </TabsTrigger>
-        <TabsTrigger value="photos">Zdjęcia</TabsTrigger>
+        }}
+      >
+        {tabs.map(({ editorTab, label }) => {
+          const hasError = tabErrorPaths[editorTab].some(tabHasError);
+          return (
+            <TabsTrigger
+              key={editorTab}
+              value={editorTab}
+              className="min-h-11 shrink-0 focus-visible:ring-inset focus-visible:ring-offset-0"
+              aria-label={hasError ? `${label} — zawiera błędy` : label}
+            >
+              {label}
+              {hasError ? (
+                <span aria-hidden="true" className="ml-1 text-destructive">
+                  •
+                </span>
+              ) : null}
+            </TabsTrigger>
+          );
+        })}
       </TabsList>
 
       <TabsContent value="basics" className="mt-6">
@@ -281,6 +298,7 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
               />
             </Field>
           </div>
+          {trip ? subtitleField : null}
           <Field
             id="short-description"
             label="Krótki opis"
@@ -316,23 +334,7 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
           disabled={disabled}
           className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
         >
-          <Field
-            id="subtitle"
-            label="Zdanie wprowadzające"
-            hint="Pod tytułem oferty"
-            characterCount={{ value: value.subtitle, max: 280 }}
-            error={errors.subtitle}
-          >
-            <Textarea
-              id="subtitle"
-              value={value.subtitle}
-              maxLength={280}
-              className="min-h-20"
-              disabled={disabled}
-              {...state("subtitle")}
-              onChange={(event) => set("subtitle", event.target.value)}
-            />
-          </Field>
+          {dayCamp ? subtitleField : null}
           <ListField
             label="Akapity opisu"
             hint="Jedno pole na akapit"
@@ -342,13 +344,15 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
             error={errorFor(errors, "content.paragraphs")}
             onChange={(next) => listChange("paragraphs", next)}
           />
-          <ListField
-            label="Najlepsze momenty"
-            values={value.content.highlights}
-            placeholder="Małe grupy i dużo aktywności"
-            error={errorFor(errors, "content.highlights")}
-            onChange={(next) => listChange("highlights", next)}
-          />
+          {dayCamp ? (
+            <ListField
+              label="Najlepsze momenty"
+              values={value.content.highlights}
+              placeholder="Małe grupy i dużo aktywności"
+              error={errorFor(errors, "content.highlights")}
+              onChange={(next) => listChange("highlights", next)}
+            />
+          ) : null}
           {dayCamp ? (
             <Field
               id="venue-description"
@@ -369,6 +373,23 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
           ) : null}
         </fieldset>
       </TabsContent>
+
+      {trip ? (
+        <TabsContent value="highlights" className="mt-6">
+          <fieldset
+            disabled={disabled}
+            className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
+          >
+            <ListField
+              label="W programie"
+              values={trip.highlights}
+              placeholder="Małe grupy i dużo aktywności"
+              error={errorFor(errors, "content.highlights")}
+              onChange={(next) => listChange("highlights", next)}
+            />
+          </fieldset>
+        </TabsContent>
+      ) : null}
 
       <TabsContent value="inout" className="mt-6">
         <fieldset
@@ -418,7 +439,17 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
           />
         ) : null}
       </TabsContent>
-      <TabsContent value="photos" className="mt-6">
+      <TabsContent value="photos" className="mt-6 space-y-4">
+        {trip ? (
+          <p className="text-sm text-muted-foreground">
+            Tutaj zarządzasz galerią i zdjęciem głównym oferty.
+          </p>
+        ) : null}
+        {errors.heroImagePath ? (
+          <p className="text-sm font-medium text-destructive" role="alert">
+            {errors.heroImagePath}
+          </p>
+        ) : null}
         {imageManager ?? (
           <section className="rounded-2xl border border-border/70 bg-background p-6">
             <p className="text-sm text-muted-foreground">
@@ -758,7 +789,10 @@ function TripScheduleEditor({
       className="space-y-4 rounded-2xl border border-border/70 bg-background p-6"
     >
       {content.schedule.map((item, index) => (
-        <div key={index} className="flex gap-3 rounded-xl border border-border/60 p-4">
+        <div
+          key={index}
+          className="grid min-w-0 gap-3 rounded-xl border border-border/60 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto]"
+        >
           <Field
             id={`schedule-day-${index}`}
             label={`Dzień ${index + 1} — nazwa`}

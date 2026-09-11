@@ -1,7 +1,3 @@
-import { useState } from "react";
-
-import { Button } from "@/components/ui/button";
-
 type DeferredYouTubeEmbedProps = {
   videoId: string;
   title: string;
@@ -9,7 +5,6 @@ type DeferredYouTubeEmbedProps = {
 };
 
 export function DeferredYouTubeEmbed({ videoId, title, className }: DeferredYouTubeEmbedProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
   const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
   return (
@@ -18,19 +13,13 @@ export function DeferredYouTubeEmbed({ videoId, title, className }: DeferredYouT
         Zobacz obozy w akcji
       </h2>
       <div className="mt-4 overflow-hidden rounded-3xl border border-border bg-secondary/55 p-5 shadow-warm sm:p-6">
-        {isLoaded ? (
-          <iframe
-            className="aspect-video w-full rounded-2xl"
-            src={`https://www.youtube-nocookie.com/embed/${videoId}`}
-            title={title}
-            loading="lazy"
-            allowFullScreen
-          />
-        ) : (
-          <Button type="button" className="rounded-full" onClick={() => setIsLoaded(true)}>
-            {`Odtwórz film: ${title}`}
-          </Button>
-        )}
+        <iframe
+          className="aspect-video w-full rounded-2xl bg-foreground"
+          src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+          title={title}
+          loading="lazy"
+          allowFullScreen
+        />
         <a
           className="mt-4 inline-block underline underline-offset-4"
           href={watchUrl}

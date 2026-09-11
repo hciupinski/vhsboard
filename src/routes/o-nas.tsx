@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import aboutCrew from "@/assets/about-crew.jpg";
+import aboutCrew from "@/assets/o-nas.jpg";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";

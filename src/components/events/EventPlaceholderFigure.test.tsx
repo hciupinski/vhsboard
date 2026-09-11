@@ -9,11 +9,9 @@ describe("EventPlaceholderFigure", () => {
       <EventPlaceholderFigure
         src="/placeholder.jpg"
         alt="Mobilny tor skimboardowy podczas eventu"
-        caption="Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu."
       />,
     );
 
     expect(screen.getByRole("img", { name: /mobilny tor skimboardowy/i })).toBeInTheDocument();
-    expect(screen.getByText(/^Zdjęcie zastępcze:/)).toBeInTheDocument();
   });
 });

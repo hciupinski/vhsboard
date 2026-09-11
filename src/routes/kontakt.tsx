@@ -34,7 +34,7 @@ function ContactPage() {
           dzieci.
         </p>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          <section className="rounded-3xl bg-sunset-gradient p-7 text-primary-foreground shadow-warm">
+          <section className="flex flex-col rounded-3xl bg-sunset-gradient p-7 text-primary-foreground shadow-warm">
             <h2 className="text-3xl">SKONTAKTUJ SIĘ Z NAMI</h2>
             <p className="mt-4">
               <a
@@ -52,7 +52,7 @@ function ContactPage() {
                 {config.contactPhone}
               </a>
             </p>
-            <h3 className="mt-3">Sprawdź co u nas słychać i dołącz do społeczności VHS</h3>
+            <h3 className="mt-auto">Sprawdź co u nas słychać i dołącz do społeczności VHS</h3>
             <p>
               <a
                 href="https://www.facebook.com/share/1E7xY7Ed2B"

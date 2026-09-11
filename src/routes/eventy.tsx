@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import skimboardingLessonImage from "@/assets/eventy-nauka-skimboardingu.jpg";
-import skimboardingTrackImage from "@/assets/eventy-tor-skimboardowy.jpg";
+import skimboardingLessonImage from "@/assets/skim-laczy.jpg";
+import skimboardingShoppingCenterImage from "@/assets/strefa-letnia.jpg";
+import skimboardingTrackImage from "@/assets/skim-tor.jpg";
 import { EventPlaceholderFigure } from "@/components/events/EventPlaceholderFigure";
 import { EventUseCasesScroller } from "@/components/events/EventUseCasesScroller";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -33,9 +34,6 @@ function EventsPage() {
               alt="Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu"
               className="size-full object-cover object-[65%_center] brightness-[0.45]"
             />
-            <figcaption className="absolute inset-x-5 bottom-5 max-w-lg rounded-lg bg-foreground/85 px-3 py-2 text-sm text-background/85 sm:left-auto sm:right-8">
-              Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu.
-            </figcaption>
           </figure>
           <div className="relative mx-auto max-w-6xl px-5 py-20 sm:py-28 lg:py-32">
             <div className="max-w-2xl">
@@ -43,7 +41,7 @@ function EventsPage() {
                 Eventy
               </p>
               <h1 className="mt-4 text-5xl leading-[0.9] sm:text-7xl lg:text-8xl">
-                TOR SKIMBOARDOWY — PRZYCIĄGA LUDZI. WCIĄGA DO ZABAWY / SURFING DLA KAŻDEGO
+                TOR SKIMBOARDOWY — PRZYCIĄGA LUDZI. SURFING DLA KAŻDEGO
               </h1>
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-background/85 sm:text-xl">
                 Atrakcja na event firmowy, piknik, imprezę miejską czy wydarzenie sportowe. Tworzymy
@@ -76,7 +74,6 @@ function EventsPage() {
           <EventPlaceholderFigure
             src={skimboardingLessonImage}
             alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
-            caption="Zdjęcie zastępcze: strefa skate z deskorolką, rolkami i warsztatami."
           />
         </section>
 
@@ -144,9 +141,8 @@ function EventsPage() {
             </p>
           </div>
           <EventPlaceholderFigure
-            src={skimboardingTrackImage}
+            src={skimboardingShoppingCenterImage}
             alt="Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu"
-            caption="Zdjęcie zastępcze: letnia strefa z torem skimboardowym w centrum handlowym."
           />
         </section>
 
@@ -170,9 +166,9 @@ function EventsPage() {
               </Button>
             </div>
             <EventPlaceholderFigure
-              src={skimboardingLessonImage}
+              src={skimboardingTrackImage}
               alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
-              caption="Zdjęcie zastępcze: mobilne tory skimboardowe w różnych długościach."
+
             />
           </div>
         </section>
@@ -184,12 +180,10 @@ function EventsPage() {
             <EventPlaceholderFigure
               src={skimboardingTrackImage}
               alt="Uczestnik korzystający z mobilnego toru skimboardowego podczas eventu"
-              caption="Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu."
             />
             <EventPlaceholderFigure
               src={skimboardingLessonImage}
               alt="Dziecko uczące się skimboardingu pod opieką instruktora"
-              caption="Zdjęcie zastępcze: realizacja toru skimboardowego podczas eventu."
             />
           </div>
         </section>

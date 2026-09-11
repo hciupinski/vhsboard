@@ -101,7 +101,7 @@ describe("day-camp detail route", () => {
     ).rejects.toMatchObject({ isNotFound: true });
   });
 
-  it("renders published camp details, gallery, registration, and an unloaded camp video", async () => {
+  it("renders published camp details, gallery, registration, and a visible camp video", async () => {
     mockedGetPublishedOfferBySlug.mockResolvedValue(publishedDayCamp);
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const router = createRouter({
@@ -126,9 +126,12 @@ describe("day-camp detail route", () => {
       "href",
       "#turnusy",
     );
+    expect(screen.getByTitle("Obozy VHSBOARD")).toHaveAttribute(
+      "src",
+      "https://www.youtube-nocookie.com/embed/wff_iv8QJ4c",
+    );
     expect(
-      screen.getByRole("button", { name: "Odtwórz film: Obozy VHSBOARD" }),
-    ).toBeInTheDocument();
-    expect(screen.queryByTitle("Obozy VHSBOARD")).not.toBeInTheDocument();
+      screen.queryByRole("button", { name: "Odtwórz film: Obozy VHSBOARD" }),
+    ).not.toBeInTheDocument();
   });
 });

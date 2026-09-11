@@ -3,6 +3,8 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Wallet } from "lucide-react";
 
 import { OfferFacts } from "@/components/offers/OfferFacts";
+import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation";
+import { getVisibleTripSections, tripSections } from "@/lib/offers/trip-sections";
 import { OfferGallery } from "@/components/offers/OfferGallery";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -60,10 +62,12 @@ function TripDetail() {
   }
 
   const { content } = offer;
+  const sections = getVisibleTripSections(offer);
+  const [about, highlights, schedule, price, gallery] = tripSections;
   const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-background">
+    <div data-trip-detail className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
       <PublicJsonLd path={`/wyjazdy/${offer.slug}`} label={offer.title} offer={offer} />
       <main className="flex-1">
@@ -110,12 +114,14 @@ function TripDetail() {
           </div>
         </section>
 
+        <TripSectionNavigation key={offer.slug} sections={sections} />
+
         <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.6fr_1fr]">
           <div className="min-w-0">
             {content.paragraphs.length > 0 ? (
-              <section aria-labelledby="about-trip-title">
+              <section id={about.id} tabIndex={-1} aria-labelledby="about-trip-title">
                 <h2 id="about-trip-title" className="text-3xl sm:text-4xl">
-                  O wyjeździe
+                  {about.label}
                 </h2>
                 {content.paragraphs.map((paragraph, index) => (
                   <p
@@ -131,10 +137,12 @@ function TripDetail() {
             {content.highlights.length > 0 ? (
               <section
                 className={content.paragraphs.length > 0 ? "mt-12" : undefined}
+                id={highlights.id}
+                tabIndex={-1}
                 aria-labelledby="highlights-title"
               >
                 <h2 id="highlights-title" className="text-3xl sm:text-4xl">
-                  Najlepsze momenty
+                  {highlights.label}
                 </h2>
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {content.highlights.map((highlight) => (
@@ -156,10 +164,12 @@ function TripDetail() {
                     ? "mt-12"
                     : undefined
                 }
+                id={schedule.id}
+                tabIndex={-1}
                 aria-labelledby="schedule-title"
               >
                 <h2 id="schedule-title" className="text-3xl sm:text-4xl">
-                  Jak wyglądają dni
+                  {schedule.label}
                 </h2>
                 <ol className="mt-4 space-y-4 border-l border-border pl-5">
                   {content.schedule.map((scheduleItem) => (
@@ -182,10 +192,12 @@ function TripDetail() {
                     ? "mt-12"
                     : undefined
                 }
+                id={price.id}
+                tabIndex={-1}
                 aria-labelledby="price-details-title"
               >
                 <h2 id="price-details-title" className="text-3xl sm:text-4xl">
-                  W cenie
+                  {price.label}
                 </h2>
                 <div className="mt-4 grid gap-6 sm:grid-cols-2">
                   {content.included.length > 0 ? (
@@ -222,7 +234,7 @@ function TripDetail() {
             ) : null}
           </div>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="lg:sticky lg:top-[calc(var(--trip-header-height,61px)+var(--trip-nav-height,0px)+24px)] lg:self-start">
             <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Twój wyjazd</p>
               <OfferFacts offer={offer} />
@@ -230,7 +242,9 @@ function TripDetail() {
           </aside>
         </div>
 
-        {offer.images.length > 0 ? <OfferGallery images={offer.images} /> : null}
+        {offer.images.length > 0 ? (
+          <OfferGallery id={gallery.id} title={gallery.label} images={offer.images} />
+        ) : null}
       </main>
       <PublicFooter />
     </div>

@@ -38,10 +38,10 @@ export function ContactDocuments() {
       className="mt-12 border-t-2 border-foreground pt-6"
       aria-labelledby="contact-documents-heading"
     >
-      <h2 id="contact-documents-heading" className="text-4xl">
+      <h2 id="contact-documents-heading" className="text-2xl">
         Do pobrania
       </h2>
-      <ul className="mt-5 space-y-3 text-lg text-muted-foreground">
+      <ul className="mt-5 space-y-3 text-md text-muted-foreground">
         {data.map((document) =>
           document.signedUrl ? (
             <li key={document.id}>
