@@ -168,7 +168,6 @@ function EventsPage() {
             <EventPlaceholderFigure
               src={skimboardingTrackImage}
               alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
-
             />
           </div>
         </section>
