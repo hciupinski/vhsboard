@@ -63,7 +63,7 @@ describe("DayCampCard", () => {
     });
     await router.load();
     render(<RouterProvider router={router} />);
-    expect(screen.getByRole("link", { name: "Zobacz szczegóły obozów" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Szczegóły" })).toHaveAttribute(
       "href",
       "/obozy/wake-lato-2026",
     );

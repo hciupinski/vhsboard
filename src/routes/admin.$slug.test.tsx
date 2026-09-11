@@ -144,16 +144,17 @@ const fillEditor = async (value: EditableOfferInput) => {
   setValue("Krótki opis", value.shortDescription);
   setValue("Adres zapisów", value.bookingUrl);
 
-  await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
   setValue("Zdanie wprowadzające", value.subtitle);
+  await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
   setValue("Akapity opisu 1", value.content.paragraphs[0]);
-  setValue("Najlepsze momenty 1", value.content.highlights[0]);
+  await user.click(screen.getByRole("tab", { name: "W programie" }));
+  setValue("W programie 1", value.content.highlights[0]);
 
-  await user.click(screen.getByRole("tab", { name: "W cenie i poza" }));
+  await user.click(screen.getByRole("tab", { name: "Co jest w cenie" }));
   setValue("W cenie 1", value.content.included[0]);
   setValue("Poza ceną 1", value.content.excluded[0]);
 
-  await user.click(screen.getByRole("tab", { name: "Dzień po dniu" }));
+  await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
   setValue("Dzień 1 — nazwa", value.content.schedule[0].day);
   setValue("Dzień 1 — opis", value.content.schedule[0].text);
 };
@@ -219,7 +220,7 @@ describe("admin offer editor route", () => {
     const user = userEvent.setup();
     await renderAdminEditor({ slug: "new", initialValue: completeInput });
 
-    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+    await user.click(screen.getByRole("tab", { name: "Galeria" }));
 
     expect(screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).toBeInTheDocument();
     expect(screen.queryByLabelText("Wybierz plik obrazu")).not.toBeInTheDocument();
@@ -242,7 +243,7 @@ describe("admin offer editor route", () => {
     const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
 
     expect(await screen.findByText(publishReadinessMessage)).toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+    await user.click(screen.getByRole("tab", { name: "Galeria" }));
     await user.click(await screen.findByRole("button", { name: "Ustaw testowy obraz główny" }));
 
     await waitFor(() =>
@@ -283,7 +284,7 @@ describe("admin offer editor route", () => {
 
     await user.clear(titleInput);
     await user.type(titleInput, "Tytuł zapisany tylko w formularzu");
-    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+    await user.click(screen.getByRole("tab", { name: "Galeria" }));
     await user.click(await screen.findByRole("button", { name: "Ustaw testowy obraz główny" }));
 
     expect(await screen.findByText("Zarchiwizowana")).toBeInTheDocument();

@@ -22,12 +22,6 @@ export function PublicFooter() {
             <Brand />
           </Link>
           <p className="mt-3 hidden max-w-md sm:block">Robione między falami a opadami śniegu.</p>
-          <p className="sm:mt-4">
-            © {new Date().getFullYear()}{" "}
-            <a href="https://theconstruct.ing" className="hover:text-primary hover:underline">
-              theconstruct.ing
-            </a>
-          </p>
           <button
             className="mt-3 rounded-sm font-medium text-foreground underline-offset-4 hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             onClick={openPreferences}
@@ -46,6 +40,12 @@ export function PublicFooter() {
           <p className="pt-1 text-xs text-foreground">
             Jesteśmy legalnym biurem podróży posiadającym wpis do rejestru organizatorów turystyki o
             nr. 26387.
+          </p>
+          <p className="sm:mt-4">
+            © {new Date().getFullYear()}{" "}
+            <a href="https://theconstruct.ing" className="hover:text-primary hover:underline">
+              theconstruct.ing
+            </a>
           </p>
         </div>
         <address className="hidden not-italic sm:block sm:text-right">

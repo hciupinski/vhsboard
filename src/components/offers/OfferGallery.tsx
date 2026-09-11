@@ -9,9 +9,11 @@ import type { OfferImage } from "@/lib/offers/types";
 export function OfferGallery({
   images,
   title = "Zdjęcia z wyjazdu",
+  id,
 }: {
   images: OfferImage[];
   title?: string;
+  id?: string;
 }) {
   const visibleImages = images.filter((image) => image.signedUrl !== null);
   const [selectedImage, setSelectedImage] = useState<OfferImage | null>(null);
@@ -21,7 +23,12 @@ export function OfferGallery({
   }
 
   return (
-    <section className="bg-secondary/60 py-16 sm:py-20" aria-labelledby="offer-gallery-title">
+    <section
+      id={id}
+      tabIndex={id ? -1 : undefined}
+      className="bg-secondary/60 py-16 sm:py-20"
+      aria-labelledby="offer-gallery-title"
+    >
       <div className="mx-auto max-w-6xl px-5">
         <h2 id="offer-gallery-title" className="text-3xl sm:text-4xl">
           {title}

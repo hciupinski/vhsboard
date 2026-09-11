@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -88,14 +89,27 @@ describe("OfferEditorForm", () => {
     expect(onChange).toHaveBeenCalled();
   });
 
-  it("preserves the five editor sections", () => {
+  it("shows all trip sections in public order even when their content is empty", () => {
     render(
-      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={vi.fn()} />,
+      <OfferEditorForm
+        value={{
+          ...completeInput,
+          content: { paragraphs: [], highlights: [], included: [], excluded: [], schedule: [] },
+        }}
+        errors={{}}
+        disabled={false}
+        onChange={vi.fn()}
+      />,
     );
 
-    for (const name of ["Podstawy", "O wyjeździe", "W cenie i poza", "Dzień po dniu", "Zdjęcia"]) {
-      expect(screen.getByRole("tab", { name })).toBeInTheDocument();
-    }
+    expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
+      "Podstawy",
+      "O wyjeździe",
+      "W programie",
+      "Plan wyjazdu",
+      "Co jest w cenie",
+      "Galeria",
+    ]);
   });
 
   it("adds an empty description item without mutating the current value", async () => {
@@ -127,7 +141,10 @@ describe("OfferEditorForm", () => {
     await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
 
     expect(screen.getByLabelText("Akapity opisu 1")).toHaveValue("Tekst o wyjeździe.");
-    expect(screen.getByLabelText("Najlepsze momenty 1")).toHaveValue("Dwie sesje dziennie");
+    expect(screen.queryByLabelText("W programie 1")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
+    expect(screen.getByLabelText("W programie 1")).toHaveValue("Dwie sesje dziennie");
+    expect(screen.queryByLabelText("Akapity opisu 1")).not.toBeInTheDocument();
   });
 
   it("updates only the selected schedule row", async () => {
@@ -145,7 +162,7 @@ describe("OfferEditorForm", () => {
     };
     render(<OfferEditorForm value={value} errors={{}} disabled={false} onChange={onChange} />);
 
-    await user.click(screen.getByRole("tab", { name: "Dzień po dniu" }));
+    await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
     fireEvent.change(screen.getByLabelText("Dzień 2 — opis"), {
       target: { value: "Dwie sesje i analiza nagrań." },
     });
@@ -170,7 +187,7 @@ describe("OfferEditorForm", () => {
       <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={onChange} />,
     );
 
-    await user.click(screen.getByRole("tab", { name: "Dzień po dniu" }));
+    await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
     await user.click(screen.getByRole("button", { name: "Dodaj dzień" }));
 
     expect(onChange).toHaveBeenCalledWith({
@@ -190,13 +207,22 @@ describe("OfferEditorForm", () => {
     render(<OfferEditorForm value={completeInput} errors={{}} disabled onChange={vi.fn()} />);
 
     expect(screen.getByLabelText("Tytuł wyjazdu")).toBeDisabled();
+    expect(screen.getByLabelText("Zdanie wprowadzające")).toBeDisabled();
     expect(screen.getByLabelText("Adres zapisów")).toBeDisabled();
     expect(screen.getByLabelText("Rodzaj wyjazdu")).toBeDisabled();
 
     await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
     expect(screen.getAllByRole("button", { name: "Dodaj pozycję" })[0]).toBeDisabled();
 
-    await user.click(screen.getByRole("tab", { name: "Dzień po dniu" }));
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
+    expect(screen.getByLabelText("W programie 1")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Dodaj pozycję" })).toBeDisabled();
+
+    await user.click(screen.getByRole("tab", { name: "Co jest w cenie" }));
+    expect(screen.getByLabelText("W cenie 1")).toBeDisabled();
+    expect(screen.getByLabelText("Poza ceną 1")).toBeDisabled();
+
+    await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
     expect(screen.getByRole("button", { name: "Dodaj dzień" })).toBeDisabled();
   });
 
@@ -206,7 +232,7 @@ describe("OfferEditorForm", () => {
       <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={vi.fn()} />,
     );
 
-    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+    await user.click(screen.getByRole("tab", { name: "Galeria" }));
 
     expect(screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).toBeInTheDocument();
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
@@ -224,7 +250,7 @@ describe("OfferEditorForm", () => {
       />,
     );
 
-    await user.click(screen.getByRole("tab", { name: "Zdjęcia" }));
+    await user.click(screen.getByRole("tab", { name: "Galeria" }));
 
     expect(screen.getByText("Panel zarządzania zdjęciami")).toBeInTheDocument();
     expect(screen.queryByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).not.toBeInTheDocument();
@@ -247,6 +273,141 @@ describe("OfferEditorForm", () => {
     expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("09:00");
     expect(screen.getByText("5/120 znaków")).toBeInTheDocument();
     expect(screen.getByLabelText("Transport")).toHaveValue("Dojazd własny.");
+  });
+
+  it("keeps trip subtitle in basics and preserves edits across the separate panels", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    function Editor() {
+      const [value, setValue] = useState(completeInput);
+      return (
+        <OfferEditorForm
+          value={value}
+          errors={{}}
+          disabled={false}
+          onChange={(next) => {
+            setValue(next);
+            onChange(next);
+          }}
+        />
+      );
+    }
+    render(<Editor />);
+    fireEvent.change(screen.getByLabelText("Zdanie wprowadzające"), {
+      target: { value: "Nowe wprowadzenie." },
+    });
+    await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
+    expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Akapity opisu 1"), { target: { value: "Nowy opis." } });
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
+    fireEvent.change(screen.getByLabelText("W programie 1"), {
+      target: { value: "Surf o świcie" },
+    });
+    await user.click(screen.getByRole("tab", { name: "Podstawy" }));
+    expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue("Nowe wprowadzenie.");
+    expect(onChange).toHaveBeenLastCalledWith({
+      ...completeInput,
+      subtitle: "Nowe wprowadzenie.",
+      content: {
+        ...completeInput.content,
+        paragraphs: ["Nowy opis."],
+        highlights: ["Surf o świcie"],
+      },
+    });
+  });
+
+  it("marks only the trip tab containing each invalid field", () => {
+    const props = { value: completeInput, disabled: false, onChange: vi.fn() };
+    const { rerender } = render(<OfferEditorForm {...props} errors={{}} />);
+    const cases: (readonly [string, string])[] = [
+      ...[
+        "offerKind",
+        "activity",
+        "title",
+        "slug",
+        "location",
+        "subtitle",
+        "shortDescription",
+        "startDate",
+        "endDate",
+        "durationDays",
+        "groupSizeMin",
+        "groupSizeMax",
+        "priceFrom",
+        "currency",
+        "bookingUrl",
+      ].map((path) => [path, "Podstawy"] as const),
+      ["content.paragraphs.0", "O wyjeździe"],
+      ["content.highlights.0", "W programie"],
+      ["content.schedule.0.text", "Plan wyjazdu"],
+      ["content.included.0", "Co jest w cenie"],
+      ["content.excluded.0", "Co jest w cenie"],
+      ["heroImagePath", "Galeria"],
+    ];
+    for (const [path, tab] of cases) {
+      rerender(<OfferEditorForm {...props} errors={{ [path]: "Popraw to pole." }} />);
+      expect(screen.getByRole("tab", { name: `${tab} — zawiera błędy` })).toBeInTheDocument();
+      expect(screen.getAllByRole("tab", { name: /zawiera błędy/ })).toHaveLength(1);
+    }
+  });
+
+  it("reveals a focused offscreen tab inside the horizontal scroller", () => {
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={vi.fn()} />,
+    );
+    const tablist = screen.getByRole("tablist");
+    const gallery = screen.getByRole("tab", { name: "Galeria" });
+    vi.spyOn(tablist, "getBoundingClientRect").mockReturnValue({ left: 10, right: 330 } as DOMRect);
+    vi.spyOn(gallery, "getBoundingClientRect").mockReturnValue({
+      left: 580,
+      right: 670,
+    } as DOMRect);
+    fireEvent.focus(gallery);
+    expect(tablist.scrollLeft).toBe(340);
+    const basics = screen.getByRole("tab", { name: "Podstawy" });
+    vi.spyOn(basics, "getBoundingClientRect").mockReturnValue({
+      left: -330,
+      right: -240,
+    } as DOMRect);
+    fireEvent.focus(basics);
+    expect(tablist.scrollLeft).toBe(0);
+  });
+
+  it("preserves day-camp tab order and story fields", async () => {
+    const user = userEvent.setup();
+    render(
+      <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={vi.fn()} />,
+    );
+    expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
+      "Podstawy",
+      "O obozów",
+      "W cenie i poza",
+      "Program i opieka",
+      "Zdjęcia",
+    ]);
+    expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "O obozów" }));
+    expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue(dayCampInput.subtitle);
+    expect(screen.getByLabelText("Najlepsze momenty 1")).toHaveValue("Małe grupy");
+    expect(screen.getByLabelText("Opis miejsca zajęć")).toBeInTheDocument();
+  });
+
+  it("keeps day-camp validation markers with their existing panels", () => {
+    const props = { value: dayCampInput, disabled: false, onChange: vi.fn() };
+    const { rerender } = render(<OfferEditorForm {...props} errors={{}} />);
+    for (const [path, tab] of [
+      ["content.terms.0.bookingUrl", "Podstawy"],
+      ["subtitle", "O obozów"],
+      ["content.highlights.0", "O obozów"],
+      ["content.venueDescription", "O obozów"],
+      ["content.dayProgram.0.time", "Program i opieka"],
+      ["content.parentInfo.safety", "Program i opieka"],
+      ["content.included.0", "W cenie i poza"],
+    ] as const) {
+      rerender(<OfferEditorForm {...props} errors={{ [path]: "Popraw to pole." }} />);
+      expect(screen.getByRole("tab", { name: `${tab} — zawiera błędy` })).toBeInTheDocument();
+      expect(screen.getAllByRole("tab", { name: /zawiera błędy/ })).toHaveLength(1);
+    }
   });
 
   it("shows character limits next to limited text fields", () => {

@@ -25,7 +25,10 @@ const navigationLinkClassName =
 
 export function PublicHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur">
+    <header
+      data-public-header
+      className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur"
+    >
       <nav
         aria-label="Nawigacja główna"
         className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3"

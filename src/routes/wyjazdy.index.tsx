@@ -34,10 +34,15 @@ function TripsPage() {
       <main className="flex-1 bg-secondary/55 py-16 sm:py-24">
         <section className="mx-auto max-w-6xl px-5">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Wyjazdy</p>
-          <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">Wyjazdy</h1>
+          <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">
+            WYJAZDY, DO KTÓRYCH CHCE SIĘ WRACAĆ
+          </h1>
           <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-            Zobacz aktualne kierunki i szczegóły wyjazdów organizowanych przez VHSBOARD.
+            Kameralne grupy, dobra ekipa i dużo czasu na desce. Organizujemy wyjazdy snowboardowe i
+            surfingowe z myślą o progresie, wspólnych zajawkach i relacjach, które zostają na
+            dłużej.
           </p>
+          <h2 className="mt-12 text-3xl leading-none sm:text-4xl">AKTUALNE KIERUNKI</h2>
           <OfferListState
             offers={offers.filter((offer): offer is TripOffer => offer.offerKind === "trip")}
             isPending={isPending}

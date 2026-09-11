@@ -4,6 +4,7 @@ import { CalendarDays, MapPin, Wallet } from "lucide-react";
 
 import { OfferFacts } from "@/components/offers/OfferFacts";
 import { OfferGallery } from "@/components/offers/OfferGallery";
+import { DeferredYouTubeEmbed } from "@/components/public/DeferredYouTubeEmbed";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { Button } from "@/components/ui/button";
@@ -97,7 +98,7 @@ function DayCampDetail() {
             {content.paragraphs.length > 0 || content.venueDescription ? (
               <section aria-labelledby="about-day-camp-title">
                 <h2 id="about-day-camp-title" className="text-3xl sm:text-4xl">
-                  O obozów
+                  Ogólne
                 </h2>
                 {content.paragraphs.map((paragraph, index) => (
                   <p
@@ -124,7 +125,7 @@ function DayCampDetail() {
                 aria-labelledby="highlights-title"
               >
                 <h2 id="highlights-title" className="text-3xl sm:text-4xl">
-                  Najlepsze momenty
+                  Atrakcje
                 </h2>
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {content.highlights.map((highlight) => (
@@ -239,7 +240,7 @@ function DayCampDetail() {
                       ))}
                       <Button asChild className="mt-5 w-full rounded-full">
                         <a href={term.bookingUrl} target="_blank" rel="noopener noreferrer">
-                          Przejdź do zapisów
+                          Zapisz się
                         </a>
                       </Button>
                     </article>
@@ -306,8 +307,13 @@ function DayCampDetail() {
           </aside>
         </div>
         {offer.images.length > 0 ? (
-          <OfferGallery images={offer.images} title="Zdjęcia z obozów" />
+          <OfferGallery images={offer.images} title="Poczuj vibe" />
         ) : null}
+        <DeferredYouTubeEmbed
+          className="mx-auto max-w-6xl px-5 py-16 sm:py-20"
+          title="Obozy VHSBOARD"
+          videoId="wff_iv8QJ4c"
+        />
       </main>
       <PublicFooter />
     </div>

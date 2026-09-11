@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import skimboardingLessonImage from "@/assets/eventy-nauka-skimboardingu.jpg";
-import skimboardingTrackImage from "@/assets/eventy-tor-skimboardowy.jpg";
+import skimboardingLessonImage from "@/assets/skim-laczy.jpg";
+import skimboardingShoppingCenterImage from "@/assets/strefa-letnia.jpg";
+import skimboardingTrackImage from "@/assets/skim-tor.jpg";
+import { EventPlaceholderFigure } from "@/components/events/EventPlaceholderFigure";
+import { EventUseCasesScroller } from "@/components/events/EventUseCasesScroller";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
@@ -25,26 +28,25 @@ function EventsPage() {
       <PublicJsonLd path="/eventy" label="Eventy" />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground text-background">
-          <img
-            src={skimboardingTrackImage}
-            alt="Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu"
-            className="absolute inset-0 -z-20 size-full object-cover object-[65%_center]"
-          />
-          <div className="absolute inset-0 -z-10 bg-foreground/75 sm:bg-gradient-to-r sm:from-foreground sm:via-foreground/80 sm:to-foreground/20" />
-          <div className="mx-auto max-w-6xl px-5 py-20 sm:py-28 lg:py-32">
+          <figure className="absolute inset-0 bg-foreground">
+            <img
+              src={skimboardingTrackImage}
+              alt="Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu"
+              className="size-full object-cover object-[65%_center] brightness-[0.45]"
+            />
+          </figure>
+          <div className="relative mx-auto max-w-6xl px-5 py-20 sm:py-28 lg:py-32">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
                 Eventy
               </p>
               <h1 className="mt-4 text-5xl leading-[0.9] sm:text-7xl lg:text-8xl">
-                Tor skimboardowy
-                <span className="mt-2 block text-background/85">
-                  wynajem na eventy w całej Polsce
-                </span>
+                TOR SKIMBOARDOWY — PRZYCIĄGA LUDZI. SURFING DLA KAŻDEGO
               </h1>
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-background/85 sm:text-xl">
-                Szukasz atrakcji na event firmowy, piknik rodzinny albo imprezę miejską, której nikt
-                wcześniej nie widział?
+                Atrakcja na event firmowy, piknik, imprezę miejską czy wydarzenie sportowe. Tworzymy
+                kompleksową strefę, która angażuje, dostarcza emocji i świetnie wygląda na
+                zdjęciach.
               </p>
               <Button asChild size="lg" className="mt-8 rounded-full">
                 <Link to="/kontakt">Zapytaj o event</Link>
@@ -55,25 +57,47 @@ function EventsPage() {
 
         <section className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-center">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-              Ruch dla każdego
-            </p>
-            <h2 className="mt-3 text-4xl leading-[0.95] sm:text-6xl">
-              Ty zajmujesz się imprezą, my robimy show.
+            <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              Strefa Skate
             </h2>
+            <h3 className="mt-3 text-4xl leading-[0.95] sm:text-6xl">
+              MIEJSKIE SPORTY, KTÓRE ŁĄCZĄ
+            </h3>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Mobilny tor skimboardowy przyciąga uczestników w każdym wieku, od 6-latków po
-              dorosłych. Przywozimy go, montujemy i prowadzimy całość z instruktorami.
+              Deskorolka, rolki, warsztaty i otwarta strefa dla każdego. Tworzymy przestrzeń, która
+              zachęca do ruchu, próbowania nowych rzeczy i wspólnej zajawki.
             </p>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Każdy zaczyna od prostych wskazówek, a pierwsze ślizgi pojawiają się już po kilku
-              minutach.
-            </p>
+            <Button asChild size="lg" className="mt-8 rounded-full">
+              <Link to="/kontakt">Zapytaj o event</Link>
+            </Button>
           </div>
-          <img
+          <EventPlaceholderFigure
             src={skimboardingLessonImage}
             alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
-            className="aspect-[4/5] w-full rounded-3xl object-cover shadow-warm"
+          />
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Dopasowany do okazji
+          </p>
+          <div className="mt-3 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+            <h2 className="text-4xl leading-[0.95] sm:text-6xl">Atrakcja na każdy event</h2>
+            <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              Mobilny tor skimboardowy sprawdzi się jako główna atrakcja wszędzie tam, gdzie liczy
+              się ruch, energia i wspólne kibicowanie.
+            </p>
+          </div>
+          <EventUseCasesScroller
+            items={[
+              "integracjach firmowych i piknikach pracowniczych",
+              "piknikach rodzinnych i festynach",
+              "dniach miasta i imprezach plenerowych",
+              "eventach w galeriach handlowych",
+              "obozach dla dzieci i młodzieży",
+              "wydarzeniach sportowych, juwenaliach i targach",
+              "eventach miejskich, festiwalach i wydarzeniach w galeriach handlowych",
+            ]}
           />
         </section>
 
@@ -89,60 +113,41 @@ function EventsPage() {
             </div>
             <div className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
               <p>
-                Skimboarding to ślizganie się na desce po płytkiej tafli wody, trochę jak surfing,
-                tylko bez oceanu. Na naszych mobilnych torach każdy uczestnik już po kilku minutach
-                nauki robi pierwsze ślizgi.
+                Tor skimboardowy to idealna atrakcja w okresie od maja do września. Pozwala
+                uczestnikom imprezy spędzić aktywnie czas i spróbować czegoś nowego. Przyciąga
+                dzieci, młodzież i dorosłych. W 2h montujemy strefę, a nasi instruktorzy czuwają nad
+                bezpieczeństwem i szkolą uczestników.
               </p>
               <p className="mt-5">
-                Dmuchane bandy i antypoślizgowe dno sprawiają, że atrakcja jest w pełni bezpieczna,
-                także dla dzieci. Zobacz, jak wygląda{" "}
-                <a
-                  href="https://www.youtube.com/watch?v=85_CDXNlPmg&t=1s"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-semibold text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary"
-                >
-                  skimboarding
-                </a>
-                .
+                Nie trzeba umieć jeździć. Wystarczy kilka wskazówek, żeby złapać pierwsze ślizgi.
               </p>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-            Dopasowany do okazji
-          </p>
-          <div className="mt-3 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
-            <h2 className="text-4xl leading-[0.95] sm:text-6xl">Atrakcja na każdy event</h2>
-            <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Mobilny tor skimboardowy sprawdzi się jako główna atrakcja wszędzie tam, gdzie liczy
-              się ruch, energia i wspólne kibicowanie.
+        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-center">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              Dłuższa chwila na ruch
+            </p>
+            <h2 className="mt-3 text-4xl leading-[0.95] sm:text-6xl">
+              Strefa letnia w centrum handlowym
+            </h2>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              Tor skimboardowy może stać się głównym punktem letniej strefy w galerii lub parku
+              handlowym. Generuje naturalny ruch i daje powód, żeby zatrzymać się na dłużej oraz
+              dołączyć do wspólnej zabawy. To świetny element kampanii sezonowej, który zachęca do
+              odwiedzin obiektu.
             </p>
           </div>
-          <ul className="mt-10 grid gap-x-12 gap-y-5 border-y border-border py-8 text-lg sm:grid-cols-2">
-            {[
-              "integracjach firmowych i piknikach pracowniczych",
-              "piknikach rodzinnych i festynach",
-              "dniach miasta i imprezach plenerowych",
-              "eventach w galeriach handlowych",
-              "obozach i obozach dla dzieci i młodzieży",
-              "wydarzeniach sportowych, juwenaliach i targach",
-            ].map((event) => (
-              <li key={event} className="flex gap-3 text-foreground">
-                <span
-                  aria-hidden="true"
-                  className="mt-3 size-1.5 shrink-0 rounded-full bg-primary"
-                />
-                <span>{event}</span>
-              </li>
-            ))}
-          </ul>
+          <EventPlaceholderFigure
+            src={skimboardingShoppingCenterImage}
+            alt="Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu"
+          />
         </section>
 
         <section className="bg-foreground py-16 text-background sm:py-24">
-          <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-center">
             <div className="max-w-3xl">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
                 Sprzęt i bezpieczeństwo
@@ -151,14 +156,34 @@ function EventsPage() {
                 Tor skrojony pod Twój event.
               </h2>
               <p className="mt-6 text-lg leading-relaxed text-background/75">
-                Dysponujemy mobilnymi torami o długości 15, 20 i 30 metrów oraz torem stacjonarnym.
-                Dmuchane bandy są w pełni bezpieczne, a antypoślizgowe dno pozwala swobodnie
-                korzystać z toru i szybko złapać rytm.
+                Dysponujemy torami w kilku rozmiarach i kolorach, dzięki czemu możemy dopasować
+                strefę do przestrzeni, charakteru wydarzenia i liczby uczestników. Każdy tor ma
+                dmuchane bandy oraz antypoślizgowe dno.
               </p>
+              <p className="mt-5 text-lg font-semibold text-background">15 m, 20 m, 22 m, 30 m</p>
+              <Button asChild size="lg" className="mt-8 rounded-full">
+                <Link to="/kontakt">Zapytaj o event</Link>
+              </Button>
             </div>
-            <Button asChild size="lg" className="rounded-full">
-              <Link to="/kontakt">Porozmawiajmy o terminie</Link>
-            </Button>
+            <EventPlaceholderFigure
+              src={skimboardingTrackImage}
+              alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
+            />
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Galeria</p>
+          <h2 className="mt-3 text-4xl leading-[0.95] sm:text-6xl">Zobacz nas w akcji</h2>
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            <EventPlaceholderFigure
+              src={skimboardingTrackImage}
+              alt="Uczestnik korzystający z mobilnego toru skimboardowego podczas eventu"
+            />
+            <EventPlaceholderFigure
+              src={skimboardingLessonImage}
+              alt="Dziecko uczące się skimboardingu pod opieką instruktora"
+            />
           </div>
         </section>
       </main>

@@ -43,7 +43,7 @@ export function DayCampCard({ offer }: { offer: DayCampOffer }) {
         </div>
         <Button asChild className="mt-4 w-full rounded-full" variant="secondary">
           <Link to="/obozy/$slug" params={{ slug: offer.slug }}>
-            Zobacz szczegóły obozów
+            Szczegóły
           </Link>
         </Button>
       </div>

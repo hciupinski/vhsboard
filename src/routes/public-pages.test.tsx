@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -29,6 +29,7 @@ const publicSiteEnv = {
   VITE_BUSINESS_CITY: "Warszawa",
   VITE_BUSINESS_NIP: "1234567890",
   VITE_BUSINESS_REGON: "123456789",
+  VITE_BUSINESS_BANK_ACCOUNT: "12345678901234567890123456",
 };
 
 const renderRoute = async (path: string, route: { options: { component?: unknown } }) => {
@@ -132,40 +133,65 @@ describe("static public pages", () => {
     }
   });
 
-  it("explains the mobile skimboard track format and directs enquiries to contact", async () => {
+  it("presents the mobile skimboard track format and directs enquiries to contact", async () => {
     await renderRoute("/eventy", EventsRoute);
 
     expect(
-      screen.getByRole("heading", { name: /tor skimboardowy.*wynajem na eventy/i }),
+      screen.getByRole("heading", { name: /przyciąga ludzi.*surfing dla każdego/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /skimboarding/i })).toHaveAttribute(
-      "href",
-      "https://www.youtube.com/watch?v=85_CDXNlPmg&t=1s",
-    );
+    expect(screen.getByRole("heading", { name: /strefa skate/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /strefa letnia w centrum handlowym/i }),
+    ).toBeInTheDocument();
     expect(
       screen.getByText(/integracjach firmowych i piknikach pracowniczych/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/15, 20 i 30 metrów/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /zapytaj o event/i })).toHaveAttribute(
-      "href",
-      "/kontakt",
-    );
-  });
+    expect(screen.getByText("obozach dla dzieci i młodzieży")).toBeInTheDocument();
+    expect(screen.queryByText("obozach i obozach dla dzieci i młodzieży")).not.toBeInTheDocument();
+    expect(screen.getByText(/15 m, 20 m, 22 m, 30 m/i)).toBeInTheDocument();
 
-  it("explains seasonal half-day camps and communicates that new offers may appear soon", async () => {
-    await renderRoute("/obozy", HalfDayCampsRoute);
-
-    expect(screen.getByRole("heading", { name: /obozy aktywnie/i })).toBeInTheDocument();
+    const gallery = screen.getByRole("heading", { name: /zobacz nas w akcji/i }).closest("section");
+    if (!gallery) {
+      throw new Error("Nie znaleziono sekcji galerii Eventów");
+    }
     expect(
-      screen.getByRole("img", {
-        name: /dziecko płynące na wakeboardzie podczas obozów/i,
+      within(gallery).getByRole("img", {
+        name: "Uczestnik korzystający z mobilnego toru skimboardowego podczas eventu",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/wakepark, skimboard i skateboarding/i)).toBeInTheDocument();
-    expect(screen.getByText(/śnieg i snowboard/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /aktualne obozy/i })).toBeInTheDocument();
-    expect(screen.getByText(/nie mamy teraz otwartych obozów/i)).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /rezerwuj|zapisz/i })).not.toBeInTheDocument();
+    expect(
+      within(gallery).getByRole("img", {
+        name: "Dziecko uczące się skimboardingu pod opieką instruktora",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /zobacz nas w akcji/i })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /plan dnia/i })).not.toBeInTheDocument();
+    for (const eventLink of screen.getAllByRole("link", { name: /zapytaj o event/i })) {
+      expect(eventLink).toHaveAttribute("href", "/kontakt");
+    }
+  });
+
+  it("presents active camps with current seasonal copy", async () => {
+    await renderRoute("/obozy", HalfDayCampsRoute);
+
+    expect(screen.getByRole("heading", { name: /zajawkowe obozy/i })).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /wakeboard, skimboard, deskorolka, sup i masa aktywności, które dzieciaki kochają najbardziej/i,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: /uczestnik obozu wakeboardowego na jeziorze podczas letnich zajęć/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: /uczestniczka obozu snowboardowego podczas zimowej jazdy w górach/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /najbliższe terminy/i })).toBeInTheDocument();
+    expect(screen.queryByText(/półkoloni/i)).not.toBeInTheDocument();
   });
 
   it("keeps discontinued services as company background rather than separate sales pages", async () => {
@@ -185,5 +211,16 @@ describe("static public pages", () => {
       "mailto:kontakt@example.test",
     );
     expect(screen.getAllByText("NIP: 1234567890")).toHaveLength(1);
+  });
+
+  it("keeps the social callout at the bottom of the contact card", async () => {
+    await renderRoute("/kontakt", ContactRoute);
+
+    const socialCallout = screen.getByRole("heading", {
+      name: /sprawdź co u nas słychać i dołącz do społeczności vhs/i,
+    });
+
+    expect(socialCallout).toHaveClass("mt-auto");
+    expect(socialCallout.closest("section")).toHaveClass("flex", "flex-col");
   });
 });
