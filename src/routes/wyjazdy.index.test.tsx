@@ -149,5 +149,13 @@ describe("trips list route", () => {
       await screen.findByRole("heading", { name: "Surfing w Portugalii" }),
     ).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Obóz wakeboardowy" })).not.toBeInTheDocument();
+
+    const offersHeading = screen.getByRole("heading", { name: /aktualne kierunki/i });
+    const faqHeading = screen.getByRole("heading", { name: "Najczęściej zadawane pytania" });
+
+    expect(
+      offersHeading.compareDocumentPosition(faqHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Jak zapisać się na wyjazd?" })).toBeVisible();
   });
 });

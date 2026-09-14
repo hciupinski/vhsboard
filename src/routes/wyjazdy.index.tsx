@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { OfferListState } from "@/components/offers/OfferListState";
+import { FaqSection } from "@/components/public/FaqSection";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
+import { tripFaqItems } from "@/lib/faq";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
 import type { TripOffer } from "@/lib/offers/types";
 import { createPageMetadata } from "@/lib/seo";
@@ -50,6 +52,7 @@ function TripsPage() {
             onRetry={() => void refetch()}
           />
         </section>
+        <FaqSection headingId="trip-faq-heading" items={tripFaqItems} />
       </main>
       <PublicFooter />
     </div>

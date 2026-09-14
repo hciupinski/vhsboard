@@ -5,9 +5,11 @@ import wakeparkCampImage from "@/assets/obozy-wake.jpg";
 import summerCampImage from "@/assets/obozy-lato.jpg";
 import winterCampImage from "@/assets/obozy-zima.jpg";
 import { DayCampCard } from "@/components/offers/DayCampCard";
+import { FaqSection } from "@/components/public/FaqSection";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
+import { campFaqItems } from "@/lib/faq";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -130,6 +132,7 @@ function HalfDayCampsPage() {
             ) : null}
           </div>
         </section>
+        <FaqSection headingId="camp-faq-heading" items={campFaqItems} />
       </main>
       <PublicFooter />
     </div>
