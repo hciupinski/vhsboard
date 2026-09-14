@@ -30,6 +30,7 @@ security invoker
 set search_path = ''
 as $$
 declare
+  current_count integer;
   max_position integer;
 begin
   if not public.is_cms_admin() then
@@ -56,8 +57,8 @@ begin
   from public.portal_carousel_images
   for update;
 
-  select coalesce(max(portal_image.position), -1)
-    into max_position
+  select count(*), coalesce(max(portal_image.position), -1)
+    into current_count, max_position
   from public.portal_carousel_images as portal_image;
 
   delete from public.portal_carousel_images as portal_image
@@ -66,7 +67,10 @@ begin
   insert into public.portal_carousel_images (image_path, position)
   select
     ordered_path.image_path,
-    max_position + ordered_path.ordinality::integer
+    max_position
+      + current_count
+      + cardinality(p_ordered_paths)
+      + ordered_path.ordinality::integer
   from unnest(p_ordered_paths) with ordinality as ordered_path(image_path, ordinality)
   on conflict (image_path) do update
     set position = excluded.position;
