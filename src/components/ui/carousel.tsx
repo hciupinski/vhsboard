@@ -15,6 +15,7 @@ type CarouselProps = {
   plugins?: CarouselPlugin;
   orientation?: "horizontal" | "vertical";
   setApi?: (api: CarouselApi) => void;
+  interactive?: boolean;
 };
 
 type CarouselContextProps = {
@@ -41,11 +42,22 @@ function useCarousel() {
 const Carousel = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & CarouselProps
->(({ orientation = "horizontal", opts, setApi, plugins, className, children, ...props }, ref) => {
+>((carouselProps, ref) => {
+  const {
+    orientation = "horizontal",
+    opts,
+    setApi,
+    plugins,
+    interactive = true,
+    className,
+    children,
+    ...props
+  } = carouselProps;
   const [carouselRef, api] = useEmblaCarousel(
     {
       ...opts,
       axis: orientation === "horizontal" ? "x" : "y",
+      ...(interactive === false ? { watchDrag: false } : {}),
     },
     plugins,
   );
@@ -71,6 +83,10 @@ const Carousel = React.forwardRef<
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (!interactive) {
+        return;
+      }
+
       if (event.key === "ArrowLeft") {
         event.preventDefault();
         scrollPrev();
@@ -79,7 +95,7 @@ const Carousel = React.forwardRef<
         scrollNext();
       }
     },
-    [scrollPrev, scrollNext],
+    [interactive, scrollPrev, scrollNext],
   );
 
   React.useEffect(() => {
@@ -110,6 +126,7 @@ const Carousel = React.forwardRef<
         carouselRef,
         api: api,
         opts,
+        interactive,
         orientation: orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
         scrollPrev,
         scrollNext,
