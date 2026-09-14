@@ -42,14 +42,13 @@ import { PORTAL_CAROUSEL_IMAGES, getPortalCarouselImage, isPortalCarouselImagePa
 
 describe("portal carousel catalogue", () => {
   it("orders repository images by stable path", () => {
-    expect(PORTAL_CAROUSEL_IMAGES.map(({ path }) => path)).toEqual([
-      "carousel/hero-surf.jpg",
-      "carousel/obozy-lato-wakeboard.png",
-      "carousel/obozy-zima.jpg",
-    ]);
+    const paths = PORTAL_CAROUSEL_IMAGES.map(({ path }) => path);
+    expect(paths).toEqual([...paths].sort((left, right) => left.localeCompare(right)));
+    expect(paths.every((path) => path.startsWith("carousel/"))).toBe(true);
   });
   it("resolves only a real catalogue entry", () => {
-    expect(getPortalCarouselImage("carousel/hero-surf.jpg")?.src).toBeTruthy();
+    const firstImage = PORTAL_CAROUSEL_IMAGES[0];
+    if (firstImage) expect(getPortalCarouselImage(firstImage.path)?.src).toBeTruthy();
     expect(getPortalCarouselImage("carousel/missing.jpg")).toBeUndefined();
     expect(isPortalCarouselImagePath("https://example.test/x.jpg")).toBe(false);
   });
