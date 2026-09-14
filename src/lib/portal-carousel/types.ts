@@ -1,5 +1,5 @@
 export type PortalCarouselImage = {
-  path: string;
-  src: string;
-  label: string;
+  readonly path: string;
+  readonly src: string;
+  readonly label: string;
 };

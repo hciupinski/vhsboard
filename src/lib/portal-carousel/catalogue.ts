@@ -17,6 +17,7 @@ export const PORTAL_CAROUSEL_IMAGES: ReadonlyArray<PortalCarouselImage> = Object
         .replace(/\.[^.]+$/, "")
         .replaceAll("-", " "),
     }))
+    .map((image) => Object.freeze(image))
     .sort((left, right) => left.path.localeCompare(right.path)),
 );
 
