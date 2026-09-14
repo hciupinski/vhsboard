@@ -1,8 +1,8 @@
 begin;
 
-select plan(1);
+select plan(8);
 
-do $$
+do $test$
 declare
   admin_id constant uuid := '10000000-0000-0000-0000-000000000001';
   editor_id constant uuid := '10000000-0000-0000-0000-000000000002';
@@ -806,9 +806,49 @@ begin
   delete from public.offers
   where id = managed_offer_id;
 
+  execute 'set local role anon';
+  perform lives_ok(
+    $$ select image_path from public.portal_carousel_images $$,
+    'anonymous visitors can read portal carousel'
+  );
+
+  execute 'set local role none';
+  perform set_config('request.jwt.claim.sub', editor_id::text, true);
+  execute 'set local role authenticated';
+  perform throws_ok(
+    $$ select public.set_portal_carousel_images(array['carousel/hero-surf.jpg']) $$,
+    '42501', 'Brak uprawnień do zmiany karuzeli portalu.',
+    'editor cannot save portal carousel'
+  );
+
+  execute 'set local role none';
+  perform set_config('request.jwt.claim.sub', admin_id::text, true);
+  execute 'set local role authenticated';
+  perform lives_ok(
+    $$ select public.set_portal_carousel_images(array['carousel/obozy-zima.jpg', 'carousel/hero-surf.jpg']) $$,
+    'admin can save ordered portal carousel'
+  );
+  perform results_eq(
+    $$ select image_path from public.portal_carousel_images order by position $$,
+    $$ values ('carousel/obozy-zima.jpg'::text), ('carousel/hero-surf.jpg'::text) $$,
+    'saved rows preserve supplied order'
+  );
+  perform throws_ok(
+    $$ select public.set_portal_carousel_images(array['private/image.jpg']) $$,
+    '22023', 'Nieprawidłowa ścieżka obrazu karuzeli.', 'invalid path is rejected'
+  );
+  perform throws_ok(
+    $$ select public.set_portal_carousel_images(null::text[]) $$,
+    '22023', 'Nieprawidłowa ścieżka obrazu karuzeli.', 'null path array is rejected'
+  );
+  perform throws_ok(
+    $$ select public.set_portal_carousel_images(array['carousel/hero-surf.jpg', 'carousel/hero-surf.jpg']) $$,
+    '22023', 'Nieprawidłowa ścieżka obrazu karuzeli.', 'duplicate paths are rejected'
+  );
+
   execute 'set local role none';
 end;
-$$;
+$test$;
 
 select pass('CMS RLS and private Storage policies enforce publication and administrator boundaries');
 select * from finish();
