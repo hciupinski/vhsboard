@@ -10,12 +10,14 @@ describe("portal carousel catalogue", () => {
     const paths = PORTAL_CAROUSEL_IMAGES.map(({ path }) => path);
     expect(paths).toEqual([...paths].sort((left, right) => left.localeCompare(right)));
     expect(paths.every((path) => path.startsWith("carousel/"))).toBe(true);
+    expect(Object.isFrozen(PORTAL_CAROUSEL_IMAGES)).toBe(true);
   });
 
   it("resolves only a real catalogue entry", () => {
     const firstImage = PORTAL_CAROUSEL_IMAGES[0];
     if (firstImage) expect(getPortalCarouselImage(firstImage.path)?.src).toBeTruthy();
     expect(getPortalCarouselImage("carousel/missing.jpg")).toBeUndefined();
+    expect(isPortalCarouselImagePath("carousel/missing.jpg")).toBe(false);
     expect(isPortalCarouselImagePath("https://example.test/x.jpg")).toBe(false);
   });
 });
