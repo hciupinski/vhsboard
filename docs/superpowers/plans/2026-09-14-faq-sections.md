@@ -31,7 +31,7 @@
 - Produces: `export type FaqItem = { question: string; answer: string }`.
 - Produces: `export const tripFaqItems: readonly FaqItem[]` and `export const campFaqItems: readonly FaqItem[]`, each containing six Polish entries specified in the design document.
 
-- [ ] **Step 1: Write the failing content contract test**
+- [x] **Step 1: Write the failing content contract test**
 
 ```tsx
 import { describe, expect, it } from "vitest";
@@ -62,23 +62,23 @@ describe("public FAQ content", () => {
 });
 ```
 
-- [ ] **Step 2: Verify the test is red**
+- [x] **Step 2: Verify the test is red**
 
 Run: `bun run test src/lib/faq.test.ts`
 
 Expected: FAIL because `./faq` does not exist.
 
-- [ ] **Step 3: Implement the typed content**
+- [x] **Step 3: Implement the typed content**
 
 Create `FaqItem` and the two `readonly` collections using the exact questions and restrained answers from `docs/superpowers/specs/2026-09-14-faq-sections-design.md`.
 
-- [ ] **Step 4: Verify the content contract is green**
+- [x] **Step 4: Verify the content contract is green**
 
 Run: `bun run test src/lib/faq.test.ts`
 
 Expected: PASS with two tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/faq.ts src/lib/faq.test.ts docs/superpowers/specs/2026-09-14-faq-sections-design.md docs/superpowers/plans/2026-09-14-faq-sections.md
@@ -95,7 +95,7 @@ git commit -m "feat: add public FAQ content"
 - Consumes: `FaqItem` from `@/lib/faq` and `Accordion`, `AccordionContent`, `AccordionItem`, `AccordionTrigger` from `@/components/ui/accordion`.
 - Produces: `FaqSection({ headingId, items }: { headingId: string; items: readonly FaqItem[] }): JSX.Element`.
 
-- [ ] **Step 1: Write the failing interaction test**
+- [x] **Step 1: Write the failing interaction test**
 
 ```tsx
 import { render, screen } from "@testing-library/react";
@@ -120,23 +120,23 @@ describe("FaqSection", () => {
 });
 ```
 
-- [ ] **Step 2: Verify the test is red**
+- [x] **Step 2: Verify the test is red**
 
 Run: `bun run test src/components/public/FaqSection.test.tsx`
 
 Expected: FAIL because `./FaqSection` does not exist.
 
-- [ ] **Step 3: Implement the component**
+- [x] **Step 3: Implement the component**
 
 Render a `<section aria-labelledby={headingId}>` with a `h2` labelled `Najczęściej zadawane pytania`, a short Polish introduction, and `Accordion type="single" collapsible`. Map each question to an `AccordionItem` with a stable `faq-${index}` value, `AccordionTrigger` and `AccordionContent`. Use the project’s `max-w-6xl`, `px-5`, `py-16 sm:py-20`, border and text token classes.
 
-- [ ] **Step 4: Verify the interaction test is green**
+- [x] **Step 4: Verify the interaction test is green**
 
 Run: `bun run test src/components/public/FaqSection.test.tsx`
 
 Expected: PASS with one test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/public/FaqSection.tsx src/components/public/FaqSection.test.tsx
@@ -155,7 +155,7 @@ git commit -m "feat: add reusable FAQ section"
 - Consumes: `FaqSection`, `tripFaqItems`, `campFaqItems`.
 - Produces: visible FAQ immediately below the list sections on both listing routes.
 
-- [ ] **Step 1: Write failing route assertions**
+- [x] **Step 1: Write failing route assertions**
 
 Add the following to the existing successful-offer test in `src/routes/wyjazdy.index.test.tsx`:
 
@@ -174,25 +174,25 @@ expect(screen.getByRole("heading", { name: "Najczęściej zadawane pytania" })).
 expect(screen.getByRole("button", { name: "Jak zapisać dziecko na obóz?" })).toBeVisible();
 ```
 
-- [ ] **Step 2: Verify the route tests are red**
+- [x] **Step 2: Verify the route tests are red**
 
 Run: `bun run test src/routes/wyjazdy.index.test.tsx src/routes/obozy.index.test.tsx`
 
 Expected: FAIL because neither route renders the FAQ heading.
 
-- [ ] **Step 3: Compose the component in each listing route**
+- [x] **Step 3: Compose the component in each listing route**
 
 Import `FaqSection` and `tripFaqItems` into `wyjazdy.index.tsx`. Close the existing offers `<section>` after `OfferListState`, then render `<FaqSection headingId="trip-faq-heading" items={tripFaqItems} />` immediately afterward.
 
 Import `FaqSection` and `campFaqItems` into `obozy.index.tsx`. Render `<FaqSection headingId="camp-faq-heading" items={campFaqItems} />` immediately after the `current-camps-heading` section.
 
-- [ ] **Step 4: Verify the route tests are green**
+- [x] **Step 4: Verify the route tests are green**
 
 Run: `bun run test src/routes/wyjazdy.index.test.tsx src/routes/obozy.index.test.tsx`
 
 Expected: PASS with all assertions.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/routes/wyjazdy.index.tsx src/routes/wyjazdy.index.test.tsx src/routes/obozy.index.tsx src/routes/obozy.index.test.tsx
@@ -208,31 +208,31 @@ git commit -m "feat: show FAQ below offer lists"
 - Consumes: completed feature and project test/build configuration.
 - Produces: fresh evidence that the feature and existing application checks pass.
 
-- [ ] **Step 1: Run all tests**
+- [x] **Step 1: Run all tests**
 
 Run: `bun run test`
 
 Expected: PASS with zero failures.
 
-- [ ] **Step 2: Run lint**
+- [x] **Step 2: Run lint**
 
 Run: `bun run lint`
 
 Expected: exit 0; preserve the six pre-existing Fast Refresh warnings only.
 
-- [ ] **Step 3: Run production build**
+- [x] **Step 3: Run production build**
 
 Run: `bun run build`
 
 Expected: exit 0 and regenerated sitemap output.
 
-- [ ] **Step 4: Review the final diff**
+- [x] **Step 4: Review the final diff**
 
 Run: `git diff origin/main...HEAD --check && git status --short`
 
 Expected: no whitespace errors and no uncommitted source or documentation changes.
 
-- [ ] **Step 5: Commit the final verified state if needed**
+- [x] **Step 5: Commit the final verified state if needed**
 
 ```bash
 git status --short

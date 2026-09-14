@@ -15,9 +15,7 @@ describe("FaqSection", () => {
       />,
     );
 
-    expect(
-      screen.getByRole("heading", { name: "Najczęściej zadawane pytania" }),
-    ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Najczęściej zadawane pytania" })).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: "Czy pytanie jest widoczne?" }));
 
