@@ -21,4 +21,25 @@ describe("FaqSection", () => {
 
     expect(screen.getByText("Tak, wraz z odpowiedzią.")).toBeVisible();
   });
+
+  it("renders paragraphs separately when an answer contains a blank line", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <FaqSection
+        headingId="about-faq-heading"
+        items={[
+          {
+            question: "Jak wygląda odpowiedź?",
+            answer: "Pierwszy akapit.\n\nDrugi akapit.",
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Jak wygląda odpowiedź?" }));
+
+    expect(screen.getByText("Pierwszy akapit.").tagName).toBe("P");
+    expect(screen.getByText("Drugi akapit.").tagName).toBe("P");
+  });
 });
