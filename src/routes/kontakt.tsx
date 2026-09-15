@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
+import { SocialLinks } from "@/components/public/SocialLinks";
 import { ContactDocuments } from "@/components/public/ContactDocuments";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { getPublicSiteConfig } from "@/lib/site-config";
@@ -53,32 +54,7 @@ function ContactPage() {
               </a>
             </p>
             <h3 className="mt-auto">Sprawdź co u nas słychać i dołącz do społeczności VHS</h3>
-            <p>
-              <a
-                href="https://www.facebook.com/share/1E7xY7Ed2B"
-                className="underline-offset-4 hover:underline p-1 hover:invert-[.1]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img
-                  src="/facebook-black.png"
-                  alt="Facebook"
-                  className="inline-block h-6 w-6 invert"
-                />
-              </a>
-              <a
-                href="https://www.instagram.com/vhsboard"
-                className="underline-offset-4 hover:underline p-1 hover:invert-[.1]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img
-                  src="/instagram-black.png"
-                  alt="Instagram"
-                  className="inline-block h-6 w-6 invert"
-                />
-              </a>
-            </p>
+            <SocialLinks className="mt-2" />
           </section>
           <section className="rounded-3xl border border-border bg-card p-7">
             <h2 className="text-3xl">Dane firmy</h2>

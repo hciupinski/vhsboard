@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 
 import { Brand } from "@/components/Brand";
+import { SocialLinks } from "@/components/public/SocialLinks";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -51,24 +52,7 @@ export function PublicHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <p>
-            <a
-              href="https://www.facebook.com/share/1E7xY7Ed2B"
-              className="underline-offset-4 hover:underline p-1 hover:invert-[.3]"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img src="/facebook-black.png" alt="Facebook" className="inline-block h-6 w-6" />
-            </a>
-            <a
-              href="https://www.instagram.com/vhsboard"
-              className="underline-offset-4 hover:underline p-1 hover:invert-[.3]"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img src="/instagram-black.png" alt="Instagram" className="inline-block h-6 w-6" />
-            </a>
-          </p>
+          <SocialLinks />
           <Sheet>
             <SheetTrigger asChild>
               <Button
