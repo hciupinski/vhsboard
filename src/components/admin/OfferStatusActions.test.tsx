@@ -55,6 +55,26 @@ describe("OfferStatusActions", () => {
     expect(screen.queryByRole("button", { name: "Cofnij publikację" })).not.toBeInTheDocument();
   });
 
+  it("runs the supplied preview action once and respects an active submission", async () => {
+    const user = userEvent.setup();
+    const onPreview = vi.fn();
+    const props = {
+      status: "draft" as const,
+      canPublish: true,
+      onSaveDraft: vi.fn(),
+      onPublish: vi.fn(),
+      onUnpublish: vi.fn(),
+      onPreview,
+    };
+    const { rerender } = render(<OfferStatusActions {...props} isSubmitting={false} />);
+
+    await user.click(screen.getByRole("button", { name: "Podgląd" }));
+    expect(onPreview).toHaveBeenCalledOnce();
+
+    rerender(<OfferStatusActions {...props} isSubmitting />);
+    expect(screen.getByRole("button", { name: "Podgląd" })).toBeDisabled();
+  });
+
   it("blocks a second status action while its callback remains pending", async () => {
     const user = userEvent.setup();
     let resolveSaveDraft: (() => void) | undefined;

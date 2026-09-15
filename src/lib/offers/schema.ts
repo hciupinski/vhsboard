@@ -95,36 +95,38 @@ const offerDetailRowShape = offerBaseRowSchema.extend({
   description: z.union([offerContentSchema, dayCampContentSchema]),
 });
 
-const validateOfferDetailRow = (offer: z.infer<typeof offerDetailRowShape>, ctx: z.RefinementCtx) => {
-    const isTrip =
-      offer.offer_kind === "trip" && ["surf", "snow", "combo"].includes(offer.activity);
-    const isDayCamp = offer.offer_kind === "day_camp" && ["wake", "snow"].includes(offer.activity);
-    const contentMatches =
-      offer.offer_kind === "trip"
-        ? offerContentSchema.safeParse(offer.description).success
-        : dayCampContentSchema.safeParse(offer.description).success;
-    if (!isTrip && !isDayCamp)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["activity"],
-        message: "Aktywność nie pasuje do rodzaju oferty.",
-      });
-    if (!contentMatches)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["description"],
-        message: "Treść nie pasuje do rodzaju oferty.",
-      });
-    if (
-      offer.offer_kind === "day_camp" &&
-      (offer.group_size_min !== null || offer.group_size_max !== null)
-    )
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["group_size_max"],
-        message: "Obóz nie może mieć limitu grupy.",
-      });
-  };
+const validateOfferDetailRow = (
+  offer: z.infer<typeof offerDetailRowShape>,
+  ctx: z.RefinementCtx,
+) => {
+  const isTrip = offer.offer_kind === "trip" && ["surf", "snow", "combo"].includes(offer.activity);
+  const isDayCamp = offer.offer_kind === "day_camp" && ["wake", "snow"].includes(offer.activity);
+  const contentMatches =
+    offer.offer_kind === "trip"
+      ? offerContentSchema.safeParse(offer.description).success
+      : dayCampContentSchema.safeParse(offer.description).success;
+  if (!isTrip && !isDayCamp)
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["activity"],
+      message: "Aktywność nie pasuje do rodzaju oferty.",
+    });
+  if (!contentMatches)
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["description"],
+      message: "Treść nie pasuje do rodzaju oferty.",
+    });
+  if (
+    offer.offer_kind === "day_camp" &&
+    (offer.group_size_min !== null || offer.group_size_max !== null)
+  )
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["group_size_max"],
+      message: "Obóz nie może mieć limitu grupy.",
+    });
+};
 
 export const offerDetailRowSchema = offerDetailRowShape.superRefine(validateOfferDetailRow);
 

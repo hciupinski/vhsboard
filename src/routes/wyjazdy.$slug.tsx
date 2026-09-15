@@ -78,7 +78,9 @@ function TripDetail() {
   return (
     <div data-trip-detail className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      {!preview ? <PublicJsonLd path={`/wyjazdy/${offer.slug}`} label={offer.title} offer={offer} /> : null}
+      {!preview ? (
+        <PublicJsonLd path={`/wyjazdy/${offer.slug}`} label={offer.title} offer={offer} />
+      ) : null}
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground">
           {offer.heroImageUrl ? (

@@ -11,11 +11,7 @@ export const publishedOffersQueryOptions = (kind: OfferKind = "trip") =>
     refetchOnMount: "always",
   });
 
-export const offerDetailQueryOptions = (
-  slug: string,
-  kind: OfferKind = "trip",
-  preview = false,
-) =>
+export const offerDetailQueryOptions = (slug: string, kind: OfferKind = "trip", preview = false) =>
   queryOptions({
     queryKey: preview
       ? (["admin-preview-offer", kind, slug] as const)

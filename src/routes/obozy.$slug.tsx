@@ -54,9 +54,7 @@ export const Route = createFileRoute("/obozy/$slug")({
 
 function DayCampDetail() {
   const { slug, preview } = Route.useLoaderData();
-  const { data: offer } = useSuspenseQuery(
-    offerDetailQueryOptions(slug, "day_camp", preview),
-  );
+  const { data: offer } = useSuspenseQuery(offerDetailQueryOptions(slug, "day_camp", preview));
   if (offer === null || offer.offerKind !== "day_camp") throw notFound();
   const { content } = offer;
   const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
@@ -64,7 +62,9 @@ function DayCampDetail() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      {!preview ? <PublicJsonLd path={`/obozy/${offer.slug}`} label={offer.title} offer={offer} /> : null}
+      {!preview ? (
+        <PublicJsonLd path={`/obozy/${offer.slug}`} label={offer.title} offer={offer} />
+      ) : null}
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground">
           {offer.heroImageUrl ? (

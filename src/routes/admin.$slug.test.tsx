@@ -106,6 +106,51 @@ const readyHeroImagePath = "offers/atlantic-surf-week/hero.jpg";
 const readyInput: EditableOfferInput = { ...completeInput, heroImagePath: readyHeroImagePath };
 const readyDraftOffer: EditableOffer = { ...draftOffer, ...readyInput };
 const readyPublishedOffer: EditableOffer = { ...readyDraftOffer, status: "published" };
+const dayCampInput: EditableOfferInput = {
+  offerKind: "day_camp",
+  slug: "wakeboardowe-lato",
+  activity: "wake",
+  title: "Wakeboardowe lato",
+  subtitle: "Pięć dni na wodzie.",
+  shortDescription: "Wakeboard i dobra ekipa.",
+  content: {
+    paragraphs: ["Uczymy od podstaw i rozwijamy pewność na desce."],
+    highlights: ["Codzienna jazda na wakeboardzie"],
+    included: ["Opieka instruktorów"],
+    excluded: ["Dojazd"],
+    dayProgram: [{ time: "09:00", text: "Zajęcia na wodzie." }],
+    venueDescription: "Wakepark nad wodą.",
+    parentInfo: {
+      ageRange: "10–16 lat",
+      supervision: "Instruktorzy",
+      safety: "Kaski i kamizelki",
+    },
+    terms: [
+      {
+        label: "Turnus 1",
+        startDate: "2026-06-29",
+        endDate: "2026-07-03",
+        bookingUrl: "https://zapisy.example.test/wakeboardowe-lato",
+        priceOptions: [{ label: "Obozy", price: 1450 }],
+      },
+    ],
+  },
+  location: "Central Wake Park, Głowno",
+  startDate: "2026-06-29",
+  endDate: "2026-07-03",
+  durationDays: 5,
+  groupSizeMin: null,
+  groupSizeMax: null,
+  priceFrom: 1450,
+  currency: "PLN",
+  bookingUrl: "https://zapisy.example.test/wakeboardowe-lato",
+  heroImagePath: null,
+};
+const dayCampDraftOffer: EditableOffer = {
+  id: "d2f8e810-1df3-42d9-90df-2a1a69ad9a2c",
+  ...dayCampInput,
+  status: "draft",
+};
 const publishReadinessMessage = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
 
 const createDeferred = <Value,>() => {
@@ -199,7 +244,7 @@ const renderAdminEditor = async ({
     </QueryClientProvider>,
   );
   if (waitForEditor) {
-    await screen.findByText(slug === "new" ? "Nowa oferta" : /Oferta|tydzień/i);
+    await screen.findByRole("button", { name: /Zapisz/ });
   }
   if (initialValue) await fillEditor(initialValue);
 
@@ -213,6 +258,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe("admin offer editor route", () => {
@@ -319,6 +365,22 @@ describe("admin offer editor route", () => {
     expect(mockedCanPublishOffer).not.toHaveBeenCalled();
     expect(mockedCreateOffer).not.toHaveBeenCalled();
     expect(mockedSetOfferStatus).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: "Podgląd" })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["trip", readyDraftOffer, `/wyjazdy/${readyDraftOffer.slug}?preview=true`],
+    ["day camp", dayCampDraftOffer, `/obozy/${dayCampDraftOffer.slug}?preview=true`],
+  ])("opens a saved %s preview in a new browser tab", async (_kind, offer, expectedPath) => {
+    const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    mockedGetAdminOffer.mockResolvedValue(offer);
+
+    await renderAdminEditor({ slug: offer.slug });
+    await user.click(screen.getByRole("button", { name: "Podgląd" }));
+
+    expect(open).toHaveBeenCalledWith(expectedPath, "_blank", "noopener,noreferrer");
   });
 
   it("disables publishing and explains missing persisted hero readiness", async () => {
