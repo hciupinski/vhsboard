@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import obozy from "@/assets/obozy.jpg";
 import eventy from "@/assets/eventy.jpg";
 import heroSurf from "@/assets/hero-surf.jpg";
+import heroZima from "@/assets/obozy-zima.jpg";
 import trips from "@/assets/wyjazdy.jpg";
 import { HeroCarousel } from "@/components/public/HeroCarousel";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -54,7 +55,10 @@ const entryPoints = [
   },
 ] as const;
 
-const fallbackImages = [{ path: "fallback/hero-surf", src: heroSurf, label: "Hero surf" }];
+const fallbackImages = [
+  { path: "fallback/hero-surf", src: heroSurf, label: "Hero surf" },
+  { path: "fallback/obozy-zima", src: heroZima, label: "Hero zima" }
+];
 
 function HomePage() {
   const { data: configuredImages } = useQuery({
