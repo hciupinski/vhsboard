@@ -71,11 +71,20 @@ describe("public offer components", () => {
 
     expect(screen.getByText("7 dni · 12–18 osób")).toBeInTheDocument();
     expect(screen.getByText(/3100\s*zł/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Zobacz szczegóły wyjazdu" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /atlantycki tydzień surfingu/i })).toHaveAttribute(
       "href",
       "/wyjazdy/atlantic-surf-week",
     );
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+
+  it("makes the entire trip card one link to its public detail", async () => {
+    await renderOfferCard(offer);
+
+    expect(screen.getByRole("link", { name: /atlantycki tydzień surfingu/i })).toHaveAttribute(
+      "href",
+      "/wyjazdy/atlantic-surf-week",
+    );
   });
 
   it("keeps the repository alt for a gallery image", () => {

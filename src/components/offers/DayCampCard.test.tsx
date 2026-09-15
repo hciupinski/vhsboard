@@ -50,7 +50,7 @@ const offer = {
 };
 
 describe("DayCampCard", () => {
-  it("links a day camp to its dedicated public detail", async () => {
+  it("makes the entire day-camp card one link to its public detail", async () => {
     const root = createRootRoute();
     const route = createRoute({
       getParentRoute: () => root,
@@ -63,7 +63,7 @@ describe("DayCampCard", () => {
     });
     await router.load();
     render(<RouterProvider router={router} />);
-    expect(screen.getByRole("link", { name: "Szczegóły" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /wakeboardowe obozy/i })).toHaveAttribute(
       "href",
       "/obozy/wake-lato-2026",
     );
