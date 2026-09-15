@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Wallet } from "lucide-react";
+import { z } from "zod";
 
 import { OfferFacts } from "@/components/offers/OfferFacts";
 import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation";
@@ -10,7 +11,7 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
-import { publishedOfferQueryOptions } from "@/lib/offers/query-options";
+import { offerDetailQueryOptions } from "@/lib/offers/query-options";
 import type { TripOffer } from "@/lib/offers/types";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -21,15 +22,22 @@ const activityLabels: Record<TripOffer["activity"], string> = {
 };
 
 export const Route = createFileRoute("/wyjazdy/$slug")({
-  loader: async ({ context, params }) => {
+  validateSearch: z.object({
+    preview: z
+      .union([z.boolean(), z.literal("true"), z.literal("false")])
+      .optional()
+      .transform((value) => value === true || value === "true"),
+  }),
+  loader: async ({ context, params, search }) => {
+    const preview = search?.preview ?? false;
     const offer = await context.queryClient.ensureQueryData(
-      publishedOfferQueryOptions(params.slug),
+      offerDetailQueryOptions(params.slug, "trip", preview),
     );
     if (offer === null || offer.offerKind !== "trip") {
       throw notFound();
     }
 
-    return { offer, slug: params.slug };
+    return { offer, slug: params.slug, preview };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -41,21 +49,22 @@ export const Route = createFileRoute("/wyjazdy/$slug")({
       });
     }
 
-    const { offer } = loaderData;
-    const title = `${offer.title} — ${offer.location} | VHSBOARD`;
+    const { offer, preview } = loaderData;
+    const title = `${preview ? "Podgląd: " : ""}${offer.title} — ${offer.location} | VHSBOARD`;
     return createPageMetadata({
       path: `/wyjazdy/${offer.slug}`,
       title,
       description: offer.shortDescription,
       ogType: "article",
+      indexable: !preview,
     });
   },
   component: TripDetail,
 });
 
 function TripDetail() {
-  const { slug } = Route.useLoaderData();
-  const { data: offer } = useSuspenseQuery(publishedOfferQueryOptions(slug));
+  const { slug, preview } = Route.useLoaderData();
+  const { data: offer } = useSuspenseQuery(offerDetailQueryOptions(slug, "trip", preview));
 
   if (offer === null || offer.offerKind !== "trip") {
     throw notFound();
@@ -69,7 +78,7 @@ function TripDetail() {
   return (
     <div data-trip-detail className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <PublicJsonLd path={`/wyjazdy/${offer.slug}`} label={offer.title} offer={offer} />
+      {!preview ? <PublicJsonLd path={`/wyjazdy/${offer.slug}`} label={offer.title} offer={offer} /> : null}
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground">
           {offer.heroImageUrl ? (

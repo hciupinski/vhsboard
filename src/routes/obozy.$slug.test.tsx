@@ -87,7 +87,28 @@ describe("day-camp detail route", () => {
         context: { queryClient: { ensureQueryData } },
         params: { slug: offer.slug },
       } as never),
-    ).resolves.toEqual({ offer, slug: offer.slug });
+    ).resolves.toEqual({ offer, slug: offer.slug, preview: false });
+  });
+
+  it("loads a saved draft through the administrator preview query", async () => {
+    const offer = {
+      slug: "wakeboardowe-lato",
+      offerKind: "day_camp",
+      title: "Wakeboardowe lato",
+      shortDescription: "Pięć dni ruchu i nauki na wodzie.",
+    };
+    const ensureQueryData = vi.fn().mockResolvedValue(offer);
+
+    await expect(
+      Route.options.loader?.({
+        context: { queryClient: { ensureQueryData } },
+        params: { slug: offer.slug },
+        search: { preview: true },
+      } as never),
+    ).resolves.toEqual({ offer, slug: offer.slug, preview: true });
+    expect(ensureQueryData).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ["admin-preview-offer", "day_camp", offer.slug] }),
+    );
   });
 
   it("returns not found when a trip is requested through the day-camp path", async () => {
