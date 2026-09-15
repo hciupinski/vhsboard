@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight } from "lucide-react";
 
 import obozy from "@/assets/obozy.jpg";
 import eventy from "@/assets/eventy.jpg";
 import heroSurf from "@/assets/hero-surf.jpg";
 import trips from "@/assets/wyjazdy.jpg";
+import { HeroCarousel } from "@/components/public/HeroCarousel";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
@@ -52,20 +54,24 @@ const entryPoints = [
   },
 ] as const;
 
+const fallbackImages = [{ path: "fallback/hero-surf", src: heroSurf, label: "Hero surf" }];
+
 function HomePage() {
+  const { data: configuredImages } = useQuery({
+    queryKey: ["public-portal-carousel"],
+    queryFn: async () =>
+      (await import("@/lib/portal-carousel/repository")).listPublicPortalCarouselImages(),
+    retry: false,
+  });
+  const heroImages = configuredImages?.length ? configuredImages : fallbackImages;
+
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
       <PublicJsonLd path="/" label="VHSBOARD" includeSite />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden">
-          <img
-            src={heroSurf}
-            alt="Grupa znajomych idąca na plażę z deskami surfingowymi o zachodzie słońca"
-            width={1600}
-            height={1104}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+          <HeroCarousel images={heroImages} />
           <div className="absolute inset-0 bg-foreground/55" />
           <div className="relative mx-auto max-w-6xl px-5 pb-20 pt-24 sm:pb-28 sm:pt-36">
             <p className="mb-4 inline-block rounded-full border border-background/40 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background">

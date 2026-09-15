@@ -6,11 +6,17 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import type { ComponentType } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
+
+const mockedListPublicPortalCarouselImages = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/portal-carousel/repository", () => ({
+  listPublicPortalCarouselImages: mockedListPublicPortalCarouselImages,
+}));
 
 import { Route as AboutRoute } from "./o-nas";
 import { Route as ContactRoute } from "./kontakt";
@@ -72,9 +78,70 @@ const renderRoute = async (path: string, route: { options: { component?: unknown
 afterEach(() => {
   cleanup();
   vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+});
+
+beforeEach(() => {
+  mockedListPublicPortalCarouselImages.mockReset();
+  mockedListPublicPortalCarouselImages.mockResolvedValue([]);
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  );
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      disconnect = vi.fn();
+      observe = vi.fn();
+      takeRecords = vi.fn(() => []);
+      unobserve = vi.fn();
+    },
+  );
+  vi.stubGlobal(
+    "ResizeObserver",
+    class {
+      disconnect = vi.fn();
+      observe = vi.fn();
+      unobserve = vi.fn();
+    },
+  );
+  vi.stubGlobal("scrollTo", vi.fn());
 });
 
 describe("static public pages", () => {
+  it("keeps one static hero slide when configuration cannot be read", async () => {
+    mockedListPublicPortalCarouselImages.mockRejectedValue(new Error("offline"));
+
+    await renderRoute("/", HomeRoute);
+
+    expect(screen.getByTestId("hero-carousel").querySelectorAll("img")).toHaveLength(1);
+  });
+
+  it("uses ordered public carousel images when configuration loads", async () => {
+    mockedListPublicPortalCarouselImages.mockResolvedValue([
+      { path: "carousel/surf.jpg", src: "/surf.jpg", label: "Surf" },
+      { path: "carousel/snow.jpg", src: "/snow.jpg", label: "Snow" },
+    ]);
+
+    await renderRoute("/", HomeRoute);
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(2);
+    });
+    expect(
+      screen.getAllByTestId("hero-carousel-slide").map((image) => image.getAttribute("src")),
+    ).toEqual(["/surf.jpg", "/snow.jpg"]);
+  });
+
   it("presents the three main areas as photo-led entry points", async () => {
     await renderRoute("/", HomeRoute);
 
