@@ -22,7 +22,7 @@ const navigationItems = [
 ] as const;
 
 const navigationLinkClassName =
-  "rounded-sm text-sm font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  "rounded-sm text-sm font-bold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 export function PublicHeader() {
   return (
@@ -35,7 +35,7 @@ export function PublicHeader() {
         className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3"
       >
         <Link to="/" className="shrink-0 text-foreground" aria-label="VHSBOARD — strona główna">
-          <Brand />
+          <Brand size="large" />
         </Link>
 
         <div className="hidden items-center gap-6 sm:flex">
@@ -74,7 +74,7 @@ export function PublicHeader() {
                   <SheetClose key={to} asChild>
                     <Link
                       to={to}
-                      className="rounded-sm text-2xl text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="rounded-sm text-2xl font-bold uppercase tracking-[0.08em] text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       activeProps={{ "aria-current": "page", className: "text-primary" }}
                     >
                       {label}
