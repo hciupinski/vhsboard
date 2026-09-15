@@ -69,7 +69,7 @@ describe("public navigation", () => {
 
     expect(within(header).getByRole("img", { name: "Logo VHSBOARD" })).toHaveAttribute(
       "width",
-      "48",
+      "60",
     );
     expect(screen.getByRole("link", { name: "Wyjazdy" })).toHaveClass("uppercase", "font-bold");
   });

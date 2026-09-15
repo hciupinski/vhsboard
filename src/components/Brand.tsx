@@ -11,11 +11,15 @@ export function Brand({ className = "", size = "default" }: BrandProps) {
       <img
         src="/logo-80.png"
         alt="Logo VHSBOARD"
-        width={isLarge ? 48 : 40}
-        height={isLarge ? 48 : 40}
-        className={isLarge ? "size-12 object-contain" : "size-9 object-contain"}
+        width={isLarge ? 60 : 48}
+        height={isLarge ? 60 : 48}
+        className={isLarge ? "size-16 object-contain" : "size-12 object-contain"}
       />
-      <span className={isLarge ? "font-display text-3xl tracking-wide" : "font-display text-2xl tracking-wide"}>
+      <span
+        className={
+          isLarge ? "font-display text-4xl tracking-wide" : "font-display text-3xl tracking-wide"
+        }
+      >
         VHSBOARD<span className="text-primary">.</span>
       </span>
     </span>
