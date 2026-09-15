@@ -147,6 +147,14 @@ describe("admin offer list route", () => {
       "href",
       "/admin/portal",
     );
+    expect(screen.getByRole("banner").firstElementChild).toHaveClass(
+      "flex-col",
+      "items-stretch",
+      "sm:flex-row",
+      "sm:items-center",
+      "sm:justify-between",
+    );
+    expect(screen.getByRole("link", { name: "Portal" }).parentElement).toHaveClass("flex-wrap");
   });
 
   it("renders loading and empty states without prototype data", async () => {

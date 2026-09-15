@@ -118,7 +118,7 @@ function AdminListContent() {
   return (
     <div className="min-h-screen bg-muted/40">
       <header className="border-b border-border/60 bg-background">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4">
+        <div className="mx-auto flex max-w-5xl flex-col items-stretch gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <Link to="/">
               <Brand />
@@ -127,7 +127,7 @@ function AdminListContent() {
               CMS ofert
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button asChild size="sm" variant="outline" className="rounded-full">
               <Link to="/admin/dokumenty">Dokumenty</Link>
             </Button>

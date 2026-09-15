@@ -56,6 +56,17 @@ const renderAdminPage = async (Component: FunctionComponent, initialEntry: strin
   return render(<RouterProvider router={router} />);
 };
 
+const expectMobileSafeHeader = (actionLinkName: string) => {
+  expect(screen.getByRole("banner").firstElementChild).toHaveClass(
+    "flex-col",
+    "items-stretch",
+    "sm:flex-row",
+    "sm:items-center",
+    "sm:justify-between",
+  );
+  expect(screen.getByRole("link", { name: actionLinkName }).parentElement).toHaveClass("flex-wrap");
+};
+
 beforeEach(() => {
   mockedListAdminPortalCarouselImages.mockResolvedValue([]);
 });
@@ -98,6 +109,7 @@ describe("admin portal route", () => {
       "href",
       "/admin/dokumenty",
     );
+    expectMobileSafeHeader("Oferty");
   });
 });
 
@@ -114,5 +126,6 @@ describe("admin documents navigation", () => {
       "href",
       "/admin/portal",
     );
+    expectMobileSafeHeader("Portal");
   });
 });
