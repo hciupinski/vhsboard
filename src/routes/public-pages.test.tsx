@@ -270,6 +270,40 @@ describe("static public pages", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("gives the VHS story a founder portrait and visual links to the board sports", async () => {
+    await renderRoute("/o-nas", AboutRoute);
+
+    expect(screen.getByRole("heading", { name: /poznaj mariusza/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /od miasta po góry/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: /mariusz podczas jazdy na deskorolce/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: /snowboardzista w locie nad śnieżnym skokiem/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("leads the VHS activity story from the mountains into skimboarding and surfing", async () => {
+    await renderRoute("/o-nas", AboutRoute);
+
+    const activities = screen
+      .getByRole("heading", { name: /od miasta po góry/i })
+      .closest("section");
+    if (!activities) {
+      throw new Error("Nie znaleziono sekcji VHS w ruchu");
+    }
+
+    expect(
+      within(activities)
+        .getAllByRole("img")
+        .map((image) => image.getAttribute("alt")),
+    ).toEqual([
+      "Snowboardzista w locie nad śnieżnym skokiem",
+      "Mobilny tor skimboardowy VHS przygotowany do aktywności na świeżym powietrzu",
+      "Mariusz w koszulce VHS podczas surfowego wyjazdu",
+    ]);
+  });
+
   it("renders contact data only from the public deploy configuration", async () => {
     await renderRoute("/kontakt", ContactRoute);
 

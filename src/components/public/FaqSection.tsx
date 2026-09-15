@@ -9,9 +9,10 @@ import type { FaqItem } from "@/lib/faq";
 type FaqSectionProps = {
   headingId: string;
   items: readonly FaqItem[];
+  headerLabel?: string;
 };
 
-export function FaqSection({ headingId, items }: FaqSectionProps) {
+export function FaqSection({ headingId, items, headerLabel }: FaqSectionProps) {
   return (
     <section className="border-t border-border bg-background" aria-labelledby={headingId}>
       <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
@@ -19,7 +20,7 @@ export function FaqSection({ headingId, items }: FaqSectionProps) {
           Dobrze wiedzieć
         </p>
         <h2 id={headingId} className="mt-3 text-4xl leading-[0.95] uppercase sm:text-5xl">
-          Najczęściej zadawane pytania
+          {headerLabel || "Najczęściej zadawane pytania"}
         </h2>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
           Zebraliśmy najważniejsze informacje, żeby łatwiej było wybrać właściwy termin i ruszyć w
@@ -31,8 +32,14 @@ export function FaqSection({ headingId, items }: FaqSectionProps) {
               <AccordionTrigger className="py-5 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                 {question}
               </AccordionTrigger>
-              <AccordionContent className="max-w-3xl text-base leading-relaxed text-muted-foreground">
-                {answer}
+              <AccordionContent className="max-w-3xl space-y-4 text-base leading-relaxed text-muted-foreground text-justify">
+                {answer
+                  .split(/\n\s*\n/)
+                  .map((paragraph) => paragraph.trim())
+                  .filter(Boolean)
+                  .map((paragraph, paragraphIndex) => (
+                    <p key={`${question}-${paragraphIndex}`}>{paragraph}</p>
+                  ))}
               </AccordionContent>
             </AccordionItem>
           ))}
