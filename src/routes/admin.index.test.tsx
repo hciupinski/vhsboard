@@ -94,8 +94,25 @@ const renderAdminList = async () => {
     path: "/",
     component: () => null,
   });
+  const documentsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/admin/dokumenty",
+    component: () => null,
+  });
+  const portalRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/admin/portal",
+    component: () => null,
+  });
   const router = createRouter({
-    routeTree: rootRoute.addChildren([adminListRoute, adminEditorRoute, tripRoute, homeRoute]),
+    routeTree: rootRoute.addChildren([
+      adminListRoute,
+      adminEditorRoute,
+      tripRoute,
+      homeRoute,
+      documentsRoute,
+      portalRoute,
+    ]),
     context: { queryClient },
     history: createMemoryHistory({ initialEntries: ["/admin"] }),
   });
@@ -121,6 +138,17 @@ afterEach(() => {
 });
 
 describe("admin offer list route", () => {
+  it("links the offers header to Portal", async () => {
+    mockedListAdminOffers.mockResolvedValue([]);
+
+    await renderAdminList();
+
+    expect(await screen.findByRole("link", { name: "Portal" })).toHaveAttribute(
+      "href",
+      "/admin/portal",
+    );
+  });
+
   it("renders loading and empty states without prototype data", async () => {
     let resolveOffers!: (offers: AdminOfferListItem[]) => void;
     mockedListAdminOffers.mockReturnValue(

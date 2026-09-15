@@ -19,6 +19,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 import { Route as AdminDokumentyRouteImport } from './routes/admin.dokumenty'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminPortalRouteImport } from './routes/admin.portal'
 import { Route as ObozyIndexRouteImport } from './routes/obozy.index'
 import { Route as ObozySlugRouteImport } from './routes/obozy.$slug'
 import { Route as TripsSlugRouteImport } from './routes/trips.$slug'
@@ -75,6 +76,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPortalRoute = AdminPortalRouteImport.update({
+  id: '/admin/portal',
+  path: '/admin/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ObozyIndexRoute = ObozyIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/portal': typeof AdminPortalRoute
   '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/portal': typeof AdminPortalRoute
   '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
@@ -145,6 +153,7 @@ export interface FileRoutesById {
   '/admin/$slug': typeof AdminSlugRoute
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/portal': typeof AdminPortalRoute
   '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
+    | '/admin/portal'
     | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
+    | '/admin/portal'
     | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
@@ -197,6 +208,7 @@ export interface FileRouteTypes {
     | '/admin/$slug'
     | '/admin/dokumenty'
     | '/admin/login'
+    | '/admin/portal'
     | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
@@ -215,6 +227,7 @@ export interface RootRouteChildren {
   AdminSlugRoute: typeof AdminSlugRoute
   AdminDokumentyRoute: typeof AdminDokumentyRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminPortalRoute: typeof AdminPortalRoute
   TripsSlugRoute: typeof TripsSlugRoute
   WyjazdySlugRoute: typeof WyjazdySlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -293,6 +306,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/portal': {
+      id: '/admin/portal'
+      path: '/admin/portal'
+      fullPath: '/admin/portal'
+      preLoaderRoute: typeof AdminPortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/obozy/': {
       id: '/obozy/'
       path: '/'
@@ -353,6 +373,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminSlugRoute: AdminSlugRoute,
   AdminDokumentyRoute: AdminDokumentyRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminPortalRoute: AdminPortalRoute,
   TripsSlugRoute: TripsSlugRoute,
   WyjazdySlugRoute: WyjazdySlugRoute,
   AdminIndexRoute: AdminIndexRoute,

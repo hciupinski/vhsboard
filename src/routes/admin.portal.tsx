@@ -2,21 +2,21 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Brand } from "@/components/Brand";
 import { AdminGuard, AdminSignOutButton } from "@/components/admin/AdminGuard";
-import { ContactDocumentManager } from "@/components/admin/ContactDocumentManager";
+import { PortalCarouselManager } from "@/components/admin/PortalCarouselManager";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/admin/dokumenty")({
+export const Route = createFileRoute("/admin/portal")({
   head: () => ({
-    meta: [{ title: "Dokumenty — CMS VHSBOARD" }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [{ title: "Portal — CMS VHSBOARD" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: () => (
     <AdminGuard>
-      <DocumentPage />
+      <PortalPage />
     </AdminGuard>
   ),
 });
 
-function DocumentPage() {
+function PortalPage() {
   return (
     <div className="min-h-screen bg-muted/40">
       <header className="border-b border-border/60 bg-background">
@@ -26,7 +26,7 @@ function DocumentPage() {
               <Brand />
             </Link>
             <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-widest">
-              CMS dokumentów
+              CMS portalu
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -34,18 +34,20 @@ function DocumentPage() {
               <Link to="/admin">Oferty</Link>
             </Button>
             <Button asChild size="sm" variant="outline" className="rounded-full">
-              <Link to="/admin/portal">Portal</Link>
+              <Link to="/admin/dokumenty">Dokumenty</Link>
             </Button>
             <AdminSignOutButton />
           </div>
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-5 py-10">
-        <h1 className="font-display text-4xl tracking-wide">Dokumenty do pobrania</h1>
+        <h1 className="font-display text-4xl tracking-wide">Karuzela strony głównej</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Dodaj regulaminy i informacje w formacie PDF. Linki pojawią się na stronie kontaktowej.
+          Wybierz zdjęcia widoczne w karuzeli na stronie głównej i ustaw ich kolejność.
         </p>
-        <ContactDocumentManager />
+        <div className="mt-8">
+          <PortalCarouselManager />
+        </div>
       </main>
     </div>
   );
