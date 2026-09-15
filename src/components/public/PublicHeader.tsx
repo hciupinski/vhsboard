@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 
 import { Brand } from "@/components/Brand";
+import { SocialLinks } from "@/components/public/SocialLinks";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -21,7 +22,7 @@ const navigationItems = [
 ] as const;
 
 const navigationLinkClassName =
-  "rounded-sm text-sm font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  "rounded-sm text-sm font-bold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 export function PublicHeader() {
   return (
@@ -34,7 +35,7 @@ export function PublicHeader() {
         className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3"
       >
         <Link to="/" className="shrink-0 text-foreground" aria-label="VHSBOARD — strona główna">
-          <Brand />
+          <Brand size="large" />
         </Link>
 
         <div className="hidden items-center gap-6 sm:flex">
@@ -51,24 +52,7 @@ export function PublicHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <p>
-            <a
-              href="https://www.facebook.com/share/1E7xY7Ed2B"
-              className="underline-offset-4 hover:underline p-1 hover:invert-[.3]"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img src="/facebook-black.png" alt="Facebook" className="inline-block h-6 w-6" />
-            </a>
-            <a
-              href="https://www.instagram.com/vhsboard"
-              className="underline-offset-4 hover:underline p-1 hover:invert-[.3]"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img src="/instagram-black.png" alt="Instagram" className="inline-block h-6 w-6" />
-            </a>
-          </p>
+          <SocialLinks />
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -90,7 +74,7 @@ export function PublicHeader() {
                   <SheetClose key={to} asChild>
                     <Link
                       to={to}
-                      className="rounded-sm text-2xl text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="rounded-sm text-2xl font-bold uppercase tracking-[0.08em] text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       activeProps={{ "aria-current": "page", className: "text-primary" }}
                     >
                       {label}

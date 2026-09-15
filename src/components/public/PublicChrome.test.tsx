@@ -5,7 +5,7 @@ import {
   createRouter,
   RouterProvider,
 } from "@tanstack/react-router";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -59,6 +59,21 @@ afterEach(() => {
 });
 
 describe("public navigation", () => {
+  it("uses a larger logo and strong uppercase primary navigation", async () => {
+    await renderPublicChrome("/wyjazdy");
+
+    const header = document.querySelector("[data-public-header]");
+    if (!header) {
+      throw new Error("Nie znaleziono nagłówka publicznego");
+    }
+
+    expect(within(header).getByRole("img", { name: "Logo VHSBOARD" })).toHaveAttribute(
+      "width",
+      "60",
+    );
+    expect(screen.getByRole("link", { name: "Wyjazdy" })).toHaveClass("uppercase", "font-bold");
+  });
+
   it("links to the final public pages and exposes the current page", async () => {
     await renderPublicChrome("/wyjazdy");
 
@@ -77,7 +92,10 @@ describe("public navigation", () => {
 
     const menu = screen.getByRole("dialog", { name: "Menu główne" });
     expect(menu).toBeInTheDocument();
-    expect(menu.querySelector('a[href="/wyjazdy"]')).toHaveTextContent("Wyjazdy");
+    expect(within(menu).getByRole("link", { name: "Wyjazdy" })).toHaveClass(
+      "uppercase",
+      "font-bold",
+    );
   });
 
   it("uses deployment configuration for contact details in the footer", async () => {
