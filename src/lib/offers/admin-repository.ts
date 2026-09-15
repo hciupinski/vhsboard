@@ -1,16 +1,18 @@
 import { supabase } from "../supabase";
 import { z } from "zod";
+import { mapAdminPreviewOfferDetailRow } from "./mapper";
 import {
   editorOfferInputSchema,
   type EditableOffer,
   type EditableOfferInput,
 } from "./editor-schema";
 import { OfferRepositoryError } from "./public-repository";
-import type { OfferStatus } from "./types";
+import type { OfferKind, OfferStatus, PublicOffer } from "./types";
 
 const ADMIN_COLUMNS =
   "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
 const ADMIN_LIST_COLUMNS = `${ADMIN_COLUMNS},updated_at`;
+const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,position";
 const OFFER_IMAGES_BUCKET = "offer-images";
 const SIGNED_URL_TTL_SECONDS = 3600;
 const PUBLISH_READINESS_MESSAGE = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
@@ -58,6 +60,12 @@ const getStringField = (value: unknown, field: string): string | null => {
   const fieldValue = value[field];
   return typeof fieldValue === "string" ? fieldValue : null;
 };
+
+const extractImagePaths = (rows: unknown[], field: string): string[] =>
+  rows.flatMap((row) => {
+    const path = getStringField(row, field);
+    return path === null ? [] : [path];
+  });
 
 const isHttpsUrl = (value: string): boolean => {
   try {
@@ -160,6 +168,48 @@ export const getAdminOffer = async (slug: string): Promise<EditableOffer | null>
     }
 
     return data === null ? null : toEditableOffer(data);
+  } catch (error) {
+    return throwRepositoryError(error, "Nie udało się pobrać oferty.");
+  }
+};
+
+export const getAdminPreviewOfferBySlug = async (
+  slug: string,
+  kind: OfferKind,
+): Promise<PublicOffer | null> => {
+  try {
+    const { data: offerData, error: offerError } = await supabase
+      .from("offers")
+      .select(ADMIN_COLUMNS)
+      .eq("slug", slug)
+      .eq("offer_kind", kind)
+      .maybeSingle();
+
+    if (offerError) {
+      throw new OfferRepositoryError("Nie udało się pobrać oferty.", { cause: offerError });
+    }
+
+    if (offerData === null) {
+      return null;
+    }
+
+    const { data: imageData, error: imageError } = await supabase
+      .from("offer_images")
+      .select(IMAGE_COLUMNS)
+      .eq("offer_id", getStringField(offerData, "id") ?? "")
+      .order("position", { ascending: true });
+
+    if (imageError) {
+      throw new OfferRepositoryError("Nie udało się pobrać obrazów oferty.", { cause: imageError });
+    }
+
+    const imageRows = ensureRows(imageData, "Nie udało się odczytać obrazów oferty.");
+    const signedUrls = await resolveAdminImageUrls([
+      ...extractImagePaths([offerData], "hero_image"),
+      ...extractImagePaths(imageRows, "storage_path"),
+    ]);
+
+    return mapAdminPreviewOfferDetailRow(offerData, imageRows, signedUrls);
   } catch (error) {
     return throwRepositoryError(error, "Nie udało się pobrać oferty.");
   }

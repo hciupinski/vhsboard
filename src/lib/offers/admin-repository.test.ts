@@ -14,6 +14,7 @@ import {
   canPublishOffer,
   createOffer,
   getAdminOffer,
+  getAdminPreviewOfferBySlug,
   listAdminOffers,
   resolveAdminImageUrls,
   setOfferStatus,
@@ -53,6 +54,7 @@ const completeInput: EditableOfferInput = {
 const draftRow = {
   id: offerId,
   slug: completeInput.slug,
+  offer_kind: "trip",
   activity: completeInput.activity,
   title: completeInput.title,
   subtitle: completeInput.subtitle,
@@ -228,6 +230,21 @@ describe("administrator offer repository", () => {
     mockedSupabase.from.mockReturnValue(query);
 
     await expect(getAdminOffer("missing-offer")).resolves.toBeNull();
+  });
+
+  it("returns a draft preview without applying the public-status filter", async () => {
+    const offerQuery = createQuery({ data: { ...draftRow, hero_image: null }, error: null });
+    const imageQuery = createQuery({ data: [], error: null });
+    mockedSupabase.from.mockReturnValueOnce(offerQuery).mockReturnValueOnce(imageQuery);
+
+    await expect(getAdminPreviewOfferBySlug(completeInput.slug, "trip")).resolves.toMatchObject({
+      slug: completeInput.slug,
+      offerKind: "trip",
+      title: completeInput.title,
+    });
+    expect(offerQuery.eq).toHaveBeenCalledWith("slug", completeInput.slug);
+    expect(offerQuery.eq).toHaveBeenCalledWith("offer_kind", "trip");
+    expect(offerQuery.eq).not.toHaveBeenCalledWith("status", "published");
   });
 
   it("parses updates and scopes them to the offer id", async () => {

@@ -91,9 +91,11 @@ const offerBaseRowSchema = z.object({
 });
 
 export const offerListRowSchema = offerBaseRowSchema;
-export const offerDetailRowSchema = offerBaseRowSchema
-  .extend({ description: z.union([offerContentSchema, dayCampContentSchema]) })
-  .superRefine((offer, ctx) => {
+const offerDetailRowShape = offerBaseRowSchema.extend({
+  description: z.union([offerContentSchema, dayCampContentSchema]),
+});
+
+const validateOfferDetailRow = (offer: z.infer<typeof offerDetailRowShape>, ctx: z.RefinementCtx) => {
     const isTrip =
       offer.offer_kind === "trip" && ["surf", "snow", "combo"].includes(offer.activity);
     const isDayCamp = offer.offer_kind === "day_camp" && ["wake", "snow"].includes(offer.activity);
@@ -122,7 +124,13 @@ export const offerDetailRowSchema = offerBaseRowSchema
         path: ["group_size_max"],
         message: "Obóz nie może mieć limitu grupy.",
       });
-  });
+  };
+
+export const offerDetailRowSchema = offerDetailRowShape.superRefine(validateOfferDetailRow);
+
+export const adminPreviewOfferDetailRowSchema = offerDetailRowShape
+  .extend({ status: z.enum(["draft", "published", "archived"]) })
+  .superRefine(validateOfferDetailRow);
 
 export const offerImageRowSchema = z.object({
   id: z.string().uuid(),
@@ -140,4 +148,5 @@ export const publishedOfferSeoRowSchema = z.object({
 
 export type OfferListRow = z.infer<typeof offerListRowSchema>;
 export type OfferDetailRow = z.infer<typeof offerDetailRowSchema>;
+export type AdminPreviewOfferDetailRow = z.infer<typeof adminPreviewOfferDetailRowSchema>;
 export type OfferImageRow = z.infer<typeof offerImageRowSchema>;
