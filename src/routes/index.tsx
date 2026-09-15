@@ -57,7 +57,7 @@ const entryPoints = [
 
 const fallbackImages = [
   { path: "fallback/hero-surf", src: heroSurf, label: "Hero surf" },
-  { path: "fallback/obozy-zima", src: heroZima, label: "Hero zima" }
+  { path: "fallback/obozy-zima", src: heroZima, label: "Hero zima" },
 ];
 
 function HomePage() {

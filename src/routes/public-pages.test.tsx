@@ -118,12 +118,13 @@ beforeEach(() => {
 });
 
 describe("static public pages", () => {
-  it("keeps one static hero slide when configuration cannot be read", async () => {
+  it("keeps the static fallback carousel when configuration cannot be read", async () => {
     mockedListPublicPortalCarouselImages.mockRejectedValue(new Error("offline"));
 
     await renderRoute("/", HomeRoute);
 
-    expect(screen.getByTestId("hero-carousel").querySelectorAll("img")).toHaveLength(1);
+    await waitFor(() => expect(mockedListPublicPortalCarouselImages).toHaveBeenCalledOnce());
+    expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(2);
   });
 
   it("uses ordered public carousel images when configuration loads", async () => {
@@ -134,12 +135,11 @@ describe("static public pages", () => {
 
     await renderRoute("/", HomeRoute);
 
-    await waitFor(() => {
-      expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(2);
-    });
-    expect(
-      screen.getAllByTestId("hero-carousel-slide").map((image) => image.getAttribute("src")),
-    ).toEqual(["/surf.jpg", "/snow.jpg"]);
+    await waitFor(() =>
+      expect(
+        screen.getAllByTestId("hero-carousel-slide").map((image) => image.getAttribute("src")),
+      ).toEqual(["/surf.jpg", "/snow.jpg"]),
+    );
   });
 
   it("presents the three main areas as photo-led entry points", async () => {
