@@ -282,6 +282,16 @@ function OfferEditorContent() {
     }
   };
 
+  const handlePreview = () => {
+    if (!persistedOffer) return;
+
+    const previewPath =
+      persistedOffer.offerKind === "day_camp"
+        ? `/obozy/${persistedOffer.slug}?preview=true`
+        : `/wyjazdy/${persistedOffer.slug}?preview=true`;
+    window.open(previewPath, "_blank", "noopener,noreferrer");
+  };
+
   if (!isNew && offerQuery.isPending && persistedOffer === null) {
     return <EditorMessage message="Ładowanie oferty…" />;
   }
@@ -327,6 +337,7 @@ function OfferEditorContent() {
               isSubmitting={isSubmitting}
               canPublish={canPublish}
               onSaveDraft={handleSaveDraft}
+              onPreview={persistedOffer ? handlePreview : undefined}
               onPublish={handlePublish}
               onUnpublish={handleUnpublish}
             />

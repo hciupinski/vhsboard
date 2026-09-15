@@ -1,7 +1,9 @@
 import {
+  adminPreviewOfferDetailRowSchema,
   offerDetailRowSchema,
   offerImageRowSchema,
   offerListRowSchema,
+  type AdminPreviewOfferDetailRow,
   type OfferImageRow,
   type OfferListRow,
 } from "./schema";
@@ -49,7 +51,7 @@ const toSignedUrlOrNull = (path: string | null, signedUrls: Map<string, string>)
   }
 };
 
-const validateGroupSize = (offer: OfferListRow): void => {
+const validateGroupSize = (offer: OfferListRow | AdminPreviewOfferDetailRow): void => {
   if (
     offer.group_size_min !== null &&
     offer.group_size_max !== null &&
@@ -85,7 +87,7 @@ const toOfferImages = (images: OfferImageRow[], signedUrls: Map<string, string>)
   }));
 
 const mapOffer = (
-  row: OfferListRow,
+  row: OfferListRow | AdminPreviewOfferDetailRow,
   content: OfferContent,
   images: OfferImage[],
   signedUrls: Map<string, string>,
@@ -150,6 +152,23 @@ export const mapOfferDetailRow = (
   signedUrls: Map<string, string>,
 ): PublicOffer => {
   const parsedRow = offerDetailRowSchema.parse(row);
+  const parsedImages = offerImageRowSchema.array().parse(imageRows);
+  validateImageOrder(parsedImages, parsedRow.id);
+
+  return mapOffer(
+    parsedRow,
+    parsedRow.description,
+    toOfferImages(parsedImages, signedUrls),
+    signedUrls,
+  );
+};
+
+export const mapAdminPreviewOfferDetailRow = (
+  row: unknown,
+  imageRows: unknown,
+  signedUrls: Map<string, string>,
+): PublicOffer => {
+  const parsedRow = adminPreviewOfferDetailRowSchema.parse(row);
   const parsedImages = offerImageRowSchema.array().parse(imageRows);
   validateImageOrder(parsedImages, parsedRow.id);
 

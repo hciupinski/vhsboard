@@ -11,12 +11,22 @@ export const publishedOffersQueryOptions = (kind: OfferKind = "trip") =>
     refetchOnMount: "always",
   });
 
-export const publishedOfferQueryOptions = (slug: string, kind: OfferKind = "trip") =>
+export const offerDetailQueryOptions = (slug: string, kind: OfferKind = "trip", preview = false) =>
   queryOptions({
-    queryKey: ["published-offer", kind, slug] as const,
+    queryKey: preview
+      ? (["admin-preview-offer", kind, slug] as const)
+      : (["published-offer", kind, slug] as const),
     queryFn: async () => {
+      if (preview) {
+        const { getAdminPreviewOfferBySlug } = await import("./admin-repository");
+        return getAdminPreviewOfferBySlug(slug, kind);
+      }
+
       const { getPublishedOfferBySlug } = await import("./public-repository");
       return getPublishedOfferBySlug(slug, kind);
     },
     refetchOnMount: "always",
   });
+
+export const publishedOfferQueryOptions = (slug: string, kind: OfferKind = "trip") =>
+  offerDetailQueryOptions(slug, kind);

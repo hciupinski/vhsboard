@@ -91,38 +91,48 @@ const offerBaseRowSchema = z.object({
 });
 
 export const offerListRowSchema = offerBaseRowSchema;
-export const offerDetailRowSchema = offerBaseRowSchema
-  .extend({ description: z.union([offerContentSchema, dayCampContentSchema]) })
-  .superRefine((offer, ctx) => {
-    const isTrip =
-      offer.offer_kind === "trip" && ["surf", "snow", "combo"].includes(offer.activity);
-    const isDayCamp = offer.offer_kind === "day_camp" && ["wake", "snow"].includes(offer.activity);
-    const contentMatches =
-      offer.offer_kind === "trip"
-        ? offerContentSchema.safeParse(offer.description).success
-        : dayCampContentSchema.safeParse(offer.description).success;
-    if (!isTrip && !isDayCamp)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["activity"],
-        message: "Aktywność nie pasuje do rodzaju oferty.",
-      });
-    if (!contentMatches)
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["description"],
-        message: "Treść nie pasuje do rodzaju oferty.",
-      });
-    if (
-      offer.offer_kind === "day_camp" &&
-      (offer.group_size_min !== null || offer.group_size_max !== null)
-    )
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["group_size_max"],
-        message: "Obóz nie może mieć limitu grupy.",
-      });
-  });
+const offerDetailRowShape = offerBaseRowSchema.extend({
+  description: z.union([offerContentSchema, dayCampContentSchema]),
+});
+
+const validateOfferDetailRow = (
+  offer: z.infer<typeof offerDetailRowShape>,
+  ctx: z.RefinementCtx,
+) => {
+  const isTrip = offer.offer_kind === "trip" && ["surf", "snow", "combo"].includes(offer.activity);
+  const isDayCamp = offer.offer_kind === "day_camp" && ["wake", "snow"].includes(offer.activity);
+  const contentMatches =
+    offer.offer_kind === "trip"
+      ? offerContentSchema.safeParse(offer.description).success
+      : dayCampContentSchema.safeParse(offer.description).success;
+  if (!isTrip && !isDayCamp)
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["activity"],
+      message: "Aktywność nie pasuje do rodzaju oferty.",
+    });
+  if (!contentMatches)
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["description"],
+      message: "Treść nie pasuje do rodzaju oferty.",
+    });
+  if (
+    offer.offer_kind === "day_camp" &&
+    (offer.group_size_min !== null || offer.group_size_max !== null)
+  )
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["group_size_max"],
+      message: "Obóz nie może mieć limitu grupy.",
+    });
+};
+
+export const offerDetailRowSchema = offerDetailRowShape.superRefine(validateOfferDetailRow);
+
+export const adminPreviewOfferDetailRowSchema = offerDetailRowShape
+  .extend({ status: z.enum(["draft", "published", "archived"]) })
+  .superRefine(validateOfferDetailRow);
 
 export const offerImageRowSchema = z.object({
   id: z.string().uuid(),
@@ -140,4 +150,5 @@ export const publishedOfferSeoRowSchema = z.object({
 
 export type OfferListRow = z.infer<typeof offerListRowSchema>;
 export type OfferDetailRow = z.infer<typeof offerDetailRowSchema>;
+export type AdminPreviewOfferDetailRow = z.infer<typeof adminPreviewOfferDetailRowSchema>;
 export type OfferImageRow = z.infer<typeof offerImageRowSchema>;

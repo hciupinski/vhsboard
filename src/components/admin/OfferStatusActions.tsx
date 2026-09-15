@@ -7,6 +7,7 @@ type Props = {
   isSubmitting: boolean;
   canPublish: boolean;
   onSaveDraft: () => void | Promise<void>;
+  onPreview?: () => void | Promise<void>;
   onPublish: () => void | Promise<void>;
   onUnpublish: () => void | Promise<void>;
 };
@@ -16,6 +17,7 @@ export function OfferStatusActions({
   isSubmitting,
   canPublish,
   onSaveDraft,
+  onPreview,
   onPublish,
   onUnpublish,
 }: Props) {
@@ -50,6 +52,16 @@ export function OfferStatusActions({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      {onPreview ? (
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isBusy}
+          onClick={() => runAction(onPreview)}
+        >
+          Podgląd
+        </Button>
+      ) : null}
       <Button
         type="button"
         variant="outline"

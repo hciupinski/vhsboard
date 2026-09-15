@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Wallet } from "lucide-react";
+import { z } from "zod";
 
 import { OfferFacts } from "@/components/offers/OfferFacts";
 import { OfferGallery } from "@/components/offers/OfferGallery";
@@ -10,7 +11,7 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { Button } from "@/components/ui/button";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
-import { publishedOfferQueryOptions } from "@/lib/offers/query-options";
+import { offerDetailQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
 const activityLabels = {
@@ -19,20 +20,28 @@ const activityLabels = {
 } as const;
 
 export const Route = createFileRoute("/obozy/$slug")({
-  loader: async ({ context, params }) => {
+  validateSearch: z.object({
+    preview: z
+      .union([z.boolean(), z.literal("true"), z.literal("false")])
+      .optional()
+      .transform((value) => value === true || value === "true"),
+  }),
+  loader: async ({ context, params, search }) => {
+    const preview = search?.preview ?? false;
     const offer = await context.queryClient.ensureQueryData(
-      publishedOfferQueryOptions(params.slug, "day_camp"),
+      offerDetailQueryOptions(params.slug, "day_camp", preview),
     );
     if (offer === null || offer.offerKind !== "day_camp") throw notFound();
-    return { offer, slug: params.slug };
+    return { offer, slug: params.slug, preview };
   },
   head: ({ loaderData }) =>
     loaderData
       ? createPageMetadata({
           path: `/obozy/${loaderData.offer.slug}`,
-          title: `${loaderData.offer.title} | VHSBOARD`,
+          title: `${loaderData.preview ? "Podgląd: " : ""}${loaderData.offer.title} | VHSBOARD`,
           description: loaderData.offer.shortDescription,
           ogType: "article",
+          indexable: !loaderData.preview,
         })
       : createPageMetadata({
           path: "/obozy",
@@ -44,8 +53,8 @@ export const Route = createFileRoute("/obozy/$slug")({
 });
 
 function DayCampDetail() {
-  const { slug } = Route.useLoaderData();
-  const { data: offer } = useSuspenseQuery(publishedOfferQueryOptions(slug, "day_camp"));
+  const { slug, preview } = Route.useLoaderData();
+  const { data: offer } = useSuspenseQuery(offerDetailQueryOptions(slug, "day_camp", preview));
   if (offer === null || offer.offerKind !== "day_camp") throw notFound();
   const { content } = offer;
   const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
@@ -53,7 +62,9 @@ function DayCampDetail() {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
-      <PublicJsonLd path={`/obozy/${offer.slug}`} label={offer.title} offer={offer} />
+      {!preview ? (
+        <PublicJsonLd path={`/obozy/${offer.slug}`} label={offer.title} offer={offer} />
+      ) : null}
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground">
           {offer.heroImageUrl ? (
