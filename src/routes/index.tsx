@@ -135,7 +135,7 @@ function HomePage() {
                     </p>
                     <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
                       {action}
-                      <span className="grid size-7 place-items-center rounded-full bg-background/15 transition duration-200 motion-reduce:transition-none group-hover:translate-x-1 group-hover:bg-primary">
+                      <span className="grid size-7 mr-2 place-items-center rounded-full bg-background/15 transition duration-200 motion-reduce:transition-none group-hover:translate-x-1 group-hover:bg-primary">
                         <ArrowUpRight aria-hidden="true" className="size-4" />
                       </span>
                     </span>
