@@ -10,6 +10,8 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { Button } from "@/components/ui/button";
 import { createPageMetadata } from "@/lib/seo";
+import { eventsFaqItems } from "@/lib/faq";
+import { FaqSection } from "@/components/public/FaqSection";
 
 export const Route = createFileRoute("/eventy")({
   head: () =>
@@ -186,6 +188,7 @@ function EventsPage() {
             />
           </div>
         </section>
+        <FaqSection headingId="events-faq-heading" items={eventsFaqItems} description="Zebraliśmy najważniejsze informacje dotyczące organizacji naszych stref eventowych – od wyboru atrakcji i miejsca po montaż, sprzęt i obsługę." />
       </main>
       <PublicFooter />
     </div>
