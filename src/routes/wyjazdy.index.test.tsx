@@ -152,10 +152,18 @@ describe("trips list route", () => {
 
     const offersHeading = screen.getByRole("heading", { name: /aktualne kierunki/i });
     const faqHeading = screen.getByRole("heading", { name: "Najczęściej zadawane pytania" });
+    const videoHeading = screen.getByRole("heading", { name: /zobacz nasze wyjazdy/i });
 
     expect(
       offersHeading.compareDocumentPosition(faqHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(screen.getByRole("button", { name: "Jak zapisać się na wyjazd?" })).toBeVisible();
+    expect(
+      faqHeading.compareDocumentPosition(videoHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.getByTitle("Film przedstawiający wyjazdy VHSBOARD")).toHaveAttribute(
+      "src",
+      "https://www.youtube-nocookie.com/embed/k4DNSx4JNlU",
+    );
   });
 });

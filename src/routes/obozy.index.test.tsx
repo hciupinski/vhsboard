@@ -117,6 +117,8 @@ describe("camps list route", () => {
     expect(
       offersHeading.compareDocumentPosition(faqHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Jak zapisać dziecko na obóz?" })).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Gdzie organizujemy obozy i półkolonie VHS?" }),
+    ).toBeVisible();
   });
 });

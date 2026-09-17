@@ -16,12 +16,12 @@ describe("public FAQ content", () => {
 
   it("keeps six parent-focused camp questions", () => {
     expect(campFaqItems.map(({ question }) => question)).toEqual([
-      "Dla dzieci w jakim wieku są obozy?",
-      "Czy dziecko musi już umieć jeździć?",
-      "Kto opiekuje się uczestnikami?",
-      "Jak wygląda typowy dzień na obozie?",
+      "Dla dzieci w jakim wieku są obozy i półkolonie VHS?",
+      "Czy dziecko musi już umieć jeździć na snowboardzie, wakeboardzie lub deskorolce?",
+      "Kto opiekuje się uczestnikami obozów i półkolonii?",
+      "Jak wygląda typowy dzień na obozie lub półkoloniach?",
       "Czy posiłki, transport i sprzęt są w cenie?",
-      "Jak zapisać dziecko na obóz?",
+      "Gdzie organizujemy obozy i półkolonie VHS?",
     ]);
   });
 });

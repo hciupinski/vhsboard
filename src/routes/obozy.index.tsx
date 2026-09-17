@@ -105,7 +105,7 @@ function HalfDayCampsPage() {
             </article>
           </div>
         </section>
-        <section className="bg-secondary/55 py-16 sm:py-20" aria-labelledby="current-camps-heading">
+        <section className="bg-secondary/55 py-8 sm:py-10" aria-labelledby="current-camps-heading">
           <div className="mx-auto max-w-6xl px-5">
             <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
               NAJBLIŻSZE TERMINY
@@ -132,7 +132,11 @@ function HalfDayCampsPage() {
             ) : null}
           </div>
         </section>
-        <FaqSection headingId="camp-faq-heading" items={campFaqItems} />
+        <FaqSection
+          headingId="camp-faq-heading"
+          items={campFaqItems}
+          description="Zebraliśmy odpowiedzi na najczęstsze pytania rodziców dotyczące naszych obozów i półkolonii – od zapisów i szkolenia po opiekę, sprzęt i organizację."
+        />
       </main>
       <PublicFooter />
     </div>
