@@ -239,6 +239,7 @@
       padding-block: clamp(1.25rem, 1.8vw, 2rem);
       padding-inline-end: clamp(1.25rem, 1.8vw, 2rem);
       background: oklch(0.22 0.03 60 / 0.18);
+      text-align: end;
     }
 
     .topic-selector__item:hover .topic-selector__details,
