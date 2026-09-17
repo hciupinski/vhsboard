@@ -198,7 +198,11 @@
   }
 
   .topic-selector__content {
-    max-inline-size: min(100%, 28rem);
+    --topic-panel-compact-width: clamp(11.5rem, 17vw, 15rem);
+    --topic-panel-expanded-width: min(100%, 28rem);
+
+    inline-size: var(--topic-panel-compact-width);
+    max-inline-size: 100%;
     margin-block-start: auto;
     margin-block-end: clamp(0.75rem, 1.2vw, 1.25rem);
     margin-inline-start: 0;
@@ -209,8 +213,48 @@
     border-radius: 0 var(--radius) var(--radius) 0;
     background: oklch(0.22 0.03 60 / 0.1);
     box-shadow: 0 16px 32px -22px oklch(0.1 0.02 60 / 0.9);
-    backdrop-filter: blur(0.15rem);
+    backdrop-filter: blur(0.1rem);
     text-align: end;
+    transform-origin: bottom left;
+    transition:
+      inline-size 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      padding 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 250ms ease;
+  }
+
+  .topic-selector__details {
+    max-block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-block-size 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 180ms ease;
+  }
+
+  @media (min-width: 768px) {
+    .topic-selector__item:hover .topic-selector__content,
+    .topic-selector__item:focus-visible .topic-selector__content,
+    .topic-selector__item:focus-within .topic-selector__content {
+      inline-size: var(--topic-panel-expanded-width);
+      padding-block: clamp(1.25rem, 1.8vw, 2rem);
+      padding-inline-end: clamp(2rem, 2.5vw, 2.5rem);
+      background: oklch(0.22 0.03 60 / 0.18);
+    }
+
+    .topic-selector__item:hover .topic-selector__details,
+    .topic-selector__item:focus-visible .topic-selector__details,
+    .topic-selector__item:focus-within .topic-selector__details {
+      max-block-size: 12rem;
+      opacity: 1;
+      transition-delay: 80ms;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .topic-selector__content,
+    .topic-selector__details {
+      transition: none;
+    }
   }
 
   .topic-selector__item--1 {
@@ -250,6 +294,10 @@
       min-height: 20rem;
       inline-size: 100%;
       clip-path: none;
+    }
+
+    .topic-selector__details {
+      display: none;
     }
   }
 }
