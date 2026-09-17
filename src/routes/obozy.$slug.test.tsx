@@ -40,9 +40,11 @@ const publishedDayCamp: DayCampOffer = {
       path: "wakeboardowe-lato/galeria-1.jpg",
       alt: "Uczestnik obozu płynie na wakeboardzie",
       position: 0,
+      category: "gallery",
       signedUrl: "https://images.example.test/wakeboardowe-lato/galeria-1.jpg",
     },
   ],
+  accommodationImages: [],
   content: {
     paragraphs: ["Uczymy od podstaw i rozwijamy pewność na desce."],
     venueDescription: "Wakepark nad wodą.",
@@ -186,5 +188,40 @@ describe("day-camp detail route", () => {
         within(target!).getByRole("heading", { level: 2, name: link.textContent! }),
       ).toBeInTheDocument();
     }
+  });
+
+  it("renders enabled camp accommodation in its own public section", async () => {
+    const accommodationImage = {
+      id: "a4a30bde-97bd-43b3-93f1-b9396a56d102",
+      path: "wakeboardowe-lato/nocleg.jpg",
+      alt: "Pokój obozowy z łóżkami",
+      position: 0,
+      category: "accommodation" as const,
+      signedUrl: "https://images.example.test/wakeboardowe-lato/nocleg.jpg",
+    };
+    mockedGetPublishedOfferBySlug.mockResolvedValue({
+      ...publishedDayCamp,
+      content: {
+        ...publishedDayCamp.content,
+        accommodation: { description: "Pensjonat blisko wakeparku." },
+      },
+      accommodationImages: [accommodationImage],
+    });
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const router = createRouter({
+      routeTree,
+      context: { queryClient },
+      history: createMemoryHistory({ initialEntries: ["/obozy/wakeboardowe-lato"] }),
+    });
+    await router.load();
+    render(<RouterProvider router={router} />);
+
+    const navigation = await screen.findByRole("navigation", { name: "Sekcje obozu" });
+    expect(within(navigation).getByRole("link", { name: "Zakwaterowanie" })).toHaveAttribute(
+      "href",
+      "#zakwaterowanie",
+    );
+    expect(screen.getByRole("heading", { name: "Zakwaterowanie" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: accommodationImage.alt })).toBeInTheDocument();
   });
 });

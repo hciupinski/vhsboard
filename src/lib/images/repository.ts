@@ -1,7 +1,7 @@
 import { resolveAdminImageUrls } from "../offers/admin-repository";
 import { offerImageRowSchema } from "../offers/schema";
 import type { OfferImageRow } from "../offers/schema";
-import type { OfferImage } from "../offers/types";
+import type { OfferImage, OfferImageCategory } from "../offers/types";
 import { supabase } from "../supabase";
 import { createImagePath } from "./path";
 import { validateImageFile } from "./validation";
@@ -47,6 +47,7 @@ const toOfferImage = (value: unknown, signedUrl: string | null = null): OfferIma
     path: row.storage_path,
     alt: row.alt_text,
     position: row.position,
+    category: row.category,
     signedUrl,
   };
 };
@@ -68,7 +69,7 @@ const getImageRows = async (offerId: string): Promise<OfferImageRow[]> => {
   ensureUuid(offerId, "Nieprawidłowy identyfikator oferty.");
   const { data, error } = await supabase
     .from("offer_images")
-    .select("id,offer_id,storage_path,alt_text,position")
+    .select("id,offer_id,storage_path,alt_text,category,position")
     .eq("offer_id", offerId)
     .order("position", { ascending: true });
 
@@ -112,6 +113,7 @@ export const uploadOfferImage = async (
   file: File,
   altText: string,
   position: number,
+  category: OfferImageCategory = "gallery",
 ): Promise<OfferImage> => {
   const normalizedAltText = validateUploadInput(offerId, file, altText, position);
   const path = createImagePath(offerId, file, crypto.randomUUID());
@@ -132,9 +134,10 @@ export const uploadOfferImage = async (
       offer_id: offerId,
       storage_path: path,
       alt_text: normalizedAltText,
+      category,
       position,
     })
-    .select("id,offer_id,storage_path,alt_text,position")
+    .select("id,offer_id,storage_path,alt_text,category,position")
     .single();
 
   if (error) {
@@ -171,7 +174,7 @@ const getImageById = async (imageId: string): Promise<OfferImageRow> => {
   ensureUuid(imageId, "Nieprawidłowy identyfikator obrazu.");
   const { data, error } = await supabase
     .from("offer_images")
-    .select("id,offer_id,storage_path,alt_text,position")
+    .select("id,offer_id,storage_path,alt_text,category,position")
     .eq("id", imageId)
     .maybeSingle();
 
@@ -189,9 +192,10 @@ export const setOfferHeroImage = async (offerId: string, imageId: string): Promi
   ensureUuid(imageId, "Nieprawidłowy identyfikator obrazu.");
   const { data, error: imageError } = await supabase
     .from("offer_images")
-    .select("id,offer_id,storage_path,alt_text,position")
+    .select("id,offer_id,storage_path,alt_text,category,position")
     .eq("id", imageId)
     .eq("offer_id", offerId)
+    .eq("category", "gallery")
     .maybeSingle();
 
   if (imageError) {
@@ -295,6 +299,7 @@ export const retryOfferImageObjectCleanup = async (storagePath: string): Promise
 export const reorderOfferImages = async (
   offerId: string,
   orderedImageIds: string[],
+  category: OfferImageCategory = "gallery",
 ): Promise<void> => {
   ensureUuid(offerId, "Nieprawidłowy identyfikator oferty.");
   for (const imageId of orderedImageIds) {
@@ -305,10 +310,12 @@ export const reorderOfferImages = async (
     throw new ImageRepositoryError("Kolejność musi zawierać wszystkie obrazy oferty.");
   }
 
-  const { error } = await supabase.rpc("reorder_offer_images", {
+  const rpcArgs = {
     p_offer_id: offerId,
     p_ordered_image_ids: orderedImageIds,
-  });
+    ...(category === "accommodation" ? { p_category: category } : {}),
+  };
+  const { error } = await supabase.rpc("reorder_offer_images", rpcArgs);
   if (error) {
     throw new ImageRepositoryError("Nie udało się zmienić kolejności obrazów.", {
       cause: error,

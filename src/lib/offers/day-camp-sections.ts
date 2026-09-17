@@ -7,6 +7,7 @@ export const dayCampSections = [
   { id: "w-cenie", label: "W cenie", editorTab: "inout" },
   { id: "turnusy", label: "Turnusy i ceny", editorTab: "terms" },
   { id: "dla-rodzica", label: "Dla rodzica", editorTab: "parents" },
+  { id: "zakwaterowanie", label: "Zakwaterowanie", editorTab: "accommodation" },
   { id: "galeria", label: "Galeria", editorTab: "photos" },
 ] as const;
 
@@ -21,6 +22,7 @@ export function getVisibleDayCampSections(offer: DayCampOffer): DayCampSection[]
     content.included.length > 0 || content.excluded.length > 0,
     content.terms.length > 0,
     Object.values(content.parentInfo).some((value) => value?.trim().length > 0),
+    Boolean(content.accommodation),
     offer.images.some((image) => image.signedUrl !== null),
   ];
 

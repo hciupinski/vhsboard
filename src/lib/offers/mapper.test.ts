@@ -121,11 +121,13 @@ describe("offer row mappers", () => {
       currency: "PLN",
       bookingUrl: "https://zapisy.example/atlantic-surf-week",
       heroImageUrl: "https://signed.example/hero.jpg",
+      accommodationImages: [],
       images: [
         {
           id: "b1f8e810-1df3-42d9-90df-2a1a69ad9a2c",
           path: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/first.jpg",
           alt: "Surfer na fali w Ericeirze",
+          category: "gallery",
           position: 0,
           signedUrl: "https://signed.example/first.jpg",
         },
@@ -133,11 +135,45 @@ describe("offer row mappers", () => {
           id: "c2f8e810-1df3-42d9-90df-2a1a69ad9a2c",
           path: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/second.jpg",
           alt: "Ekipa z deskami na plaży",
+          category: "gallery",
           position: 1,
           signedUrl: "https://signed.example/second.jpg",
         },
       ],
     });
+  });
+
+  it("separates accommodation images from the standard gallery", () => {
+    const accommodationPath = "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/accommodation.jpg";
+    const row = {
+      ...completeOfferRow,
+      description: {
+        ...completeOfferRow.description,
+        accommodation: { description: "Dom z tarasem blisko spotu." },
+      },
+    };
+    const images = [
+      { ...completeImageRows[0], category: "gallery" },
+      {
+        ...completeImageRows[0],
+        id: "d3f8e810-1df3-42d9-90df-2a1a69ad9a2c",
+        storage_path: accommodationPath,
+        alt_text: "Pokój z widokiem na ocean",
+        category: "accommodation",
+        position: 0,
+      },
+    ];
+
+    const offer = mapOfferDetailRow(
+      row,
+      images,
+      new Map([[accommodationPath, "https://signed.example/accommodation.jpg"]]),
+    );
+
+    expect(offer.images).toHaveLength(1);
+    expect(offer.accommodationImages).toEqual([
+      expect.objectContaining({ path: accommodationPath, category: "accommodation", position: 0 }),
+    ]);
   });
 
   it("maps a list row without long description or gallery to empty detail-only fields", () => {

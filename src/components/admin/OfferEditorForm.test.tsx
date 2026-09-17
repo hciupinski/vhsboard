@@ -108,8 +108,25 @@ describe("OfferEditorForm", () => {
       "W programie",
       "Plan wyjazdu",
       "Co jest w cenie",
+      "Zakwaterowanie",
       "Galeria",
     ]);
+  });
+
+  it("enables optional accommodation and edits its description", async () => {
+    const user = userEvent.setup();
+    function StatefulForm() {
+      const [value, setValue] = useState(completeInput);
+      return <OfferEditorForm value={value} errors={{}} disabled={false} onChange={setValue} />;
+    }
+    render(<StatefulForm />);
+
+    await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
+    expect(screen.getByLabelText("Opis zakwaterowania")).toHaveValue("");
+    await user.clear(screen.getByLabelText("Opis zakwaterowania"));
+    await user.type(screen.getByLabelText("Opis zakwaterowania"), "Apartament z tarasem.");
+    expect(screen.getByLabelText("Opis zakwaterowania")).toHaveValue("Apartament z tarasem.");
   });
 
   it("adds an empty description item without mutating the current value", async () => {
@@ -388,6 +405,7 @@ describe("OfferEditorForm", () => {
       "W cenie",
       "Turnusy i ceny",
       "Dla rodzica",
+      "Zakwaterowanie",
       "Galeria",
     ]);
     expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();

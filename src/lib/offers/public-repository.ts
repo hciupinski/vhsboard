@@ -9,7 +9,7 @@ const SIGNED_URL_TTL_SECONDS = 3600;
 const LIST_COLUMNS =
   "id,slug,offer_kind,activity,title,subtitle,short_description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
 const DETAIL_COLUMNS = `${LIST_COLUMNS},description`;
-const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,position";
+const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,category,position";
 const SEO_COLUMNS = "slug,updated_at,offer_kind";
 
 export class OfferRepositoryError extends Error {

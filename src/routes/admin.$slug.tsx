@@ -376,6 +376,17 @@ function OfferEditorContent() {
               />
             ) : undefined
           }
+          accommodationImageManager={
+            persistedOffer ? (
+              <OfferImageManager
+                offerId={persistedOffer.id}
+                heroImagePath={null}
+                category="accommodation"
+                disabled={isSubmitting || currentStatus === "archived"}
+                onImagesChanged={invalidateImageDependentCaches}
+              />
+            ) : undefined
+          }
         />
       </main>
     </div>

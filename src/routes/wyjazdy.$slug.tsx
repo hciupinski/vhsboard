@@ -72,7 +72,7 @@ function TripDetail() {
 
   const { content } = offer;
   const sections = getVisibleTripSections(offer);
-  const [about, highlights, schedule, price, gallery] = tripSections;
+  const [about, highlights, schedule, price, accommodation, gallery] = tripSections;
   const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
 
   return (
@@ -252,6 +252,24 @@ function TripDetail() {
             </div>
           </aside>
         </div>
+
+        {content.accommodation ? (
+          <section
+            id={accommodation.id}
+            tabIndex={-1}
+            className="border-t border-border py-16 sm:py-20"
+          >
+            <div className="mx-auto max-w-6xl px-5">
+              <h2 className="text-3xl sm:text-4xl">{accommodation.label}</h2>
+              <p className="mt-4 max-w-3xl text-muted-foreground">
+                {content.accommodation.description}
+              </p>
+            </div>
+            {offer.accommodationImages.length > 0 ? (
+              <OfferGallery title="Galeria zakwaterowania" images={offer.accommodationImages} />
+            ) : null}
+          </section>
+        ) : null}
 
         {offer.images.length > 0 ? (
           <OfferGallery id={gallery.id} title={gallery.label} images={offer.images} />

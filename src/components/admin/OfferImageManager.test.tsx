@@ -44,6 +44,7 @@ const imageOne: OfferImage = {
   path: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/b0f8e810-1df3-42d9-90df-2a1a69ad9a2c.jpeg",
   alt: "Surfer płynie po porannej fali.",
   position: 0,
+  category: "gallery",
   signedUrl: "https://example.test/private-image-one",
 };
 const imageTwo: OfferImage = {
@@ -51,6 +52,7 @@ const imageTwo: OfferImage = {
   path: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/c0f8e810-1df3-42d9-90df-2a1a69ad9a2c.jpeg",
   alt: "Deski stoją przy surf housie.",
   position: 1,
+  category: "gallery",
   signedUrl: "https://example.test/private-image-two",
 };
 const imageThree: OfferImage = {
@@ -58,6 +60,7 @@ const imageThree: OfferImage = {
   path: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/d0f8e810-1df3-42d9-90df-2a1a69ad9a2c.jpeg",
   alt: "Instruktor obserwuje trzecią falę.",
   position: 2,
+  category: "gallery",
   signedUrl: "https://example.test/private-image-three",
 };
 
@@ -69,7 +72,10 @@ const createDeferred = <Value,>() => {
   return { promise, resolve };
 };
 
-const renderManager = (heroImagePath: string | null = null) => {
+const renderManager = (
+  heroImagePath: string | null = null,
+  category: OfferImage["category"] = "gallery",
+) => {
   const onHeroChanged = vi.fn();
   const onImagesChanged = vi.fn();
   render(
@@ -77,6 +83,7 @@ const renderManager = (heroImagePath: string | null = null) => {
       offerId={offerId}
       heroImagePath={heroImagePath}
       disabled={false}
+      category={category}
       onHeroChanged={onHeroChanged}
       onImagesChanged={onImagesChanged}
     />,
@@ -209,6 +216,38 @@ describe("OfferImageManager", () => {
     await waitFor(() => expect(mockedSetOfferHeroImage).toHaveBeenCalledWith(offerId, imageOne.id));
     expect(onHeroChanged).toHaveBeenCalledWith(imageOne.path);
     expect(onImagesChanged).toHaveBeenCalledOnce();
+  });
+
+  it("keeps accommodation images separate and never offers them as a hero", async () => {
+    const user = userEvent.setup();
+    const accommodationImage = {
+      ...imageOne,
+      id: "e0f8e810-1df3-42d9-90df-2a1a69ad9a2c",
+      alt: "Apartament z widokiem na ocean.",
+      category: "accommodation" as const,
+    };
+    mockedListOfferImages.mockResolvedValue([imageOne, accommodationImage]);
+    mockedUploadOfferImage.mockResolvedValue(accommodationImage);
+    renderManager(null, "accommodation");
+
+    expect(await screen.findByText(accommodationImage.alt)).toBeInTheDocument();
+    expect(screen.queryByText(imageOne.alt)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: `Ustaw jako obraz główny: ${accommodationImage.alt}` }),
+    ).not.toBeInTheDocument();
+
+    await user.upload(screen.getByLabelText("Wybierz plik obrazu"), jpegFile);
+    await user.type(screen.getByLabelText("Opis alternatywny (wymagany)"), accommodationImage.alt);
+    await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+    await waitFor(() =>
+      expect(mockedUploadOfferImage).toHaveBeenCalledWith(
+        offerId,
+        jpegFile,
+        accommodationImage.alt,
+        1,
+        "accommodation",
+      ),
+    );
   });
 
   it("does not remove the current hero before another image is selected", async () => {

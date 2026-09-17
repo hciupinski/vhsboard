@@ -9,10 +9,12 @@ import type { OfferImage } from "@/lib/offers/types";
 export function OfferGallery({
   images,
   title = "Zdjęcia z wyjazdu",
+  description,
   id,
 }: {
   images: OfferImage[];
   title?: string;
+  description?: string;
   id?: string;
 }) {
   const visibleImages = images.filter((image) => image.signedUrl !== null);
@@ -27,12 +29,13 @@ export function OfferGallery({
       id={id}
       tabIndex={id ? -1 : undefined}
       className="bg-secondary/60 py-16 sm:py-20"
-      aria-labelledby="offer-gallery-title"
+      aria-labelledby={`${id ?? "offer"}-gallery-title`}
     >
       <div className="mx-auto max-w-6xl px-5">
-        <h2 id="offer-gallery-title" className="text-3xl sm:text-4xl">
+        <h2 id={`${id ?? "offer"}-gallery-title`} className="text-3xl sm:text-4xl">
           {title}
         </h2>
+        {description ? <p className="mt-4 max-w-3xl text-muted-foreground">{description}</p> : null}
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {visibleImages.map((image) => (
             <Button

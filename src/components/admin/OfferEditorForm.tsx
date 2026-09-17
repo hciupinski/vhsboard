@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { changeEditableOfferKind, type EditableOfferInput } from "@/lib/offers/editor-schema";
 import { shouldCommitDateValue } from "@/lib/offers/date-input";
 import { dayCampSections, type DayCampSection } from "@/lib/offers/day-camp-sections";
@@ -34,6 +35,7 @@ type Props = {
   disabled: boolean;
   onChange: (value: EditableOfferInput) => void;
   imageManager?: ReactNode | undefined;
+  accommodationImageManager?: ReactNode | undefined;
 };
 type FieldProps = {
   id: string;
@@ -78,7 +80,14 @@ function Field({ id, label, hint, characterCount, error, children }: FieldProps)
   );
 }
 
-export function OfferEditorForm({ value, errors, disabled, onChange, imageManager }: Props) {
+export function OfferEditorForm({
+  value,
+  errors,
+  disabled,
+  onChange,
+  imageManager,
+  accommodationImageManager,
+}: Props) {
   const offerKind = value.offerKind ?? "trip";
   const dayCamp = offerKind === "day_camp" ? (value.content as DayCampContent) : null;
   const trip = offerKind === "trip" ? (value.content as TripOfferContent) : null;
@@ -135,6 +144,7 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
     inout: ["content.included", "content.excluded"],
     terms: ["content.terms"],
     parents: ["content.parentInfo"],
+    accommodation: ["content.accommodation"],
     photos: ["heroImagePath"],
   };
   const subtitleField = (
@@ -432,6 +442,23 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
           />
         </TabsContent>
       ) : null}
+      <TabsContent value="accommodation" className="mt-6 space-y-4">
+        <AccommodationEditor
+          content={dayCamp ?? trip!}
+          errors={errors}
+          disabled={disabled}
+          onChange={(content) =>
+            dayCamp ? setDayCamp(content as DayCampContent) : setTrip(content as TripOfferContent)
+          }
+        />
+        {accommodationImageManager ?? (
+          <section className="rounded-2xl border border-border/70 bg-background p-6">
+            <p className="text-sm text-muted-foreground">
+              Najpierw zapisz szkic, aby dodać zdjęcia zakwaterowania.
+            </p>
+          </section>
+        )}
+      </TabsContent>
       <TabsContent value="photos" className="mt-6 space-y-4">
         {trip ? (
           <p className="text-sm text-muted-foreground">
@@ -452,6 +479,80 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
         )}
       </TabsContent>
     </Tabs>
+  );
+}
+
+function AccommodationEditor({
+  content,
+  errors,
+  disabled,
+  onChange,
+}: {
+  content: TripOfferContent | DayCampContent;
+  errors: Record<string, string>;
+  disabled: boolean;
+  onChange: (content: TripOfferContent | DayCampContent) => void;
+}) {
+  const enabled = content.accommodation !== undefined;
+  const description = content.accommodation?.description ?? "";
+  const error = errorFor(errors, "content.accommodation.description");
+
+  return (
+    <fieldset
+      disabled={disabled}
+      className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="font-display text-xl tracking-wide">Zakwaterowanie</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Opcjonalna sekcja z opisem miejsca noclegu i osobną galerią zdjęć.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Label htmlFor="accommodation-enabled">Włącz sekcję</Label>
+          <Switch
+            id="accommodation-enabled"
+            checked={enabled}
+            disabled={disabled}
+            onCheckedChange={(checked) =>
+              onChange({
+                ...content,
+                accommodation: checked ? { description: description } : undefined,
+              })
+            }
+          />
+        </div>
+      </div>
+      {enabled ? (
+        <Field
+          id="accommodation-description"
+          label="Opis zakwaterowania"
+          characterCount={{ value: description, max: 500 }}
+          error={error}
+        >
+          <Textarea
+            id="accommodation-description"
+            value={description}
+            maxLength={500}
+            className="min-h-32"
+            {...(error
+              ? { "aria-invalid": true, "aria-describedby": "accommodation-description-error" }
+              : {})}
+            onChange={(event) =>
+              onChange({
+                ...content,
+                accommodation: { description: event.target.value },
+              })
+            }
+          />
+        </Field>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          Sekcja jest wyłączona i nie będzie widoczna na stronie oferty.
+        </p>
+      )}
+    </fieldset>
   );
 }
 

@@ -55,6 +55,10 @@ const optionalText = (maximum: number) =>
     z.string().trim().min(1).max(maximum).optional(),
   );
 
+const accommodationEditorSchema = z.object({
+  description: trimmedText("Opis zakwaterowania", 3, 500),
+});
+
 const dateSchema = z.preprocess(
   (value) => (typeof value === "string" && value.trim() === "" ? null : value),
   textField("Data musi mieć format RRRR-MM-DD.")
@@ -149,6 +153,12 @@ const normalizeEditorOfferInput = (input: unknown): unknown => {
     content: isRecord(content)
       ? {
           ...content,
+          accommodation: isRecord(content.accommodation)
+            ? {
+                ...content.accommodation,
+                description: trimValue(content.accommodation.description),
+              }
+            : content.accommodation,
           paragraphs: normalizeList(content.paragraphs),
           highlights: normalizeList(content.highlights),
           included: normalizeList(content.included),
@@ -190,6 +200,7 @@ const tripEditorOfferInputSchema = z
           included: nonEmptyList,
           excluded: nonEmptyList,
           schedule: scheduleSchema,
+          accommodation: accommodationEditorSchema.optional(),
         },
         {
           required_error: "Uzupełnij opis oferty.",
@@ -306,6 +317,7 @@ const dayCampContentSchema = z.object({
     .array(dayCampTermSchema)
     .min(1, "Dodaj co najmniej jeden turnus.")
     .max(2, "Możesz dodać najwyżej dwa turnusy."),
+  accommodation: accommodationEditorSchema.optional(),
 });
 
 const daysInTerm = (startDate: string, endDate: string): number =>

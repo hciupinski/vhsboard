@@ -33,6 +33,7 @@ const dayCamp: DayCampOffer = {
   bookingUrl: "https://zapisy.example/wakeboard-2026",
   heroImageUrl: null,
   images: [],
+  accommodationImages: [],
   content: {
     paragraphs: ["Uczymy od podstaw."],
     venueDescription: "Wakepark nad wodą.",
