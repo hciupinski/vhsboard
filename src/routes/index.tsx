@@ -4,8 +4,8 @@ import { ArrowUpRight } from "lucide-react";
 
 import obozy from "@/assets/obozy.jpg";
 import eventy from "@/assets/eventy.jpg";
-import heroSurf from "@/assets/hero-surf.jpg";
-import heroZima from "@/assets/obozy-zima.jpg";
+import heroSurf from "@/assets/carousel/hero-surf.jpg";
+import heroZima from "@/assets/carousel/obozy-zima.jpg";
 import trips from "@/assets/main/wyjazdy.jpg";
 import { HeroCarousel } from "@/components/public/HeroCarousel";
 import { PublicFooter } from "@/components/public/PublicFooter";

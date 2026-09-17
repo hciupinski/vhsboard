@@ -24,7 +24,8 @@ export function FaqSection({ headingId, items, headerLabel, description }: FaqSe
           {headerLabel || "Najczęściej zadawane pytania"}
         </h2>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          { description || "Zebraliśmy najważniejsze informacje, żeby łatwiej było wybrać właściwy termin i ruszyć w drogę." }
+          {description ||
+            "Zebraliśmy najważniejsze informacje, żeby łatwiej było wybrać właściwy termin i ruszyć w drogę."}
         </p>
         <Accordion type="single" collapsible className="mt-8 border-t border-border">
           {items.map(({ question, answer }, index) => (

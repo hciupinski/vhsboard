@@ -72,7 +72,7 @@ describe("PortalCarouselManager", () => {
     const user = userEvent.setup();
     render(<PortalCarouselManager />);
 
-    await user.click(await screen.findByRole("checkbox", { name: /hero surf/i }));
+    await user.click(await screen.findByRole("checkbox", { name: "hero surf" }));
     await user.click(screen.getByRole("button", { name: /zapisz karuzelę/i }));
 
     await waitFor(() =>
@@ -80,7 +80,7 @@ describe("PortalCarouselManager", () => {
         "carousel/obozy-zima.jpg",
       ]),
     );
-    expect(screen.queryByRole("listitem", { name: /hero surf/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("listitem", { name: "hero surf" })).not.toBeInTheDocument();
   });
 
   it("disables controls that would move an image past either boundary", async () => {
@@ -111,7 +111,7 @@ describe("PortalCarouselManager", () => {
     const user = userEvent.setup();
     render(<PortalCarouselManager />);
 
-    await screen.findByRole("checkbox", { name: /hero surf/i });
+    await screen.findByRole("checkbox", { name: "hero surf" });
     await user.click(screen.getByRole("button", { name: /zapisz karuzelę/i }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
@@ -131,6 +131,6 @@ describe("PortalCarouselManager", () => {
 
     await screen.findByRole("alert");
     expect(saveButton).toBeEnabled();
-    expect(screen.getByRole("checkbox", { name: /hero surf/i })).toBeEnabled();
+    expect(screen.getByRole("checkbox", { name: "hero surf" })).toBeEnabled();
   });
 });

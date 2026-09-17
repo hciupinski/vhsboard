@@ -188,7 +188,11 @@ function EventsPage() {
             />
           </div>
         </section>
-        <FaqSection headingId="events-faq-heading" items={eventsFaqItems} description="Zebraliśmy najważniejsze informacje dotyczące organizacji naszych stref eventowych – od wyboru atrakcji i miejsca po montaż, sprzęt i obsługę." />
+        <FaqSection
+          headingId="events-faq-heading"
+          items={eventsFaqItems}
+          description="Zebraliśmy najważniejsze informacje dotyczące organizacji naszych stref eventowych – od wyboru atrakcji i miejsca po montaż, sprzęt i obsługę."
+        />
       </main>
       <PublicFooter />
     </div>

@@ -39,31 +39,38 @@ export const tripFaqItems: readonly FaqItem[] = [
 export const eventsFaqItems: readonly FaqItem[] = [
   {
     question: "Na jakich eventach sprawdzi się tor skimboardowy lub strefa skate?",
-    answer: "Nasze strefy sprawdzają się podczas eventów miejskich, pikników, festiwali, imprez firmowych, wydarzeń sportowych oraz akcji organizowanych przez centra handlowe. To atrakcje, które angażują uczestników, przyciągają uwagę i tworzą przestrzeń do aktywnej zabawy zarówno dla dzieci, młodzieży, jak i dorosłych.",
+    answer:
+      "Nasze strefy sprawdzają się podczas eventów miejskich, pikników, festiwali, imprez firmowych, wydarzeń sportowych oraz akcji organizowanych przez centra handlowe. To atrakcje, które angażują uczestników, przyciągają uwagę i tworzą przestrzeń do aktywnej zabawy zarówno dla dzieci, młodzieży, jak i dorosłych.",
   },
   {
     question: "Czy tor skimboardowy można rozstawić w dowolnym miejscu?",
-    answer: "Mobilny tor skimboardowy możemy zamontować w wielu różnych przestrzeniach – zarówno na zewnątrz, jak i w odpowiednio przygotowanych przestrzeniach eventowych. Przed realizacją ustalamy warunki techniczne, sprawdzamy nachylenie terenu, dostęp do wody, rodzaj nawierzchni oraz dostępną powierzchnię i dobieramy odpowiedni wariant toru do konkretnego miejsca.",
+    answer:
+      "Mobilny tor skimboardowy możemy zamontować w wielu różnych przestrzeniach – zarówno na zewnątrz, jak i w odpowiednio przygotowanych przestrzeniach eventowych. Przed realizacją ustalamy warunki techniczne, sprawdzamy nachylenie terenu, dostęp do wody, rodzaj nawierzchni oraz dostępną powierzchnię i dobieramy odpowiedni wariant toru do konkretnego miejsca.",
   },
   {
     question: "Czy VHS zajmuje się całą organizacją strefy?",
-    answer: "Tak. Ty dajesz teren, my robimy resztę. Zapewniamy transport, montaż i demontaż strefy, sprzęt oraz – w zależności od wybranego wariantu – doświadczoną obsługę instruktorów. Przed wydarzeniem ustalamy również wszystkie kwestie techniczne, dzięki czemu organizacja atrakcji po stronie klienta jest ograniczona do minimum.",
+    answer:
+      "Tak. Ty dajesz teren, my robimy resztę. Zapewniamy transport, montaż i demontaż strefy, sprzęt oraz – w zależności od wybranego wariantu – doświadczoną obsługę instruktorów. Przed wydarzeniem ustalamy również wszystkie kwestie techniczne, dzięki czemu organizacja atrakcji po stronie klienta jest ograniczona do minimum.",
   },
   {
     question: "Czym jest Strefa Skate VHS?",
-    answer: "Strefa skate to przestrzeń do jazdy na deskorolce, rolkach, hulajnogach, yoyo itp. którą możemy stworzyć praktycznie w dowolnym miejscu. Zapewniamy przeszkody, deskorolki, kaski oraz doświadczonych instruktorów, którzy prowadzą zajęcia i pomagają postawić pierwsze kroki na desce. Strefę dopasowujemy do przestrzeni, charakteru wydarzenia i wieku uczestników.\n\n Nasze strefy skate są częścią zarówno mniejszych eventów, jak i dużych wydarzeń miejskich. Jedną z naszych realizacji była strefa przygotowana podczas Urodzin Łodzi – wydarzenia, które każdego roku przyciąga tysiące mieszkańców. To świetny przykład tego, jak skateboarding może stać się angażującą, aktywną atrakcją podczas dużego eventu plenerowego.",
+    answer:
+      "Strefa skate to przestrzeń do jazdy na deskorolce, rolkach, hulajnogach, yoyo itp. którą możemy stworzyć praktycznie w dowolnym miejscu. Zapewniamy przeszkody, deskorolki, kaski oraz doświadczonych instruktorów, którzy prowadzą zajęcia i pomagają postawić pierwsze kroki na desce. Strefę dopasowujemy do przestrzeni, charakteru wydarzenia i wieku uczestników.\n\n Nasze strefy skate są częścią zarówno mniejszych eventów, jak i dużych wydarzeń miejskich. Jedną z naszych realizacji była strefa przygotowana podczas Urodzin Łodzi – wydarzenia, które każdego roku przyciąga tysiące mieszkańców. To świetny przykład tego, jak skateboarding może stać się angażującą, aktywną atrakcją podczas dużego eventu plenerowego.",
   },
   {
     question: "Co obejmuje wynajem toru skimboardowego?",
-    answer: "Wynajem może obejmować mobilny tor skimboardowy, montaż i demontaż, deski oraz niezbędne wyposażenie strefy. Możemy również zapewnić instruktorów, którzy pomagają uczestnikom rozpocząć zabawę i czuwają nad prawidłowym korzystaniem z toru. Zakres usługi dopasowujemy do czasu trwania, miejsca i charakteru wydarzenia.\n\n Dodatkowo możemy zaproponować stanowiska do nauki balansowania - trickboard; strefę maluszka dla dzieci od 0-7 lat oraz inne sportowe aktywności.",
+    answer:
+      "Wynajem może obejmować mobilny tor skimboardowy, montaż i demontaż, deski oraz niezbędne wyposażenie strefy. Możemy również zapewnić instruktorów, którzy pomagają uczestnikom rozpocząć zabawę i czuwają nad prawidłowym korzystaniem z toru. Zakres usługi dopasowujemy do czasu trwania, miejsca i charakteru wydarzenia.\n\n Dodatkowo możemy zaproponować stanowiska do nauki balansowania - trickboard; strefę maluszka dla dzieci od 0-7 lat oraz inne sportowe aktywności.",
   },
   {
     question: "Czy z toru skimboardowego i strefy skate mogą korzystać osoby początkujące?",
-    answer: "Oczywiście. Nie trzeba wcześniej jeździć na skimboardzie czy deskorolce. Nasze strefy mają zachęcać do spróbowania sportów deskowych, dlatego są odpowiednie również dla osób, które robią to po raz pierwszy. Przy wariancie z obsługą instruktorzy pokazują podstawy i pomagają uczestnikom bezpiecznie rozpocząć jazdę.",
+    answer:
+      "Oczywiście. Nie trzeba wcześniej jeździć na skimboardzie czy deskorolce. Nasze strefy mają zachęcać do spróbowania sportów deskowych, dlatego są odpowiednie również dla osób, które robią to po raz pierwszy. Przy wariancie z obsługą instruktorzy pokazują podstawy i pomagają uczestnikom bezpiecznie rozpocząć jazdę.",
   },
   {
     question: "Gdzie organizujemy eventy skimboardowe i strefy skate?",
-    answer: "Realizujemy eventy w całej Polsce, a także za granicą. Nasze mobilne strefy dopasowujemy do miejsca, charakteru wydarzenia i jego uczestników. Strefy wodne z torem skimboardowym świetnie sprawdzają się w centrach handlowych, podczas imprez firmowych, pikników i festiwali, a także jako atrakcja podczas wydarzeń i inicjatyw organizowanych dla mieszkańców przez miasta, gminy i urzędy. To sposób na stworzenie aktywnej, wakacyjnej przestrzeni, która przyciąga uwagę i angażuje uczestników wydarzenia.",
+    answer:
+      "Realizujemy eventy w całej Polsce, a także za granicą. Nasze mobilne strefy dopasowujemy do miejsca, charakteru wydarzenia i jego uczestników. Strefy wodne z torem skimboardowym świetnie sprawdzają się w centrach handlowych, podczas imprez firmowych, pikników i festiwali, a także jako atrakcja podczas wydarzeń i inicjatyw organizowanych dla mieszkańców przez miasta, gminy i urzędy. To sposób na stworzenie aktywnej, wakacyjnej przestrzeni, która przyciąga uwagę i angażuje uczestników wydarzenia.",
   },
 ];
 

@@ -132,7 +132,11 @@ function HalfDayCampsPage() {
             ) : null}
           </div>
         </section>
-        <FaqSection headingId="camp-faq-heading" items={campFaqItems} description="Zebraliśmy odpowiedzi na najczęstsze pytania rodziców dotyczące naszych obozów i półkolonii – od zapisów i szkolenia po opiekę, sprzęt i organizację." />
+        <FaqSection
+          headingId="camp-faq-heading"
+          items={campFaqItems}
+          description="Zebraliśmy odpowiedzi na najczęstsze pytania rodziców dotyczące naszych obozów i półkolonii – od zapisów i szkolenia po opiekę, sprzęt i organizację."
+        />
       </main>
       <PublicFooter />
     </div>

@@ -209,7 +209,7 @@ describe("static public pages", () => {
     expect(
       screen.getByRole("heading", { name: /przyciąga ludzi.*surfing dla każdego/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /strefa skate/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Strefa Skate" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: /strefa letnia w centrum handlowym/i }),
     ).toBeInTheDocument();
@@ -261,7 +261,11 @@ describe("static public pages", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /najbliższe terminy/i })).toBeInTheDocument();
-    expect(screen.queryByText(/półkoloni/i)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: "Dla dzieci w jakim wieku są obozy i półkolonie VHS?",
+      }),
+    ).toBeInTheDocument();
   });
 
   it("keeps discontinued services as company background rather than separate sales pages", async () => {
