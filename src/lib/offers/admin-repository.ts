@@ -12,7 +12,7 @@ import type { OfferKind, OfferStatus, PublicOffer } from "./types";
 const ADMIN_COLUMNS =
   "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
 const ADMIN_LIST_COLUMNS = `${ADMIN_COLUMNS},updated_at`;
-const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,position";
+const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,category,position";
 const OFFER_IMAGES_BUCKET = "offer-images";
 const SIGNED_URL_TTL_SECONDS = 3600;
 const PUBLISH_READINESS_MESSAGE = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
@@ -285,6 +285,7 @@ export const canPublishOffer = async (id: string): Promise<boolean> => {
       .select("alt_text")
       .eq("offer_id", id)
       .eq("storage_path", heroImagePath)
+      .eq("category", "gallery")
       .maybeSingle();
 
     if (imageError) {
@@ -294,9 +295,29 @@ export const canPublishOffer = async (id: string): Promise<boolean> => {
     }
 
     const altText = getStringField(imageData, "alt_text")?.trim();
-    return (
-      altText !== undefined && altText !== null && altText.length >= 5 && altText.length <= 180
-    );
+    const heroReady =
+      altText !== undefined && altText !== null && altText.length >= 5 && altText.length <= 180;
+    if (!heroReady) return false;
+
+    const content = offerData.description;
+    const accommodationEnabled =
+      isRecord(content) &&
+      isRecord(content.accommodation) &&
+      typeof content.accommodation.description === "string";
+    if (!accommodationEnabled) return true;
+
+    const { data: accommodationImage, error: accommodationError } = await supabase
+      .from("offer_images")
+      .select("id")
+      .eq("offer_id", id)
+      .eq("category", "accommodation")
+      .maybeSingle();
+    if (accommodationError) {
+      throw new OfferRepositoryError("Nie udało się sprawdzić gotowości oferty.", {
+        cause: accommodationError,
+      });
+    }
+    return accommodationImage !== null;
   } catch (error) {
     return throwRepositoryError(error, "Nie udało się sprawdzić gotowości oferty.");
   }

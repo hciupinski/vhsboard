@@ -140,6 +140,27 @@ describe("editor offer input schema", () => {
     });
   });
 
+  it("normalizes an enabled accommodation description", () => {
+    const result = editorOfferInputSchema.parse({
+      ...completeInput,
+      content: {
+        ...completeInput.content,
+        accommodation: { description: "  Apartamenty przy plaży.  " },
+      },
+    });
+
+    expect(result.content.accommodation).toEqual({ description: "Apartamenty przy plaży." });
+  });
+
+  it("rejects an enabled accommodation section with a too-short description", () => {
+    expect(
+      editorOfferInputSchema.safeParse({
+        ...completeInput,
+        content: { ...completeInput.content, accommodation: { description: "  " } },
+      }).success,
+    ).toBe(false);
+  });
+
   it.each([
     ["an activity reserved for trips", { activity: "surf" }],
     [

@@ -275,6 +275,28 @@ describe("administrator offer repository", () => {
     expect(imageQuery.eq).toHaveBeenCalledWith("storage_path", heroPath);
   });
 
+  it("requires an accommodation image when the optional section is enabled", async () => {
+    const offerQuery = createQuery({
+      data: {
+        ...draftRow,
+        description: {
+          ...completeInput.content,
+          accommodation: { description: "Dom przy plaży." },
+        },
+      },
+      error: null,
+    });
+    const heroQuery = createQuery({ data: { alt_text: "Opis głównego zdjęcia" }, error: null });
+    const accommodationQuery = createQuery({ data: null, error: null });
+    mockedSupabase.from
+      .mockReturnValueOnce(offerQuery)
+      .mockReturnValueOnce(heroQuery)
+      .mockReturnValueOnce(accommodationQuery);
+
+    await expect(canPublishOffer(offerId)).resolves.toBe(false);
+    expect(accommodationQuery.eq).toHaveBeenCalledWith("category", "accommodation");
+  });
+
   it("rejects publication when the matching hero path exists only on another offer", async () => {
     const offerQuery = createQuery({ data: draftRow, error: null });
     const imageQuery = createFilteredImageLookup([

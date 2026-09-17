@@ -58,6 +58,7 @@ const publishedOffers: PublicOffer[] = [
     bookingUrl: "https://zapisy.example.test/surf-portugal",
     heroImageUrl: null,
     images: [],
+    accommodationImages: [],
   },
   {
     id: "camp-1",
@@ -88,6 +89,7 @@ const publishedOffers: PublicOffer[] = [
     bookingUrl: "https://zapisy.example.test/wake-lato",
     heroImageUrl: null,
     images: [],
+    accommodationImages: [],
   },
 ];
 

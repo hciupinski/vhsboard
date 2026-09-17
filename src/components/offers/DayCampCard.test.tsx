@@ -47,6 +47,7 @@ const offer = {
   bookingUrl: "https://zapisy.example.test/wake",
   heroImageUrl: null,
   images: [],
+  accommodationImages: [],
 };
 
 describe("DayCampCard", () => {

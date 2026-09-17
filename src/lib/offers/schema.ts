@@ -3,6 +3,9 @@ import { z } from "zod";
 const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const optionalGroupSizeSchema = z.number().int().min(1).max(99).nullable();
 const requiredTextSchema = z.string().trim().min(1);
+const accommodationContentSchema = z.object({
+  description: requiredTextSchema.min(3).max(500),
+});
 const bookingUrlSchema = z
   .string()
   .url()
@@ -21,6 +24,7 @@ export const offerContentSchema = z.object({
       text: requiredTextSchema,
     }),
   ),
+  accommodation: accommodationContentSchema.optional(),
 });
 
 export const dayCampContentSchema = z.object({
@@ -67,6 +71,7 @@ export const dayCampContentSchema = z.object({
     )
     .min(1)
     .max(2),
+  accommodation: accommodationContentSchema.optional(),
 });
 
 const offerBaseRowSchema = z.object({
@@ -139,6 +144,7 @@ export const offerImageRowSchema = z.object({
   offer_id: z.string().uuid(),
   storage_path: z.string().trim().min(1),
   alt_text: z.string().trim().min(5).max(180),
+  category: z.enum(["gallery", "accommodation"]).default("gallery"),
   position: z.number().int().nonnegative(),
 });
 

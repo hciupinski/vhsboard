@@ -6,11 +6,18 @@ export type TripActivity = "surf" | "snow" | "combo";
 export type DayCampActivity = "wake" | "snow";
 export type OfferActivity = TripActivity | DayCampActivity;
 
+export type OfferImageCategory = "gallery" | "accommodation";
+
+export type AccommodationContent = {
+  description: string;
+};
+
 export type OfferImage = {
   id: string;
   path: string;
   alt: string;
   position: number;
+  category: OfferImageCategory;
   signedUrl: string | null;
 };
 
@@ -20,6 +27,7 @@ export type TripOfferContent = {
   included: string[];
   excluded: string[];
   schedule: Array<{ day: string; text: string }>;
+  accommodation?: AccommodationContent | undefined;
 };
 
 export type DayCampPriceOption = {
@@ -50,6 +58,7 @@ export type DayCampContent = {
     meals?: string | undefined;
   };
   terms: DayCampTerm[];
+  accommodation?: AccommodationContent | undefined;
 };
 
 export type OfferContent = TripOfferContent | DayCampContent;
@@ -71,6 +80,7 @@ type PublicOfferBase = {
   bookingUrl: string;
   heroImageUrl: string | null;
   images: OfferImage[];
+  accommodationImages: OfferImage[];
 };
 
 export type TripOffer = PublicOfferBase & {

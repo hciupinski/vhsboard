@@ -90,9 +90,11 @@ const detailOffer: TripOffer = {
       path: "gallery.jpg",
       alt: "Surfer na fali",
       position: 0,
+      category: "gallery",
       signedUrl: "https://example.test/gallery.jpg",
     },
   ],
+  accommodationImages: [],
 };
 
 async function renderDetail(offer: TripOffer) {
@@ -165,6 +167,34 @@ describe("trip section navigation integration", () => {
         .map((link) => link.textContent),
     ).toEqual(["Co jest w cenie"]);
     expect(screen.queryByRole("heading", { name: "Galeria" })).not.toBeInTheDocument();
+  });
+
+  it("renders enabled accommodation with its separate gallery", async () => {
+    const accommodationImage = {
+      id: "accommodation-1",
+      path: "accommodation.jpg",
+      alt: "Taras apartamentu przy plaży",
+      position: 0,
+      category: "accommodation" as const,
+      signedUrl: "https://example.test/accommodation.jpg",
+    };
+    await renderDetail({
+      ...detailOffer,
+      content: {
+        ...detailOffer.content,
+        accommodation: { description: "Dom kilka minut od oceanu." },
+      },
+      accommodationImages: [accommodationImage],
+    });
+
+    const navigation = await screen.findByRole("navigation", { name: "Sekcje wyjazdu" });
+    expect(within(navigation).getByRole("link", { name: "Zakwaterowanie" })).toHaveAttribute(
+      "href",
+      "#zakwaterowanie",
+    );
+    expect(screen.getByRole("heading", { name: "Zakwaterowanie" })).toBeInTheDocument();
+    expect(screen.getByText("Dom kilka minut od oceanu.")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: accommodationImage.alt })).toBeInTheDocument();
   });
 
   it("does not render a navigation bar when every optional section is empty", async () => {

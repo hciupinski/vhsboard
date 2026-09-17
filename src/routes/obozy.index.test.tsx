@@ -66,6 +66,7 @@ const publishedCamp: DayCampOffer = {
   bookingUrl: "https://zapisy.example.test/wake-lato",
   heroImageUrl: null,
   images: [],
+  accommodationImages: [],
 };
 
 const renderCampsPage = async () => {

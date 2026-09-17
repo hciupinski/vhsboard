@@ -5,6 +5,7 @@ export const tripSections = [
   { id: "program", label: "W programie", editorTab: "highlights" },
   { id: "plan-wyjazdu", label: "Plan wyjazdu", editorTab: "days" },
   { id: "w-cenie", label: "Co jest w cenie", editorTab: "inout" },
+  { id: "zakwaterowanie", label: "Zakwaterowanie", editorTab: "accommodation" },
   { id: "galeria", label: "Galeria", editorTab: "photos" },
 ] as const;
 
@@ -17,6 +18,7 @@ export function getVisibleTripSections(offer: TripOffer): TripSection[] {
     content.highlights.length > 0,
     content.schedule.length > 0,
     content.included.length > 0 || content.excluded.length > 0,
+    Boolean(content.accommodation),
     offer.images.some((image) => image.signedUrl !== null),
   ];
   return tripSections.filter((_, index) => visible[index]);

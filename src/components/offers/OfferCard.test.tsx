@@ -35,6 +35,7 @@ const offer: TripOffer = {
   bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImageUrl: "https://signed.example/hero.jpg",
   images: [],
+  accommodationImages: [],
 };
 
 const image: OfferImage = {
@@ -42,6 +43,7 @@ const image: OfferImage = {
   path: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/gallery.jpg",
   alt: "Surfer na fali w Ericeirze",
   position: 0,
+  category: "gallery",
   signedUrl: "https://signed.example/gallery.jpg",
 };
 

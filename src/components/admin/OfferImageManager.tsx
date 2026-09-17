@@ -11,7 +11,7 @@ import {
   uploadOfferImage,
 } from "@/lib/images/repository";
 import { validateImageFile } from "@/lib/images/validation";
-import type { OfferImage } from "@/lib/offers/types";
+import type { OfferImage, OfferImageCategory } from "@/lib/offers/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,7 +31,8 @@ type OfferImageManagerProps = {
   offerId: string;
   heroImagePath: string | null;
   disabled: boolean;
-  onHeroChanged: (path: string) => void | Promise<void>;
+  category?: OfferImageCategory;
+  onHeroChanged?: (path: string) => void | Promise<void>;
   onImagesChanged: () => void | Promise<void>;
 };
 
@@ -57,6 +58,7 @@ export function OfferImageManager({
   offerId,
   heroImagePath,
   disabled,
+  category = "gallery",
   onHeroChanged,
   onImagesChanged,
 }: OfferImageManagerProps) {
@@ -76,7 +78,11 @@ export function OfferImageManager({
     const requestVersion = ++imageRequestVersion.current;
     const nextImages = await listOfferImages(offerId);
     if (requestVersion === imageRequestVersion.current) {
-      setImages([...nextImages].sort((first, second) => first.position - second.position));
+      setImages(
+        nextImages
+          .filter((image) => (image.category ?? "gallery") === category)
+          .sort((first, second) => first.position - second.position),
+      );
     }
   };
 
@@ -88,7 +94,11 @@ export function OfferImageManager({
     void listOfferImages(offerId)
       .then((nextImages) => {
         if (isCurrent && requestVersion === imageRequestVersion.current) {
-          setImages([...nextImages].sort((first, second) => first.position - second.position));
+          setImages(
+            nextImages
+              .filter((image) => (image.category ?? "gallery") === category)
+              .sort((first, second) => first.position - second.position),
+          );
           setIsGalleryReady(true);
           setError(null);
         }
@@ -105,7 +115,7 @@ export function OfferImageManager({
     return () => {
       isCurrent = false;
     };
-  }, [offerId]);
+  }, [offerId, category]);
 
   const handleUpload = async () => {
     if (!selectedFile) {
@@ -129,7 +139,10 @@ export function OfferImageManager({
       images.reduce((maximum, image) => Math.max(maximum, image.position), -1) + 1;
     let uploadedImage: OfferImage;
     try {
-      uploadedImage = await uploadOfferImage(offerId, selectedFile, altText.trim(), nextPosition);
+      uploadedImage =
+        category === "gallery"
+          ? await uploadOfferImage(offerId, selectedFile, altText.trim(), nextPosition)
+          : await uploadOfferImage(offerId, selectedFile, altText.trim(), nextPosition, category);
     } catch {
       setError("Nie udało się dodać zdjęcia. Spróbuj ponownie.");
       setIsUploading(false);
@@ -157,7 +170,7 @@ export function OfferImageManager({
     }
 
     const synchronized = await synchronizeImageState([
-      () => onHeroChanged(image.path),
+      () => onHeroChanged?.(image.path),
       onImagesChanged,
     ]);
     if (!synchronized) setError(imageSyncWarning);
@@ -175,10 +188,12 @@ export function OfferImageManager({
 
     setError(null);
     try {
-      await reorderOfferImages(
-        offerId,
-        reordered.map((image) => image.id),
-      );
+      const orderedIds = reordered.map((image) => image.id);
+      if (category === "gallery") {
+        await reorderOfferImages(offerId, orderedIds);
+      } else {
+        await reorderOfferImages(offerId, orderedIds, category);
+      }
     } catch {
       setError("Nie udało się zmienić kolejności zdjęć. Spróbuj ponownie.");
       return;
@@ -238,7 +253,7 @@ export function OfferImageManager({
   return (
     <section
       className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
-      aria-label="Zdjęcia oferty"
+      aria-label={category === "accommodation" ? "Zdjęcia zakwaterowania" : "Zdjęcia oferty"}
     >
       <div className="space-y-4 rounded-xl bg-secondary/40 p-4">
         <div className="flex items-center gap-3">
@@ -254,10 +269,10 @@ export function OfferImageManager({
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="image-file">Wybierz plik obrazu</Label>
+            <Label htmlFor={`image-file-${category}`}>Wybierz plik obrazu</Label>
             <Input
               ref={fileInputRef}
-              id="image-file"
+              id={`image-file-${category}`}
               type="file"
               accept="image/jpeg,image/png,image/webp"
               disabled={disabled || isUploading || !isGalleryReady}
@@ -268,14 +283,14 @@ export function OfferImageManager({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="image-alt">Opis alternatywny (wymagany)</Label>
-            <p id="image-alt-hint" className="text-sm text-muted-foreground">
+            <Label htmlFor={`image-alt-${category}`}>Opis alternatywny (wymagany)</Label>
+            <p id={`image-alt-hint-${category}`} className="text-sm text-muted-foreground">
               Opisz krótko, co przedstawia zdjęcie; od 5 do 180 znaków.
             </p>
             <Input
-              id="image-alt"
+              id={`image-alt-${category}`}
               value={altText}
-              aria-describedby="image-alt-hint"
+              aria-describedby={`image-alt-hint-${category}`}
               required
               minLength={5}
               maxLength={180}
@@ -314,12 +329,19 @@ export function OfferImageManager({
       ) : null}
 
       <div>
-        <h2 className="font-display text-xl tracking-wide">Galeria</h2>
+        <h2 className="font-display text-xl tracking-wide">
+          {category === "accommodation" ? "Galeria zakwaterowania" : "Galeria"}
+        </h2>
         {isLoading ? <p className="mt-3 text-sm text-muted-foreground">Ładowanie zdjęć…</p> : null}
         {!isLoading && images.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">Galeria jest jeszcze pusta.</p>
         ) : null}
-        <ul className="mt-4 grid gap-4 sm:grid-cols-2" aria-label="Galeria zdjęć oferty">
+        <ul
+          className="mt-4 grid gap-4 sm:grid-cols-2"
+          aria-label={
+            category === "accommodation" ? "Galeria zdjęć zakwaterowania" : "Galeria zdjęć oferty"
+          }
+        >
           {images.map((image, index) => {
             const isHero = image.path === heroImagePath;
             return (
@@ -344,16 +366,18 @@ export function OfferImageManager({
                   </div>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    aria-label={`Ustaw jako obraz główny: ${image.alt}`}
-                    disabled={disabled || isHero}
-                    onClick={() => void handleSetHero(image)}
-                  >
-                    Ustaw jako obraz główny
-                  </Button>
+                  {category === "gallery" ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      aria-label={`Ustaw jako obraz główny: ${image.alt}`}
+                      disabled={disabled || isHero}
+                      onClick={() => void handleSetHero(image)}
+                    >
+                      Ustaw jako obraz główny
+                    </Button>
+                  ) : null}
                   <Button
                     type="button"
                     variant="outline"
@@ -374,7 +398,7 @@ export function OfferImageManager({
                   >
                     <ArrowDown aria-hidden="true" />
                   </Button>
-                  {isHero ? (
+                  {isHero && category === "gallery" ? (
                     <Button
                       type="button"
                       variant="destructive"

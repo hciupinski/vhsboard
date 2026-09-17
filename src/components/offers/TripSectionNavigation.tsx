@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 
-import type { TripSection } from "@/lib/offers/trip-sections";
 import { cn } from "@/lib/utils";
 
-export function TripSectionNavigation({ sections }: { sections: TripSection[] }) {
+type OfferSection = { id: string; label: string };
+
+export function TripSectionNavigation({
+  sections,
+  ariaLabel = "Sekcje wyjazdu",
+}: {
+  sections: readonly OfferSection[];
+  ariaLabel?: string;
+}) {
   const navigationRef = useRef<HTMLElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const initialHashAligned = useRef(false);
@@ -129,7 +136,7 @@ export function TripSectionNavigation({ sections }: { sections: TripSection[] })
   return (
     <nav
       ref={navigationRef}
-      aria-label="Sekcje wyjazdu"
+      aria-label={ariaLabel}
       className="sticky top-[var(--trip-header-height,61px)] z-40 border-b border-border bg-background/95 backdrop-blur"
     >
       <div

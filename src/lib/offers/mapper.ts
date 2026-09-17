@@ -62,17 +62,18 @@ const validateGroupSize = (offer: OfferListRow | AdminPreviewOfferDetailRow): vo
 };
 
 const validateImageOrder = (images: OfferImageRow[], offerId: string): void => {
-  for (let index = 0; index < images.length; index += 1) {
-    const image = images[index];
-    if (!image) {
-      continue;
-    }
-    if (image.offer_id !== offerId) {
-      throw new Error("Galeria zawiera obraz należący do innej oferty.");
-    }
-    const previousImage = index > 0 ? images[index - 1] : undefined;
-    if (previousImage && previousImage.position >= image.position) {
-      throw new Error("Pozycje obrazów muszą być rosnące i unikalne.");
+  for (const category of ["gallery", "accommodation"] as const) {
+    const categoryImages = images.filter((image) => image.category === category);
+    for (let index = 0; index < categoryImages.length; index += 1) {
+      const image = categoryImages[index];
+      if (!image) continue;
+      if (image.offer_id !== offerId) {
+        throw new Error("Galeria zawiera obraz należący do innej oferty.");
+      }
+      const previousImage = index > 0 ? categoryImages[index - 1] : undefined;
+      if (previousImage && previousImage.position >= image.position) {
+        throw new Error("Pozycje obrazów muszą być rosnące i unikalne.");
+      }
     }
   }
 };
@@ -83,6 +84,7 @@ const toOfferImages = (images: OfferImageRow[], signedUrls: Map<string, string>)
     path: image.storage_path,
     alt: image.alt_text,
     position: image.position,
+    category: image.category,
     signedUrl: toSignedUrlOrNull(image.storage_path, signedUrls),
   }));
 
@@ -111,7 +113,8 @@ const mapOffer = (
     currency: row.currency,
     bookingUrl: row.booking_url,
     heroImageUrl: toSignedUrlOrNull(row.hero_image, signedUrls),
-    images,
+    images: images.filter((image) => image.category === "gallery"),
+    accommodationImages: images.filter((image) => image.category === "accommodation"),
   };
 
   if (row.offer_kind === "day_camp") {
