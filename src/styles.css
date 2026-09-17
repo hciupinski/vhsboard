@@ -237,7 +237,7 @@
     .topic-selector__item:focus-within .topic-selector__content {
       inline-size: var(--topic-panel-expanded-width);
       padding-block: clamp(1.25rem, 1.8vw, 2rem);
-      padding-inline-end: clamp(1.25rem, 1.8vw, 2rem);
+      padding-inline-end: clamp(2rem, 2.5vw, 2.5rem);
       background: oklch(0.22 0.03 60 / 0.18);
     }
 
