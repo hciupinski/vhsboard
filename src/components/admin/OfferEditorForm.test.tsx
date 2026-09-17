@@ -262,6 +262,7 @@ describe("OfferEditorForm", () => {
       <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={vi.fn()} />,
     );
 
+    await user.click(screen.getByRole("tab", { name: "Turnusy i ceny" }));
     expect(screen.getByText("Turnusy i warianty cen")).toBeInTheDocument();
     expect(screen.getByLabelText("Turnus 1, wariant 1 — cena")).toHaveValue(1290);
     expect(screen.getByLabelText("Turnus 1 — adres zapisów")).toHaveValue(
@@ -269,9 +270,10 @@ describe("OfferEditorForm", () => {
     );
     expect(screen.queryByText("Plan zajęć")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("tab", { name: "Program i opieka" }));
+    await user.click(screen.getByRole("tab", { name: "Plan dnia" }));
     expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("09:00");
     expect(screen.getByText("5/120 znaków")).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
     expect(screen.getByLabelText("Transport")).toHaveValue("Dojazd własny.");
   });
 
@@ -380,29 +382,33 @@ describe("OfferEditorForm", () => {
     );
     expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
       "Podstawy",
-      "O obozów",
-      "W cenie i poza",
-      "Program i opieka",
-      "Zdjęcia",
+      "O obozie",
+      "Atrakcje",
+      "Plan dnia",
+      "W cenie",
+      "Turnusy i ceny",
+      "Dla rodzica",
+      "Galeria",
     ]);
     expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "O obozów" }));
+    await user.click(screen.getByRole("tab", { name: "O obozie" }));
     expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue(dayCampInput.subtitle);
-    expect(screen.getByLabelText("Najlepsze momenty 1")).toHaveValue("Małe grupy");
-    expect(screen.getByLabelText("Opis miejsca zajęć")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Atrakcje 1")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Atrakcje" }));
+    expect(screen.getByLabelText("Atrakcje 1")).toHaveValue("Małe grupy");
   });
 
   it("keeps day-camp validation markers with their existing panels", () => {
     const props = { value: dayCampInput, disabled: false, onChange: vi.fn() };
     const { rerender } = render(<OfferEditorForm {...props} errors={{}} />);
     for (const [path, tab] of [
-      ["content.terms.0.bookingUrl", "Podstawy"],
-      ["subtitle", "O obozów"],
-      ["content.highlights.0", "O obozów"],
-      ["content.venueDescription", "O obozów"],
-      ["content.dayProgram.0.time", "Program i opieka"],
-      ["content.parentInfo.safety", "Program i opieka"],
-      ["content.included.0", "W cenie i poza"],
+      ["content.terms.0.bookingUrl", "Turnusy i ceny"],
+      ["subtitle", "O obozie"],
+      ["content.highlights.0", "Atrakcje"],
+      ["content.venueDescription", "O obozie"],
+      ["content.dayProgram.0.time", "Plan dnia"],
+      ["content.parentInfo.safety", "Dla rodzica"],
+      ["content.included.0", "W cenie"],
     ] as const) {
       rerender(<OfferEditorForm {...props} errors={{ [path]: "Popraw to pole." }} />);
       expect(screen.getByRole("tab", { name: `${tab} — zawiera błędy` })).toBeInTheDocument();

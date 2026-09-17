@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { changeEditableOfferKind, type EditableOfferInput } from "@/lib/offers/editor-schema";
 import { shouldCommitDateValue } from "@/lib/offers/date-input";
+import { dayCampSections, type DayCampSection } from "@/lib/offers/day-camp-sections";
 import { tripSections, type TripSection } from "@/lib/offers/trip-sections";
 import type {
   DayCampContent,
@@ -25,7 +26,7 @@ import type {
   TripOfferContent,
 } from "@/lib/offers/types";
 
-type EditorTab = "basics" | TripSection["editorTab"];
+type EditorTab = "basics" | TripSection["editorTab"] | DayCampSection["editorTab"];
 
 type Props = {
   value: EditableOfferInput;
@@ -104,13 +105,7 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
     Object.keys(errors).some((path) => path === prefix || path.startsWith(`${prefix}.`));
 
   const tabs: { editorTab: EditorTab; label: string }[] = dayCamp
-    ? [
-        { editorTab: "basics", label: "Podstawy" },
-        { editorTab: "story", label: "O obozów" },
-        { editorTab: "inout", label: "W cenie i poza" },
-        { editorTab: "days", label: "Program i opieka" },
-        { editorTab: "photos", label: "Zdjęcia" },
-      ]
+    ? [{ editorTab: "basics", label: "Podstawy" }, ...dayCampSections]
     : [{ editorTab: "basics", label: "Podstawy" }, ...tripSections];
   const tabErrorPaths: Record<EditorTab, string[]> = {
     basics: [
@@ -121,7 +116,7 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
       "location",
       "shortDescription",
       ...(dayCamp
-        ? ["content.terms"]
+        ? []
         : [
             "subtitle",
             "startDate",
@@ -134,13 +129,12 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
             "bookingUrl",
           ]),
     ],
-    story: [
-      "content.paragraphs",
-      ...(dayCamp ? ["subtitle", "content.highlights", "content.venueDescription"] : []),
-    ],
+    story: ["content.paragraphs", ...(dayCamp ? ["subtitle", "content.venueDescription"] : [])],
     highlights: ["content.highlights"],
-    days: dayCamp ? ["content.dayProgram", "content.parentInfo"] : ["content.schedule"],
+    days: dayCamp ? ["content.dayProgram"] : ["content.schedule"],
     inout: ["content.included", "content.excluded"],
+    terms: ["content.terms"],
+    parents: ["content.parentInfo"],
     photos: ["heroImagePath"],
   };
   const subtitleField = (
@@ -316,16 +310,9 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
               onChange={(event) => set("shortDescription", event.target.value)}
             />
           </Field>
-          {dayCamp ? (
-            <TermsEditor
-              content={dayCamp}
-              errors={errors}
-              disabled={disabled}
-              onChange={setTerms}
-            />
-          ) : (
+          {trip ? (
             <TripBasics value={value} errors={errors} disabled={disabled} set={set} state={state} />
-          )}
+          ) : null}
         </fieldset>
       </TabsContent>
 
@@ -344,15 +331,6 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
             error={errorFor(errors, "content.paragraphs")}
             onChange={(next) => listChange("paragraphs", next)}
           />
-          {dayCamp ? (
-            <ListField
-              label="Najlepsze momenty"
-              values={value.content.highlights}
-              placeholder="Małe grupy i dużo aktywności"
-              error={errorFor(errors, "content.highlights")}
-              onChange={(next) => listChange("highlights", next)}
-            />
-          ) : null}
           {dayCamp ? (
             <Field
               id="venue-description"
@@ -374,15 +352,15 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
         </fieldset>
       </TabsContent>
 
-      {trip ? (
+      {trip || dayCamp ? (
         <TabsContent value="highlights" className="mt-6">
           <fieldset
             disabled={disabled}
             className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
           >
             <ListField
-              label="W programie"
-              values={trip.highlights}
+              label={trip ? "W programie" : "Atrakcje"}
+              values={(trip ?? dayCamp).highlights}
               placeholder="Małe grupy i dużo aktywności"
               error={errorFor(errors, "content.highlights")}
               onChange={(next) => listChange("highlights", next)}
@@ -439,6 +417,21 @@ export function OfferEditorForm({ value, errors, disabled, onChange, imageManage
           />
         ) : null}
       </TabsContent>
+      {dayCamp ? (
+        <TabsContent value="terms" className="mt-6">
+          <TermsEditor content={dayCamp} errors={errors} disabled={disabled} onChange={setTerms} />
+        </TabsContent>
+      ) : null}
+      {dayCamp ? (
+        <TabsContent value="parents" className="mt-6">
+          <DayCampParentInfoEditor
+            content={dayCamp}
+            errors={errors}
+            disabled={disabled}
+            onChange={setDayCamp}
+          />
+        </TabsContent>
+      ) : null}
       <TabsContent value="photos" className="mt-6 space-y-4">
         {trip ? (
           <p className="text-sm text-muted-foreground">
@@ -958,101 +951,119 @@ function DayCampProgramEditor({
           </p>
         ) : null}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field
+    </fieldset>
+  );
+}
+
+function DayCampParentInfoEditor({
+  content,
+  errors,
+  disabled,
+  onChange,
+}: {
+  content: DayCampContent;
+  errors: Record<string, string>;
+  disabled: boolean;
+  onChange: (content: DayCampContent) => void;
+}) {
+  return (
+    <fieldset
+      disabled={disabled}
+      className="grid gap-4 rounded-2xl border border-border/70 bg-background p-6 sm:grid-cols-2"
+    >
+      <Field
+        id="parent-age-range"
+        label="Wiek uczestników"
+        characterCount={{ value: content.parentInfo.ageRange, max: 120 }}
+        error={errorFor(errors, "content.parentInfo.ageRange")}
+      >
+        <Input
           id="parent-age-range"
-          label="Wiek uczestników"
-          characterCount={{ value: content.parentInfo.ageRange, max: 120 }}
-          error={errorFor(errors, "content.parentInfo.ageRange")}
-        >
-          <Input
-            id="parent-age-range"
-            value={content.parentInfo.ageRange}
-            maxLength={120}
-            onChange={(event) =>
-              onChange({
-                ...content,
-                parentInfo: { ...content.parentInfo, ageRange: event.target.value },
-              })
-            }
-          />
-        </Field>
-        <Field
+          value={content.parentInfo.ageRange}
+          maxLength={120}
+          onChange={(event) =>
+            onChange({
+              ...content,
+              parentInfo: { ...content.parentInfo, ageRange: event.target.value },
+            })
+          }
+        />
+      </Field>
+      <Field
+        id="parent-transport"
+        label="Transport"
+        hint="Opcjonalnie"
+        characterCount={{ value: content.parentInfo.transport ?? "", max: 500 }}
+        error={errorFor(errors, "content.parentInfo.transport")}
+      >
+        <Textarea
           id="parent-transport"
-          label="Transport"
-          hint="Opcjonalnie"
-          characterCount={{ value: content.parentInfo.transport ?? "", max: 500 }}
-          error={errorFor(errors, "content.parentInfo.transport")}
-        >
-          <Textarea
-            id="parent-transport"
-            value={content.parentInfo.transport ?? ""}
-            maxLength={500}
-            onChange={(event) =>
-              onChange({
-                ...content,
-                parentInfo: { ...content.parentInfo, transport: event.target.value },
-              })
-            }
-          />
-        </Field>
-        <Field
+          value={content.parentInfo.transport ?? ""}
+          maxLength={500}
+          onChange={(event) =>
+            onChange({
+              ...content,
+              parentInfo: { ...content.parentInfo, transport: event.target.value },
+            })
+          }
+        />
+      </Field>
+      <Field
+        id="parent-supervision"
+        label="Opieka"
+        characterCount={{ value: content.parentInfo.supervision, max: 500 }}
+        error={errorFor(errors, "content.parentInfo.supervision")}
+      >
+        <Textarea
           id="parent-supervision"
-          label="Opieka"
-          characterCount={{ value: content.parentInfo.supervision, max: 500 }}
-          error={errorFor(errors, "content.parentInfo.supervision")}
-        >
-          <Textarea
-            id="parent-supervision"
-            value={content.parentInfo.supervision}
-            maxLength={500}
-            onChange={(event) =>
-              onChange({
-                ...content,
-                parentInfo: { ...content.parentInfo, supervision: event.target.value },
-              })
-            }
-          />
-        </Field>
-        <Field
+          value={content.parentInfo.supervision}
+          maxLength={500}
+          onChange={(event) =>
+            onChange({
+              ...content,
+              parentInfo: { ...content.parentInfo, supervision: event.target.value },
+            })
+          }
+        />
+      </Field>
+      <Field
+        id="parent-safety"
+        label="Bezpieczeństwo"
+        characterCount={{ value: content.parentInfo.safety, max: 500 }}
+        error={errorFor(errors, "content.parentInfo.safety")}
+      >
+        <Textarea
           id="parent-safety"
-          label="Bezpieczeństwo"
-          characterCount={{ value: content.parentInfo.safety, max: 500 }}
-          error={errorFor(errors, "content.parentInfo.safety")}
+          value={content.parentInfo.safety}
+          maxLength={500}
+          onChange={(event) =>
+            onChange({
+              ...content,
+              parentInfo: { ...content.parentInfo, safety: event.target.value },
+            })
+          }
+        />
+      </Field>
+      <div className="sm:col-span-2">
+        <Field
+          id="parent-meals"
+          label="Wyżywienie"
+          hint="Opcjonalnie"
+          characterCount={{ value: content.parentInfo.meals ?? "", max: 500 }}
+          error={errorFor(errors, "content.parentInfo.meals")}
         >
           <Textarea
-            id="parent-safety"
-            value={content.parentInfo.safety}
+            id="parent-meals"
+            value={content.parentInfo.meals ?? ""}
             maxLength={500}
             onChange={(event) =>
               onChange({
                 ...content,
-                parentInfo: { ...content.parentInfo, safety: event.target.value },
+                parentInfo: { ...content.parentInfo, meals: event.target.value },
               })
             }
           />
         </Field>
-        <div className="sm:col-span-2">
-          <Field
-            id="parent-meals"
-            label="Wyżywienie"
-            hint="Opcjonalnie"
-            characterCount={{ value: content.parentInfo.meals ?? "", max: 500 }}
-            error={errorFor(errors, "content.parentInfo.meals")}
-          >
-            <Textarea
-              id="parent-meals"
-              value={content.parentInfo.meals ?? ""}
-              maxLength={500}
-              onChange={(event) =>
-                onChange({
-                  ...content,
-                  parentInfo: { ...content.parentInfo, meals: event.target.value },
-                })
-              }
-            />
-          </Field>
-        </div>
       </div>
     </fieldset>
   );

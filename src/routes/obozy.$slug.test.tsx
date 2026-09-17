@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createMemoryHistory, createRouter, RouterProvider } from "@tanstack/react-router";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { DayCampOffer } from "@/lib/offers/types";
@@ -134,11 +134,11 @@ describe("day-camp detail route", () => {
     await router.load();
     render(<RouterProvider router={router} />);
 
-    expect(await screen.findByRole("heading", { name: "Ogólne" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "O obozie" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Atrakcje" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "W cenie" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Poza ceną" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Poczuj vibe" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Galeria" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Zapisz się" })).toHaveAttribute(
       "href",
       "https://zapisy.example.test/wakeboardowe-lato",
@@ -154,5 +154,37 @@ describe("day-camp detail route", () => {
     expect(
       screen.queryByRole("button", { name: "Odtwórz film: Obozy VHSBOARD" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("links camp sections in their public reading order", async () => {
+    mockedGetPublishedOfferBySlug.mockResolvedValue(publishedDayCamp);
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const router = createRouter({
+      routeTree,
+      context: { queryClient },
+      history: createMemoryHistory({ initialEntries: ["/obozy/wakeboardowe-lato"] }),
+    });
+
+    await router.load();
+    render(<RouterProvider router={router} />);
+
+    const navigation = await screen.findByRole("navigation", { name: "Sekcje obozu" });
+    const links = within(navigation).getAllByRole("link");
+    expect(links.map((link) => link.textContent)).toEqual([
+      "O obozie",
+      "Atrakcje",
+      "Plan dnia",
+      "W cenie",
+      "Turnusy i ceny",
+      "Dla rodzica",
+      "Galeria",
+    ]);
+    for (const link of links) {
+      const target = document.getElementById(link.getAttribute("href")!.slice(1));
+      expect(target).not.toBeNull();
+      expect(
+        within(target!).getByRole("heading", { level: 2, name: link.textContent! }),
+      ).toBeInTheDocument();
+    }
   });
 });

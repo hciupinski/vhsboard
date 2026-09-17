@@ -10,6 +10,8 @@ kolejności i nawigacji kotwicowej.
 ## Zakres
 
 - Dotyczy obu istniejących rodzajów ofert: wyjazdów i obozów.
+- Przed dodaniem zakwaterowania obozy otrzymają ten sam model sekcji, kotwic
+  i kart CMS co wyjazdy, dostosowany do ich własnej treści.
 - Nie zmienia zewnętrznego procesu rezerwacji, tras ani publicznego modelu
   dostępu do ofert.
 - Nie wprowadza nowych usług ani zależności. Wykorzystuje obecny Supabase
@@ -82,6 +84,18 @@ Usunięcie zdjęcia jest trwałe i używa obecnego dialogu potwierdzenia. Zdjęc
 pozostawione po wyłączeniu sekcji nie są dostępne publicznie; administrator
 może je zachować na później lub usunąć. Opisy alternatywne są nadal wymagane
 w języku polskim, zgodnie z obecną walidacją obrazów.
+
+## Ujednolicenie obozów przed zakwaterowaniem
+
+Obozy dostaną wspólną z wyjazdami, lepką subnawigację kotwicową. Konfiguracja
+sekcji obozu będzie jednym źródłem prawdy dla tej nawigacji i kolejności kart
+w CMS: „O obozie”, „Atrakcje”, „Plan dnia”, „W cenie”, „Turnusy i ceny”, „Dla
+rodzica” oraz „Galeria”. Widok publiczny nada każdej widocznej sekcji odpowiedni
+identyfikator i zachowa możliwość pominięcia pustych bloków. Edytor rozdzieli
+dotychczas połączone panele: highlights, program dnia, informacje dla rodzica i
+turnusy będą edytowane w osobnych kartach, z błędami walidacji wskazującymi
+właściwą kartę. Zakwaterowanie zostanie dodane jako kolejna sekcja do obu tak
+ujednoliconych konfiguracji.
 
 ## Widok publiczny
 

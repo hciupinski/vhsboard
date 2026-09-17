@@ -5,12 +5,14 @@ import { z } from "zod";
 
 import { OfferFacts } from "@/components/offers/OfferFacts";
 import { OfferGallery } from "@/components/offers/OfferGallery";
+import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation";
 import { DeferredYouTubeEmbed } from "@/components/public/DeferredYouTubeEmbed";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { Button } from "@/components/ui/button";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
+import { dayCampSections, getVisibleDayCampSections } from "@/lib/offers/day-camp-sections";
 import { offerDetailQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -57,10 +59,12 @@ function DayCampDetail() {
   const { data: offer } = useSuspenseQuery(offerDetailQueryOptions(slug, "day_camp", preview));
   if (offer === null || offer.offerKind !== "day_camp") throw notFound();
   const { content } = offer;
+  const sections = getVisibleDayCampSections(offer);
+  const [about, highlights, dayProgram, price, terms, parentInfo, gallery] = dayCampSections;
   const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
   const hasTerms = content.terms.length > 0;
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-background">
+    <div data-trip-detail className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
       {!preview ? (
         <PublicJsonLd path={`/obozy/${offer.slug}`} label={offer.title} offer={offer} />
@@ -104,12 +108,13 @@ function DayCampDetail() {
             </div>
           </div>
         </section>
+        <TripSectionNavigation key={offer.slug} sections={sections} ariaLabel="Sekcje obozu" />
         <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.6fr_1fr]">
           <div className="min-w-0">
             {content.paragraphs.length > 0 || content.venueDescription ? (
-              <section aria-labelledby="about-day-camp-title">
+              <section id={about.id} tabIndex={-1} aria-labelledby="about-day-camp-title">
                 <h2 id="about-day-camp-title" className="text-3xl sm:text-4xl">
-                  Ogólne
+                  {about.label}
                 </h2>
                 {content.paragraphs.map((paragraph, index) => (
                   <p
@@ -133,10 +138,12 @@ function DayCampDetail() {
                 className={
                   content.paragraphs.length > 0 || content.venueDescription ? "mt-12" : undefined
                 }
+                id={highlights.id}
+                tabIndex={-1}
                 aria-labelledby="highlights-title"
               >
                 <h2 id="highlights-title" className="text-3xl sm:text-4xl">
-                  Atrakcje
+                  {highlights.label}
                 </h2>
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {content.highlights.map((highlight) => (
@@ -160,10 +167,12 @@ function DayCampDetail() {
                     ? "mt-12"
                     : undefined
                 }
+                id={dayProgram.id}
+                tabIndex={-1}
                 aria-labelledby="day-program-title"
               >
                 <h2 id="day-program-title" className="text-3xl sm:text-4xl">
-                  Plan dnia
+                  {dayProgram.label}
                 </h2>
                 <ol className="mt-4 space-y-4 border-l border-border pl-5">
                   {content.dayProgram.map((item) => (
@@ -187,10 +196,12 @@ function DayCampDetail() {
                     ? "mt-12"
                     : undefined
                 }
+                id={price.id}
+                tabIndex={-1}
                 aria-labelledby="price-details-title"
               >
                 <h2 id="price-details-title" className="text-3xl sm:text-4xl">
-                  W cenie
+                  {price.label}
                 </h2>
                 <div className="mt-4 grid gap-6 sm:grid-cols-2">
                   {content.included.length > 0 ? (
@@ -227,9 +238,9 @@ function DayCampDetail() {
             ) : null}
 
             {hasTerms ? (
-              <section className="mt-12" id="turnusy" aria-labelledby="terms-title">
+              <section className="mt-12" id={terms.id} tabIndex={-1} aria-labelledby="terms-title">
                 <h2 id="terms-title" className="text-3xl sm:text-4xl">
-                  Turnusy i ceny
+                  {terms.label}
                 </h2>
                 <div className="mt-4 grid gap-5 md:grid-cols-2">
                   {content.terms.map((term) => (
@@ -260,9 +271,14 @@ function DayCampDetail() {
               </section>
             ) : null}
 
-            <section className="mt-12" aria-labelledby="parent-info-title">
+            <section
+              className="mt-12"
+              id={parentInfo.id}
+              tabIndex={-1}
+              aria-labelledby="parent-info-title"
+            >
               <h2 id="parent-info-title" className="text-3xl sm:text-4xl">
-                Dla rodzica
+                {parentInfo.label}
               </h2>
               <dl className="mt-4 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-border bg-card p-4">
@@ -303,7 +319,7 @@ function DayCampDetail() {
             </section>
           </div>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="lg:sticky lg:top-[calc(var(--trip-header-height,61px)+var(--trip-nav-height,0px)+24px)] lg:self-start">
             <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
               <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">
                 Twój obóz
@@ -318,7 +334,7 @@ function DayCampDetail() {
           </aside>
         </div>
         {offer.images.length > 0 ? (
-          <OfferGallery images={offer.images} title="Poczuj vibe" />
+          <OfferGallery id={gallery.id} images={offer.images} title={gallery.label} />
         ) : null}
         <DeferredYouTubeEmbed
           className="mx-auto max-w-6xl px-5 py-16 sm:py-20"
