@@ -129,15 +129,15 @@ function HomePage() {
                     {eyebrow}
                   </p>
                   <h3 className="mt-3 text-4xl leading-[0.9] sm:text-5xl">{title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-background/85 sm:text-base">
-                    {text}
-                  </p>
-                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
-                    {action}
-                    <span className="grid size-7 place-items-center rounded-full bg-background/15 transition duration-200 motion-reduce:transition-none group-hover:translate-x-1 group-hover:bg-primary">
-                      <ArrowUpRight aria-hidden="true" className="size-4" />
+                  <div className="topic-selector__details">
+                    <p className="mt-3 text-sm leading-relaxed text-background/85 sm:text-base">{text}</p>
+                    <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
+                      {action}
+                      <span className="grid size-7 place-items-center rounded-full bg-background/15 transition duration-200 motion-reduce:transition-none group-hover:translate-x-1 group-hover:bg-primary">
+                        <ArrowUpRight aria-hidden="true" className="size-4" />
+                      </span>
                     </span>
-                  </span>
+                  </div>
                 </div>
               </Link>
             ))}

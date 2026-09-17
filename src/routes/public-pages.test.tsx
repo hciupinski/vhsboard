@@ -169,6 +169,9 @@ describe("static public pages", () => {
         .querySelectorAll(".topic-selector__content--safe-text-inset"),
     ).toHaveLength(3);
     expect(
+      screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__details"),
+    ).toHaveLength(3);
+    expect(
       screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__item--mobile-stack"),
     ).toHaveLength(3);
     expect(
