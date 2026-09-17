@@ -257,9 +257,9 @@ function TripDetail() {
           <section
             id={accommodation.id}
             tabIndex={-1}
-            className="border-t border-border py-16 sm:py-20"
+            className="border-t border-border py-6 sm:py-10"
           >
-            <div className="mx-auto max-w-6xl px-5">
+            <div className="mx-auto max-w-6xl px-5 pb-4">
               <h2 className="text-3xl sm:text-4xl">{accommodation.label}</h2>
               <p className="mt-4 max-w-3xl text-muted-foreground">
                 {content.accommodation.description}
