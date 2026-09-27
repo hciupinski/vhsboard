@@ -11,11 +11,17 @@ import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
+import type { DayCampOffer, TripOffer } from "@/lib/offers/types";
 
 const mockedListPublicPortalCarouselImages = vi.hoisted(() => vi.fn());
+const mockedListPublishedOffers = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/portal-carousel/repository", () => ({
   listPublicPortalCarouselImages: mockedListPublicPortalCarouselImages,
+}));
+
+vi.mock("@/lib/offers/public-repository", () => ({
+  listPublishedOffers: mockedListPublishedOffers,
 }));
 
 import { Route as AboutRoute } from "./o-nas";
@@ -36,6 +42,61 @@ const publicSiteEnv = {
   VITE_BUSINESS_NIP: "1234567890",
   VITE_BUSINESS_REGON: "123456789",
   VITE_BUSINESS_BANK_ACCOUNT: "12345678901234567890123456",
+};
+
+const homeTrip: TripOffer = {
+  id: "trip-1",
+  slug: "atlantic-surf-week",
+  offerKind: "trip",
+  activity: "surf",
+  title: "Atlantycki tydzień surfingu",
+  subtitle: "",
+  shortDescription: "Poranne sesje na oceanie.",
+  location: "Ericeira, Portugalia",
+  startDate: "2099-06-12",
+  endDate: "2099-06-18",
+  durationDays: 7,
+  groupSizeMin: null,
+  groupSizeMax: null,
+  priceFrom: 3100,
+  currency: "PLN",
+  bookingUrl: "https://example.test/zapisy",
+  heroImageUrl: null,
+  images: [],
+  accommodationImages: [],
+  content: { paragraphs: [], highlights: [], included: [], excluded: [], schedule: [] },
+};
+
+const homeCamp: DayCampOffer = {
+  id: "camp-1",
+  slug: "wakeboardowe-lato",
+  offerKind: "day_camp",
+  activity: "wake",
+  title: "Wakeboardowe lato",
+  subtitle: "",
+  shortDescription: "Pięć aktywnych dni nad wodą.",
+  location: "Warszawa",
+  startDate: "2099-07-01",
+  endDate: "2099-07-05",
+  durationDays: 5,
+  groupSizeMin: null,
+  groupSizeMax: null,
+  priceFrom: 1200,
+  currency: "PLN",
+  bookingUrl: "https://example.test/zapisy",
+  heroImageUrl: null,
+  images: [],
+  accommodationImages: [],
+  content: {
+    paragraphs: [],
+    highlights: [],
+    included: [],
+    excluded: [],
+    dayProgram: [],
+    venueDescription: "",
+    parentInfo: { ageRange: "", supervision: "", safety: "" },
+    terms: [],
+  },
 };
 
 const renderRoute = async (path: string, route: { options: { component?: unknown } }) => {
@@ -84,6 +145,8 @@ afterEach(() => {
 beforeEach(() => {
   mockedListPublicPortalCarouselImages.mockReset();
   mockedListPublicPortalCarouselImages.mockResolvedValue([]);
+  mockedListPublishedOffers.mockReset();
+  mockedListPublishedOffers.mockResolvedValue([]);
   vi.stubGlobal(
     "matchMedia",
     vi.fn().mockImplementation((query: string) => ({
@@ -201,6 +264,63 @@ describe("static public pages", () => {
       const link = screen.getByRole("img", { name: entryPoint.imageAlt }).closest("a");
       expect(link).toHaveAttribute("href", entryPoint.href);
     }
+  });
+
+  it("extends the home page from current offers to the brand story and contact CTA", async () => {
+    mockedListPublishedOffers.mockImplementation((kind: "trip" | "day_camp") =>
+      Promise.resolve(kind === "trip" ? [homeTrip] : [homeCamp]),
+    );
+
+    await renderRoute("/", HomeRoute);
+
+    expect(
+      await screen.findByRole("heading", { name: "NAJBLIŻSZE NA RADARZE" }),
+    ).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: homeTrip.title })).toHaveAttribute(
+      "href",
+      "/wyjazdy/atlantic-surf-week",
+    );
+    expect(screen.getByRole("link", { name: homeCamp.title })).toHaveAttribute(
+      "href",
+      "/obozy/wakeboardowe-lato",
+    );
+    expect(
+      screen.getByRole("heading", { name: "NIEWAŻNE GDZIE. WAŻNE, ŻE NA DESCE" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Poznaj VHSBOARD" })).toHaveAttribute("href", "/o-nas");
+    const contactHeading = screen.getByRole("heading", { name: "GOTOWY NA COŚ POZA PLANEM?" });
+    expect(contactHeading).toBeInTheDocument();
+    const contactSection = contactHeading.closest("section");
+    if (!contactSection) throw new Error("Nie znaleziono końcowej sekcji kontaktowej");
+
+    expect(within(contactSection).getByRole("link", { name: "Napisz do nas" })).toHaveAttribute(
+      "href",
+      "/kontakt",
+    );
+    expect(within(contactSection).getByRole("link", { name: "Zobacz wyjazdy" })).toHaveAttribute(
+      "href",
+      "/wyjazdy",
+    );
+  });
+
+  it("keeps category links when the home offer request fails", async () => {
+    mockedListPublishedOffers.mockRejectedValue(new Error("offline"));
+
+    await renderRoute("/", HomeRoute);
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Nie udało się pobrać najbliższych ofert.");
+    const homeOffersSection = alert.closest("section");
+    if (!homeOffersSection) throw new Error("Nie znaleziono sekcji najbliższych ofert");
+
+    expect(within(homeOffersSection).getByRole("link", { name: "Zobacz wyjazdy" })).toHaveAttribute(
+      "href",
+      "/wyjazdy",
+    );
+    expect(within(homeOffersSection).getByRole("link", { name: "Zobacz obozy" })).toHaveAttribute(
+      "href",
+      "/obozy",
+    );
   });
 
   it("presents the mobile skimboard track format and directs enquiries to contact", async () => {

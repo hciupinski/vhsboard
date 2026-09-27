@@ -8,11 +8,15 @@ import heroEventy from "@/assets/carousel/eventy.jpg";
 import heroSurf from "@/assets/carousel/hero-surf.jpg";
 import heroWyjazdy from "@/assets/carousel/wyjazdy.jpg";
 import trips from "@/assets/main/wyjazdy.jpg";
+import { HomeBrandStory } from "@/components/home/HomeBrandStory";
+import { HomeContactCta } from "@/components/home/HomeContactCta";
+import { HomeUpcomingOffersSection } from "@/components/home/HomeUpcomingOffersSection";
 import { HeroCarousel } from "@/components/public/HeroCarousel";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { Button } from "@/components/ui/button";
+import { homeOffersQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
@@ -20,7 +24,8 @@ export const Route = createFileRoute("/")({
     createPageMetadata({
       path: "/",
       title: "VHSBOARD — wyjazdy, eventy i obozy",
-      description: "VHSBOARD organizuje wyjazdy, eventy z torem skimboardowym i obozy.",
+      description:
+        "Wyjazdy surfowe i snowboardowe, obozy sportowe dla dzieci oraz eventy z torem skimboardowym organizowane przez VHSBOARD.",
     }),
   component: HomePage,
 });
@@ -59,7 +64,7 @@ const entryPoints = [
 const fallbackImages = [
   { path: "fallback/hero-surf", src: heroSurf, label: "Hero surf" },
   { path: "fallback/eventy", src: heroEventy, label: "Hero zima" },
-    { path: "fallback/wyjazdy", src: heroWyjazdy, label: "Hero wyjazdy" },
+  { path: "fallback/wyjazdy", src: heroWyjazdy, label: "Hero wyjazdy" },
 ];
 
 function HomePage() {
@@ -70,6 +75,12 @@ function HomePage() {
     retry: false,
   });
   const heroImages = configuredImages?.length ? configuredImages : fallbackImages;
+  const {
+    data: homeOffers = [],
+    isPending: areHomeOffersPending,
+    isError: homeOffersError,
+  } = useQuery(homeOffersQueryOptions());
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
@@ -95,7 +106,7 @@ function HomePage() {
             </Button>
           </div>
         </section>
-        <section className="py-16 sm:py-24" aria-labelledby="entry-points-heading">
+        <section className="py-12 sm:py-14" aria-labelledby="entry-points-heading">
           <div className="mx-auto max-w-6xl px-5">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               Wybierz swój kierunek
@@ -147,6 +158,14 @@ function HomePage() {
             ))}
           </div>
         </section>
+        <HomeUpcomingOffersSection
+          offers={homeOffers}
+          isPending={areHomeOffersPending}
+          isError={homeOffersError}
+          today={today}
+        />
+        <HomeBrandStory />
+        <HomeContactCta />
       </main>
       <PublicFooter />
     </div>
