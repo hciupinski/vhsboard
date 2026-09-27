@@ -187,7 +187,7 @@ describe("static public pages", () => {
     await renderRoute("/", HomeRoute);
 
     await waitFor(() => expect(mockedListPublicPortalCarouselImages).toHaveBeenCalledOnce());
-    expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(2);
+    expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(3);
   });
 
   it("uses ordered public carousel images when configuration loads", async () => {
@@ -213,6 +213,13 @@ describe("static public pages", () => {
     expect(structuredData?.textContent).toContain('"WebSite"');
 
     expect(screen.getByRole("heading", { name: /zacznij nową przygodę/i })).toBeInTheDocument();
+    const hero = screen
+      .getByRole("heading", { name: "Dobre rzeczy dzieją się poza codziennym planem" })
+      .closest("section");
+    if (!hero) throw new Error("Nie znaleziono sekcji hero");
+    const heroTripLink = within(hero).getByRole("link", { name: "Zobacz wyjazdy" });
+    expect(heroTripLink).toHaveAttribute("href", "/wyjazdy");
+    expect(heroTripLink).not.toHaveClass("hidden");
     expect(screen.getByTestId("topic-selector")).toHaveClass("topic-selector");
     expect(
       screen.getByTestId("topic-selector").querySelectorAll(".topic-selector__content"),
@@ -264,6 +271,16 @@ describe("static public pages", () => {
       const link = screen.getByRole("img", { name: entryPoint.imageAlt }).closest("a");
       expect(link).toHaveAttribute("href", entryPoint.href);
     }
+    expect(
+      screen.getByRole("img", {
+        name: "Uczestnik eventu na mobilnym torze skimboardowym VHSBOARD",
+      }),
+    ).toHaveAttribute("loading", "lazy");
+    expect(
+      screen.getByRole("img", {
+        name: "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+      }),
+    ).toHaveAttribute("loading", "lazy");
   });
 
   it("extends the home page from current offers to the brand story and contact CTA", async () => {

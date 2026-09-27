@@ -93,10 +93,11 @@ describe("public offer components", () => {
     );
   });
 
-  it("keeps the repository alt for a gallery image", () => {
+  it("keeps the repository alt without creating an empty gallery heading", () => {
     render(<OfferGallery images={[image]} />);
 
     expect(screen.getByRole("img", { name: image.alt })).toHaveAttribute("src", image.signedUrl);
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
   });
 
   it("opens a selected gallery image in an accessible lightbox", async () => {

@@ -102,7 +102,7 @@ function HomePage() {
               Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
               eventach i podczas aktywności dla dzieci.
             </p>
-            <Button asChild size="lg" className="mt-8 rounded-full shadow-warm hidden">
+            <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
               <Link to="/wyjazdy">Zobacz wyjazdy</Link>
             </Button>
           </div>
@@ -133,6 +133,7 @@ function HomePage() {
                 <img
                   src={image}
                   alt={imageAlt}
+                  loading="lazy"
                   className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-105"
                 />
                 <div className="absolute inset-0 -z-10 bg-gradient-to-t from-foreground/90 via-foreground/25 to-foreground/5" />
