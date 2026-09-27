@@ -12,7 +12,7 @@ const activityLabels: Record<PublicOffer["activity"], string> = {
 
 export function HomeOfferCard({ offer }: { offer: PublicOffer }) {
   const content = (
-    <article className="relative isolate aspect-[4/5] min-w-0 overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-300 motion-reduce:transition-none md:group-hover:-translate-y-1">
+    <article className="relative isolate aspect-[5/5] min-w-0 overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-300 motion-reduce:transition-none md:group-hover:-translate-y-1">
       <div className="absolute inset-0">
         {offer.heroImageUrl ? (
           <img

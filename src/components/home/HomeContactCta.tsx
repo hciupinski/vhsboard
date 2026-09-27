@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export function HomeContactCta() {
   return (
     <section
-      className="bg-foreground py-16 text-background sm:py-24"
+      className="bg-foreground py-12 text-background sm:py-14"
       aria-labelledby="home-contact-heading"
     >
       <div className="mx-auto max-w-6xl px-5">

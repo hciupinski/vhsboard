@@ -17,7 +17,7 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
       aria-label={`Sprawdź szczegóły wyjazdu: ${offer.title}`}
       className="group block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
-      <article className="relative isolate aspect-[4/5] min-w-0 overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-300 motion-reduce:transition-none md:group-hover:-translate-y-1">
+      <article className="relative isolate aspect-[5/5] min-w-0 overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-300 motion-reduce:transition-none md:group-hover:-translate-y-1">
         <div className="absolute inset-0">
           {offer.heroImageUrl ? (
             <img

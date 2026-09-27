@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export function HomeBrandStory() {
   return (
-    <section className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:py-24 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
+    <section className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
       <figure className="order-last lg:order-first">
         <img
           src={marioVhs}

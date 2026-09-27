@@ -41,7 +41,7 @@ export function HomeUpcomingOffersSection({
   const upcomingOffers = selectUpcomingHomeOffers(offers, today);
 
   return (
-    <section className="bg-secondary/55 py-16 sm:py-24" aria-labelledby="home-upcoming-heading">
+    <section className="bg-secondary/55 py-12 sm:py-14" aria-labelledby="home-upcoming-heading">
       <div className="mx-auto max-w-6xl px-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
           Wyjazdy i obozy
