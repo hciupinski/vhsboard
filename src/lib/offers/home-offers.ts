@@ -9,6 +9,7 @@ export const selectUpcomingHomeOffers = (
     .filter((offer) => offer.startDate !== null && offer.startDate >= today)
     .sort(
       (first, second) =>
-        first.startDate!.localeCompare(second.startDate!) || first.title.localeCompare(second.title, "pl"),
+        first.startDate!.localeCompare(second.startDate!) ||
+        first.title.localeCompare(second.title, "pl"),
     )
     .slice(0, limit);
