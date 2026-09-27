@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import type { DayCampOffer, TripOffer } from "./types";
-import { selectUpcomingHomeOffers } from "./home-offers";
+import * as homeOffers from "./home-offers";
+
+const { selectUpcomingHomeOffers } = homeOffers;
 
 const trip = (title: string, startDate: string | null): TripOffer => ({
   id: `trip-${title}`,
@@ -65,14 +67,24 @@ describe("selectUpcomingHomeOffers", () => {
       trip("Zeta", "2026-09-28"),
       camp("Obóz wake", "2026-09-29"),
       trip("Alfa", "2026-09-28"),
+      trip("Dzisiaj", "2026-09-27"),
       trip("Miniony", "2026-09-26"),
       trip("Termin wkrótce", null),
     ];
 
     expect(selectUpcomingHomeOffers(offers, "2026-09-27").map((offer) => offer.title)).toEqual([
+      "Dzisiaj",
       "Alfa",
       "Zeta",
-      "Obóz wake",
     ]);
+  });
+
+  it("uses the current Warsaw calendar day after midnight", () => {
+    const getTodayInWarsaw = (
+      homeOffers as typeof homeOffers & { getTodayInWarsaw?: (now: Date) => string }
+    ).getTodayInWarsaw;
+
+    expect(getTodayInWarsaw).toBeTypeOf("function");
+    expect(getTodayInWarsaw!(new Date("2026-09-26T22:30:00.000Z"))).toBe("2026-09-27");
   });
 });

@@ -287,6 +287,7 @@ describe("static public pages", () => {
     expect(
       screen.getByRole("heading", { name: "NIEWAŻNE GDZIE. WAŻNE, ŻE NA DESCE" }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/VHSBOARD działa od 2017 roku\./i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Poznaj VHSBOARD" })).toHaveAttribute("href", "/o-nas");
     const contactHeading = screen.getByRole("heading", { name: "GOTOWY NA COŚ POZA PLANEM?" });
     expect(contactHeading).toBeInTheDocument();

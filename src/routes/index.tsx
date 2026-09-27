@@ -16,6 +16,7 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { Button } from "@/components/ui/button";
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { homeOffersQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -80,7 +81,7 @@ function HomePage() {
     isPending: areHomeOffersPending,
     isError: homeOffersError,
   } = useQuery(homeOffersQueryOptions());
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayInWarsaw();
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">

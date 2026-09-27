@@ -22,9 +22,9 @@ export function HomeBrandStory() {
           NIEWAŻNE GDZIE. WAŻNE, ŻE NA DESCE
         </h2>
         <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-          Od 2017 roku organizujemy wyjazdy surfingowe i snowboardowe, obozy sportowe dla dzieci i
-          młodzieży oraz eventy z torem skimboardowym. Zawsze wokół tej samej zajawki: ruchu, ludzi
-          i czasu spędzonego razem.
+          VHSBOARD działa od 2017 roku. Organizujemy wyjazdy surfingowe i snowboardowe, obozy
+          sportowe dla dzieci i młodzieży oraz eventy z torem skimboardowym. Zawsze wokół tej samej
+          zajawki: ruchu, ludzi i czasu spędzonego razem.
         </p>
         <p className="mt-4 leading-relaxed text-muted-foreground">
           Jesteśmy lokalnym biurem podróży. Nie interesuje nas masówka — wolimy kameralne wyjazdy,
