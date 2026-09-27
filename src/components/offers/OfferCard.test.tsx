@@ -68,11 +68,15 @@ afterEach(() => {
 });
 
 describe("public offer components", () => {
-  it("renders Polish facts and a detail link without a content image when its URL is missing", async () => {
+  it("shows only the selected trip facts on the image card", async () => {
     await renderOfferCard({ ...offer, heroImageUrl: null });
 
-    expect(screen.getByText("7 dni · 12–18 osób")).toBeInTheDocument();
+    expect(screen.getByText("12–18 czerwca 2026")).toBeInTheDocument();
+    expect(screen.getByText("Surf")).toBeInTheDocument();
     expect(screen.getByText(/3100\s*zł/)).toBeInTheDocument();
+    expect(screen.getByText("Sprawdź szczegóły")).toBeInTheDocument();
+    expect(screen.queryByText("Ericeira, Portugalia")).not.toBeInTheDocument();
+    expect(screen.queryByText("7 dni · 12–18 osób")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /atlantycki tydzień surfingu/i })).toHaveAttribute(
       "href",
       "/wyjazdy/atlantic-surf-week",
@@ -106,14 +110,13 @@ describe("public offer components", () => {
     expect(screen.getByRole("img", { name: image.alt })).toHaveAttribute("src", image.signedUrl);
   });
 
-  it("does not use HTML injection in the offer card", async () => {
-    const { container } = await renderOfferCard({
+  it("omits a short description from the compact card", async () => {
+    await renderOfferCard({
       ...offer,
       shortDescription: "<strong>Tekst administratora</strong>",
     });
 
-    expect(screen.getByText("<strong>Tekst administratora</strong>")).toBeInTheDocument();
-    expect(container.querySelector("strong")).toBeNull();
+    expect(screen.queryByText("<strong>Tekst administratora</strong>")).not.toBeInTheDocument();
   });
 
   it("uses the required external-link protection for the booking CTA", () => {

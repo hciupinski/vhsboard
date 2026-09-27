@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { formatGroupSize, formatPriceFrom } from "@/lib/offers/formatters";
+import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
 import type { TripOffer } from "@/lib/offers/types";
 
 const activityLabels: Record<TripOffer["activity"], string> = {
@@ -14,10 +14,11 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
     <Link
       to="/wyjazdy/$slug"
       params={{ slug: offer.slug }}
+      aria-label={`Sprawdź szczegóły wyjazdu: ${offer.title}`}
       className="group block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
-      <article className="flex min-w-0 flex-col overflow-hidden rounded-3xl border border-border bg-card transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-warm">
-        <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
+      <article className="relative isolate aspect-[4/5] min-w-0 overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-300 motion-reduce:transition-none md:group-hover:-translate-y-1">
+        <div className="absolute inset-0">
           {offer.heroImageUrl ? (
             <img
               src={offer.heroImageUrl}
@@ -25,29 +26,35 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
               loading="lazy"
               width={1200}
               height={900}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="size-full object-cover transition-transform duration-500 motion-reduce:transition-none md:group-hover:scale-105"
             />
           ) : (
-            <div aria-hidden="true" className="h-full w-full bg-sunset-gradient opacity-40" />
+            <div aria-hidden="true" className="size-full bg-sunset-gradient opacity-75" />
           )}
-          <span className="absolute left-4 top-4 rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/40 to-transparent"
+          />
+        </div>
+        <div className="absolute inset-x-0 top-0 flex justify-start p-5">
+          <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground shadow-sm">
             {activityLabels[offer.activity]}
           </span>
         </div>
-        <div className="flex flex-1 flex-col p-6">
-          <p className="text-sm font-medium text-accent">{offer.location}</p>
-          <h3 className="mt-1 text-2xl">{offer.title}</h3>
-          <p className="mt-3 flex-1 text-sm text-muted-foreground">{offer.shortDescription}</p>
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border pt-4">
-            <span className="text-xs uppercase tracking-widest text-muted-foreground">
-              {offer.durationDays} dni · {formatGroupSize(offer.groupSizeMin, offer.groupSizeMax)}
-            </span>
-            <span className="font-display text-xl text-primary">
-              {formatPriceFrom(offer.priceFrom, offer.currency)}
-            </span>
-          </div>
-          <span className="mt-4 block w-full rounded-full bg-secondary px-4 py-2 text-center text-sm font-medium text-secondary-foreground shadow-sm transition-colors group-hover:bg-secondary/80">
-            Zobacz szczegóły wyjazdu
+        <div className="absolute inset-x-0 bottom-0 p-5 text-background sm:p-6">
+          <p className="text-sm font-medium text-background/80">
+            {formatTripDates(offer.startDate, offer.endDate)}
+          </p>
+          <h3 className="mt-1 font-display text-3xl leading-none sm:text-4xl">{offer.title}</h3>
+          <p className="mt-4 text-sm font-medium text-background/80">Już od</p>
+          <p className="font-display text-3xl leading-none text-background">
+            {formatPriceFrom(offer.priceFrom, offer.currency)}
+          </p>
+          <span
+            aria-hidden="true"
+            className="mt-5 flex w-full items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-[opacity,transform] duration-300 motion-reduce:transition-none md:pointer-events-none md:translate-y-2 md:opacity-0 md:group-focus-visible:pointer-events-auto md:group-focus-visible:translate-y-0 md:group-focus-visible:opacity-100 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100"
+          >
+            Sprawdź szczegóły
           </span>
         </div>
       </article>
