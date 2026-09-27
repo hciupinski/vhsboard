@@ -52,19 +52,23 @@ export function PublicHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <SocialLinks />
+          <SocialLinks className="hidden sm:flex" />
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 size="icon"
                 variant="ghost"
-                className="rounded-full sm:hidden"
+                className="rounded-full hover:bg-primary hover:text-primary-foreground sm:hidden"
                 aria-label="Otwórz menu"
               >
                 <Menu aria-hidden="true" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" aria-describedby="mobile-menu-description">
+            <SheetContent
+              side="right"
+              aria-describedby="mobile-menu-description"
+              className="flex flex-col"
+            >
               <SheetTitle className="sr-only">Menu główne</SheetTitle>
               <SheetDescription id="mobile-menu-description" className="sr-only">
                 Przejdź do wybranej podstrony VHSBOARD.
@@ -82,6 +86,7 @@ export function PublicHeader() {
                   </SheetClose>
                 ))}
               </nav>
+              <SocialLinks className="mt-auto self-end" />
             </SheetContent>
           </Sheet>
         </div>

@@ -13,7 +13,7 @@ export function Brand({ className = "", size = "default" }: BrandProps) {
         alt="Logo VHSBOARD"
         width={isLarge ? 60 : 48}
         height={isLarge ? 60 : 48}
-        className={isLarge ? "size-16 object-contain" : "size-12 object-contain"}
+        className={isLarge ? "size-16 mb-3 object-contain" : "size-12 object-contain"}
       />
       <span
         className={

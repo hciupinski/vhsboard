@@ -2,10 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight } from "lucide-react";
 
-import obozy from "@/assets/obozy.jpg";
-import eventy from "@/assets/eventy.jpg";
+import obozy from "@/assets/main/obozy-zima.jpg";
+import eventy from "@/assets/main/eventy-1.jpg";
+import heroEventy from "@/assets/carousel/eventy.jpg";
 import heroSurf from "@/assets/carousel/hero-surf.jpg";
-import heroZima from "@/assets/carousel/obozy-zima.jpg";
+import heroWyjazdy from "@/assets/carousel/wyjazdy.jpg";
 import trips from "@/assets/main/wyjazdy.jpg";
 import { HeroCarousel } from "@/components/public/HeroCarousel";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -57,7 +58,8 @@ const entryPoints = [
 
 const fallbackImages = [
   { path: "fallback/hero-surf", src: heroSurf, label: "Hero surf" },
-  { path: "fallback/obozy-zima", src: heroZima, label: "Hero zima" },
+  { path: "fallback/eventy", src: heroEventy, label: "Hero zima" },
+    { path: "fallback/wyjazdy", src: heroWyjazdy, label: "Hero wyjazdy" },
 ];
 
 function HomePage() {
@@ -88,7 +90,7 @@ function HomePage() {
               Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
               eventach i podczas aktywności dla dzieci.
             </p>
-            <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
+            <Button asChild size="lg" className="mt-8 rounded-full shadow-warm hidden">
               <Link to="/wyjazdy">Zobacz wyjazdy</Link>
             </Button>
           </div>
