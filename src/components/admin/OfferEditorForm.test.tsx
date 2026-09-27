@@ -69,6 +69,22 @@ const dayCampInput: EditableOfferInput = {
 afterEach(cleanup);
 
 describe("OfferEditorForm", () => {
+  it("generates a URL address from the offer title", async () => {
+    const user = userEvent.setup();
+    function StatefulForm() {
+      const [value, setValue] = useState({ ...completeInput, slug: "" });
+      return <OfferEditorForm value={value} errors={{}} disabled={false} onChange={setValue} />;
+    }
+
+    render(<StatefulForm />);
+
+    expect(screen.getByLabelText("Adres URL oferty")).toHaveValue("");
+    await user.clear(screen.getByLabelText("Tytuł wyjazdu"));
+    await user.type(screen.getByLabelText("Tytuł wyjazdu"), "FOLGARIDA, Włochy 2027!");
+
+    expect(screen.getByLabelText("Adres URL oferty")).toHaveValue("folgarida-wlochy-2027");
+  });
+
   it("keeps entered data and exposes a Polish field error", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

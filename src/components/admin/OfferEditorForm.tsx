@@ -49,6 +49,16 @@ const errorFor = (errors: Record<string, string>, path: string) =>
   errors[path] ?? Object.entries(errors).find(([key]) => key.startsWith(`${path}.`))?.[1];
 const nullableNumber = (value: string) => (value === "" ? null : Number(value));
 
+const toOfferSlug = (value: string) =>
+  value
+    .trim()
+    .toLocaleLowerCase("pl-PL")
+    .replaceAll("ł", "l")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 const shouldUpdateDate = (event: ChangeEvent<HTMLInputElement>) =>
   shouldCommitDateValue(event.currentTarget.value, event.currentTarget.validity.badInput);
 
@@ -240,13 +250,21 @@ export function OfferEditorForm({
                 maxLength={120}
                 disabled={disabled}
                 {...state("title")}
-                onChange={(event) => set("title", event.target.value)}
+                onChange={(event) => {
+                  const title = event.target.value;
+                  const followsTitle = value.slug === "" || value.slug === toOfferSlug(value.title);
+                  onChange({
+                    ...value,
+                    title,
+                    slug: followsTitle ? toOfferSlug(title) : value.slug,
+                  });
+                }}
               />
             </Field>
             <Field
               id="slug"
-              label="Adres oferty"
-              hint="Małe litery, cyfry i łączniki"
+              label="Adres URL oferty"
+              hint="Tworzy się z tytułu; możesz go zmienić"
               error={errors.slug}
             >
               <Input
@@ -528,13 +546,13 @@ function AccommodationEditor({
         <Field
           id="accommodation-description"
           label="Opis zakwaterowania"
-          characterCount={{ value: description, max: 500 }}
+          characterCount={{ value: description, max: 1000 }}
           error={error}
         >
           <Textarea
             id="accommodation-description"
             value={description}
-            maxLength={500}
+            maxLength={1000}
             className="min-h-32"
             {...(error
               ? { "aria-invalid": true, "aria-describedby": "accommodation-description-error" }

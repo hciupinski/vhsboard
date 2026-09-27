@@ -56,7 +56,7 @@ const optionalText = (maximum: number) =>
   );
 
 const accommodationEditorSchema = z.object({
-  description: trimmedText("Opis zakwaterowania", 3, 500),
+  description: trimmedText("Opis zakwaterowania", 3, 1000),
 });
 
 const dateSchema = z.preprocess(
@@ -181,11 +181,11 @@ const tripEditorOfferInputSchema = z
   .object(
     {
       offerKind: z.literal("trip"),
-      slug: textField("Adres oferty jest wymagany.")
+      slug: textField("Adres URL oferty jest wymagany.")
         .trim()
         .regex(
           /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-          "Adres oferty może zawierać małe litery, cyfry i łączniki.",
+          "Adres URL oferty może zawierać małe litery, cyfry i łączniki.",
         ),
       activity: z.enum(["surf", "snow", "combo"], {
         errorMap: () => ({ message: "Wybierz rodzaj wyjazdu." }),
@@ -328,11 +328,11 @@ const daysInTerm = (startDate: string, endDate: string): number =>
 const dayCampEditorOfferInputSchema = z
   .object({
     offerKind: z.literal("day_camp"),
-    slug: textField("Adres oferty jest wymagany.")
+    slug: textField("Adres URL oferty jest wymagany.")
       .trim()
       .regex(
         /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-        "Adres oferty może zawierać małe litery, cyfry i łączniki.",
+        "Adres URL oferty może zawierać małe litery, cyfry i łączniki.",
       ),
     activity: z.enum(["wake", "snow"], {
       errorMap: () => ({ message: "Wybierz aktywność obozów." }),

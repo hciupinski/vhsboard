@@ -152,6 +152,18 @@ describe("editor offer input schema", () => {
     expect(result.content.accommodation).toEqual({ description: "Apartamenty przy plaży." });
   });
 
+  it("accepts an accommodation description of 1000 characters", () => {
+    expect(
+      editorOfferInputSchema.safeParse({
+        ...completeInput,
+        content: {
+          ...completeInput.content,
+          accommodation: { description: "a".repeat(1000) },
+        },
+      }).success,
+    ).toBe(true);
+  });
+
   it("rejects an enabled accommodation section with a too-short description", () => {
     expect(
       editorOfferInputSchema.safeParse({
@@ -360,7 +372,7 @@ describe("editor offer input schema", () => {
       "slug",
       { slug: "Zła Oferta" },
       "slug",
-      "Adres oferty może zawierać małe litery, cyfry i łączniki.",
+      "Adres URL oferty może zawierać małe litery, cyfry i łączniki.",
     ],
     ["date format", { startDate: "12-09-2026" }, "startDate", "Data musi mieć format RRRR-MM-DD."],
     [
