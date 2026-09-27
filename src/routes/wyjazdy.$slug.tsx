@@ -266,7 +266,7 @@ function TripDetail() {
               </p>
             </div>
             {offer.accommodationImages.length > 0 ? (
-              <OfferGallery title="Galeria zakwaterowania" images={offer.accommodationImages} />
+              <OfferGallery images={offer.accommodationImages} />
             ) : null}
           </section>
         ) : null}

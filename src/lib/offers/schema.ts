@@ -4,7 +4,7 @@ const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const optionalGroupSizeSchema = z.number().int().min(1).max(99).nullable();
 const requiredTextSchema = z.string().trim().min(1);
 const accommodationContentSchema = z.object({
-  description: requiredTextSchema.min(3).max(500),
+  description: requiredTextSchema.min(3).max(1000),
 });
 const bookingUrlSchema = z
   .string()

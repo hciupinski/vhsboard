@@ -182,7 +182,7 @@ const setValue = (label: string | RegExp, value: string) => {
 const fillEditor = async (value: EditableOfferInput) => {
   const user = userEvent.setup();
   setValue("Tytuł wyjazdu", value.title);
-  setValue("Adres oferty", value.slug);
+  setValue("Adres URL oferty", value.slug);
   setValue("Miejsce", value.location);
   setValue("Liczba dni", String(value.durationDays));
   setValue("Cena od", String(value.priceFrom));
@@ -544,7 +544,7 @@ describe("admin offer editor route", () => {
     const { queryClient, router } = await renderAdminEditor({ slug: draftOffer.slug });
     const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
 
-    const slugInput = screen.getByLabelText("Adres oferty");
+    const slugInput = screen.getByLabelText("Adres URL oferty");
     await user.clear(slugInput);
     await user.type(slugInput, renamedInput.slug);
     await user.click(screen.getByRole("button", { name: "Zapisz szkic" }));

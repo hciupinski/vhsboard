@@ -98,6 +98,26 @@ describe("public navigation", () => {
     );
   });
 
+  it("places social links at the bottom-right of the mobile menu", async () => {
+    const user = userEvent.setup();
+    await renderPublicChrome("/");
+
+    await user.click(screen.getByRole("button", { name: "Otwórz menu" }));
+
+    const menu = screen.getByRole("dialog", { name: "Menu główne" });
+    const facebook = within(menu).getByRole("link", { name: "Facebook" });
+    expect(facebook.parentElement).toHaveClass("mt-auto", "self-end");
+  });
+
+  it("uses the primary colour when hovering the mobile menu button", async () => {
+    await renderPublicChrome("/");
+
+    expect(screen.getByRole("button", { name: "Otwórz menu" })).toHaveClass(
+      "hover:bg-primary",
+      "hover:text-primary-foreground",
+    );
+  });
+
   it("uses deployment configuration for contact details in the footer", async () => {
     await renderPublicChrome("/kontakt");
 

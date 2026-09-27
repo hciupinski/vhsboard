@@ -11,6 +11,20 @@ export const publishedOffersQueryOptions = (kind: OfferKind = "trip") =>
     refetchOnMount: "always",
   });
 
+export const homeOffersQueryOptions = () =>
+  queryOptions({
+    queryKey: ["home-offers"] as const,
+    queryFn: async () => {
+      const { listPublishedOffers } = await import("./public-repository");
+      const offers = await Promise.all([
+        listPublishedOffers("trip"),
+        listPublishedOffers("day_camp"),
+      ]);
+      return offers.flat();
+    },
+    refetchOnMount: "always",
+  });
+
 export const offerDetailQueryOptions = (slug: string, kind: OfferKind = "trip", preview = false) =>
   queryOptions({
     queryKey: preview
