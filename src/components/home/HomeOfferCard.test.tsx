@@ -86,26 +86,32 @@ const renderCard = async (offer: PublicOffer) => {
 afterEach(cleanup);
 
 describe("HomeOfferCard", () => {
-  it("links an upcoming trip to its detail with the essential offer facts", async () => {
+  it("shows only the selected trip facts on the image card", async () => {
     await renderCard(trip);
 
     expect(screen.getByRole("heading", { name: trip.title })).toBeInTheDocument();
-    expect(screen.getByText(trip.location)).toBeInTheDocument();
+    expect(screen.getByText("Surf")).toBeInTheDocument();
     expect(screen.getByText("12–18 czerwca 2099")).toBeInTheDocument();
     expect(screen.getByText(/3\s*100\s*zł/)).toBeInTheDocument();
+    expect(screen.getByText("Sprawdź szczegóły")).toBeInTheDocument();
+    expect(screen.queryByText(trip.location)).not.toBeInTheDocument();
+    expect(screen.queryByText(trip.shortDescription)).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: trip.title })).toHaveAttribute(
       "href",
       "/wyjazdy/atlantic-surf-week",
     );
   });
 
-  it("links an upcoming camp to its detail with the essential offer facts", async () => {
+  it("links an upcoming camp to its detail from the image card", async () => {
     await renderCard(camp);
 
     expect(screen.getByRole("heading", { name: camp.title })).toBeInTheDocument();
-    expect(screen.getByText(camp.location)).toBeInTheDocument();
+    expect(screen.getByText("Wakeboard")).toBeInTheDocument();
     expect(screen.getByText("1–5 lipca 2099")).toBeInTheDocument();
     expect(screen.getByText(/1\s*200\s*zł/)).toBeInTheDocument();
+    expect(screen.getByText("Sprawdź szczegóły")).toBeInTheDocument();
+    expect(screen.queryByText(camp.location)).not.toBeInTheDocument();
+    expect(screen.queryByText(camp.shortDescription)).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: camp.title })).toHaveAttribute(
       "href",
       "/obozy/wakeboardowe-lato",
