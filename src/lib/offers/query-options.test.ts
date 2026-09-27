@@ -7,7 +7,9 @@ const repository = vi.hoisted(() => ({
 
 vi.mock("./public-repository", () => repository);
 
-import { publishedOfferQueryOptions, publishedOffersQueryOptions } from "./query-options";
+import * as offerQueries from "./query-options";
+
+const { publishedOfferQueryOptions, publishedOffersQueryOptions } = offerQueries;
 
 describe("public offer query options", () => {
   it("uses a stable list key and refetches after hydration", () => {
@@ -44,5 +46,32 @@ describe("public offer query options", () => {
       "wakeboardowe-lato",
       "day_camp",
     );
+  });
+
+  it("combines published trip and camp lists for the home page", async () => {
+    const homeOffersQueryOptions = (
+      offerQueries as typeof offerQueries & {
+        homeOffersQueryOptions?: () => {
+          queryKey: readonly string[];
+          queryFn: () => Promise<unknown>;
+        };
+      }
+    ).homeOffersQueryOptions;
+
+    expect(homeOffersQueryOptions).toBeTypeOf("function");
+
+    repository.listPublishedOffers
+      .mockResolvedValueOnce([{ slug: "atlantic-surf-week" }])
+      .mockResolvedValueOnce([{ slug: "wakeboardowe-lato" }]);
+
+    const options = homeOffersQueryOptions!();
+
+    await expect(options.queryFn()).resolves.toEqual([
+      { slug: "atlantic-surf-week" },
+      { slug: "wakeboardowe-lato" },
+    ]);
+    expect(options.queryKey).toEqual(["home-offers"]);
+    expect(repository.listPublishedOffers).toHaveBeenCalledWith("trip");
+    expect(repository.listPublishedOffers).toHaveBeenCalledWith("day_camp");
   });
 });
