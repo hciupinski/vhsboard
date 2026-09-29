@@ -27,7 +27,7 @@ function ContactPage() {
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
       <PublicJsonLd path="/kontakt" label="Kontakt" />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-16 sm:py-24">
+      <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-12 sm:py-14">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Kontakt</p>
         <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">MASZ PYTANIA? POGADAJMY!</h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground">

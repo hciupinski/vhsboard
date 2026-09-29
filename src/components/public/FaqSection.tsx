@@ -15,8 +15,11 @@ type FaqSectionProps = {
 
 export function FaqSection({ headingId, items, headerLabel, description }: FaqSectionProps) {
   return (
-    <section className="border-t border-border bg-background" aria-labelledby={headingId}>
-      <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
+    <section
+      className="border-t border-border bg-background py-12 sm:py-14"
+      aria-labelledby={headingId}
+    >
+      <div className="mx-auto max-w-6xl px-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
           Dobrze wiedzieć
         </p>

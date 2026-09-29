@@ -127,7 +127,7 @@ function TripDetail() {
 
         <TripSectionNavigation key={offer.slug} sections={sections} />
 
-        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.6fr_1fr]">
+        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-12 sm:py-14 lg:grid-cols-[1.6fr_1fr]">
           <div className="min-w-0">
             {content.paragraphs.length > 0 ? (
               <section id={about.id} tabIndex={-1} aria-labelledby="about-trip-title">
@@ -257,7 +257,7 @@ function TripDetail() {
           <section
             id={accommodation.id}
             tabIndex={-1}
-            className="border-t border-border py-6 sm:py-10"
+            className="border-t border-border py-12 sm:py-14"
           >
             <div className="mx-auto max-w-6xl px-5 pb-4">
               <h2 className="text-3xl sm:text-4xl">{accommodation.label}</h2>

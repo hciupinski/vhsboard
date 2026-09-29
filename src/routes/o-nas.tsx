@@ -28,7 +28,7 @@ function AboutPage() {
       <PublicHeader />
       <PublicJsonLd path="/o-nas" label="O nas" />
       <main className="flex-1">
-        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:py-24 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
+        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
           <div className="max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">O nas</p>
             <h1 className="mt-3 text-5xl leading-[0.92] text-balance sm:text-7xl">
@@ -63,10 +63,10 @@ function AboutPage() {
         </section>
 
         <section
-          className="border-y border-border bg-secondary/50"
+          className="border-y border-border bg-secondary/50 py-12 sm:py-14"
           aria-labelledby="about-founder-heading"
         >
-          <div className="mx-auto grid max-w-6xl gap-8 px-5 py-16 sm:py-20 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-center lg:gap-16">
+          <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-center lg:gap-16">
             <figure className="overflow-hidden rounded-3xl shadow-warm">
               <img
                 src={marioSkate}
@@ -100,7 +100,7 @@ function AboutPage() {
         </section>
 
         <section
-          className="mx-auto max-w-6xl px-5 py-16 sm:py-24"
+          className="mx-auto max-w-6xl px-5 py-12 sm:py-14"
           aria-labelledby="about-activities-heading"
         >
           <div className="max-w-2xl">
