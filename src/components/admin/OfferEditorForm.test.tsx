@@ -70,6 +70,27 @@ const dayCampInput: EditableOfferInput = {
 afterEach(cleanup);
 
 describe("OfferEditorForm", () => {
+  it("updates the last-places badge setting from the Basics tab", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+
+    await user.click(screen.getByRole("switch", { name: "Pokaż tag: Ostatnie miejsca" }));
+
+    expect(onChange).toHaveBeenLastCalledWith({
+      ...completeInput,
+      showLastPlacesBadge: true,
+    });
+  });
+
+  it("disables the last-places badge setting when day-camp editing is disabled", () => {
+    render(<OfferEditorForm value={dayCampInput} errors={{}} disabled onChange={vi.fn()} />);
+
+    expect(screen.getByRole("switch", { name: "Pokaż tag: Ostatnie miejsca" })).toBeDisabled();
+  });
+
   it("generates a URL address from the offer title", async () => {
     const user = userEvent.setup();
     function StatefulForm() {

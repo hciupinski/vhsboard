@@ -338,6 +338,20 @@ export function OfferEditorForm({
               onChange={(event) => set("shortDescription", event.target.value)}
             />
           </Field>
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="show-last-places-badge">Pokaż tag: Ostatnie miejsca</Label>
+              <p className="text-sm text-muted-foreground">
+                Tag pojawi się tylko na kafelkach aktywnych ofert.
+              </p>
+            </div>
+            <Switch
+              id="show-last-places-badge"
+              checked={value.showLastPlacesBadge}
+              disabled={disabled}
+              onCheckedChange={(checked) => set("showLastPlacesBadge", checked)}
+            />
+          </div>
           {trip ? (
             <TripBasics value={value} errors={errors} disabled={disabled} set={set} state={state} />
           ) : null}
