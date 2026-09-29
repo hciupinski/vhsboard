@@ -106,6 +106,28 @@ describe("public offer components", () => {
     expect(container.querySelector("img")).not.toHaveClass("grayscale");
   });
 
+  it("keeps wrapping status tags and a long title in one expanding card flow", async () => {
+    const title = "Surf i snowboard podczas długiego tygodnia przygód";
+    const { container } = await renderOfferCard({
+      ...offer,
+      activity: "combo",
+      title,
+      showLastPlacesBadge: true,
+    });
+
+    const card = container.querySelector("article");
+    const tags = screen.getByText("Ostatnie miejsca").parentElement;
+    const details = screen.getByRole("heading", { name: title }).parentElement;
+
+    expect(card).toHaveClass("flex", "min-h-[26rem]");
+    expect(screen.getByText("Surf + snowboard")).toBeInTheDocument();
+    expect(tags).toHaveClass("flex", "flex-wrap");
+    expect(tags).not.toHaveClass("absolute");
+    expect(details).toHaveClass("mt-auto");
+    expect(details).not.toHaveClass("absolute");
+    expect(tags?.parentElement).toBe(details?.parentElement);
+  });
+
   it("shows a finished trip without a detail link or last places tag", async () => {
     const { container } = await renderOfferCard({
       ...offer,
@@ -122,10 +144,20 @@ describe("public offer components", () => {
   });
 
   it("keeps the repository alt without creating an empty gallery heading", () => {
-    render(<OfferGallery images={[image]} />);
+    const { container } = render(<OfferGallery images={[image]} />);
 
     expect(screen.getByRole("img", { name: image.alt })).toHaveAttribute("src", image.signedUrl);
     expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    expect(container.firstElementChild).toHaveClass("py-6", "sm:pb-10");
+  });
+
+  it("uses standard section spacing for a titled standalone gallery", () => {
+    render(<OfferGallery images={[image]} title="Galeria wyjazdu" id="trip" />);
+
+    expect(screen.getByRole("region", { name: "Galeria wyjazdu" })).toHaveClass(
+      "py-12",
+      "sm:py-14",
+    );
   });
 
   it("opens a selected gallery image in an accessible lightbox", async () => {

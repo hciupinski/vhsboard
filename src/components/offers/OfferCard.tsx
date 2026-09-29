@@ -14,7 +14,7 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
   const { isFinished, showLastPlacesBadge } = getOfferCardStatus(offer);
   const content = (
     <article
-      className={`relative isolate aspect-[5/5] min-w-0 overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-300 motion-reduce:transition-none${isFinished ? "" : " md:group-hover:-translate-y-1"}`}
+      className={`relative isolate flex min-h-[26rem] min-w-0 flex-col overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-300 motion-reduce:transition-none${isFinished ? "" : " md:group-hover:-translate-y-1"}`}
     >
       <div className="absolute inset-0">
         {offer.heroImageUrl ? (
@@ -34,38 +34,40 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
           className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/40 to-transparent"
         />
       </div>
-      <div className="absolute inset-x-0 top-0 flex flex-wrap gap-2 p-5">
-        <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground shadow-sm">
-          {activityLabels[offer.activity]}
-        </span>
-        {showLastPlacesBadge && (
-          <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
-            Ostatnie miejsca
+      <div className="relative flex flex-1 flex-col p-5 sm:p-6">
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground shadow-sm">
+            {activityLabels[offer.activity]}
           </span>
-        )}
-        {isFinished && (
-          <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
-            Zakończone
-          </span>
-        )}
-      </div>
-      <div className="absolute inset-x-0 bottom-0 p-5 text-background sm:p-6">
-        <p className="text-sm font-medium text-background/80">
-          {formatTripDates(offer.startDate, offer.endDate)}
-        </p>
-        <h3 className="mt-1 font-display text-3xl leading-none sm:text-4xl">{offer.title}</h3>
-        <p className="mt-4 text-sm font-medium text-background/80">Już od</p>
-        <p className="font-display text-3xl leading-none text-background">
-          {formatPriceFrom(offer.priceFrom, offer.currency)}
-        </p>
-        {!isFinished && (
-          <span
-            aria-hidden="true"
-            className="mt-5 flex w-full items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-[opacity,transform] duration-300 motion-reduce:transition-none md:pointer-events-none md:translate-y-2 md:opacity-0 md:group-focus-visible:pointer-events-auto md:group-focus-visible:translate-y-0 md:group-focus-visible:opacity-100 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100"
-          >
-            Sprawdź szczegóły
-          </span>
-        )}
+          {showLastPlacesBadge && (
+            <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
+              Ostatnie miejsca
+            </span>
+          )}
+          {isFinished && (
+            <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
+              Zakończone
+            </span>
+          )}
+        </div>
+        <div className="mt-auto pt-8 text-background">
+          <p className="text-sm font-medium text-background/80">
+            {formatTripDates(offer.startDate, offer.endDate)}
+          </p>
+          <h3 className="mt-1 font-display text-3xl leading-none sm:text-4xl">{offer.title}</h3>
+          <p className="mt-4 text-sm font-medium text-background/80">Już od</p>
+          <p className="font-display text-3xl leading-none text-background">
+            {formatPriceFrom(offer.priceFrom, offer.currency)}
+          </p>
+          {!isFinished && (
+            <span
+              aria-hidden="true"
+              className="mt-5 flex w-full items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-[opacity,transform] duration-300 motion-reduce:transition-none md:pointer-events-none md:translate-y-2 md:opacity-0 md:group-focus-visible:pointer-events-auto md:group-focus-visible:translate-y-0 md:group-focus-visible:opacity-100 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100"
+            >
+              Sprawdź szczegóły
+            </span>
+          )}
+        </div>
       </div>
     </article>
   );

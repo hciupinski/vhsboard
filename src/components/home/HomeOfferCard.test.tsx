@@ -135,6 +135,28 @@ describe("HomeOfferCard", () => {
     expect(container.querySelector("img")).not.toHaveClass("grayscale");
   });
 
+  it("keeps wrapping status tags and a long title in one expanding card flow", async () => {
+    const title = "Surf i snowboard podczas długiego tygodnia przygód";
+    const { container } = await renderCard({
+      ...trip,
+      activity: "combo",
+      title,
+      showLastPlacesBadge: true,
+    });
+
+    const card = container.querySelector("article");
+    const tags = screen.getByText("Ostatnie miejsca").parentElement;
+    const details = screen.getByRole("heading", { name: title }).parentElement;
+
+    expect(card).toHaveClass("flex", "min-h-[26rem]");
+    expect(screen.getByText("Surf + snowboard")).toBeInTheDocument();
+    expect(tags).toHaveClass("flex", "flex-wrap");
+    expect(tags).not.toHaveClass("absolute");
+    expect(details).toHaveClass("mt-auto");
+    expect(details).not.toHaveClass("absolute");
+    expect(tags?.parentElement).toBe(details?.parentElement);
+  });
+
   it("shows a finished home card without a detail link or last places tag", async () => {
     const { container } = await renderCard({
       ...trip,
