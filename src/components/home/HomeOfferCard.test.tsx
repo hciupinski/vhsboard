@@ -119,4 +119,35 @@ describe("HomeOfferCard", () => {
       "/obozy/wakeboardowe-lato",
     );
   });
+
+  it("shows last places on an upcoming home card while preserving its detail route", async () => {
+    const { container } = await renderCard({
+      ...camp,
+      heroImageUrl: "https://signed.example/camp.jpg",
+      showLastPlacesBadge: true,
+    });
+
+    expect(screen.getByText("Ostatnie miejsca")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /ostatnie miejsca/i })).toHaveAttribute(
+      "href",
+      "/obozy/wakeboardowe-lato",
+    );
+    expect(container.querySelector("img")).not.toHaveClass("grayscale");
+  });
+
+  it("shows a finished home card without a detail link or last places tag", async () => {
+    const { container } = await renderCard({
+      ...trip,
+      startDate: "2000-06-12",
+      endDate: "2000-06-18",
+      heroImageUrl: "https://signed.example/trip.jpg",
+      showLastPlacesBadge: true,
+    });
+
+    expect(screen.getByText("Zakończone")).toBeInTheDocument();
+    expect(container.querySelector("img")).toHaveClass("grayscale");
+    expect(screen.queryByText("Ostatnie miejsca")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sprawdź szczegóły")).not.toBeInTheDocument();
+  });
 });

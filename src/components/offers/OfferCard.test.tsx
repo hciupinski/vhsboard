@@ -25,8 +25,8 @@ const offer: TripOffer = {
   shortDescription: "Poranne sesje, dobry surf house i kolacje po wodzie.",
   content: { paragraphs: [], highlights: [], included: [], excluded: [], schedule: [] },
   location: "Ericeira, Portugalia",
-  startDate: "2026-06-12",
-  endDate: "2026-06-18",
+  startDate: "2099-06-12",
+  endDate: "2099-06-18",
   durationDays: 7,
   groupSizeMin: 12,
   groupSizeMax: 18,
@@ -72,7 +72,7 @@ describe("public offer components", () => {
   it("shows only the selected trip facts on the image card", async () => {
     await renderOfferCard({ ...offer, heroImageUrl: null });
 
-    expect(screen.getByText("12–18 czerwca 2026")).toBeInTheDocument();
+    expect(screen.getByText("12–18 czerwca 2099")).toBeInTheDocument();
     expect(screen.getByText("Surf")).toBeInTheDocument();
     expect(screen.getByText(/3100\s*zł/)).toBeInTheDocument();
     expect(screen.getByText("Sprawdź szczegóły")).toBeInTheDocument();
@@ -92,6 +92,33 @@ describe("public offer components", () => {
       "href",
       "/wyjazdy/atlantic-surf-week",
     );
+  });
+
+  it("shows the last places tag while retaining the detail link for an upcoming trip", async () => {
+    const { container } = await renderOfferCard({ ...offer, showLastPlacesBadge: true });
+
+    expect(screen.getByText("Ostatnie miejsca")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /ostatnie miejsca/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /atlantycki tydzień surfingu/i })).toHaveAttribute(
+      "href",
+      "/wyjazdy/atlantic-surf-week",
+    );
+    expect(container.querySelector("img")).not.toHaveClass("grayscale");
+  });
+
+  it("shows a finished trip without a detail link or last places tag", async () => {
+    const { container } = await renderOfferCard({
+      ...offer,
+      startDate: "2000-06-12",
+      endDate: "2000-06-18",
+      showLastPlacesBadge: true,
+    });
+
+    expect(screen.getByText("Zakończone")).toBeInTheDocument();
+    expect(container.querySelector("img")).toHaveClass("grayscale");
+    expect(screen.queryByText("Ostatnie miejsca")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sprawdź szczegóły")).not.toBeInTheDocument();
   });
 
   it("keeps the repository alt without creating an empty gallery heading", () => {
