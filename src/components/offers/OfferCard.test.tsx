@@ -33,6 +33,7 @@ const offer: TripOffer = {
   priceFrom: 3100,
   currency: "PLN",
   bookingUrl: "https://zapisy.example/atlantic-surf-week",
+  showLastPlacesBadge: false,
   heroImageUrl: "https://signed.example/hero.jpg",
   images: [],
   accommodationImages: [],

@@ -29,6 +29,7 @@ const completeInput: EditableOfferInput = {
   priceFrom: 3100,
   currency: "PLN",
   bookingUrl: "https://zapisy.example/atlantic-surf-week",
+  showLastPlacesBadge: false,
   heroImagePath: "offers/atlantic-surf-week/hero.jpg",
 };
 

@@ -45,6 +45,7 @@ const offer = {
   priceFrom: 1200,
   currency: "PLN" as const,
   bookingUrl: "https://zapisy.example.test/wake",
+  showLastPlacesBadge: false,
   heroImageUrl: null,
   images: [],
   accommodationImages: [],

@@ -83,6 +83,7 @@ const detailOffer: TripOffer = {
   priceFrom: 3000,
   currency: "PLN",
   bookingUrl: "https://tripahead.example/surf",
+  showLastPlacesBadge: false,
   heroImageUrl: null,
   images: [
     {

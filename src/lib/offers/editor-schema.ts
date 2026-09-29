@@ -26,6 +26,7 @@ export type EditableOfferInput = {
   priceFrom: number;
   currency: "PLN";
   bookingUrl: string;
+  showLastPlacesBadge: boolean;
   heroImagePath: string | null;
 };
 
@@ -234,6 +235,7 @@ const tripEditorOfferInputSchema = z
         .trim()
         .url("Wpisz poprawny adres rezerwacji.")
         .refine(isHttpsUrl, { message: "Adres rezerwacji musi używać HTTPS." }),
+      showLastPlacesBadge: z.boolean(),
       heroImagePath: nullableText("Ścieżka obrazu głównego musi być tekstem."),
     },
     {
@@ -350,6 +352,7 @@ const dayCampEditorOfferInputSchema = z
     priceFrom: z.unknown(),
     currency: z.literal("PLN"),
     bookingUrl: z.unknown(),
+    showLastPlacesBadge: z.boolean(),
     heroImagePath: nullableText("Ścieżka obrazu głównego musi być tekstem."),
   })
   .transform((offer) => {
@@ -431,6 +434,7 @@ export function createEmptyEditableOfferInput(): EditableOfferInput {
     priceFrom: 0,
     currency: "PLN",
     bookingUrl: "",
+    showLastPlacesBadge: false,
     heroImagePath: null,
   };
 }

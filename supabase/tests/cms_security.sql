@@ -1,6 +1,6 @@
 begin;
 
-select plan(9);
+select plan(10);
 
 do $test$
 declare
@@ -809,6 +809,12 @@ begin
   execute 'set local role none';
 end;
 $test$;
+
+select results_eq(
+  $$ select show_last_places_badge from public.offers where slug = 'testowy-szkic' $$,
+  $$ values (false) $$,
+  'omitted last-places badge defaults to false'
+);
 
 set local role anon;
 select lives_ok(

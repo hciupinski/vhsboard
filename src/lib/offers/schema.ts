@@ -91,6 +91,7 @@ const offerBaseRowSchema = z.object({
   price_from: z.number().int().nonnegative(),
   currency: z.literal("PLN"),
   booking_url: bookingUrlSchema,
+  show_last_places_badge: z.boolean(),
   hero_image: z.string().trim().min(1).nullable(),
   status: z.literal("published"),
 });

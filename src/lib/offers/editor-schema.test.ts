@@ -32,6 +32,7 @@ const completeInput: EditableOfferInput = {
   currency: "PLN",
   bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImagePath: "offers/atlantic-surf-week/hero.jpg",
+  showLastPlacesBadge: false,
 };
 
 const mergeInput = (patch: Partial<EditableOfferInput>): EditableOfferInput => ({
@@ -97,6 +98,7 @@ const completeDayCamp = {
   currency: "PLN",
   bookingUrl: "",
   heroImagePath: "offers/wake-lato-2026/hero.webp",
+  showLastPlacesBadge: false,
 };
 
 const fieldErrorsFor = (input: unknown) => {
@@ -106,6 +108,25 @@ const fieldErrorsFor = (input: unknown) => {
 };
 
 describe("editor offer input schema", () => {
+  it("keeps the opt-in badge flag for trips and day camps", () => {
+    expect(
+      editorOfferInputSchema.parse({ ...completeInput, showLastPlacesBadge: true }),
+    ).toMatchObject({
+      showLastPlacesBadge: true,
+    });
+    expect(
+      editorOfferInputSchema.parse({ ...completeDayCamp, showLastPlacesBadge: true }),
+    ).toMatchObject({
+      showLastPlacesBadge: true,
+    });
+  });
+
+  it("rejects a non-boolean badge flag", () => {
+    expect(
+      editorOfferInputSchema.safeParse({ ...completeInput, showLastPlacesBadge: "true" }).success,
+    ).toBe(false);
+  });
+
   it("replaces fields that belong only to the previously selected offer kind", () => {
     const dayCamp = changeEditableOfferKind(completeInput, "day_camp");
 
@@ -329,6 +350,7 @@ describe("editor offer input schema", () => {
 
   it("creates a blank editable input with one row for every required list", () => {
     expect(createEmptyEditableOfferInput()).toMatchObject({
+      showLastPlacesBadge: false,
       activity: "surf",
       currency: "PLN",
       startDate: null,

@@ -29,6 +29,7 @@ const offer: TripOffer = {
   priceFrom: 3100,
   currency: "PLN",
   bookingUrl: "https://example.test/zapisy",
+  showLastPlacesBadge: false,
   heroImageUrl: null,
   images: [],
   accommodationImages: [],
