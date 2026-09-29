@@ -49,6 +49,7 @@ const completeInput: EditableOfferInput = {
   currency: "PLN",
   bookingUrl: "https://zapisy.example/atlantic-surf-week",
   heroImagePath: heroPath,
+  showLastPlacesBadge: false,
 };
 
 const draftRow = {
@@ -70,6 +71,7 @@ const draftRow = {
   currency: completeInput.currency,
   booking_url: completeInput.bookingUrl,
   hero_image: completeInput.heroImagePath,
+  show_last_places_badge: false,
   status: "draft",
   updated_at: updatedAt,
 };
@@ -154,7 +156,7 @@ describe("administrator offer repository", () => {
     mockedSupabase.from.mockReturnValue(query);
 
     await expect(listAdminOffers()).resolves.toMatchObject([
-      { status: "draft", updatedAt },
+      { status: "draft", updatedAt, showLastPlacesBadge: false },
       { status: "published", updatedAt },
       { status: "archived", updatedAt },
     ]);
@@ -190,7 +192,11 @@ describe("administrator offer repository", () => {
     mockedSupabase.from.mockReturnValue(query);
 
     await expect(
-      createOffer({ ...completeInput, title: `  ${completeInput.title}  ` }),
+      createOffer({
+        ...completeInput,
+        title: `  ${completeInput.title}  `,
+        showLastPlacesBadge: true,
+      }),
     ).resolves.toMatchObject({
       id: offerId,
       title: completeInput.title,
@@ -198,7 +204,11 @@ describe("administrator offer repository", () => {
       heroImagePath: heroPath,
     });
     expect(query.insert).toHaveBeenCalledWith(
-      expect.objectContaining({ title: completeInput.title, status: "draft" }),
+      expect.objectContaining({
+        title: completeInput.title,
+        status: "draft",
+        show_last_places_badge: true,
+      }),
     );
   });
 
@@ -220,6 +230,7 @@ describe("administrator offer repository", () => {
       id: offerId,
       slug: completeInput.slug,
       status: "draft",
+      showLastPlacesBadge: false,
     });
     expect(query.eq).toHaveBeenCalledWith("slug", completeInput.slug);
     expect(query.eq).not.toHaveBeenCalledWith("status", "published");
@@ -241,6 +252,7 @@ describe("administrator offer repository", () => {
       slug: completeInput.slug,
       offerKind: "trip",
       title: completeInput.title,
+      showLastPlacesBadge: false,
     });
     expect(offerQuery.eq).toHaveBeenCalledWith("slug", completeInput.slug);
     expect(offerQuery.eq).toHaveBeenCalledWith("offer_kind", "trip");
@@ -251,12 +263,18 @@ describe("administrator offer repository", () => {
     const query = createMutationQuery({ data: draftRow, error: null });
     mockedSupabase.from.mockReturnValue(query);
 
-    await expect(updateOffer(offerId, completeInput)).resolves.toMatchObject({
+    await expect(
+      updateOffer(offerId, { ...completeInput, showLastPlacesBadge: true }),
+    ).resolves.toMatchObject({
       id: offerId,
       status: "draft",
     });
     expect(query.update).toHaveBeenCalledWith(
-      expect.objectContaining({ slug: completeInput.slug, description: completeInput.content }),
+      expect.objectContaining({
+        slug: completeInput.slug,
+        description: completeInput.content,
+        show_last_places_badge: true,
+      }),
     );
     expect(query.eq).toHaveBeenCalledWith("id", offerId);
   });

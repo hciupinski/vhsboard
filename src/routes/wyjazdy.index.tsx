@@ -33,7 +33,7 @@ function TripsPage() {
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
       <PublicJsonLd path="/wyjazdy" label="Wyjazdy" />
-      <main className="flex-1 bg-secondary/55 py-16 sm:py-24">
+      <main className="flex-1 bg-secondary/55 py-12 sm:py-14">
         <section className="mx-auto max-w-6xl px-5 mb-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Wyjazdy</p>
           <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">
@@ -54,10 +54,10 @@ function TripsPage() {
         </section>
         <FaqSection headingId="trip-faq-heading" items={tripFaqItems} />
         <section
-          className="border-t border-border bg-secondary/55"
+          className="border-t border-border bg-secondary/55 py-12 sm:py-14"
           aria-labelledby="trips-video-heading"
         >
-          <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl px-5">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               VHSBOARD w ruchu
             </p>

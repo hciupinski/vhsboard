@@ -57,7 +57,7 @@ function EventsPage() {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-center">
+        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:py-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-center">
           <div>
             <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               Strefa Skate
@@ -79,7 +79,7 @@ function EventsPage() {
           />
         </section>
 
-        <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+        <section className="mx-auto max-w-6xl px-5 py-12 sm:py-14">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
             Dopasowany do okazji
           </p>
@@ -103,7 +103,7 @@ function EventsPage() {
           />
         </section>
 
-        <section className="bg-secondary/55 py-16 sm:py-24">
+        <section className="bg-secondary/55 py-12 sm:py-14">
           <div className="mx-auto grid max-w-6xl gap-10 px-5 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -127,7 +127,7 @@ function EventsPage() {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-center">
+        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:py-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-center">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               Dłuższa chwila na ruch
@@ -148,7 +148,7 @@ function EventsPage() {
           />
         </section>
 
-        <section className="bg-foreground py-16 text-background sm:py-24">
+        <section className="bg-foreground py-12 text-background sm:py-14">
           <div className="mx-auto grid max-w-6xl gap-10 px-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-center">
             <div className="max-w-3xl">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -174,7 +174,7 @@ function EventsPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+        <section className="mx-auto max-w-6xl px-5 py-12 sm:py-14">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Galeria</p>
           <h2 className="mt-3 text-4xl leading-[0.95] sm:text-6xl">Zobacz nas w akcji</h2>
           <div className="mt-10 grid gap-5 md:grid-cols-2">

@@ -78,6 +78,7 @@ type PublicOfferBase = {
   priceFrom: number;
   currency: "PLN";
   bookingUrl: string;
+  showLastPlacesBadge: boolean;
   heroImageUrl: string | null;
   images: OfferImage[];
   accommodationImages: OfferImage[];

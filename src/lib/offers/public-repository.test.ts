@@ -35,6 +35,7 @@ const listRow = {
   currency: "PLN",
   booking_url: "https://zapisy.example/atlantic-surf-week",
   hero_image: heroPath,
+  show_last_places_badge: false,
   status: "published",
 };
 
@@ -115,11 +116,13 @@ describe("public offer repository", () => {
 
     expect(offerQuery.select).toHaveBeenCalledOnce();
     expect(selectedColumns?.split(",")).not.toContain("description");
+    expect(selectedColumns?.split(",")).toContain("show_last_places_badge");
     expect(offerQuery.eq).toHaveBeenCalledWith("status", "published");
     expect(offerQuery.eq).toHaveBeenCalledWith("offer_kind", "trip");
     expect(offers).toMatchObject([
       {
         slug: "atlantic-surf-week",
+        showLastPlacesBadge: false,
         heroImageUrl: "https://signed.example/image.jpg",
         images: [],
       },

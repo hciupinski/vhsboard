@@ -29,6 +29,7 @@ const trip: TripOffer = {
   priceFrom: 3100,
   currency: "PLN",
   bookingUrl: "https://example.test/zapisy",
+  showLastPlacesBadge: false,
   heroImageUrl: null,
   images: [],
   accommodationImages: [],
@@ -52,6 +53,7 @@ const camp: DayCampOffer = {
   priceFrom: 1200,
   currency: "PLN",
   bookingUrl: "https://example.test/zapisy",
+  showLastPlacesBadge: false,
   heroImageUrl: null,
   images: [],
   accommodationImages: [],
@@ -116,5 +118,58 @@ describe("HomeOfferCard", () => {
       "href",
       "/obozy/wakeboardowe-lato",
     );
+  });
+
+  it("shows last places on an upcoming home card while preserving its detail route", async () => {
+    const { container } = await renderCard({
+      ...camp,
+      heroImageUrl: "https://signed.example/camp.jpg",
+      showLastPlacesBadge: true,
+    });
+
+    expect(screen.getByText("Ostatnie miejsca")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /ostatnie miejsca/i })).toHaveAttribute(
+      "href",
+      "/obozy/wakeboardowe-lato",
+    );
+    expect(container.querySelector("img")).not.toHaveClass("grayscale");
+  });
+
+  it("keeps wrapping status tags and a long title in one expanding card flow", async () => {
+    const title = "Surf i snowboard podczas długiego tygodnia przygód";
+    const { container } = await renderCard({
+      ...trip,
+      activity: "combo",
+      title,
+      showLastPlacesBadge: true,
+    });
+
+    const card = container.querySelector("article");
+    const tags = screen.getByText("Ostatnie miejsca").parentElement;
+    const details = screen.getByRole("heading", { name: title }).parentElement;
+
+    expect(card).toHaveClass("flex", "min-h-[26rem]");
+    expect(screen.getByText("Surf + snowboard")).toBeInTheDocument();
+    expect(tags).toHaveClass("flex", "flex-wrap");
+    expect(tags).not.toHaveClass("absolute");
+    expect(details).toHaveClass("mt-auto");
+    expect(details).not.toHaveClass("absolute");
+    expect(tags?.parentElement).toBe(details?.parentElement);
+  });
+
+  it("shows a finished home card without a detail link or last places tag", async () => {
+    const { container } = await renderCard({
+      ...trip,
+      startDate: "2000-06-12",
+      endDate: "2000-06-18",
+      heroImageUrl: "https://signed.example/trip.jpg",
+      showLastPlacesBadge: true,
+    });
+
+    expect(screen.getByText("Zakończone")).toBeInTheDocument();
+    expect(container.querySelector("img")).toHaveClass("grayscale");
+    expect(screen.queryByText("Ostatnie miejsca")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sprawdź szczegóły")).not.toBeInTheDocument();
   });
 });

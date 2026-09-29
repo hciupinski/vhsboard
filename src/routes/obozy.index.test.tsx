@@ -64,6 +64,7 @@ const publishedCamp: DayCampOffer = {
   priceFrom: 1200,
   currency: "PLN",
   bookingUrl: "https://zapisy.example.test/wake-lato",
+  showLastPlacesBadge: false,
   heroImageUrl: null,
   images: [],
   accommodationImages: [],

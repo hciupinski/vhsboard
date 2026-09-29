@@ -10,7 +10,7 @@ import { OfferRepositoryError } from "./public-repository";
 import type { OfferKind, OfferStatus, PublicOffer } from "./types";
 
 const ADMIN_COLUMNS =
-  "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,hero_image,status";
+  "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,show_last_places_badge,hero_image,status";
 const ADMIN_LIST_COLUMNS = `${ADMIN_COLUMNS},updated_at`;
 const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,category,position";
 const OFFER_IMAGES_BUCKET = "offer-images";
@@ -93,6 +93,7 @@ const toEditableOfferInput = (row: Record<string, unknown>): EditableOfferInput 
     priceFrom: row.price_from,
     currency: row.currency,
     bookingUrl: row.booking_url,
+    showLastPlacesBadge: row["show_last_places_badge"],
     heroImagePath: row.hero_image,
   });
 
@@ -138,6 +139,7 @@ const toOfferRow = (input: EditableOfferInput) => ({
   price_from: input.priceFrom,
   currency: input.currency,
   booking_url: input.bookingUrl,
+  show_last_places_badge: input.showLastPlacesBadge,
   hero_image: input.heroImagePath,
 });
 

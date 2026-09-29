@@ -27,6 +27,7 @@ const completeOfferRow = {
   price_from: 3100,
   currency: "PLN",
   booking_url: "https://zapisy.example/atlantic-surf-week",
+  show_last_places_badge: false,
   hero_image: "offers/a0f8e810-1df3-42d9-90df-2a1a69ad9a2c/hero.jpg",
   status: "published",
 };
@@ -120,6 +121,7 @@ describe("offer row mappers", () => {
       priceFrom: 3100,
       currency: "PLN",
       bookingUrl: "https://zapisy.example/atlantic-surf-week",
+      showLastPlacesBadge: false,
       heroImageUrl: "https://signed.example/hero.jpg",
       accommodationImages: [],
       images: [

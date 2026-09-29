@@ -92,6 +92,7 @@ const completeInput: EditableOfferInput = {
   priceFrom: 3100,
   currency: "PLN",
   bookingUrl: "https://zapisy.example/atlantic-surf-week",
+  showLastPlacesBadge: false,
   heroImagePath: null,
 };
 
@@ -144,6 +145,7 @@ const dayCampInput: EditableOfferInput = {
   priceFrom: 1450,
   currency: "PLN",
   bookingUrl: "https://zapisy.example.test/wakeboardowe-lato",
+  showLastPlacesBadge: false,
   heroImagePath: null,
 };
 const dayCampDraftOffer: EditableOffer = {

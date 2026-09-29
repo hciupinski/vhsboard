@@ -31,6 +31,7 @@ const dayCamp: DayCampOffer = {
   priceFrom: 1450,
   currency: "PLN",
   bookingUrl: "https://zapisy.example/wakeboard-2026",
+  showLastPlacesBadge: false,
   heroImageUrl: null,
   images: [],
   accommodationImages: [],

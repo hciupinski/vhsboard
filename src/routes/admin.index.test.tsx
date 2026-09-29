@@ -60,6 +60,7 @@ const offer: AdminOfferListItem = {
   priceFrom: 3100,
   currency: "PLN",
   bookingUrl: "https://zapisy.example/atlantic-surf-week",
+  showLastPlacesBadge: false,
   heroImagePath: "offers/atlantic-surf-week/hero.jpg",
   status: "draft",
   updatedAt: "2026-08-17T08:30:00.000Z",

@@ -110,7 +110,7 @@ function DayCampDetail() {
           </div>
         </section>
         <TripSectionNavigation key={offer.slug} sections={sections} ariaLabel="Sekcje obozu" />
-        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.6fr_1fr]">
+        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-12 sm:py-14 lg:grid-cols-[1.6fr_1fr]">
           <div className="min-w-0">
             {content.paragraphs.length > 0 || content.venueDescription ? (
               <section id={about.id} tabIndex={-1} aria-labelledby="about-day-camp-title">
@@ -338,7 +338,7 @@ function DayCampDetail() {
           <section
             id={accommodation.id}
             tabIndex={-1}
-            className="border-t border-border py-16 sm:py-20"
+            className="border-t border-border py-12 sm:py-14"
           >
             <div className="mx-auto max-w-6xl px-5">
               <h2 className="text-3xl sm:text-4xl">{accommodation.label}</h2>
@@ -355,7 +355,7 @@ function DayCampDetail() {
           <OfferGallery id={gallery.id} images={offer.images} title={gallery.label} />
         ) : null}
         <DeferredYouTubeEmbed
-          className="mx-auto max-w-6xl px-5 py-16 sm:py-20"
+          className="mx-auto max-w-6xl px-5 py-12 sm:py-14"
           title="Obozy VHSBOARD"
           videoId="wff_iv8QJ4c"
         />

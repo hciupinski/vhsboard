@@ -33,6 +33,7 @@ const publishedDayCamp: DayCampOffer = {
   priceFrom: 1450,
   currency: "PLN",
   bookingUrl: "https://zapisy.example.test/wakeboardowe-lato",
+  showLastPlacesBadge: false,
   heroImageUrl: null,
   images: [
     {

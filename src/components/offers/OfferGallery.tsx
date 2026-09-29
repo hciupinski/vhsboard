@@ -94,7 +94,7 @@ export function OfferGallery({
     <section
       id={id}
       tabIndex={id ? -1 : undefined}
-      className="bg-secondary/60 py-6 sm:pb-10"
+      className="bg-secondary/60 py-12 sm:py-14"
       aria-labelledby={`${id ?? "offer"}-gallery-title`}
     >
       {gallery}

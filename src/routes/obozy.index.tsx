@@ -59,7 +59,7 @@ function HalfDayCampsPage() {
           </div>
         </section>
         <section
-          className="mx-auto max-w-6xl px-5 py-16 sm:py-24"
+          className="mx-auto max-w-6xl px-5 py-12 sm:py-14"
           aria-labelledby="program-heading"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -105,7 +105,7 @@ function HalfDayCampsPage() {
             </article>
           </div>
         </section>
-        <section className="bg-secondary/55 py-8 sm:py-10" aria-labelledby="current-camps-heading">
+        <section className="bg-secondary/55 py-12 sm:py-14" aria-labelledby="current-camps-heading">
           <div className="mx-auto max-w-6xl px-5">
             <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
               NAJBLIŻSZE TERMINY

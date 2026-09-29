@@ -112,6 +112,7 @@ const mapOffer = (
     priceFrom: row.price_from,
     currency: row.currency,
     bookingUrl: row.booking_url,
+    showLastPlacesBadge: row.show_last_places_badge,
     heroImageUrl: toSignedUrlOrNull(row.hero_image, signedUrls),
     images: images.filter((image) => image.category === "gallery"),
     accommodationImages: images.filter((image) => image.category === "accommodation"),
