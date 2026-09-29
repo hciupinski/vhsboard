@@ -8,9 +8,11 @@ import {
 } from "@tanstack/react-router";
 import { afterEach, describe, expect, it } from "vitest";
 
+import type { DayCampOffer } from "@/lib/offers/types";
+
 import { DayCampCard } from "./DayCampCard";
 
-const offer = {
+const offer: DayCampOffer = {
   id: "a0f8e810-1df3-42d9-90df-2a1a69ad9a2c",
   offerKind: "day_camp" as const,
   slug: "wake-lato-2026",
@@ -51,7 +53,7 @@ const offer = {
   accommodationImages: [],
 };
 
-const renderCard = async (cardOffer: typeof offer) => {
+const renderCard = async (cardOffer: DayCampOffer) => {
   const root = createRootRoute();
   const route = createRoute({
     getParentRoute: () => root,
