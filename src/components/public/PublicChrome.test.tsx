@@ -5,7 +5,7 @@ import {
   createRouter,
   RouterProvider,
 } from "@tanstack/react-router";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -69,7 +69,7 @@ describe("public navigation", () => {
 
     expect(within(header).getByRole("img", { name: "Logo VHSBOARD" })).toHaveAttribute(
       "width",
-      "60",
+      "48",
     );
     expect(screen.getByRole("link", { name: "Wyjazdy" })).toHaveClass("uppercase", "font-bold");
   });
@@ -96,6 +96,26 @@ describe("public navigation", () => {
       "uppercase",
       "font-bold",
     );
+  });
+
+  it("restores trigger focus after Escape and closes after navigation", async () => {
+    const user = userEvent.setup();
+    await renderPublicChrome("/");
+    const trigger = screen.getByRole("button", { name: "Otwórz menu" });
+    await user.click(trigger);
+    expect(screen.getByRole("dialog", { name: "Menu główne" })).toBeInTheDocument();
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await user.click(trigger);
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Menu główne" })).getByRole("link", {
+        name: "Kontakt",
+      }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: "Menu główne" })).not.toBeInTheDocument(),
+    );
+    expect(screen.getByRole("link", { name: "Kontakt" })).toHaveAttribute("aria-current", "page");
   });
 
   it("places social links at the bottom-right of the mobile menu", async () => {
