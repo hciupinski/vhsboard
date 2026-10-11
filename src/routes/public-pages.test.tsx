@@ -256,7 +256,7 @@ describe("static public pages", () => {
     const entryPoints = [
       {
         href: "/wyjazdy",
-        imageAlt: "Uczestnicy wyjazdu VHSBOARD z deskami surfingowymi na plaży",
+        imageAlt: "Uczestnicy wyjazdu snowboardowego VHSBOARD w zaśnieżonych górach",
       },
       {
         href: "/eventy",
@@ -264,8 +264,7 @@ describe("static public pages", () => {
       },
       {
         href: "/obozy",
-        imageAlt:
-          "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+        imageAlt: "Dziecko na snowboardzie podczas zimowego obozu VHSBOARD",
       },
     ];
 
@@ -280,7 +279,7 @@ describe("static public pages", () => {
     ).toHaveAttribute("loading", "lazy");
     expect(
       screen.getByRole("img", {
-        name: "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+        name: "Dziecko na snowboardzie podczas zimowego obozu VHSBOARD",
       }),
     ).toHaveAttribute("loading", "lazy");
   });

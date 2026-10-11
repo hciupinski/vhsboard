@@ -40,16 +40,14 @@ const entryPoints = [
   {
     to: "/wyjazdy",
     title: "Wyjazdy",
-    eyebrow: "01 / W podróż",
     text: "Surf, snowboard i dobra ekipa — wyjazdy, do których chce się wracać.",
     action: "Zobacz wyjazdy",
     image: trips,
-    imageAlt: "Uczestnicy wyjazdu VHSBOARD z deskami surfingowymi na plaży",
+    imageAlt: "Uczestnicy wyjazdu snowboardowego VHSBOARD w zaśnieżonych górach",
   },
   {
     to: "/eventy",
     title: "Eventy",
-    eyebrow: "02 / Ruch",
     text: "Sport, energia i aktywności, które przyciągają ludzi i rozkręcają wydarzenia.",
     action: "Sprawdź eventy",
     image: eventy,
@@ -58,12 +56,10 @@ const entryPoints = [
   {
     to: "/obozy",
     title: "Obozy",
-    eyebrow: "03 / Dla młodych",
     text: "Wakacje po naszemu? Aktywne dni pełne sportu, zabawy i nowych doświadczeń.",
     action: "Poznaj obozy",
     image: obozy,
-    imageAlt:
-      "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+    imageAlt: "Dziecko na snowboardzie podczas zimowego obozu VHSBOARD",
   },
 ] as const;
 
@@ -134,7 +130,7 @@ function HomePage() {
             data-testid="topic-selector"
             className="topic-selector mt-8 overflow-hidden bg-background sm:mt-10"
           >
-            {entryPoints.map(({ to, title, eyebrow, text, action, image, imageAlt }, index) => (
+            {entryPoints.map(({ to, title, text, action, image, imageAlt }, index) => (
               <Link
                 key={to}
                 to={to}
@@ -151,10 +147,7 @@ function HomePage() {
                 <div
                   className={`topic-selector__content topic-selector__content--contrast topic-selector__content--flush-left topic-selector__content--safe-text-inset topic-selector__content--${index + 1}`}
                 >
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
-                    {eyebrow}
-                  </p>
-                  <h3 className="mt-3 text-4xl leading-[0.9] sm:text-5xl">{title}</h3>
+                  <h3 className="text-4xl leading-[0.9] sm:text-5xl">{title}</h3>
                   <div className="topic-selector__details">
                     <p className="mt-3 text-sm leading-relaxed text-background/85 sm:text-base">
                       {text}
