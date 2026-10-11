@@ -134,6 +134,19 @@ describe("offer image repository upload", () => {
     expect(mockedSupabase.storage.from).not.toHaveBeenCalled();
     expect(mockedSupabase.from).not.toHaveBeenCalled();
   });
+  it("accepts a jpg photograph and persists its optimized WebP", async () => {
+    mockedSupabase.from.mockReturnValue(createInsertQuery({ data: imageRow, error: null }));
+    const file = new File(["jpeg-data"], "aparat.jpg", { type: "image/jpeg" });
+
+    const image = await uploadOfferImage(offerId, file, validAlt, 0);
+
+    expect(image.path).toBe(`offers/${offerId}/${uploadId}.webp`);
+    expect(storageUpload).toHaveBeenCalledWith(image.path, expect.any(Blob), {
+      contentType: "image/webp",
+      upsert: false,
+    });
+    expect(await storageUpload.mock.calls[0]?.[1].text()).toBe("optimized");
+  });
   it("persists accommodation as a separate image category", async () => {
     const accommodationRow = { ...imageRow, category: "accommodation" };
     const insertQuery = createInsertQuery({ data: accommodationRow, error: null });

@@ -122,7 +122,8 @@ wyświetlenia PDF w nowej karcie — nie używa `getPublicUrl`.
 
 ## Przygotowanie nowych zdjęć i diagnostyka CMS
 
-Przeglądarka waliduje plik wejściowy (JPEG/PNG/WebP, do 8 MiB), a następnie
+Przeglądarka waliduje plik wejściowy (JPEG z `.jpg` lub `.jpeg`, PNG/WebP,
+do 8 MiB), a następnie
 przed uploadem poprawnie orientuje obraz, zmniejsza najdłuższą krawędź do
 1920 px i zapisuje WebP do 2 MiB. Nie powiększa małych zdjęć. Brak dekodera,
 kodera WebP lub zbyt duży wynik kończy operację czytelnym błędem przed zapisem
