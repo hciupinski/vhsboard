@@ -9,14 +9,23 @@ import { isBuildOnly } from "./scripts/build-mode";
 
 const staticPublicPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
 const spaShellMaskPath = "/spa-shell";
+const adminShellMaskPath = "/admin-shell";
 
 export default defineConfig(async ({ mode }) => {
   const environment = loadEnv(mode, process.cwd(), "");
   const buildOnly = isBuildOnly(environment);
   const allowedPaths = new Set(
-    buildOnly ? staticPublicPaths : [...staticPublicPaths, spaShellMaskPath],
+    buildOnly ? staticPublicPaths : [...staticPublicPaths, spaShellMaskPath, adminShellMaskPath],
   );
-  const prerenderPages = buildOnly ? [] : staticPublicPaths.map((path) => ({ path }));
+  const prerenderPages = buildOnly
+    ? []
+    : [
+        ...staticPublicPaths.map((path) => ({ path })),
+        {
+          path: adminShellMaskPath,
+          prerender: { outputPath: "/_shell/admin", autoSubfolderIndex: false, crawlLinks: false },
+        },
+      ];
 
   return {
     plugins: [

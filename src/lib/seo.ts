@@ -2,6 +2,9 @@ import { getSeoConfig } from "./env";
 
 export { getSeoConfig } from "./env";
 
+export const getRobotsContent = (indexable = true): "index, follow" | "noindex, nofollow" =>
+  getSeoConfig().indexing && indexable ? "index, follow" : "noindex, nofollow";
+
 type PageMetadataInput = {
   path: string;
   title: string;
@@ -45,7 +48,7 @@ export const createPageMetadata = ({
   ogType = "website",
 }: PageMetadataInput) => {
   const canonical = canonicalUrl(path);
-  const robots = getSeoConfig().indexing && indexable ? "index, follow" : "noindex, nofollow";
+  const robots = getRobotsContent(indexable);
 
   return {
     meta: [

@@ -20,14 +20,17 @@ const html = (path: string, body = "Pełna treść strony.") => `<!doctype html>
   <link rel="canonical" href="${siteUrl}${path}">
 </head><body>${body}</body></html>`;
 
-const createOutput = async () => {
+const createOutput = async (indexing = false) => {
   const outputDirectory = await mkdtemp(join(tmpdir(), "vhsboard-seo-check-"));
   directories.push(outputDirectory);
   const paths = staticPaths;
   for (const path of paths) {
     const file = outputFile(outputDirectory, path);
     await mkdir(join(file, ".."), { recursive: true });
-    await writeFile(file, html(path));
+    await writeFile(
+      file,
+      html(path).replace("noindex, nofollow", indexing ? "index, follow" : "noindex, nofollow"),
+    );
   }
   await writeFile(
     join(outputDirectory, "sitemap.xml"),
@@ -40,11 +43,15 @@ const createOutput = async () => {
   await mkdir(join(outputDirectory, "_shell"), { recursive: true });
   await writeFile(
     join(outputDirectory, "_shell", "app.html"),
-    '<!doctype html><html lang="pl"></html>',
+    `<!doctype html><html lang="pl"><head><meta name="robots" content="${indexing ? "index, follow" : "noindex, nofollow"}"></head></html>`,
+  );
+  await writeFile(
+    join(outputDirectory, "_shell", "admin.html"),
+    '<html lang="pl"><head><meta name="robots" content="noindex, nofollow"></head></html>',
   );
   await writeFile(
     join(outputDirectory, "_redirects"),
-    "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/obozy/:slug /_shell/app 200\n/admin /_shell/app 200\n/admin/* /_shell/app 200\n",
+    "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/obozy/:slug /_shell/app 200\n/admin /_shell/admin 200\n/admin/* /_shell/admin 200\n",
   );
   return outputDirectory;
 };
@@ -54,6 +61,31 @@ afterEach(async () => {
 });
 
 describe("checkSeoBuild", () => {
+  it.each([true, false])("checks the public shell against indexing=%s", async (indexing) => {
+    const outputDirectory = await createOutput(indexing);
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing })).resolves.toBeUndefined();
+    await writeFile(
+      join(outputDirectory, "_shell", "app.html"),
+      '<html lang="pl"><meta name="robots" content="unexpected"></html>',
+    );
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing })).rejects.toThrow();
+  });
+  it("rejects an indexable or missing admin shell", async () => {
+    const outputDirectory = await createOutput();
+    const file = join(outputDirectory, "_shell", "admin.html");
+    await writeFile(file, '<html lang="pl"><meta name="robots" content="index, follow"></html>');
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow();
+    await rm(file);
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow();
+  });
+  it("rejects admin rewrites to the public shell", async () => {
+    const outputDirectory = await createOutput();
+    await writeFile(
+      join(outputDirectory, "_redirects"),
+      "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/obozy/:slug /_shell/app 200\n/admin /_shell/app 200\n/admin/* /_shell/app 200\n",
+    );
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow();
+  });
   it("accepts Pages output with a dedicated SPA shell for dynamic routes", async () => {
     const outputDirectory = await createOutput();
 

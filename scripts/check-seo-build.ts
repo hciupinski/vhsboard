@@ -121,13 +121,29 @@ export const checkSeoBuild = async ({
   const sitemapPath = join(outputDirectory, "sitemap.xml");
   const robotsPath = join(outputDirectory, "robots.txt");
   const shellPath = join(outputDirectory, "_shell", "app.html");
+  const adminShellPath = join(outputDirectory, "_shell", "admin.html");
   const redirectsPath = join(outputDirectory, "_redirects");
   await Promise.all([
     ensureFile(sitemapPath, "sitemapy"),
     ensureFile(robotsPath, "robots.txt"),
     ensureFile(shellPath, "shella SPA"),
+    ensureFile(adminShellPath, "shella administratora"),
     ensureFile(redirectsPath, "przekierowań"),
   ]);
+  for (const [filename, expected] of [
+    [shellPath, expectedRobots],
+    [adminShellPath, "noindex, nofollow"],
+  ] as const) {
+    const html = await readFile(filename, "utf8");
+    const content = extractSingle(
+      html,
+      /<meta\b[^>]*\bname=["']robots["'][^>]*\bcontent=["']([^"']+)["'][^>]*>/gi,
+      "robots",
+      filename,
+    );
+    if (content !== expected || signedUrlPattern.test(html))
+      throw new Error(`${filename}: nieprawidłowy robots lub podpisany URL.`);
+  }
   const [sitemap, robots] = await Promise.all([
     readFile(sitemapPath, "utf8"),
     readFile(robotsPath, "utf8"),
@@ -150,8 +166,8 @@ export const checkSeoBuild = async ({
   const dynamicRouteRewrites = [
     "/wyjazdy/:slug /_shell/app 200",
     "/obozy/:slug /_shell/app 200",
-    "/admin /_shell/app 200",
-    "/admin/* /_shell/app 200",
+    "/admin /_shell/admin 200",
+    "/admin/* /_shell/admin 200",
   ];
   if (dynamicRouteRewrites.some((rewrite) => !redirects.includes(rewrite))) {
     throw new Error("Przekierowania nie kierują dynamicznych adresów do shella SPA.");
