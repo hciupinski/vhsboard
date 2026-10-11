@@ -2,181 +2,96 @@
 
 ## Product boundary
 
-VHSBOARD is a public marketing site for company information, destinations, and
-small-group surf and snowboard offers. A small internal CMS lets a handful of
-administrators maintain offers, images, and selected site content.
-
-VHSBOARD is not a reservation system. The authoritative booking flow remains
-in an external booking system. Every published offer must include a booking URL and a CTA
-that leaves VHSBOARD for the appropriate registration flow. Do not add payments,
-availability, bookings, participant data, or public user accounts here.
+VHSBOARD is a Polish marketing site for surfing and snowboarding trips, events,
+and children's sports camps. The small administrator CMS manages offers, offer
+photographs, contact PDFs, and the homepage carousel. Every published offer
+links to an external TripAhead booking flow. Reservations, payments,
+availability, participant management, and public accounts are outside this app.
 
 ## Current implementation
 
-The current repository is a frontend prototype, not yet the production CMS:
-
-- React, TypeScript, Vite, TanStack Router/Start/Query, Tailwind CSS, and Radix
-  UI form the existing application stack.
-- Static example offers and their gallery data are defined in
-  `src/lib/trips.ts`.
-- The public home page is `/`; offer detail pages use `/trips/:slug`.
-- `/admin` and `/admin/:slug` provide a visual CMS prototype.
-- `src/lib/adminStore.ts` reads and writes drafts in browser `localStorage`.
-  It has no authentication, database, Row Level Security (RLS), upload
-  pipeline, or production authorization. It must not become the production data
-  layer.
-- `src/start.ts` supplies application error handling and CSRF protection for
-  TanStack Start server functions. The intended public marketing pages should
-  remain static and should not depend on server-side work without a concrete
-  need.
-
-## Target production architecture
+React 19, TypeScript, Vite, TanStack Router/Start/Query, Tailwind CSS 4, and Radix
+UI form one frontend. Cloudflare Pages serves the static `.output/public`
+artifact; there is no production application server or Cloudflare Worker.
+Supabase provides PostgreSQL, Auth, private Storage, and RLS. Browser code uses
+only the public project URL and anon key.
 
 ```text
-Git repository
-      │ CI/CD deployment
-      ▼
-Cloudflare static hosting, CDN, TLS, custom domain, cache
-      │
-      ├── Public marketing site
-      └── Admin panel ──► Supabase
-                            ├── PostgreSQL database
-                            ├── Auth
-                            └── Storage
+Git → GitHub Actions → Cloudflare Pages (static HTML, JS, CSS, photographs, fonts)
+                                │ browser queries and CMS mutations
+                                ▼
+                         Supabase Auth / PostgreSQL / Storage + RLS
 ```
 
-The public site and admin panel remain one frontend project unless their
-separation provides a clear, measured benefit. Cloudflare is responsible for
-hosting, CDN delivery, TLS, domain handling, caching, and deployment from the
-Git repository. Prefer static delivery and do not assume Cloudflare Workers,
-KV, D1, R2, Queues, Durable Objects, or paid services are required.
+Marketing HTML is prerendered at build time. Offer lists and details are queried
+from Supabase in the browser. Publishing or editing an offer requires no rebuild;
+a newly opened page fetches the current data. This is not a push subscription
+for visitors who already have the page open. Code, local photography, fonts,
+social previews, and build-time company configuration require a new Git deploy.
 
-Supabase is the backend platform. It provides PostgreSQL, Auth, Storage, direct
-data access where securely appropriate, and Row Level Security. Do not add a
-separate application backend merely to proxy straightforward CMS data access.
+## Routes and delivery
 
-## Routes
+| Route                                                      | Purpose                                              |
+| ---------------------------------------------------------- | ---------------------------------------------------- |
+| `/`, `/o-nas`, `/wyjazdy`, `/eventy`, `/obozy`, `/kontakt` | Six prerendered marketing pages.                     |
+| `/wyjazdy/:slug`, `/obozy/:slug`                           | JS offer details, served through `/_shell/app.html`. |
+| `/trips/:slug`                                             | Legacy 301 redirect to `/wyjazdy/:slug`.             |
+| `/admin`                                                   | Authorized offer list.                               |
+| `/admin/login`                                             | Administrator sign-in.                               |
+| `/admin/new`, `/admin/:slug`                               | Create or edit an offer by slug.                     |
+| `/admin/dokumenty`, `/admin/portal`                        | Contact PDF and carousel management.                 |
 
-The current prototype routes are `/` and `/trips/:slug`, with `/admin` and
-`/admin/:slug` for the unauthenticated admin prototype. The intended public
-information architecture is:
+Cloudflare rewrites in [`public/_redirects`](../public/_redirects) send admin
+routes to a separate `/_shell/admin.html`. It always has `noindex, nofollow`.
+The public shell follows `VITE_SEO_INDEXING`; previews, missing offers, and
+errors have their own noindex metadata in the browser. The internal render
+targets `/spa-shell` and `/admin-shell` are build machinery, not public navigation.
+Only the six marketing pages enter the sitemap. See the [SEO runbook](seo-runbook.md).
 
-- `/`
-- `/o-nas`
-- `/oferty`
-- `/oferty/:slug`
-- `/kontakt`
+## Data and authorization
 
-Treat the target route names as an SEO and navigation migration, not a casual
-rename. Preserve redirects and public links when moving from `/trips/:slug` to
-`/oferty/:slug`.
+- `offers` contains `trip` and `day_camp` offers, slugs, structured JSONB copy,
+  dates, prices, an external booking URL, image references, and
+  `draft` / `published` / `archived` status. Public repository queries explicitly
+  filter published content; database RLS also enforces that boundary.
+- `offer_images` stores object paths, Polish alternative text, and gallery order.
+  Publishing requires a hero record belonging to the offer with a valid alt.
+  Gallery reordering uses the transactional `reorder_offer_images` RPC.
+- `contact_documents` stores public PDF metadata. `portal_carousel_images`
+  stores selected local asset paths and order; it does not upload carousel files.
+- `profiles.role = 'admin'` is manually granted to approved Auth users. Login alone
+  does not authorize editing. Route checks improve UX; database and Storage RLS
+  protect every mutation. Public and administrator repositories and query keys
+  remain separate, including authenticated preview queries.
 
-## Domain model
+Implementation modules live under `src/lib/offers`, `src/lib/images`,
+`src/lib/documents`, `src/lib/portal-carousel`, and `src/lib/auth`. Schema changes
+live in `supabase/migrations`; security tests live in `supabase/tests`.
+The [Supabase runbook](supabase-runbook.md) describes local database checks and roles.
 
-Keep the schema small and pragmatic. Names below describe the intended model,
-not a mandatory migration that overrides an already better implementation.
+## Media
 
-### `offers`
+Offer photographs use the private `offer-images` bucket. New uploads validate
+MIME, extension, input size, and alt text, then preserve orientation, resize the
+longest edge to at most 1920 px without enlarging, and encode WebP up to 2 MiB.
+Unique paths remain scoped to the offer; existing objects are not recompressed.
+Contact PDFs use the private `contact-documents` bucket. Authorized reads create
+signed URLs lasting one hour. Do not persist these temporary URLs in the database,
+static HTML, sitemap, social metadata, logs, or source control. A signed URL
+already issued remains usable until expiry even if publication status changes.
 
-| Field                                      | Purpose                                               |
-| ------------------------------------------ | ----------------------------------------------------- |
-| `id`                                       | Stable primary key.                                   |
-| `slug`                                     | Unique, human-readable public identifier.             |
-| `title`, `subtitle`                        | Offer headings.                                       |
-| `short_description`, `description`         | Listing and detail-page copy.                         |
-| `location`                                 | Destination label.                                    |
-| `start_date`, `end_date`                   | Optional trip period.                                 |
-| `price_from`                               | Starting price, represented consistently for display. |
-| `booking_url`                              | External registration destination.                    |
-| `hero_image`                               | Reference to a Storage object or primary image.       |
-| `status`                                   | `draft`, `published`, or `archived`.                  |
-| `published_at`, `created_at`, `updated_at` | Lifecycle and audit timestamps.                       |
+Repository photographs have generated AVIF/WebP variants and intrinsic dimensions.
+Fontsource fonts and JPEG social previews are served locally. Generation and
+budget checks are described in the [deployment runbook](deployment-runbook.md).
 
-### `offer_images`
+## Maintenance
 
-| Field          | Purpose                                 |
-| -------------- | --------------------------------------- |
-| `id`           | Stable primary key.                     |
-| `offer_id`     | Required relation to `offers`.          |
-| `storage_path` | Path of the object in Supabase Storage. |
-| `alt_text`     | Meaningful image description.           |
-| `position`     | Deterministic gallery order.            |
-| `created_at`   | Upload timestamp.                       |
+Pull requests run the **Verify** workflow (`test`, `lint`, `typecheck`, `build`).
+The PR build skips prerendering and sitemap generation. A `main` deploy runs
+verification, forward Supabase migrations, then the full build, SEO check, and
+Pages upload. Branch protection and account configuration must be checked in
+GitHub; repository files alone do not prove they are enabled.
 
-Add a minimal administrator-role source (for example, a `profiles` record or
-approved Auth metadata) only as needed to support RLS. Do not rely solely on
-hidden admin navigation or a successful login.
-
-## Authentication and authorization
-
-Public visitors have no accounts. Supabase Auth exists only for approximately
-one to five administrators.
-
-Enable RLS on CMS tables. The required policy outcome is:
-
-| Actor                                          | Offers                                                              | Images / Storage                             |
-| ---------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------- |
-| Public visitor                                 | `SELECT` published offers only                                      | Read published offer images only.            |
-| Authenticated administrator with approved role | `SELECT`, `INSERT`, `UPDATE`, `DELETE`; publish, unpublish, archive | Upload, update, and delete permitted images. |
-| Any other user                                 | No CMS mutation; no draft or archived data                          | No upload, modification, or deletion.        |
-
-Policies must be enforced at the database and Storage layer. Frontend state and
-route guards improve UX but are not authorization. Drafts and archived offers
-must not appear in public queries, server-rendered payloads, static generation
-inputs, search indexes, or client-side caches intended for public use.
-
-## Images and Storage
-
-Use Supabase Storage for hero and gallery images. Store object references in
-PostgreSQL; never duplicate image binaries in database rows. On upload:
-
-1. Validate accepted image MIME type and a reasonable file-size limit before
-   upload.
-2. Generate a unique, stable path scoped to the offer or upload.
-3. Require meaningful `alt_text` for images used as content.
-4. Keep public read access limited to images belonging to published offers, or
-   use signed delivery if public object access is not appropriate.
-5. Delete an obsolete object only after confirming that no retained offer image
-   record references it.
-
-Do not introduce Cloudflare R2 or another asset platform unless Supabase Storage
-has a specific, demonstrated limitation.
-
-## Client configuration and secrets
-
-The browser may receive only Supabase values intended for public clients, such
-as the project URL and public/anon key, through documented Vite environment
-variables. Never include a Supabase service-role key, a privileged database
-credential, or an administrator secret in client code, source control, build
-output, or static Cloudflare assets.
-
-Authorization belongs in Supabase Auth and RLS policies. A client-side `isAdmin`
-flag is never sufficient.
-
-## Migration sequence
-
-1. Create the Supabase project, minimal `offers` and `offer_images` schema,
-   administrator-role mechanism, RLS policies, and Storage bucket policies.
-2. Add the public Supabase environment variables to local and Cloudflare build
-   configuration; keep privileged secrets out of the frontend.
-3. Introduce a typed offer data-access module and replace static public reads
-   from `src/lib/trips.ts` with published-offer queries.
-4. Map the existing public cards and detail pages onto the persisted model,
-   including the external `booking_url` CTA.
-5. Replace `src/lib/adminStore.ts` mutations with authenticated Supabase CMS
-   operations and add explicit admin sign-in, role checks, loading, and error
-   states.
-6. Implement Storage upload/list/delete behavior and image lifecycle safeguards.
-7. Migrate route names deliberately, preserve redirects, verify SEO metadata,
-   and deploy the static frontend from the Git repository to Cloudflare.
-
-Keep each step independently deployable where possible. The public site must
-continue to show only published content throughout the migration.
-
-## Operational priorities
-
-Optimize for maintainability, correctness, predictable queries, accessibility,
-SEO, mobile devices, and fast cached loading — not hypothetical large scale.
-The CMS will create roughly 10–20 offers a year and undergo occasional content
-or visual changes. Avoid microservices, custom queues, elaborate asset DAMs,
-or other infrastructure whose operational cost exceeds the product's needs.
+Keep this architecture small. No separate backend, queues, asset platform, or
+booking feature is needed for the current product. See the
+[deployment runbook](deployment-runbook.md) for logs and operational checks.

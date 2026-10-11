@@ -4,7 +4,7 @@
 
 VHSBOARD is a Polish marketing website for small-group surfing and snowboarding
 trips, eventy z torem skimboardowym oraz obozy. It presents current
-offers and trip details, with a lightweight admin CMS prototype for managing
+offers and trip details, with a lightweight Supabase admin CMS for managing
 offer content.
 
 Bookings are handled externally through a configured registration system. VHSBOARD does not manage
@@ -34,8 +34,11 @@ bun run dev
 Useful commands:
 
 ```bash
+bun run typecheck
+bun run test
 bun run build
 bun run check:seo
+bun run images:check
 bun run lint
 bun run format
 ```
@@ -75,3 +78,8 @@ supabase test db supabase/tests
 
 Instrukcję ręcznego nadania roli administratora, zasady podpisanych URL-i i
 bezpiecznej ewolucji schematu zawiera [runbook Supabase](docs/supabase-runbook.md).
+
+Publikacja i edycja ofert, PDF-ów oraz wybór zdjęć karuzeli w CMS nie wymagają
+rebuilda. Zmiany kodu, zdjęć repozytorium, fontów i grafik OG wymagają deployu.
+Aktualne trasy i granice aplikacji opisuje [architektura](docs/architecture.md),
+a reguły mediów i interakcji — [system designu](docs/design-system.md).

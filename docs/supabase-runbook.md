@@ -60,7 +60,7 @@ offers/<offer-id>/<uuid>.<ext>
 
 Bucket odrzuca pliki większe niż 8 MiB oraz MIME inne niż `image/jpeg`,
 `image/png` i `image/webp`. Dozwolone rozszerzenia ścieżki to dokładnie
-`.jpeg`, `.png` i `.webp`. Walidacja w przeglądarce nadal przekazuje
+`.jpeg`, `.png` i `.webp`. Walidacja w przeglądarce przekazuje
 administratorowi zrozumiały błąd przed uploadem, ale granica bezpieczeństwa
 jest egzekwowana również przez Storage.
 
@@ -119,3 +119,34 @@ zapisana w `public.contact_documents`. Administrator może tworzyć, zmieniać i
 usuwać zarówno metadane, jak i obiekty; polityki RLS nie dają tych uprawnień
 zwykłemu zalogowanemu użytkownikowi. Aplikacja generuje podpisane adresy URL do
 wyświetlenia PDF w nowej karcie — nie używa `getPublicUrl`.
+
+## Przygotowanie nowych zdjęć i diagnostyka CMS
+
+Przeglądarka waliduje plik wejściowy (JPEG/PNG/WebP, do 8 MiB), a następnie
+przed uploadem poprawnie orientuje obraz, zmniejsza najdłuższą krawędź do
+1920 px i zapisuje WebP do 2 MiB. Nie powiększa małych zdjęć. Brak dekodera,
+kodera WebP lub zbyt duży wynik kończy operację czytelnym błędem przed zapisem
+Storage. Nowe obiekty otrzymują unikalną ścieżkę `.webp`; granica bucketu
+8 MiB i istniejące obiekty pozostają bez zmian. Opis alternatywny ma 5–180
+znaków. Gdy zapis metadanych po uploadzie zawiedzie, aplikacja próbuje usunąć
+osierocony obiekt i zgłasza nieudane sprzątanie.
+
+Podpisane adresy zdjęć i PDF są ważne przez 3600 sekund. Ponowne pobranie
+zwraca nowy URL po kontroli RLS. Już wydany link może działać do wygaśnięcia
+nawet po wycofaniu oferty; nie przekazuj go jako stałego adresu zasobu.
+Publikacja i edycja treści nie wywołują deployu. Po zmianie sprawdź nowo otwartą
+stronę publiczną; podgląd administratora ma oddzielny cache i noindex.
+
+Przy błędzie uploadu sprawdź komunikat formularza, MIME/rozmiar pliku, rolę
+administratora oraz logi i polityki Storage. Przy błędzie publikacji sprawdź
+hero, alt, wymagane dane i zewnętrzny link zapisów. Nie rozwiązuj błędu przez
+upublicznienie bucketu lub użycie service-role key w przeglądarce.
+
+## Karuzela strony głównej
+
+`public.portal_carousel_images` przechowuje wybór i kolejność zdjęć z katalogu
+repozytorium. Administrator zapisuje pełną listę przez
+`set_portal_carousel_images`; publiczny użytkownik może ją odczytać, ale nie
+zmienić. CMS wybiera istniejące ścieżki — nie wysyła nowych plików karuzeli.
+Dodanie nowego zdjęcia do katalogu wymaga wygenerowania wariantów i deployu;
+zmiana wyboru istniejących zdjęć wymaga tylko zapisu w CMS.
