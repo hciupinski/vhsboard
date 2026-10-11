@@ -4,11 +4,11 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 describe("Cloudflare Pages redirects", () => {
-  it("serves dynamic details and CMS through the SPA shell", () => {
+  it("serves dynamic details and CMS through separate SPA shells", () => {
     const redirects = readFileSync(resolve(process.cwd(), "public/_redirects"), "utf8");
 
     expect(redirects.trim()).toBe(
-      "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/obozy/:slug /_shell/app 200\n/admin /_shell/app 200\n/admin/* /_shell/app 200",
+      "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/obozy/:slug /_shell/app 200\n/admin /_shell/admin 200\n/admin/* /_shell/admin 200",
     );
   });
 });
