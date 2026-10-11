@@ -14,7 +14,7 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
   const { isFinished, showLastPlacesBadge } = getOfferCardStatus(offer);
   const content = (
     <article
-      className={`relative isolate flex min-h-[26rem] min-w-0 flex-col overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-300 motion-reduce:transition-none${isFinished ? "" : " md:group-hover:-translate-y-1"}`}
+      className={`relative isolate flex min-h-[26rem] min-w-0 flex-col overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-160 ease-out motion-reduce:transition-none${isFinished ? "" : " hover-lift"}`}
     >
       <div className="absolute inset-0">
         {offer.heroImageUrl ? (
@@ -24,7 +24,7 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
             loading="lazy"
             width={1200}
             height={900}
-            className={`size-full object-cover transition-transform duration-500 motion-reduce:transition-none${isFinished ? " grayscale" : " md:group-hover:scale-105"}`}
+            className={`size-full object-cover transition-transform duration-160 ease-out motion-reduce:transition-none${isFinished ? " grayscale" : " hover-zoom"}`}
           />
         ) : (
           <div aria-hidden="true" className="size-full bg-sunset-gradient opacity-75" />
@@ -62,7 +62,7 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
           {!isFinished && (
             <span
               aria-hidden="true"
-              className="mt-5 flex w-full items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-[opacity,transform] duration-300 motion-reduce:transition-none md:pointer-events-none md:translate-y-2 md:opacity-0 md:group-focus-visible:pointer-events-auto md:group-focus-visible:translate-y-0 md:group-focus-visible:opacity-100 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100"
+              className="mt-5 flex w-full items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm offer-card-action transition-[opacity,transform] duration-160 ease-out motion-reduce:transition-none"
             >
               Sprawdź szczegóły
             </span>

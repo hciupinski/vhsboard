@@ -10,10 +10,13 @@ type EventUseCasesScrollerProps = {
 export function EventUseCasesScroller({ items }: EventUseCasesScrollerProps) {
   const listRef = useRef<HTMLUListElement>(null);
 
-  const scroll = (direction: 1 | -1) => {
+  const scroll = (direction: 1 | -1, instant: boolean) => {
     listRef.current?.scrollBy({
       left: direction * listRef.current.clientWidth * 0.8,
-      behavior: "smooth",
+      behavior:
+        instant || window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
     });
   };
 
@@ -40,7 +43,7 @@ export function EventUseCasesScroller({ items }: EventUseCasesScrollerProps) {
             size="icon"
             className="rounded-full bg-background"
             aria-label="Pokaż poprzednie zastosowania"
-            onClick={() => scroll(-1)}
+            onClick={(event) => scroll(-1, event.detail === 0)}
           >
             <ArrowLeft aria-hidden="true" />
           </Button>
@@ -49,7 +52,7 @@ export function EventUseCasesScroller({ items }: EventUseCasesScrollerProps) {
             size="icon"
             className="rounded-full"
             aria-label="Pokaż następne zastosowania"
-            onClick={() => scroll(1)}
+            onClick={(event) => scroll(1, event.detail === 0)}
           >
             <ArrowRight aria-hidden="true" />
           </Button>

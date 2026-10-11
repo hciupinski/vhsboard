@@ -225,10 +225,7 @@
     backdrop-filter: blur(0.1rem);
     text-align: end;
     transform-origin: bottom left;
-    transition:
-      inline-size 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      padding 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      background-color 250ms ease;
+    transition: background-color 160ms ease-out;
   }
 
   .topic-selector__item:focus-visible .topic-selector__content {
@@ -240,34 +237,56 @@
     max-block-size: 0;
     overflow: hidden;
     opacity: 0;
+    transform: translateY(0.25rem);
     transition:
-      max-block-size 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      opacity 180ms ease;
+      opacity 160ms ease-out,
+      transform 160ms ease-out;
   }
-
   @media (min-width: 768px) {
-    .topic-selector__item:hover .topic-selector__content,
-    .topic-selector__item:focus-visible .topic-selector__content,
-    .topic-selector__item:focus-within .topic-selector__content {
+    .topic-selector__item:is(:focus-visible, :focus-within) .topic-selector__content {
       inline-size: var(--topic-panel-expanded-width);
       padding-block: clamp(1.25rem, 1.8vw, 2rem);
       padding-inline-end: clamp(2rem, 2.5vw, 2.5rem);
       background: oklch(0.22 0.03 60 / 0.18);
     }
-
-    .topic-selector__item:hover .topic-selector__details,
-    .topic-selector__item:focus-visible .topic-selector__details,
-    .topic-selector__item:focus-within .topic-selector__details {
-      max-block-size: 12rem;
+    .topic-selector__item:is(:focus-visible, :focus-within) .topic-selector__details {
+      max-block-size: none;
       opacity: 1;
-      transition-delay: 80ms;
+      transform: none;
+      transition: none;
     }
   }
-
+  @media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+    .topic-selector__item:hover .topic-selector__content {
+      inline-size: var(--topic-panel-expanded-width);
+      padding-block: clamp(1.25rem, 1.8vw, 2rem);
+      padding-inline-end: clamp(2rem, 2.5vw, 2.5rem);
+      background: oklch(0.22 0.03 60 / 0.18);
+    }
+    .topic-selector__item:hover .topic-selector__details {
+      max-block-size: 12rem;
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (hover: none), (pointer: coarse), (max-width: 767px) {
+    .topic-selector__content {
+      inline-size: var(--topic-panel-expanded-width);
+    }
+    .topic-selector__details {
+      max-block-size: none;
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .topic-selector__content,
     .topic-selector__details {
       transition: none;
+    }
+    .topic-selector__details {
+      transform: none;
     }
   }
 
@@ -309,9 +328,65 @@
       inline-size: 100%;
       clip-path: none;
     }
-
-    .topic-selector__details {
-      display: none;
+  }
+  .offer-card-action,
+  .gallery-action {
+    opacity: 1;
+    transform: none;
+  }
+  .gallery-shade {
+    background-color: transparent;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    @media (min-width: 768px) {
+      .offer-card-action {
+        opacity: 0;
+        transform: translateY(0.5rem);
+        pointer-events: none;
+      }
+    }
+    .gallery-action {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+    .group:hover .offer-card-action,
+    .group:hover .gallery-action {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+    .group:hover .gallery-shade {
+      background-color: oklch(0.22 0.03 60 / 0.35);
+    }
+  }
+  .group:focus-visible .offer-card-action,
+  .group:focus-visible .gallery-action {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition: none;
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .group:hover .hover-lift {
+      transform: translateY(-0.25rem);
+      box-shadow: var(--shadow-warm);
+    }
+    .group:hover .hover-zoom {
+      transform: scale(1.03);
+    }
+    .group:hover .hover-nudge {
+      transform: translateX(0.25rem);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .button-press:not(:disabled):not([aria-disabled="true"]):active {
+      transform: scale(0.98);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .offer-card-action,
+    .gallery-action {
+      transform: none;
     }
   }
 }

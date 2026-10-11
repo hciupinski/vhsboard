@@ -17,17 +17,24 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
   const [api, setApi] = React.useState<CarouselApi>();
 
   React.useEffect(() => {
-    if (
-      !api ||
-      images.length < 2 ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
-    }
-
-    const timer = window.setInterval(() => api.scrollNext(), 7_000);
-
-    return () => window.clearInterval(timer);
+    if (!api || images.length < 2) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: number | undefined;
+    const synchronize = () => {
+      if (timer !== undefined) window.clearInterval(timer);
+      timer = undefined;
+      if (!motion.matches && document.visibilityState === "visible") {
+        timer = window.setInterval(() => api.scrollNext(), 7_000);
+      }
+    };
+    motion.addEventListener("change", synchronize);
+    document.addEventListener("visibilitychange", synchronize);
+    synchronize();
+    return () => {
+      if (timer !== undefined) window.clearInterval(timer);
+      motion.removeEventListener("change", synchronize);
+      document.removeEventListener("visibilitychange", synchronize);
+    };
   }, [api, images.length]);
 
   return (

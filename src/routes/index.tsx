@@ -145,7 +145,7 @@ function HomePage() {
                   image={image}
                   alt={imageAlt}
                   loading="lazy"
-                  className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-105"
+                  className="absolute inset-0 -z-20 size-full object-cover hover-zoom transition-transform duration-160 ease-out motion-reduce:transition-none"
                 />
                 <div className="absolute inset-0 -z-10 bg-gradient-to-t from-foreground/90 via-foreground/25 to-foreground/5" />
                 <div
@@ -161,7 +161,7 @@ function HomePage() {
                     </p>
                     <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
                       {action}
-                      <span className="grid size-7 mr-2 place-items-center rounded-full bg-background/15 transition duration-200 motion-reduce:transition-none group-hover:translate-x-1 group-hover:bg-primary">
+                      <span className="grid size-7 mr-2 place-items-center rounded-full bg-background/15 hover-nudge transition-[transform,background-color] duration-160 ease-out motion-reduce:transition-none">
                         <ArrowUpRight aria-hidden="true" className="size-4" />
                       </span>
                     </span>
