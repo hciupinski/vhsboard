@@ -17,7 +17,9 @@
     "test:coverage": "vitest run --coverage",
     "generate:sitemap": "bun scripts/generate-sitemap.ts",
     "check:seo": "bun scripts/check-seo-build.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "images:generate": "bun scripts/generate-image-assets.ts",
+    "images:check": "bun scripts/check-image-assets.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.8.0",
@@ -93,6 +95,7 @@
     "jsdom": "^30.0.1",
     "nitro": "3.0.260603-beta",
     "prettier": "^3.9.6",
+    "sharp": "^0.35.5",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.67.0",
     "vite": "^8.2.1",

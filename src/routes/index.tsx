@@ -1,13 +1,9 @@
+import { getLocalImage } from "@/lib/images/responsive";
+import { ResponsiveImage } from "@/components/public/ResponsiveImage";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight } from "lucide-react";
 
-import obozy from "@/assets/main/obozy-zima.jpg";
-import eventy from "@/assets/main/eventy-1.jpg";
-import heroEventy from "@/assets/carousel/eventy.jpg";
-import heroSurf from "@/assets/carousel/hero-surf.jpg";
-import heroWyjazdy from "@/assets/carousel/wyjazdy.jpg";
-import trips from "@/assets/main/wyjazdy.jpg";
 import { HomeBrandStory } from "@/components/home/HomeBrandStory";
 import { HomeContactCta } from "@/components/home/HomeContactCta";
 import { HomeUpcomingOffersSection } from "@/components/home/HomeUpcomingOffersSection";
@@ -19,6 +15,13 @@ import { Button } from "@/components/ui/button";
 import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { homeOffersQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
+
+const obozy = getLocalImage("main/obozy-zima.jpg");
+const eventy = getLocalImage("main/eventy-1.jpg");
+const heroEventy = getLocalImage("carousel/eventy.jpg");
+const heroSurf = getLocalImage("carousel/hero-surf.jpg");
+const heroWyjazdy = getLocalImage("carousel/wyjazdy.jpg");
+const trips = getLocalImage("main/wyjazdy.jpg");
 
 export const Route = createFileRoute("/")({
   head: () =>
@@ -63,9 +66,14 @@ const entryPoints = [
 ] as const;
 
 const fallbackImages = [
-  { path: "fallback/hero-surf", src: heroSurf, label: "Hero surf" },
-  { path: "fallback/eventy", src: heroEventy, label: "Hero zima" },
-  { path: "fallback/wyjazdy", src: heroWyjazdy, label: "Hero wyjazdy" },
+  { path: "fallback/hero-surf", src: heroSurf.src, responsive: heroSurf, label: "Hero surf" },
+  { path: "fallback/eventy", src: heroEventy.src, responsive: heroEventy, label: "Hero zima" },
+  {
+    path: "fallback/wyjazdy",
+    src: heroWyjazdy.src,
+    responsive: heroWyjazdy,
+    label: "Hero wyjazdy",
+  },
 ];
 
 function HomePage() {
@@ -130,8 +138,9 @@ function HomePage() {
                 to={to}
                 className={`topic-selector__item topic-selector__item--${index + 1} topic-selector__item--mobile-stack group isolate flex overflow-hidden py-8 text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:py-10`}
               >
-                <img
-                  src={image}
+                <ResponsiveImage
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  image={image}
                   alt={imageAlt}
                   loading="lazy"
                   className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-105"

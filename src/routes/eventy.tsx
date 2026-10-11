@@ -1,8 +1,7 @@
+import { getLocalImage } from "@/lib/images/responsive";
+import { ResponsiveImage } from "@/components/public/ResponsiveImage";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import skimboardingLessonImage from "@/assets/skim-laczy.jpg";
-import skimboardingShoppingCenterImage from "@/assets/strefa-letnia.jpg";
-import skimboardingTrackImage from "@/assets/skim-tor.jpg";
 import { EventPlaceholderFigure } from "@/components/events/EventPlaceholderFigure";
 import { EventUseCasesScroller } from "@/components/events/EventUseCasesScroller";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -12,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { createPageMetadata } from "@/lib/seo";
 import { eventsFaqItems } from "@/lib/faq";
 import { FaqSection } from "@/components/public/FaqSection";
+
+const skimboardingLessonImage = getLocalImage("skim-laczy.jpg");
+const skimboardingShoppingCenterImage = getLocalImage("strefa-letnia.jpg");
+const skimboardingTrackImage = getLocalImage("skim-tor.jpg");
 
 export const Route = createFileRoute("/eventy")({
   head: () =>
@@ -31,8 +34,9 @@ function EventsPage() {
       <main className="flex-1">
         <section className="relative isolate overflow-hidden bg-foreground text-background">
           <figure className="absolute inset-0 bg-foreground">
-            <img
-              src={skimboardingTrackImage}
+            <ResponsiveImage
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              image={skimboardingTrackImage}
               alt="Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu"
               className="size-full object-cover object-[65%_center] brightness-[0.45]"
             />
@@ -74,7 +78,7 @@ function EventsPage() {
             </Button>
           </div>
           <EventPlaceholderFigure
-            src={skimboardingLessonImage}
+            image={skimboardingLessonImage}
             alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
           />
         </section>
@@ -143,7 +147,7 @@ function EventsPage() {
             </p>
           </div>
           <EventPlaceholderFigure
-            src={skimboardingShoppingCenterImage}
+            image={skimboardingShoppingCenterImage}
             alt="Uczestnik ślizgający się po mobilnym torze skimboardowym podczas plenerowego eventu"
           />
         </section>
@@ -168,7 +172,7 @@ function EventsPage() {
               </Button>
             </div>
             <EventPlaceholderFigure
-              src={skimboardingTrackImage}
+              image={skimboardingTrackImage}
               alt="Dziecko uczące się skimboardingu pod opieką instruktora na mobilnym torze"
             />
           </div>
@@ -179,11 +183,11 @@ function EventsPage() {
           <h2 className="mt-3 text-4xl leading-[0.95] sm:text-6xl">Zobacz nas w akcji</h2>
           <div className="mt-10 grid gap-5 md:grid-cols-2">
             <EventPlaceholderFigure
-              src={skimboardingTrackImage}
+              image={skimboardingTrackImage}
               alt="Uczestnik korzystający z mobilnego toru skimboardowego podczas eventu"
             />
             <EventPlaceholderFigure
-              src={skimboardingLessonImage}
+              image={skimboardingLessonImage}
               alt="Dziecko uczące się skimboardingu pod opieką instruktora"
             />
           </div>

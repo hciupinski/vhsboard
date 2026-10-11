@@ -7,6 +7,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import type { PortalCarouselImage } from "@/lib/portal-carousel/types";
+import { ResponsiveImage } from "./ResponsiveImage";
 
 type HeroCarouselProps = {
   images: readonly PortalCarouselImage[];
@@ -39,14 +40,28 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
       setApi={setApi}
     >
       <CarouselContent className="ml-0 h-full">
-        {images.map((image) => (
+        {images.map((image, index) => (
           <CarouselItem className="h-full pl-0" key={image.path}>
-            <img
-              alt=""
-              className="h-full w-full object-cover"
-              data-testid="hero-carousel-slide"
-              src={image.src}
-            />
+            {image.responsive ? (
+              <ResponsiveImage
+                image={image.responsive}
+                sizes="100vw"
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
+                alt=""
+                className="h-full w-full object-cover"
+                data-testid="hero-carousel-slide"
+              />
+            ) : (
+              <img
+                alt=""
+                className="h-full w-full object-cover"
+                data-testid="hero-carousel-slide"
+                src={image.src}
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
+              />
+            )}
           </CarouselItem>
         ))}
       </CarouselContent>

@@ -104,3 +104,10 @@ aby nie nadpisywać równocześnie tych samych plików. Zalecana kolejność:
 - [Fontsource — instalacja](https://fontsource.org/docs/getting-started/install)
   i [subsets](https://fontsource.org/docs/getting-started/subsets): lokalne
   pakiety fontów i obsługa glyphów poprzez `unicode-range`.
+
+## Ustalenie wykonawcze — obrazy pionowe
+
+Eksport zachowuje pełny kadr i limit jakości. Dla zdjęć pionowych wysokość
+ograniczamy do 1920 px, więc największa szerokość może być mniejsza niż
+1600 px. Pozwala to zachować budżet 450 KiB bez pogorszenia jakości poniżej
+ustalonego minimum i bez dodatkowego kadrowania.
