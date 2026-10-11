@@ -3,6 +3,7 @@ import { offerImageRowSchema } from "../offers/schema";
 import type { OfferImageRow } from "../offers/schema";
 import type { OfferImage, OfferImageCategory } from "../offers/types";
 import { supabase } from "../supabase";
+import { optimizeImageForUpload } from "./optimization";
 import { createImagePath } from "./path";
 import { validateImageFile } from "./validation";
 
@@ -116,11 +117,12 @@ export const uploadOfferImage = async (
   category: OfferImageCategory = "gallery",
 ): Promise<OfferImage> => {
   const normalizedAltText = validateUploadInput(offerId, file, altText, position);
-  const path = createImagePath(offerId, file, crypto.randomUUID());
-  const blob = new Blob([await file.arrayBuffer()], { type: file.type });
+  const optimizedFile = await optimizeImageForUpload(file);
+  const path = createImagePath(offerId, optimizedFile, crypto.randomUUID());
+  const blob = new Blob([await optimizedFile.arrayBuffer()], { type: optimizedFile.type });
   const storage = supabase.storage.from(OFFER_IMAGES_BUCKET);
   const { error: uploadError } = await storage.upload(path, blob, {
-    contentType: file.type,
+    contentType: optimizedFile.type,
     upsert: false,
   });
 
