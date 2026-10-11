@@ -38,7 +38,7 @@
 | `src/components/offers/{OfferCard,DayCampCard,OfferGallery}.tsx`, `src/components/home/HomeOfferCard.tsx`, `src/routes/index.tsx`, `src/components/events/EventUseCasesScroller{,.test}.tsx` | Touch/keyboard CTA, warunkowy hover i przewijanie bez ruchu przy reduced motion. |
 | `src/routes/public-pages.test.tsx`, `docs/design-system.md`                                                                                                                                  | Zachowanie publicznej treści i reguły designu.                                   |
 
-### Zadanie 11: Header i nawigacja na tablecie
+### Task 11: Header i nawigacja na tablecie
 
 **Files:** Modify `PublicHeader.tsx`, `Brand.tsx`, `PublicChrome.test.tsx` z mapy. Istniejący `TripSectionNavigation.test.tsx` pozostaje testem regresji kotwic.
 
@@ -50,7 +50,7 @@
 - [ ] Uruchomić `bun run test -- src/components/public/PublicChrome.test.tsx src/components/offers/TripSectionNavigation.test.tsx`, typecheck, lint i pełny build. W browser aktywować kotwicę oferty: nagłówek sekcji nie jest zasłonięty, pomiar reaguje na resize.
 - [ ] Commit: `fix: make public navigation fit tablet layouts`.
 
-### Zadanie 12: Kontrast CTA i widoczny fokus
+### Task 12: Kontrast CTA i widoczny fokus
 
 **Files:** Modify `src/styles.css`, `src/components/ui/button.tsx`, `docs/design-system.md`, `src/components/offers/DayCampCard.tsx`, `src/routes/{wyjazdy,obozy}.$slug.tsx` oraz `src/routes/kontakt.tsx`. Dekoracyjne gradienty w OfferCard/HomeOfferCard pozostają bez zmian.
 
@@ -62,7 +62,7 @@
 - [ ] Przejść całą nawigację klawiaturą: widać fokus, bez podwójnych ringów i ucięć przez overflow/clip-path. Sprawdzić również auth/editor CMS po globalnej zmianie. Uruchomić testy PublicChrome, typecheck, lint i pełny build; zaktualizować tabelę tokenów w design-system.
 - [ ] Commit: `fix: improve CTA contrast and keyboard focus`.
 
-### Zadanie 14: Press, hover, reduced motion i touch
+### Task 14: Press, hover, reduced motion i touch
 
 **Files:** Modify `src/styles.css`, `src/components/ui/{button,sheet,dialog}.tsx`, `src/components/public/HeroCarousel{,.test}.tsx`, `src/components/offers/{OfferCard,DayCampCard,OfferGallery}.tsx`, `src/components/home/HomeOfferCard.tsx`, `src/routes/index.tsx`, `src/components/events/EventUseCasesScroller{,.test}.tsx`. Obecne testy kart zachować.
 
@@ -78,7 +78,7 @@
 - [ ] Uruchomić testy HeroCarousel, PublicChrome oraz kart, typecheck, lint i pełny build. Browser: hover i rapid clicks nie powodują skoków; reduced motion również po zmianie preferencji blokuje ruch; coarse pointer nie wymaga pierwszego tap do reveal. Tab pokazuje CTA bez opóźnienia. Disabled button nie skaluje się i nie wywołuje akcji.
 - [ ] Commit: `fix: respect motion and touch interaction preferences`.
 
-### Zadanie 17: Usunięcie dekoracyjnych etykiet sekcji
+### Task 17: Usunięcie dekoracyjnych etykiet sekcji
 
 **Files:** Modify `src/routes/index.tsx`; Test regression `src/routes/public-pages.test.tsx`.
 

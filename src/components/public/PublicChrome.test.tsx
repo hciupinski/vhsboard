@@ -62,7 +62,7 @@ describe("public navigation", () => {
   it("uses a larger logo and strong uppercase primary navigation", async () => {
     await renderPublicChrome("/wyjazdy");
 
-    const header = document.querySelector("[data-public-header]");
+    const header = document.querySelector<HTMLElement>("[data-public-header]");
     if (!header) {
       throw new Error("Nie znaleziono nagłówka publicznego");
     }

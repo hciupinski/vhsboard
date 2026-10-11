@@ -16,7 +16,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "generate:sitemap": "bun scripts/generate-sitemap.ts",
-    "check:seo": "bun scripts/check-seo-build.ts"
+    "check:seo": "bun scripts/check-seo-build.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.8.0",

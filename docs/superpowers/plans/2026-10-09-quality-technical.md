@@ -40,7 +40,7 @@
 | `scripts/check-seo-build{,.test}.ts`, `src/lib/seo{,.test}.ts`                                                                                                                                                                                                                                                                     | Regresje metadanych i artefaktów.                                                                         |
 | `AGENTS.md`, `docs/{architecture,deployment-runbook,seo-runbook,supabase-runbook,design-system}.md`                                                                                                                                                                                                                                | Aktualny opis i utrzymanie.                                                                               |
 
-### Zadanie 5: TypeScript i CI
+### Task 5: TypeScript i CI
 
 **Files:** Modify wszystkie istniejące pliki w pierwszych czterech wierszach mapy. Dokładną listę bazową odtworzy `bunx tsc --noEmit`; nie edytować ręcznie `src/routeTree.gen.ts`. Test: istniejące testy modułów oraz `src/routes/{wyjazdy,obozy}.$slug.test.tsx`.
 
@@ -54,7 +54,7 @@
 - [ ] Uruchomić `bun run typecheck`, `bun run test`, `bun run lint`, `bun run build:ci`; oczekiwany kod 0. `tsconfig` nadal ma wszystkie obecne rygorystyczne flagi. Istniejące testy `src/lib/auth/session.test.ts` nadal odrzucają zewnętrzny `next`.
 - [ ] Commit tylko plików zadania: `fix: enforce strict TypeScript checks in CI`.
 
-### Zadanie 1: Publiczny shell index i prywatny shell noindex
+### Task 1: Publiczny shell index i prywatny shell noindex
 
 **Files:** Modify `vite.config.ts`, `src/routes/__root.tsx`, `src/routes/spa-shell.tsx`, `public/_redirects`, `scripts/check-seo-build{,.test}.ts`, `src/lib/seo{,.test}.ts`; Create `src/routes/admin-shell.tsx`, `src/routes/seo-routing.test.tsx`.
 
@@ -77,7 +77,7 @@
 - [ ] Uruchomić powyższe testy oraz `bun run typecheck`, `bun run lint`. Wykonać pełny `bun run build` i `bun run check:seo` oddzielnie z `VITE_SEO_INDEXING=false` i `true`; env obu komend musi być identyczny. Oczekiwany kod 0 i osiem plików HTML: sześć marketingowych + dwa shelle, bez szczegółów ofert. Nie wdrażać buildu testowego.
 - [ ] Commit: `fix: separate public and admin SEO shells`.
 
-### Zadanie 18: Dokumentacja utrzymania — po media i UI
+### Task 18: Dokumentacja utrzymania — po media i UI
 
 **Files:** Modify `AGENTS.md`, `docs/architecture.md`, `docs/deployment-runbook.md`, `docs/seo-runbook.md`, `docs/supabase-runbook.md`, `docs/design-system.md`.
 

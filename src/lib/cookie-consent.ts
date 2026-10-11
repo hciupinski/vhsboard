@@ -54,5 +54,7 @@ function isCookiePreferences(value: unknown): value is CookiePreferences {
 
   const preferences = value as Record<string, unknown>;
 
-  return typeof preferences.analytics === "boolean" && typeof preferences.marketing === "boolean";
+  return (
+    typeof preferences["analytics"] === "boolean" && typeof preferences["marketing"] === "boolean"
+  );
 }

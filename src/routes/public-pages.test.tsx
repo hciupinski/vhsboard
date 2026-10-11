@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
-import type { ComponentType } from "react";
+import type { FunctionComponent } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
@@ -105,7 +105,7 @@ const renderRoute = async (path: string, route: { options: { component?: unknown
   for (const [name, value] of Object.entries(publicSiteEnv)) {
     vi.stubEnv(name, value);
   }
-  const Component = route.options.component as ComponentType;
+  const Component = route.options.component as FunctionComponent;
   const rootRoute = createRootRoute();
   const pageRoute = createRoute({
     getParentRoute: () => rootRoute,

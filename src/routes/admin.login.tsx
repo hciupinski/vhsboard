@@ -6,7 +6,7 @@ import type { AdminPath } from "@/lib/auth/session";
 
 export const Route = createFileRoute("/admin/login")({
   validateSearch: (search: Record<string, unknown>): { next?: string } => ({
-    next: typeof search.next === "string" ? search.next : undefined,
+    ...(typeof search["next"] === "string" ? { next: search["next"] } : {}),
   }),
   head: () => ({
     meta: [
@@ -47,7 +47,7 @@ function AdminLogin() {
           Dostęp mają wyłącznie ręcznie zatwierdzeni administratorzy VHSBOARD.
         </p>
         <div className="mt-7">
-          <AdminSignInForm next={next} onSuccess={navigateToAdmin} />
+          <AdminSignInForm {...(next ? { next } : {})} onSuccess={navigateToAdmin} />
         </div>
       </section>
     </main>

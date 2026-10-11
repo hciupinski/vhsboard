@@ -28,8 +28,9 @@ export const Route = createFileRoute("/wyjazdy/$slug")({
       .optional()
       .transform((value) => value === true || value === "true"),
   }),
-  loader: async ({ context, params, search }) => {
-    const preview = search?.preview ?? false;
+  loaderDeps: ({ search }) => ({ preview: search.preview }),
+  loader: async ({ context, params, deps }) => {
+    const preview = deps.preview;
     const offer = await context.queryClient.ensureQueryData(
       offerDetailQueryOptions(params.slug, "trip", preview),
     );

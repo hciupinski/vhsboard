@@ -39,7 +39,7 @@
 | `src/styles.css`, `src/routes/__root.tsx`, `package.json`, `bun.lock`                                                                                                                     | Lokalne fonty i komendy mediów.                              |
 | `scripts/generate-og-images.ts`, `public/og/*`, `src/lib/{social-images,seo}.ts`                                                                                                          | Grafiki i metadane udostępniania.                            |
 
-### Zadanie 4a: Responsywne fotografie lokalne
+### Task 4a: Responsywne fotografie lokalne
 
 **Files:** Create pliki z pierwszego wiersza mapy oraz `src/components/public/ResponsiveImage.tsx`, `scripts/check-image-assets.test.ts`; Modify pliki z kolejnych dwóch wierszy, `package.json`, `bun.lock`, `src/lib/portal-carousel/catalogue.test.ts`.
 
@@ -53,7 +53,7 @@
 - [ ] Uruchomić `bun run images:generate`, testy i `bun run images:check`; powtórny generator daje pusty diff. Inspekcja zdjęcia pionowego i z EXIF potwierdza orientację. W browser przy 390 i 1440 px sprawdzić `currentSrc`, brak pełnych źródłowych fotografii w Network i identyczne cropy. Dalej `bun run typecheck`, lint, pełny build i check:seo — kod 0.
 - [ ] Commit: `perf: serve responsive optimized local photographs`.
 
-### Zadanie 4b: Optymalizacja nowych uploadów CMS
+### Task 4b: Optymalizacja nowych uploadów CMS
 
 **Files:** Create `src/lib/images/resize.ts`, `src/lib/images/resize.test.ts`, `src/lib/images/optimization.ts`, `src/lib/images/optimization.test.ts`; Modify `src/lib/images/repository.ts`, `src/lib/images/repository.test.ts`.
 
@@ -75,7 +75,7 @@
 - [ ] Uruchomić testy modułu, typecheck, lint i pełny build. Ręcznie w lokalnym/testowym CMS użyć realnego JPEG pionowego i PNG: poprawna orientacja, WebP ≤1920 px/2 MiB i poprawny alt. Nie wykonywać zapisu na produkcji.
 - [ ] Commit: `perf: optimize newly uploaded offer images`.
 
-### Zadanie 15: Lokalne fonty
+### Task 15: Lokalne fonty
 
 **Files:** Modify `package.json`, `bun.lock`, `src/styles.css`, `src/routes/__root.tsx`.
 
@@ -86,7 +86,7 @@
 - [ ] Uruchomić typecheck, lint, pełny build. Inspekcja output CSS potwierdza lokalne URL fontów i swap. Browser z blokadą fonts.googleapis.com/fonts.gstatic.com: zero requestów do nich, polskie znaki i italic działają; porównać złamania tekstu na 390 i 1440 px. Nie preloadować wszystkich wag.
 - [ ] Commit: `perf: self-host brand fonts`.
 
-### Zadanie 16: OG dla marketingu i ogólny OG ofert
+### Task 16: OG dla marketingu i ogólny OG ofert
 
 **Files:** Create `src/lib/social-images.ts`, `scripts/generate-og-images.ts`, `public/og/{home,about,trips,events,camps,contact,offers}.jpg`; Modify `src/lib/seo{,.test}.ts`, `src/routes/spa-shell.tsx`, sześć marketingowych route head, oba route head ofert, `scripts/check-seo-build{,.test}.ts`, `package.json`.
 
