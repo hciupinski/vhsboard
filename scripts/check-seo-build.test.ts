@@ -1,6 +1,7 @@
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import sharp from "sharp";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { checkSeoBuild } from "./check-seo-build";
@@ -12,9 +13,24 @@ const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"]
 const outputFile = (outputDirectory: string, path: string) =>
   path === "/" ? join(outputDirectory, "index.html") : join(outputDirectory, path, "index.html");
 
+const socialTags = (path: string) => {
+  const key =
+    (
+      {
+        "/": "home",
+        "/o-nas": "about",
+        "/wyjazdy": "trips",
+        "/eventy": "events",
+        "/obozy": "camps",
+        "/kontakt": "contact",
+      } as Record<string, string>
+    )[path] ?? "offers";
+  return `<meta property="og:image" content="${siteUrl}/og/${key}.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:alt" content="VHSBOARD"><meta name="twitter:image" content="${siteUrl}/og/${key}.jpg"><meta name="twitter:card" content="summary_large_image">`;
+};
 const html = (path: string, body = "Pełna treść strony.") => `<!doctype html>
 <html lang="pl"><head>
   <title>Strona ${path}</title>
+${socialTags(path)}
   <meta name="description" content="Opis strony ${path}.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="${siteUrl}${path}">
@@ -23,6 +39,14 @@ const html = (path: string, body = "Pełna treść strony.") => `<!doctype html>
 const createOutput = async (indexing = false) => {
   const outputDirectory = await mkdtemp(join(tmpdir(), "vhsboard-seo-check-"));
   directories.push(outputDirectory);
+  await mkdir(join(outputDirectory, "og"));
+  const image = await sharp({
+    create: { width: 1200, height: 630, channels: 3, background: "#fff2da" },
+  })
+    .jpeg()
+    .toBuffer();
+  for (const key of ["home", "about", "trips", "events", "camps", "contact", "offers"])
+    await writeFile(join(outputDirectory, "og", `${key}.jpg`), image);
   const paths = staticPaths;
   for (const path of paths) {
     const file = outputFile(outputDirectory, path);
@@ -43,7 +67,7 @@ const createOutput = async (indexing = false) => {
   await mkdir(join(outputDirectory, "_shell"), { recursive: true });
   await writeFile(
     join(outputDirectory, "_shell", "app.html"),
-    `<!doctype html><html lang="pl"><head><meta name="robots" content="${indexing ? "index, follow" : "noindex, nofollow"}"></head></html>`,
+    `<!doctype html><html lang="pl"><head><meta name="robots" content="${indexing ? "index, follow" : "noindex, nofollow"}">${socialTags("offers")}</head></html>`,
   );
   await writeFile(
     join(outputDirectory, "_shell", "admin.html"),
@@ -126,4 +150,18 @@ describe("checkSeoBuild", () => {
       "statycznych szczegółów ofert",
     );
   });
+});
+
+it.each(["missing", "dimensions"])("rejects %s social assets", async (condition) => {
+  const outputDirectory = await createOutput();
+  const file = join(outputDirectory, "og/home.jpg");
+  if (condition === "missing") await rm(file);
+  else
+    await writeFile(
+      file,
+      await sharp({ create: { width: 200, height: 100, channels: 3, background: "red" } })
+        .jpeg()
+        .toBuffer(),
+    );
+  await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow();
 });

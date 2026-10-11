@@ -8,6 +8,7 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { Button } from "@/components/ui/button";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 import { eventsFaqItems } from "@/lib/faq";
 import { FaqSection } from "@/components/public/FaqSection";
@@ -19,6 +20,7 @@ const skimboardingTrackImage = getLocalImage("skim-tor.jpg");
 export const Route = createFileRoute("/eventy")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.events,
       path: "/eventy",
       title: "Eventy z torem skimboardowym | VHSBOARD",
       description: "Eventy z mobilnym torem skimboardowym organizowane przez VHSBOARD.",

@@ -10,6 +10,7 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { campFaqItems } from "@/lib/faq";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 
 const wakeparkCampImage = getLocalImage("obozy-wake.jpg");
@@ -19,6 +20,7 @@ const winterCampImage = getLocalImage("obozy-zima.jpg");
 export const Route = createFileRoute("/obozy/")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.camps,
       path: "/obozy",
       title: "Obozy sportowe | VHSBOARD",
       description:

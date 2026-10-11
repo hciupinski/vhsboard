@@ -5,6 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 import { aboutUsFaqItems } from "@/lib/faq";
 import { FaqSection } from "@/components/public/FaqSection";
@@ -18,6 +19,7 @@ const marioSkim = getLocalImage("about-us/mario-skim.jpg");
 export const Route = createFileRoute("/o-nas")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.about,
       path: "/o-nas",
       title: "O nas | VHSBOARD",
       description: "Poznaj VHSBOARD — ludzi i aktywności, które stoją za naszymi wyjazdami.",

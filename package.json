@@ -19,7 +19,8 @@
     "check:seo": "bun scripts/check-seo-build.ts",
     "typecheck": "tsc --noEmit",
     "images:generate": "bun scripts/generate-image-assets.ts",
-    "images:check": "bun scripts/check-image-assets.ts"
+    "images:check": "bun scripts/check-image-assets.ts",
+    "og:generate": "bun scripts/generate-og-images.ts"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.3.0",

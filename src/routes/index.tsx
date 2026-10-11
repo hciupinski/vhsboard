@@ -14,6 +14,7 @@ import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { Button } from "@/components/ui/button";
 import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { homeOffersQueryOptions } from "@/lib/offers/query-options";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 
 const obozy = getLocalImage("main/obozy-zima.jpg");
@@ -26,6 +27,7 @@ const trips = getLocalImage("main/wyjazdy.jpg");
 export const Route = createFileRoute("/")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.home,
       path: "/",
       title: "VHSBOARD — wyjazdy, eventy i obozy",
       description:

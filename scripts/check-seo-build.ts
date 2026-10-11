@@ -1,6 +1,8 @@
-import { access, readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
 
+import sharp from "sharp";
+import { SOCIAL_IMAGES, type SocialImage } from "../src/lib/social-images";
 import { getSeoConfigFrom } from "../src/lib/env";
 
 const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
@@ -57,6 +59,53 @@ const listOutputFiles = async (directory: string): Promise<string[]> => {
   );
   return nested.flat();
 };
+
+const socialByPath: Record<string, SocialImage> = {
+  "/": SOCIAL_IMAGES.home,
+  "/o-nas": SOCIAL_IMAGES.about,
+  "/wyjazdy": SOCIAL_IMAGES.trips,
+  "/eventy": SOCIAL_IMAGES.events,
+  "/obozy": SOCIAL_IMAGES.camps,
+  "/kontakt": SOCIAL_IMAGES.contact,
+};
+async function checkSocialImage(
+  html: string,
+  path: string,
+  origin: string,
+  outputDirectory: string,
+): Promise<void> {
+  const image = socialByPath[path] ?? SOCIAL_IMAGES.offers;
+  const meta = (attribute: "property" | "name", key: string) =>
+    extractSingle(
+      html,
+      new RegExp(
+        `<meta\\b[^>]*\\b${attribute}=["']${key}["'][^>]*\\bcontent=["']([^"']+)["'][^>]*>`,
+        "gi",
+      ),
+      key,
+      path,
+    );
+  if (
+    meta("property", "og:image") !== `${origin}${image.path}` ||
+    meta("name", "twitter:image") !== `${origin}${image.path}` ||
+    meta("property", "og:image:width") !== "1200" ||
+    meta("property", "og:image:height") !== "630" ||
+    meta("property", "og:image:type") !== "image/jpeg" ||
+    meta("name", "twitter:card") !== "summary_large_image"
+  )
+    throw new Error(`${path}: nieprawidłowy obraz udostępniania.`);
+  meta("property", "og:image:alt");
+  const filename = join(outputDirectory, image.path);
+  await ensureFile(filename, "obrazu OG");
+  const metadata = await sharp(filename).metadata();
+  if (
+    metadata.width !== 1200 ||
+    metadata.height !== 630 ||
+    metadata.format !== "jpeg" ||
+    (await stat(filename)).size > 300 * 1024
+  )
+    throw new Error(`${path}: nieprawidłowy plik OG.`);
+}
 
 const expectedCanonical = (siteUrl: string, path: string): string => `${siteUrl}${path}`;
 
@@ -116,6 +165,7 @@ export const checkSeoBuild = async ({
     if (signedUrlPattern.test(html)) {
       throw new Error(`${path}: HTML zawiera podpisany URL Storage.`);
     }
+    await checkSocialImage(html, path, origin, outputDirectory);
   }
 
   const sitemapPath = join(outputDirectory, "sitemap.xml");
@@ -144,6 +194,10 @@ export const checkSeoBuild = async ({
     if (content !== expected || signedUrlPattern.test(html))
       throw new Error(`${filename}: nieprawidłowy robots lub podpisany URL.`);
   }
+  const publicShell = await readFile(shellPath, "utf8");
+  if (/<link\b[^>]*\brel=["']canonical["']/i.test(publicShell))
+    throw new Error("Shell publiczny nie może narzucać canonical.");
+  await checkSocialImage(publicShell, "offers", origin, outputDirectory);
   const [sitemap, robots] = await Promise.all([
     readFile(sitemapPath, "utf8"),
     readFile(robotsPath, "utf8"),
