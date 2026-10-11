@@ -29,7 +29,7 @@ export function DayCampCard({ offer }: { offer: DayCampOffer }) {
           <div aria-hidden="true" className="h-full w-full bg-sunset-gradient opacity-40" />
         )}
         <div className="absolute inset-x-0 top-0 flex flex-wrap gap-2 p-4">
-          <span className="rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground">
+          <span className="rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-sunset-foreground">
             {activityLabels[offer.activity]}
           </span>
           {showLastPlacesBadge && (

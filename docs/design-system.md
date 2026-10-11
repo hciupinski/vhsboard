@@ -22,8 +22,8 @@ hex values or a second palette.
 | ------------- | ------------------- | ------------------------- | ---------------------------------------------- |
 | Page ground   | `--background`      | `oklch(0.985 0.012 85)`   | Warm cream, never sterile white.               |
 | Main text     | `--foreground`      | `oklch(0.22 0.03 60)`     | Deep warm brown for high contrast.             |
-| Brand action  | `--primary`         | `oklch(0.63 0.19 42)`     | Volcanic orange for primary CTAs and emphasis. |
-| Place/context | `--accent`          | `oklch(0.55 0.11 210)`    | Ocean blue, used with restraint.               |
+| Brand action  | `--primary`         | `oklch(0.56 0.17 42)`     | Volcanic orange for primary CTAs and emphasis. |
+| Place/context | `--accent`          | `oklch(0.54 0.11 210)`    | Ocean blue, used with restraint.               |
 | Quiet section | `--secondary`       | `oklch(0.94 0.03 85)`     | Sand-tinted surface.                           |
 | Boundaries    | `--border`          | `oklch(0.9 0.02 80)`      | Soft separation without cold grey.             |
 | Warm emphasis | `--gradient-sunset` | Orange-to-golden gradient | Use for memorable small surfaces and CTAs.     |
@@ -129,3 +129,11 @@ Before approving a UI change, check:
    handoff?
 5. Has it reused an existing Radix primitive or focused component where one
    already exists?
+
+### Contrast and focus
+
+Primary actions use solid `--primary-hover: oklch(0.52 0.17 42)` on hover. Avoid
+opacity blends that lighten their background. Gradient labels and contact text
+use `--sunset-foreground`. The shared focus ring is `oklch(0.56 0.17 42)`; native
+interactive controls have a 2px outline with 3px offset. On dark photographs use
+a cream focus ring, and on the sunset gradient use the dark sunset foreground.

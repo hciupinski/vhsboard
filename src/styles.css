@@ -46,6 +46,7 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -82,19 +83,20 @@
   --card-foreground: oklch(0.22 0.03 60);
   --popover: oklch(0.995 0.008 85);
   --popover-foreground: oklch(0.22 0.03 60);
-  --primary: oklch(0.63 0.19 42);
+  --primary: oklch(0.56 0.17 42);
+  --primary-hover: oklch(0.52 0.17 42);
   --primary-foreground: oklch(0.99 0.01 85);
   --secondary: oklch(0.94 0.03 85);
   --secondary-foreground: oklch(0.28 0.04 60);
   --muted: oklch(0.945 0.02 85);
   --muted-foreground: oklch(0.5 0.03 60);
-  --accent: oklch(0.55 0.11 210);
+  --accent: oklch(0.54 0.11 210);
   --accent-foreground: oklch(0.99 0.01 85);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.9 0.02 80);
   --input: oklch(0.9 0.02 80);
-  --ring: oklch(0.63 0.19 42);
+  --ring: oklch(0.56 0.17 42);
   --sunset: oklch(0.72 0.17 62);
   --sunset-foreground: oklch(0.2 0.03 60);
   --ocean: oklch(0.45 0.09 215);
@@ -125,6 +127,7 @@
   --popover: oklch(0.208 0.042 265.755);
   --popover-foreground: oklch(0.984 0.003 247.858);
   --primary: oklch(0.929 0.013 255.508);
+  --primary-hover: oklch(0.86 0.013 255.508);
   --primary-foreground: oklch(0.208 0.042 265.755);
   --secondary: oklch(0.279 0.041 260.031);
   --secondary-foreground: oklch(0.984 0.003 247.858);
@@ -152,11 +155,11 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
-*:focus {
-  outline: none;
-}
-
 @layer base {
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
   * {
     border-color: var(--color-border);
   }
@@ -226,6 +229,11 @@
       inline-size 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
       padding 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
       background-color 250ms ease;
+  }
+
+  .topic-selector__item:focus-visible .topic-selector__content {
+    outline: 2px solid var(--background);
+    outline-offset: -4px;
   }
 
   .topic-selector__details {

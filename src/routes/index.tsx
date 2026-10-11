@@ -138,7 +138,7 @@ function HomePage() {
               <Link
                 key={to}
                 to={to}
-                className={`topic-selector__item topic-selector__item--${index + 1} topic-selector__item--mobile-stack group isolate flex overflow-hidden py-8 text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:py-10`}
+                className={`topic-selector__item topic-selector__item--${index + 1} topic-selector__item--mobile-stack group isolate flex overflow-hidden py-8 text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-inset sm:py-10`}
               >
                 <ResponsiveImage
                   sizes="(min-width: 768px) 33vw, 100vw"
