@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  type AdminPath,
   getAdminSession,
   sanitizeAdminNext,
   signInWithPassword,
@@ -12,7 +13,7 @@ import {
 
 type AdminSignInFormProps = {
   next?: string;
-  onSuccess: (next: string) => void;
+  onSuccess: (next: AdminPath) => void;
 };
 
 export function AdminSignInForm({ next, onSuccess }: AdminSignInFormProps) {

@@ -1,0 +1,1273 @@
+{
+  "version": 1,
+  "images": {
+    "about-us/mario-skate-web.jpg": {
+      "sourceHash": "3be8b5e45b77fed7f186886bb17a780832777a6f1d30b3ea1b7e8ae26845c442",
+      "asset": {
+        "src": "/images/generated/about-us-mario-skate-web-1280-c353e711756f.webp",
+        "width": 1280,
+        "height": 1920,
+        "webpSrcSet": "/images/generated/about-us-mario-skate-web-480-27dc7130deee.webp 480w, /images/generated/about-us-mario-skate-web-960-fab7c3e4e189.webp 960w, /images/generated/about-us-mario-skate-web-1280-c353e711756f.webp 1280w",
+        "avifSrcSet": "/images/generated/about-us-mario-skate-web-480-908425e28834.avif 480w, /images/generated/about-us-mario-skate-web-960-77215b1477f3.avif 960w, /images/generated/about-us-mario-skate-web-1280-8b1b800968db.avif 1280w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-mario-skate-web-480-27dc7130deee.webp",
+          "width": 480,
+          "height": 720,
+          "format": "webp",
+          "bytes": 63710
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-web-480-908425e28834.avif",
+          "width": 480,
+          "height": 720,
+          "format": "avif",
+          "bytes": 28941
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-web-960-fab7c3e4e189.webp",
+          "width": 960,
+          "height": 1440,
+          "format": "webp",
+          "bytes": 166824
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-web-960-77215b1477f3.avif",
+          "width": 960,
+          "height": 1440,
+          "format": "avif",
+          "bytes": 80465
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-web-1280-c353e711756f.webp",
+          "width": 1280,
+          "height": 1920,
+          "format": "webp",
+          "bytes": 243974
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-web-1280-8b1b800968db.avif",
+          "width": 1280,
+          "height": 1920,
+          "format": "avif",
+          "bytes": 121976
+        }
+      ]
+    },
+    "about-us/mario-skate.jpg": {
+      "sourceHash": "e6fb5066d7b3b3cda5cc3a4d9acbe5925dc959c929e96859aeac5aa1e0139bea",
+      "asset": {
+        "src": "/images/generated/about-us-mario-skate-1280-5ee2a661ca57.webp",
+        "width": 1280,
+        "height": 1920,
+        "webpSrcSet": "/images/generated/about-us-mario-skate-480-15c49fd17d96.webp 480w, /images/generated/about-us-mario-skate-960-a34ac435825c.webp 960w, /images/generated/about-us-mario-skate-1280-5ee2a661ca57.webp 1280w",
+        "avifSrcSet": "/images/generated/about-us-mario-skate-480-a9fdd4bc7f0b.avif 480w, /images/generated/about-us-mario-skate-960-417ff512d21c.avif 960w, /images/generated/about-us-mario-skate-1280-4cb3a23eac10.avif 1280w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-mario-skate-480-15c49fd17d96.webp",
+          "width": 480,
+          "height": 720,
+          "format": "webp",
+          "bytes": 61602
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-480-a9fdd4bc7f0b.avif",
+          "width": 480,
+          "height": 720,
+          "format": "avif",
+          "bytes": 28435
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-960-a34ac435825c.webp",
+          "width": 960,
+          "height": 1440,
+          "format": "webp",
+          "bytes": 170580
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-960-417ff512d21c.avif",
+          "width": 960,
+          "height": 1440,
+          "format": "avif",
+          "bytes": 81662
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-1280-5ee2a661ca57.webp",
+          "width": 1280,
+          "height": 1920,
+          "format": "webp",
+          "bytes": 257956
+        },
+        {
+          "path": "/images/generated/about-us-mario-skate-1280-4cb3a23eac10.avif",
+          "width": 1280,
+          "height": 1920,
+          "format": "avif",
+          "bytes": 123360
+        }
+      ]
+    },
+    "about-us/mario-skim.jpg": {
+      "sourceHash": "8928edc459df450183e21dbe2b73564f7f0ac40a21e1bdd448829aa660378748",
+      "asset": {
+        "src": "/images/generated/about-us-mario-skim-1600-baf7a17f2c72.webp",
+        "width": 1600,
+        "height": 1200,
+        "webpSrcSet": "/images/generated/about-us-mario-skim-480-a77f53d7f992.webp 480w, /images/generated/about-us-mario-skim-960-ce3b5d1f5e31.webp 960w, /images/generated/about-us-mario-skim-1600-baf7a17f2c72.webp 1600w",
+        "avifSrcSet": "/images/generated/about-us-mario-skim-480-d5354a6bf248.avif 480w, /images/generated/about-us-mario-skim-960-e8e6b9525134.avif 960w, /images/generated/about-us-mario-skim-1600-e2cb2fc90d56.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-mario-skim-480-a77f53d7f992.webp",
+          "width": 480,
+          "height": 360,
+          "format": "webp",
+          "bytes": 25740
+        },
+        {
+          "path": "/images/generated/about-us-mario-skim-480-d5354a6bf248.avif",
+          "width": 480,
+          "height": 360,
+          "format": "avif",
+          "bytes": 12526
+        },
+        {
+          "path": "/images/generated/about-us-mario-skim-960-ce3b5d1f5e31.webp",
+          "width": 960,
+          "height": 720,
+          "format": "webp",
+          "bytes": 93728
+        },
+        {
+          "path": "/images/generated/about-us-mario-skim-960-e8e6b9525134.avif",
+          "width": 960,
+          "height": 720,
+          "format": "avif",
+          "bytes": 44163
+        },
+        {
+          "path": "/images/generated/about-us-mario-skim-1600-baf7a17f2c72.webp",
+          "width": 1600,
+          "height": 1200,
+          "format": "webp",
+          "bytes": 234030
+        },
+        {
+          "path": "/images/generated/about-us-mario-skim-1600-e2cb2fc90d56.avif",
+          "width": 1600,
+          "height": 1200,
+          "format": "avif",
+          "bytes": 112694
+        }
+      ]
+    },
+    "about-us/mario-snow.jpg": {
+      "sourceHash": "9b7a8dac18c52f80ef0b12ce80ed81e97778b3d096455faca41578d6b4a795fa",
+      "asset": {
+        "src": "/images/generated/about-us-mario-snow-1280-273f8b41ac41.webp",
+        "width": 1280,
+        "height": 1920,
+        "webpSrcSet": "/images/generated/about-us-mario-snow-480-906a9c00a912.webp 480w, /images/generated/about-us-mario-snow-960-fc77c5e2b452.webp 960w, /images/generated/about-us-mario-snow-1280-273f8b41ac41.webp 1280w",
+        "avifSrcSet": "/images/generated/about-us-mario-snow-480-7c3c9ec534e7.avif 480w, /images/generated/about-us-mario-snow-960-d7315f9cf715.avif 960w, /images/generated/about-us-mario-snow-1280-5d3e1c434cfb.avif 1280w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-mario-snow-480-906a9c00a912.webp",
+          "width": 480,
+          "height": 720,
+          "format": "webp",
+          "bytes": 66906
+        },
+        {
+          "path": "/images/generated/about-us-mario-snow-480-7c3c9ec534e7.avif",
+          "width": 480,
+          "height": 720,
+          "format": "avif",
+          "bytes": 31248
+        },
+        {
+          "path": "/images/generated/about-us-mario-snow-960-fc77c5e2b452.webp",
+          "width": 960,
+          "height": 1440,
+          "format": "webp",
+          "bytes": 227830
+        },
+        {
+          "path": "/images/generated/about-us-mario-snow-960-d7315f9cf715.avif",
+          "width": 960,
+          "height": 1440,
+          "format": "avif",
+          "bytes": 111832
+        },
+        {
+          "path": "/images/generated/about-us-mario-snow-1280-273f8b41ac41.webp",
+          "width": 1280,
+          "height": 1920,
+          "format": "webp",
+          "bytes": 376652
+        },
+        {
+          "path": "/images/generated/about-us-mario-snow-1280-5d3e1c434cfb.avif",
+          "width": 1280,
+          "height": 1920,
+          "format": "avif",
+          "bytes": 180412
+        }
+      ]
+    },
+    "about-us/mario-trip-web.jpg": {
+      "sourceHash": "9e7a70982f380271d176ce9475839bb7e8142ee28be1da732cbe37d0810f33c7",
+      "asset": {
+        "src": "/images/generated/about-us-mario-trip-web-1600-f7440b1c235f.webp",
+        "width": 1600,
+        "height": 900,
+        "webpSrcSet": "/images/generated/about-us-mario-trip-web-480-d205eddd5bf0.webp 480w, /images/generated/about-us-mario-trip-web-960-837c1bf2dfb9.webp 960w, /images/generated/about-us-mario-trip-web-1600-f7440b1c235f.webp 1600w",
+        "avifSrcSet": "/images/generated/about-us-mario-trip-web-480-3e8f71492ae2.avif 480w, /images/generated/about-us-mario-trip-web-960-af81e7b55a1c.avif 960w, /images/generated/about-us-mario-trip-web-1600-0850feab871f.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-mario-trip-web-480-d205eddd5bf0.webp",
+          "width": 480,
+          "height": 270,
+          "format": "webp",
+          "bytes": 29690
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-web-480-3e8f71492ae2.avif",
+          "width": 480,
+          "height": 270,
+          "format": "avif",
+          "bytes": 14429
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-web-960-837c1bf2dfb9.webp",
+          "width": 960,
+          "height": 540,
+          "format": "webp",
+          "bytes": 83550
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-web-960-af81e7b55a1c.avif",
+          "width": 960,
+          "height": 540,
+          "format": "avif",
+          "bytes": 39875
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-web-1600-f7440b1c235f.webp",
+          "width": 1600,
+          "height": 900,
+          "format": "webp",
+          "bytes": 165554
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-web-1600-0850feab871f.avif",
+          "width": 1600,
+          "height": 900,
+          "format": "avif",
+          "bytes": 86877
+        }
+      ]
+    },
+    "about-us/mario-trip.jpg": {
+      "sourceHash": "22e6db9234d6e8b87c09a555e3f4af5f824272de633a7c56e959d222c6e74b16",
+      "asset": {
+        "src": "/images/generated/about-us-mario-trip-1600-d6e32253c813.webp",
+        "width": 1600,
+        "height": 901,
+        "webpSrcSet": "/images/generated/about-us-mario-trip-480-ece6d8f3a1d6.webp 480w, /images/generated/about-us-mario-trip-960-42bcd45a29f5.webp 960w, /images/generated/about-us-mario-trip-1600-d6e32253c813.webp 1600w",
+        "avifSrcSet": "/images/generated/about-us-mario-trip-480-07a0f9ced57e.avif 480w, /images/generated/about-us-mario-trip-960-1f126c515ee7.avif 960w, /images/generated/about-us-mario-trip-1600-075dc57b5ab2.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-mario-trip-480-ece6d8f3a1d6.webp",
+          "width": 480,
+          "height": 270,
+          "format": "webp",
+          "bytes": 29220
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-480-07a0f9ced57e.avif",
+          "width": 480,
+          "height": 270,
+          "format": "avif",
+          "bytes": 14248
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-960-42bcd45a29f5.webp",
+          "width": 960,
+          "height": 541,
+          "format": "webp",
+          "bytes": 85002
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-960-1f126c515ee7.avif",
+          "width": 960,
+          "height": 541,
+          "format": "avif",
+          "bytes": 40271
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-1600-d6e32253c813.webp",
+          "width": 1600,
+          "height": 901,
+          "format": "webp",
+          "bytes": 186038
+        },
+        {
+          "path": "/images/generated/about-us-mario-trip-1600-075dc57b5ab2.avif",
+          "width": 1600,
+          "height": 901,
+          "format": "avif",
+          "bytes": 91078
+        }
+      ]
+    },
+    "about-us/mario-vhs.jpg": {
+      "sourceHash": "4b09454d76fad39ad5e00b969bbca3114d57730a7d501185a033daf4185e8814",
+      "asset": {
+        "src": "/images/generated/about-us-mario-vhs-1600-76b2ed14964d.webp",
+        "width": 1600,
+        "height": 1066,
+        "webpSrcSet": "/images/generated/about-us-mario-vhs-480-c7cb8585c140.webp 480w, /images/generated/about-us-mario-vhs-960-aad4c1dc151a.webp 960w, /images/generated/about-us-mario-vhs-1600-76b2ed14964d.webp 1600w",
+        "avifSrcSet": "/images/generated/about-us-mario-vhs-480-1128a7ba14ff.avif 480w, /images/generated/about-us-mario-vhs-960-bc208ffe25fa.avif 960w, /images/generated/about-us-mario-vhs-1600-0053b20335d2.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-mario-vhs-480-c7cb8585c140.webp",
+          "width": 480,
+          "height": 320,
+          "format": "webp",
+          "bytes": 12964
+        },
+        {
+          "path": "/images/generated/about-us-mario-vhs-480-1128a7ba14ff.avif",
+          "width": 480,
+          "height": 320,
+          "format": "avif",
+          "bytes": 7973
+        },
+        {
+          "path": "/images/generated/about-us-mario-vhs-960-aad4c1dc151a.webp",
+          "width": 960,
+          "height": 640,
+          "format": "webp",
+          "bytes": 56638
+        },
+        {
+          "path": "/images/generated/about-us-mario-vhs-960-bc208ffe25fa.avif",
+          "width": 960,
+          "height": 640,
+          "format": "avif",
+          "bytes": 28335
+        },
+        {
+          "path": "/images/generated/about-us-mario-vhs-1600-76b2ed14964d.webp",
+          "width": 1600,
+          "height": 1066,
+          "format": "webp",
+          "bytes": 152734
+        },
+        {
+          "path": "/images/generated/about-us-mario-vhs-1600-0053b20335d2.avif",
+          "width": 1600,
+          "height": 1066,
+          "format": "avif",
+          "bytes": 80714
+        }
+      ]
+    },
+    "carousel/eventy.jpg": {
+      "sourceHash": "4ecc2eaf8583be77f400bcac94a4cd6ef64eab31edf6d4d4764d9ed17d8e8b7d",
+      "asset": {
+        "src": "/images/generated/carousel-eventy-1200-7d8028770963.webp",
+        "width": 1200,
+        "height": 1200,
+        "webpSrcSet": "/images/generated/carousel-eventy-480-97fea312abef.webp 480w, /images/generated/carousel-eventy-960-70b07bff559b.webp 960w, /images/generated/carousel-eventy-1200-7d8028770963.webp 1200w",
+        "avifSrcSet": "/images/generated/carousel-eventy-480-c158ec55df3b.avif 480w, /images/generated/carousel-eventy-960-a6a1fa2280f2.avif 960w, /images/generated/carousel-eventy-1200-b9b34b7fc6e4.avif 1200w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/carousel-eventy-480-97fea312abef.webp",
+          "width": 480,
+          "height": 480,
+          "format": "webp",
+          "bytes": 78444
+        },
+        {
+          "path": "/images/generated/carousel-eventy-480-c158ec55df3b.avif",
+          "width": 480,
+          "height": 480,
+          "format": "avif",
+          "bytes": 34473
+        },
+        {
+          "path": "/images/generated/carousel-eventy-960-70b07bff559b.webp",
+          "width": 960,
+          "height": 960,
+          "format": "webp",
+          "bytes": 255192
+        },
+        {
+          "path": "/images/generated/carousel-eventy-960-a6a1fa2280f2.avif",
+          "width": 960,
+          "height": 960,
+          "format": "avif",
+          "bytes": 104164
+        },
+        {
+          "path": "/images/generated/carousel-eventy-1200-7d8028770963.webp",
+          "width": 1200,
+          "height": 1200,
+          "format": "webp",
+          "bytes": 381344
+        },
+        {
+          "path": "/images/generated/carousel-eventy-1200-b9b34b7fc6e4.avif",
+          "width": 1200,
+          "height": 1200,
+          "format": "avif",
+          "bytes": 166966
+        }
+      ]
+    },
+    "carousel/hero-surf-3.jpg": {
+      "sourceHash": "b8a09e855a54bbbf40ab860baa64d9dc8fac34151fca9ab8f0efc00e1028cbfc",
+      "asset": {
+        "src": "/images/generated/carousel-hero-surf-3-1600-8f5b4fbb4904.webp",
+        "width": 1600,
+        "height": 900,
+        "webpSrcSet": "/images/generated/carousel-hero-surf-3-480-14a25cc84898.webp 480w, /images/generated/carousel-hero-surf-3-960-0fed8c03378f.webp 960w, /images/generated/carousel-hero-surf-3-1600-8f5b4fbb4904.webp 1600w",
+        "avifSrcSet": "/images/generated/carousel-hero-surf-3-480-7f7dbde371d2.avif 480w, /images/generated/carousel-hero-surf-3-960-bb21947a3f7e.avif 960w, /images/generated/carousel-hero-surf-3-1600-8d247d20aad9.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/carousel-hero-surf-3-480-14a25cc84898.webp",
+          "width": 480,
+          "height": 270,
+          "format": "webp",
+          "bytes": 18896
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-3-480-7f7dbde371d2.avif",
+          "width": 480,
+          "height": 270,
+          "format": "avif",
+          "bytes": 9729
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-3-960-0fed8c03378f.webp",
+          "width": 960,
+          "height": 540,
+          "format": "webp",
+          "bytes": 54844
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-3-960-bb21947a3f7e.avif",
+          "width": 960,
+          "height": 540,
+          "format": "avif",
+          "bytes": 27279
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-3-1600-8f5b4fbb4904.webp",
+          "width": 1600,
+          "height": 900,
+          "format": "webp",
+          "bytes": 116872
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-3-1600-8d247d20aad9.avif",
+          "width": 1600,
+          "height": 900,
+          "format": "avif",
+          "bytes": 57832
+        }
+      ]
+    },
+    "carousel/hero-surf.jpg": {
+      "sourceHash": "f1a96edcb3866882ac51f00ac3adfe414eb9aa239f32d6e776e4454d05c524f4",
+      "asset": {
+        "src": "/images/generated/carousel-hero-surf-1600-67035f818021.webp",
+        "width": 1600,
+        "height": 1067,
+        "webpSrcSet": "/images/generated/carousel-hero-surf-480-0df186a9fd69.webp 480w, /images/generated/carousel-hero-surf-960-78d3142516fc.webp 960w, /images/generated/carousel-hero-surf-1600-67035f818021.webp 1600w",
+        "avifSrcSet": "/images/generated/carousel-hero-surf-480-f06cc20fd11d.avif 480w, /images/generated/carousel-hero-surf-960-abe6e1c4892b.avif 960w, /images/generated/carousel-hero-surf-1600-c66775666f46.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/carousel-hero-surf-480-0df186a9fd69.webp",
+          "width": 480,
+          "height": 320,
+          "format": "webp",
+          "bytes": 20088
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-480-f06cc20fd11d.avif",
+          "width": 480,
+          "height": 320,
+          "format": "avif",
+          "bytes": 9498
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-960-78d3142516fc.webp",
+          "width": 960,
+          "height": 640,
+          "format": "webp",
+          "bytes": 81000
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-960-abe6e1c4892b.avif",
+          "width": 960,
+          "height": 640,
+          "format": "avif",
+          "bytes": 38051
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-1600-67035f818021.webp",
+          "width": 1600,
+          "height": 1067,
+          "format": "webp",
+          "bytes": 224122
+        },
+        {
+          "path": "/images/generated/carousel-hero-surf-1600-c66775666f46.avif",
+          "width": 1600,
+          "height": 1067,
+          "format": "avif",
+          "bytes": 100817
+        }
+      ]
+    },
+    "carousel/obozy-lato-wakeboard.png": {
+      "sourceHash": "307f57cfb41960b58175a9e2c8fca95cd2767e84c6bdea088bfe5f9f35d77a3c",
+      "asset": {
+        "src": "/images/generated/carousel-obozy-lato-wakeboard-1533-6d9110928e73.webp",
+        "width": 1533,
+        "height": 1026,
+        "webpSrcSet": "/images/generated/carousel-obozy-lato-wakeboard-480-7d74099f2573.webp 480w, /images/generated/carousel-obozy-lato-wakeboard-960-e0b61748af3a.webp 960w, /images/generated/carousel-obozy-lato-wakeboard-1533-6d9110928e73.webp 1533w",
+        "avifSrcSet": "/images/generated/carousel-obozy-lato-wakeboard-480-86ecfa74ca37.avif 480w, /images/generated/carousel-obozy-lato-wakeboard-960-60507cb413d2.avif 960w, /images/generated/carousel-obozy-lato-wakeboard-1533-c81780dffaff.avif 1533w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/carousel-obozy-lato-wakeboard-480-7d74099f2573.webp",
+          "width": 480,
+          "height": 321,
+          "format": "webp",
+          "bytes": 38896
+        },
+        {
+          "path": "/images/generated/carousel-obozy-lato-wakeboard-480-86ecfa74ca37.avif",
+          "width": 480,
+          "height": 321,
+          "format": "avif",
+          "bytes": 17028
+        },
+        {
+          "path": "/images/generated/carousel-obozy-lato-wakeboard-960-e0b61748af3a.webp",
+          "width": 960,
+          "height": 643,
+          "format": "webp",
+          "bytes": 105602
+        },
+        {
+          "path": "/images/generated/carousel-obozy-lato-wakeboard-960-60507cb413d2.avif",
+          "width": 960,
+          "height": 643,
+          "format": "avif",
+          "bytes": 45748
+        },
+        {
+          "path": "/images/generated/carousel-obozy-lato-wakeboard-1533-6d9110928e73.webp",
+          "width": 1533,
+          "height": 1026,
+          "format": "webp",
+          "bytes": 185882
+        },
+        {
+          "path": "/images/generated/carousel-obozy-lato-wakeboard-1533-c81780dffaff.avif",
+          "width": 1533,
+          "height": 1026,
+          "format": "avif",
+          "bytes": 86718
+        }
+      ]
+    },
+    "carousel/obozy-zima.jpg": {
+      "sourceHash": "79e19c91d0bb6f5f84143730d0d24fb365066d529eae980e92e5ba89ec03aa76",
+      "asset": {
+        "src": "/images/generated/carousel-obozy-zima-1600-ff1841bcd45c.webp",
+        "width": 1600,
+        "height": 1069,
+        "webpSrcSet": "/images/generated/carousel-obozy-zima-480-220e201cc8ac.webp 480w, /images/generated/carousel-obozy-zima-960-549d0753a557.webp 960w, /images/generated/carousel-obozy-zima-1600-ff1841bcd45c.webp 1600w",
+        "avifSrcSet": "/images/generated/carousel-obozy-zima-480-3a83cf5ea7ba.avif 480w, /images/generated/carousel-obozy-zima-960-77dbae121933.avif 960w, /images/generated/carousel-obozy-zima-1600-03fc356846c7.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/carousel-obozy-zima-480-220e201cc8ac.webp",
+          "width": 480,
+          "height": 321,
+          "format": "webp",
+          "bytes": 29820
+        },
+        {
+          "path": "/images/generated/carousel-obozy-zima-480-3a83cf5ea7ba.avif",
+          "width": 480,
+          "height": 321,
+          "format": "avif",
+          "bytes": 14168
+        },
+        {
+          "path": "/images/generated/carousel-obozy-zima-960-549d0753a557.webp",
+          "width": 960,
+          "height": 641,
+          "format": "webp",
+          "bytes": 112408
+        },
+        {
+          "path": "/images/generated/carousel-obozy-zima-960-77dbae121933.avif",
+          "width": 960,
+          "height": 641,
+          "format": "avif",
+          "bytes": 54047
+        },
+        {
+          "path": "/images/generated/carousel-obozy-zima-1600-ff1841bcd45c.webp",
+          "width": 1600,
+          "height": 1069,
+          "format": "webp",
+          "bytes": 289772
+        },
+        {
+          "path": "/images/generated/carousel-obozy-zima-1600-03fc356846c7.avif",
+          "width": 1600,
+          "height": 1069,
+          "format": "avif",
+          "bytes": 139007
+        }
+      ]
+    },
+    "carousel/wyjazdy.jpg": {
+      "sourceHash": "8dd9699e23de2241719a8cc89cb91babaf2552e802e6ac32a4ceef178b31eb3a",
+      "asset": {
+        "src": "/images/generated/carousel-wyjazdy-1600-7e0597525543.webp",
+        "width": 1600,
+        "height": 1066,
+        "webpSrcSet": "/images/generated/carousel-wyjazdy-480-e62def13817f.webp 480w, /images/generated/carousel-wyjazdy-960-e94208e7813c.webp 960w, /images/generated/carousel-wyjazdy-1600-7e0597525543.webp 1600w",
+        "avifSrcSet": "/images/generated/carousel-wyjazdy-480-1c000ac4574a.avif 480w, /images/generated/carousel-wyjazdy-960-0f7b7eb97a92.avif 960w, /images/generated/carousel-wyjazdy-1600-5d4503c14f43.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/carousel-wyjazdy-480-e62def13817f.webp",
+          "width": 480,
+          "height": 320,
+          "format": "webp",
+          "bytes": 26738
+        },
+        {
+          "path": "/images/generated/carousel-wyjazdy-480-1c000ac4574a.avif",
+          "width": 480,
+          "height": 320,
+          "format": "avif",
+          "bytes": 11725
+        },
+        {
+          "path": "/images/generated/carousel-wyjazdy-960-e94208e7813c.webp",
+          "width": 960,
+          "height": 640,
+          "format": "webp",
+          "bytes": 82854
+        },
+        {
+          "path": "/images/generated/carousel-wyjazdy-960-0f7b7eb97a92.avif",
+          "width": 960,
+          "height": 640,
+          "format": "avif",
+          "bytes": 38480
+        },
+        {
+          "path": "/images/generated/carousel-wyjazdy-1600-7e0597525543.webp",
+          "width": 1600,
+          "height": 1066,
+          "format": "webp",
+          "bytes": 174710
+        },
+        {
+          "path": "/images/generated/carousel-wyjazdy-1600-5d4503c14f43.avif",
+          "width": 1600,
+          "height": 1066,
+          "format": "avif",
+          "bytes": 84800
+        }
+      ]
+    },
+    "main/eventy-1.jpg": {
+      "sourceHash": "dcb7199b32dad6dc2866c7b0746d5036fd64815a1597a90ac2b824028823a74e",
+      "asset": {
+        "src": "/images/generated/main-eventy-1-1535-ffe389a6d3ce.webp",
+        "width": 1535,
+        "height": 1919,
+        "webpSrcSet": "/images/generated/main-eventy-1-480-8292a0b89d39.webp 480w, /images/generated/main-eventy-1-960-5ebffab93f7a.webp 960w, /images/generated/main-eventy-1-1535-ffe389a6d3ce.webp 1535w",
+        "avifSrcSet": "/images/generated/main-eventy-1-480-c73d624c0844.avif 480w, /images/generated/main-eventy-1-960-af3a35535a1d.avif 960w, /images/generated/main-eventy-1-1535-6df17b37cb85.avif 1535w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/main-eventy-1-480-8292a0b89d39.webp",
+          "width": 480,
+          "height": 600,
+          "format": "webp",
+          "bytes": 67860
+        },
+        {
+          "path": "/images/generated/main-eventy-1-480-c73d624c0844.avif",
+          "width": 480,
+          "height": 600,
+          "format": "avif",
+          "bytes": 31202
+        },
+        {
+          "path": "/images/generated/main-eventy-1-960-5ebffab93f7a.webp",
+          "width": 960,
+          "height": 1201,
+          "format": "webp",
+          "bytes": 196760
+        },
+        {
+          "path": "/images/generated/main-eventy-1-960-af3a35535a1d.avif",
+          "width": 960,
+          "height": 1201,
+          "format": "avif",
+          "bytes": 86365
+        },
+        {
+          "path": "/images/generated/main-eventy-1-1535-ffe389a6d3ce.webp",
+          "width": 1535,
+          "height": 1919,
+          "format": "webp",
+          "bytes": 366192
+        },
+        {
+          "path": "/images/generated/main-eventy-1-1535-6df17b37cb85.avif",
+          "width": 1535,
+          "height": 1919,
+          "format": "avif",
+          "bytes": 181525
+        }
+      ]
+    },
+    "main/obozy-zima.jpg": {
+      "sourceHash": "c20d1b4aa185f8ea95bad20f4fa697171ff20124da82c412df124fa462201ea5",
+      "asset": {
+        "src": "/images/generated/main-obozy-zima-1280-3ffe8cdcab90.webp",
+        "width": 1280,
+        "height": 1920,
+        "webpSrcSet": "/images/generated/main-obozy-zima-480-c22f6160a335.webp 480w, /images/generated/main-obozy-zima-960-1fb8138510cb.webp 960w, /images/generated/main-obozy-zima-1280-3ffe8cdcab90.webp 1280w",
+        "avifSrcSet": "/images/generated/main-obozy-zima-480-e9cec0f3033b.avif 480w, /images/generated/main-obozy-zima-960-faee215db3cb.avif 960w, /images/generated/main-obozy-zima-1280-8890fbe14a8a.avif 1280w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/main-obozy-zima-480-c22f6160a335.webp",
+          "width": 480,
+          "height": 720,
+          "format": "webp",
+          "bytes": 81724
+        },
+        {
+          "path": "/images/generated/main-obozy-zima-480-e9cec0f3033b.avif",
+          "width": 480,
+          "height": 720,
+          "format": "avif",
+          "bytes": 37197
+        },
+        {
+          "path": "/images/generated/main-obozy-zima-960-1fb8138510cb.webp",
+          "width": 960,
+          "height": 1440,
+          "format": "webp",
+          "bytes": 309480
+        },
+        {
+          "path": "/images/generated/main-obozy-zima-960-faee215db3cb.avif",
+          "width": 960,
+          "height": 1440,
+          "format": "avif",
+          "bytes": 139556
+        },
+        {
+          "path": "/images/generated/main-obozy-zima-1280-3ffe8cdcab90.webp",
+          "width": 1280,
+          "height": 1920,
+          "format": "webp",
+          "bytes": 451474
+        },
+        {
+          "path": "/images/generated/main-obozy-zima-1280-8890fbe14a8a.avif",
+          "width": 1280,
+          "height": 1920,
+          "format": "avif",
+          "bytes": 244847
+        }
+      ]
+    },
+    "main/wyjazdy.jpg": {
+      "sourceHash": "5947581770776a678cc83d331b949e8ce187607349b11c7197e452c0d6d79cf0",
+      "asset": {
+        "src": "/images/generated/main-wyjazdy-1600-12204ace8c72.webp",
+        "width": 1600,
+        "height": 1067,
+        "webpSrcSet": "/images/generated/main-wyjazdy-480-b328a94c4446.webp 480w, /images/generated/main-wyjazdy-960-e5059248495b.webp 960w, /images/generated/main-wyjazdy-1600-12204ace8c72.webp 1600w",
+        "avifSrcSet": "/images/generated/main-wyjazdy-480-ec4c7687b020.avif 480w, /images/generated/main-wyjazdy-960-3a0f0efe0015.avif 960w, /images/generated/main-wyjazdy-1600-307b9685ec2a.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/main-wyjazdy-480-b328a94c4446.webp",
+          "width": 480,
+          "height": 320,
+          "format": "webp",
+          "bytes": 37858
+        },
+        {
+          "path": "/images/generated/main-wyjazdy-480-ec4c7687b020.avif",
+          "width": 480,
+          "height": 320,
+          "format": "avif",
+          "bytes": 18961
+        },
+        {
+          "path": "/images/generated/main-wyjazdy-960-e5059248495b.webp",
+          "width": 960,
+          "height": 640,
+          "format": "webp",
+          "bytes": 124784
+        },
+        {
+          "path": "/images/generated/main-wyjazdy-960-3a0f0efe0015.avif",
+          "width": 960,
+          "height": 640,
+          "format": "avif",
+          "bytes": 58256
+        },
+        {
+          "path": "/images/generated/main-wyjazdy-1600-12204ace8c72.webp",
+          "width": 1600,
+          "height": 1067,
+          "format": "webp",
+          "bytes": 278570
+        },
+        {
+          "path": "/images/generated/main-wyjazdy-1600-307b9685ec2a.avif",
+          "width": 1600,
+          "height": 1067,
+          "format": "avif",
+          "bytes": 131290
+        }
+      ]
+    },
+    "o-nas.jpg": {
+      "sourceHash": "25c8f4119f9fb047307df327734370f4860d2d07bbf180dc91b28d0031e5ffbe",
+      "asset": {
+        "src": "/images/generated/o-nas-1600-2aa69e0e61bc.webp",
+        "width": 1600,
+        "height": 1066,
+        "webpSrcSet": "/images/generated/o-nas-480-c9aa1cdc529d.webp 480w, /images/generated/o-nas-960-9451fc634ecf.webp 960w, /images/generated/o-nas-1600-2aa69e0e61bc.webp 1600w",
+        "avifSrcSet": "/images/generated/o-nas-480-e19488258f29.avif 480w, /images/generated/o-nas-960-e3fdb2ca0483.avif 960w, /images/generated/o-nas-1600-5cdb704f087c.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/o-nas-480-c9aa1cdc529d.webp",
+          "width": 480,
+          "height": 320,
+          "format": "webp",
+          "bytes": 32638
+        },
+        {
+          "path": "/images/generated/o-nas-480-e19488258f29.avif",
+          "width": 480,
+          "height": 320,
+          "format": "avif",
+          "bytes": 15149
+        },
+        {
+          "path": "/images/generated/o-nas-960-9451fc634ecf.webp",
+          "width": 960,
+          "height": 640,
+          "format": "webp",
+          "bytes": 97076
+        },
+        {
+          "path": "/images/generated/o-nas-960-e3fdb2ca0483.avif",
+          "width": 960,
+          "height": 640,
+          "format": "avif",
+          "bytes": 46895
+        },
+        {
+          "path": "/images/generated/o-nas-1600-2aa69e0e61bc.webp",
+          "width": 1600,
+          "height": 1066,
+          "format": "webp",
+          "bytes": 203034
+        },
+        {
+          "path": "/images/generated/o-nas-1600-5cdb704f087c.avif",
+          "width": 1600,
+          "height": 1066,
+          "format": "avif",
+          "bytes": 100506
+        }
+      ]
+    },
+    "obozy-lato.jpg": {
+      "sourceHash": "b487b8dc6b483b4680f5daa82e4f116bce816435696352cf83a703d0cf1d9d24",
+      "asset": {
+        "src": "/images/generated/obozy-lato-1600-a1880f167b77.webp",
+        "width": 1600,
+        "height": 1066,
+        "webpSrcSet": "/images/generated/obozy-lato-480-9b38a7c40e94.webp 480w, /images/generated/obozy-lato-960-de0be7a0cceb.webp 960w, /images/generated/obozy-lato-1600-a1880f167b77.webp 1600w",
+        "avifSrcSet": "/images/generated/obozy-lato-480-628f20e6a95d.avif 480w, /images/generated/obozy-lato-960-16d8c8831aa1.avif 960w, /images/generated/obozy-lato-1600-ab50cd31e99e.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/obozy-lato-480-9b38a7c40e94.webp",
+          "width": 480,
+          "height": 320,
+          "format": "webp",
+          "bytes": 16904
+        },
+        {
+          "path": "/images/generated/obozy-lato-480-628f20e6a95d.avif",
+          "width": 480,
+          "height": 320,
+          "format": "avif",
+          "bytes": 9433
+        },
+        {
+          "path": "/images/generated/obozy-lato-960-de0be7a0cceb.webp",
+          "width": 960,
+          "height": 640,
+          "format": "webp",
+          "bytes": 49278
+        },
+        {
+          "path": "/images/generated/obozy-lato-960-16d8c8831aa1.avif",
+          "width": 960,
+          "height": 640,
+          "format": "avif",
+          "bytes": 26619
+        },
+        {
+          "path": "/images/generated/obozy-lato-1600-a1880f167b77.webp",
+          "width": 1600,
+          "height": 1066,
+          "format": "webp",
+          "bytes": 100540
+        },
+        {
+          "path": "/images/generated/obozy-lato-1600-ab50cd31e99e.avif",
+          "width": 1600,
+          "height": 1066,
+          "format": "avif",
+          "bytes": 54840
+        }
+      ]
+    },
+    "obozy-wake.jpg": {
+      "sourceHash": "bd588e4ba323660fab9f81cd13ade2f5522e06826bf377c7b61cb41810d6ddf4",
+      "asset": {
+        "src": "/images/generated/obozy-wake-1600-25720ea52223.webp",
+        "width": 1600,
+        "height": 1069,
+        "webpSrcSet": "/images/generated/obozy-wake-480-0085940e65ab.webp 480w, /images/generated/obozy-wake-960-abbd757f6d3c.webp 960w, /images/generated/obozy-wake-1600-25720ea52223.webp 1600w",
+        "avifSrcSet": "/images/generated/obozy-wake-480-b1d7a88a4eb1.avif 480w, /images/generated/obozy-wake-960-25ad50d6ea5f.avif 960w, /images/generated/obozy-wake-1600-165894ac5b11.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/obozy-wake-480-0085940e65ab.webp",
+          "width": 480,
+          "height": 321,
+          "format": "webp",
+          "bytes": 38992
+        },
+        {
+          "path": "/images/generated/obozy-wake-480-b1d7a88a4eb1.avif",
+          "width": 480,
+          "height": 321,
+          "format": "avif",
+          "bytes": 18804
+        },
+        {
+          "path": "/images/generated/obozy-wake-960-abbd757f6d3c.webp",
+          "width": 960,
+          "height": 641,
+          "format": "webp",
+          "bytes": 125426
+        },
+        {
+          "path": "/images/generated/obozy-wake-960-25ad50d6ea5f.avif",
+          "width": 960,
+          "height": 641,
+          "format": "avif",
+          "bytes": 59100
+        },
+        {
+          "path": "/images/generated/obozy-wake-1600-25720ea52223.webp",
+          "width": 1600,
+          "height": 1069,
+          "format": "webp",
+          "bytes": 294678
+        },
+        {
+          "path": "/images/generated/obozy-wake-1600-165894ac5b11.avif",
+          "width": 1600,
+          "height": 1069,
+          "format": "avif",
+          "bytes": 134909
+        }
+      ]
+    },
+    "obozy-zima.jpg": {
+      "sourceHash": "79e19c91d0bb6f5f84143730d0d24fb365066d529eae980e92e5ba89ec03aa76",
+      "asset": {
+        "src": "/images/generated/obozy-zima-1600-ff1841bcd45c.webp",
+        "width": 1600,
+        "height": 1069,
+        "webpSrcSet": "/images/generated/obozy-zima-480-220e201cc8ac.webp 480w, /images/generated/obozy-zima-960-549d0753a557.webp 960w, /images/generated/obozy-zima-1600-ff1841bcd45c.webp 1600w",
+        "avifSrcSet": "/images/generated/obozy-zima-480-3a83cf5ea7ba.avif 480w, /images/generated/obozy-zima-960-77dbae121933.avif 960w, /images/generated/obozy-zima-1600-03fc356846c7.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/obozy-zima-480-220e201cc8ac.webp",
+          "width": 480,
+          "height": 321,
+          "format": "webp",
+          "bytes": 29820
+        },
+        {
+          "path": "/images/generated/obozy-zima-480-3a83cf5ea7ba.avif",
+          "width": 480,
+          "height": 321,
+          "format": "avif",
+          "bytes": 14168
+        },
+        {
+          "path": "/images/generated/obozy-zima-960-549d0753a557.webp",
+          "width": 960,
+          "height": 641,
+          "format": "webp",
+          "bytes": 112408
+        },
+        {
+          "path": "/images/generated/obozy-zima-960-77dbae121933.avif",
+          "width": 960,
+          "height": 641,
+          "format": "avif",
+          "bytes": 54047
+        },
+        {
+          "path": "/images/generated/obozy-zima-1600-ff1841bcd45c.webp",
+          "width": 1600,
+          "height": 1069,
+          "format": "webp",
+          "bytes": 289772
+        },
+        {
+          "path": "/images/generated/obozy-zima-1600-03fc356846c7.avif",
+          "width": 1600,
+          "height": 1069,
+          "format": "avif",
+          "bytes": 139007
+        }
+      ]
+    },
+    "obozy.jpg": {
+      "sourceHash": "58d577adfbbbb1512fe7d5521cce444de9716aee98315b24045813c63a3d9c87",
+      "asset": {
+        "src": "/images/generated/obozy-1600-075502252a02.webp",
+        "width": 1600,
+        "height": 1069,
+        "webpSrcSet": "/images/generated/obozy-480-d6f9d6e42abc.webp 480w, /images/generated/obozy-960-d3a2b04c5738.webp 960w, /images/generated/obozy-1600-075502252a02.webp 1600w",
+        "avifSrcSet": "/images/generated/obozy-480-6439f0b0a2d0.avif 480w, /images/generated/obozy-960-0357f547cade.avif 960w, /images/generated/obozy-1600-3dcc1f24c2cd.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/obozy-480-d6f9d6e42abc.webp",
+          "width": 480,
+          "height": 321,
+          "format": "webp",
+          "bytes": 39958
+        },
+        {
+          "path": "/images/generated/obozy-480-6439f0b0a2d0.avif",
+          "width": 480,
+          "height": 321,
+          "format": "avif",
+          "bytes": 19177
+        },
+        {
+          "path": "/images/generated/obozy-960-d3a2b04c5738.webp",
+          "width": 960,
+          "height": 641,
+          "format": "webp",
+          "bytes": 123156
+        },
+        {
+          "path": "/images/generated/obozy-960-0357f547cade.avif",
+          "width": 960,
+          "height": 641,
+          "format": "avif",
+          "bytes": 57726
+        },
+        {
+          "path": "/images/generated/obozy-1600-075502252a02.webp",
+          "width": 1600,
+          "height": 1069,
+          "format": "webp",
+          "bytes": 272520
+        },
+        {
+          "path": "/images/generated/obozy-1600-3dcc1f24c2cd.avif",
+          "width": 1600,
+          "height": 1069,
+          "format": "avif",
+          "bytes": 128158
+        }
+      ]
+    },
+    "skim-laczy.jpg": {
+      "sourceHash": "9705b2599d01d6037debc906fd4f71bc3c94064161ddb9e71ce90027f3331617",
+      "asset": {
+        "src": "/images/generated/skim-laczy-888-3f14063ceff1.webp",
+        "width": 888,
+        "height": 563,
+        "webpSrcSet": "/images/generated/skim-laczy-480-0977f307a7ef.webp 480w, /images/generated/skim-laczy-888-3f14063ceff1.webp 888w",
+        "avifSrcSet": "/images/generated/skim-laczy-480-0890bd4ed09d.avif 480w, /images/generated/skim-laczy-888-f550e4fb0feb.avif 888w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/skim-laczy-480-0977f307a7ef.webp",
+          "width": 480,
+          "height": 304,
+          "format": "webp",
+          "bytes": 32302
+        },
+        {
+          "path": "/images/generated/skim-laczy-480-0890bd4ed09d.avif",
+          "width": 480,
+          "height": 304,
+          "format": "avif",
+          "bytes": 16230
+        },
+        {
+          "path": "/images/generated/skim-laczy-888-3f14063ceff1.webp",
+          "width": 888,
+          "height": 563,
+          "format": "webp",
+          "bytes": 94688
+        },
+        {
+          "path": "/images/generated/skim-laczy-888-f550e4fb0feb.avif",
+          "width": 888,
+          "height": 563,
+          "format": "avif",
+          "bytes": 46554
+        }
+      ]
+    },
+    "skim-tor.jpg": {
+      "sourceHash": "cdd2c3d3c9cbe3912aa4053c6eb2fedf131e80b4a305cc7d9727b0730743801f",
+      "asset": {
+        "src": "/images/generated/skim-tor-650-2b1bd186a783.webp",
+        "width": 650,
+        "height": 433,
+        "webpSrcSet": "/images/generated/skim-tor-480-614005de3c7a.webp 480w, /images/generated/skim-tor-650-2b1bd186a783.webp 650w",
+        "avifSrcSet": "/images/generated/skim-tor-480-39b25ce1d1cc.avif 480w, /images/generated/skim-tor-650-158fce5955d1.avif 650w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/skim-tor-480-614005de3c7a.webp",
+          "width": 480,
+          "height": 320,
+          "format": "webp",
+          "bytes": 36562
+        },
+        {
+          "path": "/images/generated/skim-tor-480-39b25ce1d1cc.avif",
+          "width": 480,
+          "height": 320,
+          "format": "avif",
+          "bytes": 16676
+        },
+        {
+          "path": "/images/generated/skim-tor-650-2b1bd186a783.webp",
+          "width": 650,
+          "height": 433,
+          "format": "webp",
+          "bytes": 60828
+        },
+        {
+          "path": "/images/generated/skim-tor-650-158fce5955d1.avif",
+          "width": 650,
+          "height": 433,
+          "format": "avif",
+          "bytes": 29679
+        }
+      ]
+    },
+    "strefa-letnia.jpg": {
+      "sourceHash": "53b2322372b44fae2146dc271b5b6f0a0965f8439e68dda74883ffa698da1fd8",
+      "asset": {
+        "src": "/images/generated/strefa-letnia-1500-9419f95af725.webp",
+        "width": 1500,
+        "height": 844,
+        "webpSrcSet": "/images/generated/strefa-letnia-480-491ee9177e08.webp 480w, /images/generated/strefa-letnia-960-aa4de3fb433e.webp 960w, /images/generated/strefa-letnia-1500-9419f95af725.webp 1500w",
+        "avifSrcSet": "/images/generated/strefa-letnia-480-042948748c4f.avif 480w, /images/generated/strefa-letnia-960-ec834fe39017.avif 960w, /images/generated/strefa-letnia-1500-ebc0e984fa47.avif 1500w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/strefa-letnia-480-491ee9177e08.webp",
+          "width": 480,
+          "height": 270,
+          "format": "webp",
+          "bytes": 26936
+        },
+        {
+          "path": "/images/generated/strefa-letnia-480-042948748c4f.avif",
+          "width": 480,
+          "height": 270,
+          "format": "avif",
+          "bytes": 13995
+        },
+        {
+          "path": "/images/generated/strefa-letnia-960-aa4de3fb433e.webp",
+          "width": 960,
+          "height": 540,
+          "format": "webp",
+          "bytes": 84492
+        },
+        {
+          "path": "/images/generated/strefa-letnia-960-ec834fe39017.avif",
+          "width": 960,
+          "height": 540,
+          "format": "avif",
+          "bytes": 40934
+        },
+        {
+          "path": "/images/generated/strefa-letnia-1500-9419f95af725.webp",
+          "width": 1500,
+          "height": 844,
+          "format": "webp",
+          "bytes": 162528
+        },
+        {
+          "path": "/images/generated/strefa-letnia-1500-ebc0e984fa47.avif",
+          "width": 1500,
+          "height": 844,
+          "format": "avif",
+          "bytes": 88391
+        }
+      ]
+    }
+  }
+}

@@ -21,13 +21,15 @@ availability, participant management, or customer accounts.
 - React 19 + TypeScript + Vite
 - TanStack Router, Start, and Query
 - Tailwind CSS 4 and Radix UI primitives
-- Public home page: `/`
-- Current public offer page: `/trips/:slug`
-- Current CMS prototype: `/admin` and `/admin/:slug`
+- Prerendered marketing routes: `/`, `/o-nas`, `/wyjazdy`, `/eventy`, `/obozy`, `/kontakt`
+- JS offer details: `/wyjazdy/:slug`, `/obozy/:slug`; `/trips/:slug` is a legacy 301 redirect
+- Supabase CMS: `/admin`, `/admin/login`, `/admin/new`, `/admin/:slug`,
+  `/admin/dokumenty`, `/admin/portal`
+- Public and admin details receive separate static shells; admin always stays noindex
 
-The public trips in `src/lib/trips.ts` and the `localStorage` implementation in
-`src/lib/adminStore.ts` are prototype data sources. Do not extend
-`localStorage` as a production CMS.
+Offers, photographs, contact PDFs, and carousel selection use Supabase, Auth,
+and RLS. Publishing content does not rebuild the frontend. Code, repository
+photographs, fonts, and OG images require a Git build/deploy.
 
 ## Design guardrails
 
@@ -66,19 +68,26 @@ The public trips in `src/lib/trips.ts` and the `localStorage` implementation in
 - Store image object paths and metadata, not binary data, in the database.
 - Validate uploaded image type and size; use unique storage paths and useful
   alt text.
-- Treat the planned public route names (`/o-nas`, `/oferty`, `/oferty/:slug`,
-  `/kontakt`) as a migration target. Do not rename existing routes without a
+- Preserve current routes and legacy redirects; rename routes only with a
   deliberate routing and SEO migration.
+- Use `ResponsiveImage` and the generated local asset catalogue for repository
+  photographs. Do not restore eager imports of full-size originals.
+- Use local Fontsource fonts, semantic contrast tokens, and reduced-motion guards.
 
 ## Useful commands
 
 ```bash
 bun run dev
-bun run build
+bun run typecheck
+bun run test
 bun run lint
+bun run build:ci
+bun run build
+bun run check:seo
+bun run images:check
 bun run format
 ```
 
-Run `bun run lint` and `bun run build` after application changes. For docs-only
+Run `bun run typecheck`, `bun run test`, `bun run lint`, and `bun run build` after application changes. For docs-only
 work, check that Markdown links, file references, and statements about the
 current code are correct.

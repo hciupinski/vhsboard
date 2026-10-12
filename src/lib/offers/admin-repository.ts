@@ -26,7 +26,8 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isOfferStatus = (value: unknown): value is OfferStatus =>
   value === "draft" || value === "published" || value === "archived";
 
-const isDuplicateSlugError = (error: unknown): boolean => isRecord(error) && error.code === "23505";
+const isDuplicateSlugError = (error: unknown): boolean =>
+  isRecord(error) && error["code"] === "23505";
 
 const throwRepositoryError = (error: unknown, message: string): never => {
   if (error instanceof OfferRepositoryError) {
@@ -77,41 +78,43 @@ const isHttpsUrl = (value: string): boolean => {
 
 const toEditableOfferInput = (row: Record<string, unknown>): EditableOfferInput =>
   editorOfferInputSchema.parse({
-    offerKind: row.offer_kind,
-    slug: row.slug,
-    activity: row.activity,
-    title: row.title,
-    subtitle: row.subtitle,
-    shortDescription: row.short_description,
-    content: row.description,
-    location: row.location,
-    startDate: row.start_date,
-    endDate: row.end_date,
-    durationDays: row.duration_days,
-    groupSizeMin: row.group_size_min,
-    groupSizeMax: row.group_size_max,
-    priceFrom: row.price_from,
-    currency: row.currency,
-    bookingUrl: row.booking_url,
+    offerKind: row["offer_kind"],
+    slug: row["slug"],
+    activity: row["activity"],
+    title: row["title"],
+    subtitle: row["subtitle"],
+    shortDescription: row["short_description"],
+    content: row["description"],
+    location: row["location"],
+    startDate: row["start_date"],
+    endDate: row["end_date"],
+    durationDays: row["duration_days"],
+    groupSizeMin: row["group_size_min"],
+    groupSizeMax: row["group_size_max"],
+    priceFrom: row["price_from"],
+    currency: row["currency"],
+    bookingUrl: row["booking_url"],
     showLastPlacesBadge: row["show_last_places_badge"],
-    heroImagePath: row.hero_image,
+    heroImagePath: row["hero_image"],
   });
 
 const toEditableOffer = (value: unknown): EditableOffer => {
-  if (!isRecord(value) || typeof value.id !== "string" || !isOfferStatus(value.status)) {
+  if (!isRecord(value) || typeof value["id"] !== "string" || !isOfferStatus(value["status"])) {
     throw new OfferRepositoryError("Nie udało się odczytać danych oferty.");
   }
 
   return {
-    id: value.id,
+    id: value["id"],
     ...toEditableOfferInput(value),
-    status: value.status,
+    status: value["status"],
   };
 };
 
 const toAdminOfferListItem = (value: unknown): AdminOfferListItem => {
   const offer = toEditableOffer(value);
-  const parsedUpdatedAt = updatedAtSchema.safeParse(isRecord(value) ? value.updated_at : undefined);
+  const parsedUpdatedAt = updatedAtSchema.safeParse(
+    isRecord(value) ? value["updated_at"] : undefined,
+  );
 
   if (!parsedUpdatedAt.success) {
     throw new OfferRepositoryError("Nie udało się odczytać danych oferty.", {
@@ -304,8 +307,8 @@ export const canPublishOffer = async (id: string): Promise<boolean> => {
     const content = offerData.description;
     const accommodationEnabled =
       isRecord(content) &&
-      isRecord(content.accommodation) &&
-      typeof content.accommodation.description === "string";
+      isRecord(content["accommodation"]) &&
+      typeof content["accommodation"]["description"] === "string";
     if (!accommodationEnabled) return true;
 
     const { data: accommodationImage, error: accommodationError } = await supabase

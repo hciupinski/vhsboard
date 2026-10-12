@@ -1,3 +1,4 @@
+import { required } from "@/test/required";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockedSupabase = vi.hoisted(() => ({ from: vi.fn(), storage: { from: vi.fn() } }));
@@ -76,7 +77,7 @@ describe("contact document repository", () => {
       0,
     );
     expect(upload.mock.invocationCallOrder[0]).toBeLessThan(
-      insertQuery.insert.mock.invocationCallOrder[0],
+      required(insertQuery.insert.mock.invocationCallOrder[0]),
     );
     expect(insertQuery.insert).toHaveBeenCalledWith({
       title: "Regulamin",

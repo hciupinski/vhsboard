@@ -1,13 +1,9 @@
+import { getLocalImage } from "@/lib/images/responsive";
+import { ResponsiveImage } from "@/components/public/ResponsiveImage";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight } from "lucide-react";
 
-import obozy from "@/assets/main/obozy-zima.jpg";
-import eventy from "@/assets/main/eventy-1.jpg";
-import heroEventy from "@/assets/carousel/eventy.jpg";
-import heroSurf from "@/assets/carousel/hero-surf.jpg";
-import heroWyjazdy from "@/assets/carousel/wyjazdy.jpg";
-import trips from "@/assets/main/wyjazdy.jpg";
 import { HomeBrandStory } from "@/components/home/HomeBrandStory";
 import { HomeContactCta } from "@/components/home/HomeContactCta";
 import { HomeUpcomingOffersSection } from "@/components/home/HomeUpcomingOffersSection";
@@ -18,11 +14,20 @@ import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { Button } from "@/components/ui/button";
 import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { homeOffersQueryOptions } from "@/lib/offers/query-options";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
+
+const obozy = getLocalImage("main/obozy-zima.jpg");
+const eventy = getLocalImage("main/eventy-1.jpg");
+const heroEventy = getLocalImage("carousel/eventy.jpg");
+const heroSurf = getLocalImage("carousel/hero-surf.jpg");
+const heroWyjazdy = getLocalImage("carousel/wyjazdy.jpg");
+const trips = getLocalImage("main/wyjazdy.jpg");
 
 export const Route = createFileRoute("/")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.home,
       path: "/",
       title: "VHSBOARD — wyjazdy, eventy i obozy",
       description:
@@ -35,16 +40,14 @@ const entryPoints = [
   {
     to: "/wyjazdy",
     title: "Wyjazdy",
-    eyebrow: "01 / W podróż",
     text: "Surf, snowboard i dobra ekipa — wyjazdy, do których chce się wracać.",
     action: "Zobacz wyjazdy",
     image: trips,
-    imageAlt: "Uczestnicy wyjazdu VHSBOARD z deskami surfingowymi na plaży",
+    imageAlt: "Uczestnicy wyjazdu snowboardowego VHSBOARD w zaśnieżonych górach",
   },
   {
     to: "/eventy",
     title: "Eventy",
-    eyebrow: "02 / Ruch",
     text: "Sport, energia i aktywności, które przyciągają ludzi i rozkręcają wydarzenia.",
     action: "Sprawdź eventy",
     image: eventy,
@@ -53,19 +56,22 @@ const entryPoints = [
   {
     to: "/obozy",
     title: "Obozy",
-    eyebrow: "03 / Dla młodych",
     text: "Wakacje po naszemu? Aktywne dni pełne sportu, zabawy i nowych doświadczeń.",
     action: "Poznaj obozy",
     image: obozy,
-    imageAlt:
-      "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+    imageAlt: "Dziecko na snowboardzie podczas zimowego obozu VHSBOARD",
   },
 ] as const;
 
 const fallbackImages = [
-  { path: "fallback/hero-surf", src: heroSurf, label: "Hero surf" },
-  { path: "fallback/eventy", src: heroEventy, label: "Hero zima" },
-  { path: "fallback/wyjazdy", src: heroWyjazdy, label: "Hero wyjazdy" },
+  { path: "fallback/hero-surf", src: heroSurf.src, responsive: heroSurf, label: "Hero surf" },
+  { path: "fallback/eventy", src: heroEventy.src, responsive: heroEventy, label: "Hero zima" },
+  {
+    path: "fallback/wyjazdy",
+    src: heroWyjazdy.src,
+    responsive: heroWyjazdy,
+    label: "Hero wyjazdy",
+  },
 ];
 
 function HomePage() {
@@ -124,33 +130,31 @@ function HomePage() {
             data-testid="topic-selector"
             className="topic-selector mt-8 overflow-hidden bg-background sm:mt-10"
           >
-            {entryPoints.map(({ to, title, eyebrow, text, action, image, imageAlt }, index) => (
+            {entryPoints.map(({ to, title, text, action, image, imageAlt }, index) => (
               <Link
                 key={to}
                 to={to}
-                className={`topic-selector__item topic-selector__item--${index + 1} topic-selector__item--mobile-stack group isolate flex overflow-hidden py-8 text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:py-10`}
+                className={`topic-selector__item topic-selector__item--${index + 1} topic-selector__item--mobile-stack group isolate flex overflow-hidden py-8 text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-inset sm:py-10`}
               >
-                <img
-                  src={image}
+                <ResponsiveImage
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  image={image}
                   alt={imageAlt}
                   loading="lazy"
-                  className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-105"
+                  className="absolute inset-0 -z-20 size-full object-cover hover-zoom transition-transform duration-160 ease-out motion-reduce:transition-none"
                 />
                 <div className="absolute inset-0 -z-10 bg-gradient-to-t from-foreground/90 via-foreground/25 to-foreground/5" />
                 <div
                   className={`topic-selector__content topic-selector__content--contrast topic-selector__content--flush-left topic-selector__content--safe-text-inset topic-selector__content--${index + 1}`}
                 >
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
-                    {eyebrow}
-                  </p>
-                  <h3 className="mt-3 text-4xl leading-[0.9] sm:text-5xl">{title}</h3>
+                  <h3 className="text-4xl leading-[0.9] sm:text-5xl">{title}</h3>
                   <div className="topic-selector__details">
                     <p className="mt-3 text-sm leading-relaxed text-background/85 sm:text-base">
                       {text}
                     </p>
                     <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
                       {action}
-                      <span className="grid size-7 mr-2 place-items-center rounded-full bg-background/15 transition duration-200 motion-reduce:transition-none group-hover:translate-x-1 group-hover:bg-primary">
+                      <span className="grid size-7 mr-2 place-items-center rounded-full bg-background/15 hover-nudge transition-[transform,background-color] duration-160 ease-out motion-reduce:transition-none">
                         <ArrowUpRight aria-hidden="true" className="size-4" />
                       </span>
                     </span>

@@ -1,12 +1,17 @@
+import { SOCIAL_IMAGES, type SocialImage } from "./social-images";
 import { getSeoConfig } from "./env";
 
 export { getSeoConfig } from "./env";
+
+export const getRobotsContent = (indexable = true): "index, follow" | "noindex, nofollow" =>
+  getSeoConfig().indexing && indexable ? "index, follow" : "noindex, nofollow";
 
 type PageMetadataInput = {
   path: string;
   title: string;
   description: string;
   indexable?: boolean;
+  socialImage?: SocialImage;
   ogType?: "website" | "article";
 };
 
@@ -43,9 +48,13 @@ export const createPageMetadata = ({
   description,
   indexable = true,
   ogType = "website",
+  socialImage = SOCIAL_IMAGES.offers,
 }: PageMetadataInput) => {
+  if (!/^\/og\/[a-z-]+\.jpg$/.test(socialImage.path))
+    throw new Error("Obraz udostępniania musi być lokalnym plikiem JPEG w /og/.");
+  const imageUrl = canonicalUrl(socialImage.path);
   const canonical = canonicalUrl(path);
-  const robots = getSeoConfig().indexing && indexable ? "index, follow" : "noindex, nofollow";
+  const robots = getRobotsContent(indexable);
 
   return {
     meta: [
@@ -57,6 +66,16 @@ export const createPageMetadata = ({
       { property: "og:locale", content: "pl_PL" },
       { property: "og:url", content: canonical },
       { property: "og:type", content: ogType },
+      { property: "og:image", content: imageUrl },
+      { property: "og:image:width", content: String(socialImage.width) },
+      { property: "og:image:height", content: String(socialImage.height) },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:alt", content: socialImage.alt },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
+      { name: "twitter:image", content: imageUrl },
+      { name: "twitter:image:alt", content: socialImage.alt },
     ],
     links: [{ rel: "canonical", href: canonical }],
   };

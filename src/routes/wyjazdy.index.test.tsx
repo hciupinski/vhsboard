@@ -7,7 +7,7 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 import { cleanup, render, screen } from "@testing-library/react";
-import type { ComponentType } from "react";
+import type { FunctionComponent } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
@@ -101,7 +101,7 @@ const renderTripsPage = async () => {
   }
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const rootRoute = createRootRoute();
-  const TripsPage = TripsRoute.options.component as ComponentType;
+  const TripsPage = TripsRoute.options.component as FunctionComponent;
   const tripsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/wyjazdy",

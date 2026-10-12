@@ -101,12 +101,12 @@ function OfferEditorContent() {
 
   useEffect(() => {
     if (isNew || !offerQuery.data) return;
-
-    setPersistedOffer(offerQuery.data);
+    const offer = offerQuery.data;
+    setPersistedOffer(offer);
     setFormValue((current) =>
       isFormDirty.current
-        ? { ...current, heroImagePath: offerQuery.data.heroImagePath }
-        : toEditableInput(offerQuery.data),
+        ? { ...current, heroImagePath: offer.heroImagePath }
+        : toEditableInput(offer),
     );
   }, [isNew, offerQuery.data]);
 
@@ -337,7 +337,7 @@ function OfferEditorContent() {
               isSubmitting={isSubmitting}
               canPublish={canPublish}
               onSaveDraft={handleSaveDraft}
-              onPreview={persistedOffer ? handlePreview : undefined}
+              {...(persistedOffer ? { onPreview: handlePreview } : {})}
               onPublish={handlePublish}
               onUnpublish={handleUnpublish}
             />

@@ -1,9 +1,8 @@
+import { getLocalImage } from "@/lib/images/responsive";
+import { ResponsiveImage } from "@/components/public/ResponsiveImage";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import wakeparkCampImage from "@/assets/obozy-wake.jpg";
-import summerCampImage from "@/assets/obozy-lato.jpg";
-import winterCampImage from "@/assets/obozy-zima.jpg";
 import { DayCampCard } from "@/components/offers/DayCampCard";
 import { FaqSection } from "@/components/public/FaqSection";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -11,11 +10,17 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { campFaqItems } from "@/lib/faq";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
+
+const wakeparkCampImage = getLocalImage("obozy-wake.jpg");
+const summerCampImage = getLocalImage("obozy-lato.jpg");
+const winterCampImage = getLocalImage("obozy-zima.jpg");
 
 export const Route = createFileRoute("/obozy/")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.camps,
       path: "/obozy",
       title: "Obozy sportowe | VHSBOARD",
       description:
@@ -37,11 +42,10 @@ function HalfDayCampsPage() {
       <PublicJsonLd path="/obozy" label="Obozy" />
       <main className="flex-1">
         <section className="relative isolate overflow-hidden">
-          <img
-            src={wakeparkCampImage}
+          <ResponsiveImage
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            image={wakeparkCampImage}
             alt="Dziecko płynące na wakeboardzie podczas obozów VHSBOARD, obserwowane przez instruktora i grupę dzieci"
-            width={1536}
-            height={1024}
             className="absolute inset-0 -z-20 size-full object-cover"
           />
           <div className="absolute inset-0 -z-10 bg-foreground/65" />
@@ -70,8 +74,10 @@ function HalfDayCampsPage() {
           </h2>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             <article className="relative isolate min-h-[25rem] overflow-hidden rounded-3xl border border-border bg-foreground p-6 text-background shadow-warm sm:p-8 flex flex-col justify-end">
-              <img
-                src={summerCampImage}
+              <ResponsiveImage
+                loading="lazy"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                image={summerCampImage}
                 alt="Uczestnik obozu wakeboardowego na jeziorze podczas letnich zajęć"
                 className="absolute inset-0 -z-20 size-full object-cover object-center"
               />
@@ -87,8 +93,10 @@ function HalfDayCampsPage() {
               </p>
             </article>
             <article className="relative isolate min-h-[25rem] overflow-hidden rounded-3xl border border-border bg-foreground p-6 text-background shadow-warm sm:p-8 flex flex-col justify-end">
-              <img
-                src={winterCampImage}
+              <ResponsiveImage
+                loading="lazy"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                image={winterCampImage}
                 alt="Uczestniczka obozu snowboardowego podczas zimowej jazdy w górach"
                 className="absolute inset-0 -z-20 size-full object-cover object-center"
               />

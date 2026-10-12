@@ -23,6 +23,7 @@ W lokalnym `.env.local` ustaw jawnie wartości SEO oraz istniejące dane firmy
 i Supabase. Nie commituj tego pliku. Następnie uruchom:
 
 ```bash
+bun run typecheck
 bun run test
 bun run lint
 bun run build
@@ -48,9 +49,9 @@ Przed publikacją oferty potwierdź ręcznie rzeczywistą cenę PLN oraz działa
 link HTTPS do zewnętrznego systemu zapisów. Dane firmy w JSON-LD pochodzą wyłącznie z publicznej
 konfiguracji deployu, więc muszą odpowiadać zatwierdzonym danym firmy.
 
-## Przełączenie domeny w Tasku 100
+## Przyszłe przełączenie domeny
 
-Po skonfigurowaniu i zweryfikowaniu DNS dla `vhsboard.pl` zmień w tym samym
+Po osobnym zatwierdzeniu migracji domeny oraz skonfigurowaniu i zweryfikowaniu DNS dla `vhsboard.pl` zmień w tym samym
 workflow, bez tworzenia nowego środowiska:
 
 ```text
@@ -60,3 +61,34 @@ VITE_SEO_INDEXING=true
 
 Wykonaj nowy build i deploy, następnie sprawdź canonicale, sitemapę i
 `index, follow` na wdrożonej domenie przed zgłoszeniem jej do indeksowania.
+
+## HTML ofert i panelu
+
+Dynamiczne adresy `/wyjazdy/:slug` i `/obozy/:slug` otrzymują publiczny shell
+`/_shell/app.html`, a `/admin` i `/admin/*` — `/_shell/admin.html`.
+Publiczny shell zawiera `index, follow` tylko przy `VITE_SEO_INDEXING=true`.
+Panel zawsze ma `noindex, nofollow`, niezależnie od tego ustawienia.
+Shell publiczny nie ma canonicala wskazującego techniczny adres. Prawidłowy
+canonical, tytuł i opis konkretnej oferty ustawia aplikacja po pobraniu danych.
+Podgląd `?preview=true`, brak oferty oraz stany błędów mają noindex.
+Bezpieczny fallback główny również ma noindex.
+
+Pozostawiamy szczegóły ofert pobierane przez JS: CMS nie generuje HTML i nie
+wywołuje rebuilda. Robot musi uruchomić JavaScript i odczytać dane, aby zobaczyć
+pełną ofertę. Nie ma gwarancji terminu indeksacji. Część botów udostępniania nie
+uruchamia JS, dlatego zobaczy ogólny podgląd VHSBOARD z publicznego shellu.
+Oferty nie są dodawane do sitemapy ani generowane statycznie.
+
+## Open Graph i Twitter
+
+Strony marketingowe mają własne lokalne grafiki sekcji `/og/*.jpg` 1200×630.
+Szczegóły ofert używają ogólnej grafiki ofert; zdjęcie podpisane z Supabase nie
+jest trwałym obrazem OG. Nie umieszczaj w metadanych adresów zawierających
+query ani token Storage. Regenerację grafik opisuje
+[runbook wdrożenia](deployment-runbook.md).
+
+Kontrola `check:seo` wymaga jednej deklaracji robots i spójnych OG/Twitter,
+wymiarów i alt obrazu; sprawdza oba shelle oraz fizyczne pliki grafik.
+Po zmianie routingu lub metadanych zbuduj i sprawdź lokalnie oba ustawienia
+`VITE_SEO_INDEXING=false` i `true`; nie zmieniaj tym ustawienia konta GitHub.
+Po próbie z `true` odtwórz lokalny artefakt dla rzeczywistej konfiguracji deployu.

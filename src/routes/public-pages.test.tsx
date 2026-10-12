@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
-import type { ComponentType } from "react";
+import type { FunctionComponent } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
@@ -105,7 +105,7 @@ const renderRoute = async (path: string, route: { options: { component?: unknown
   for (const [name, value] of Object.entries(publicSiteEnv)) {
     vi.stubEnv(name, value);
   }
-  const Component = route.options.component as ComponentType;
+  const Component = route.options.component as FunctionComponent;
   const rootRoute = createRootRoute();
   const pageRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -256,7 +256,7 @@ describe("static public pages", () => {
     const entryPoints = [
       {
         href: "/wyjazdy",
-        imageAlt: "Uczestnicy wyjazdu VHSBOARD z deskami surfingowymi na plaży",
+        imageAlt: "Uczestnicy wyjazdu snowboardowego VHSBOARD w zaśnieżonych górach",
       },
       {
         href: "/eventy",
@@ -264,8 +264,7 @@ describe("static public pages", () => {
       },
       {
         href: "/obozy",
-        imageAlt:
-          "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+        imageAlt: "Dziecko na snowboardzie podczas zimowego obozu VHSBOARD",
       },
     ];
 
@@ -280,7 +279,7 @@ describe("static public pages", () => {
     ).toHaveAttribute("loading", "lazy");
     expect(
       screen.getByRole("img", {
-        name: "Dziecko płynące na wakeboardzie podczas obozu VHSBOARD, obserwowane przez instruktora i grupę dzieci",
+        name: "Dziecko na snowboardzie podczas zimowego obozu VHSBOARD",
       }),
     ).toHaveAttribute("loading", "lazy");
   });

@@ -1,20 +1,25 @@
+import { getLocalImage } from "@/lib/images/responsive";
+import { ResponsiveImage } from "@/components/public/ResponsiveImage";
 import { createFileRoute } from "@tanstack/react-router";
 
-import marioSkate from "@/assets/about-us/mario-skate-web.jpg";
-import marioSnow from "@/assets/about-us/mario-snow.jpg";
-import marioTrip from "@/assets/about-us/mario-trip-web.jpg";
-import marioVhs from "@/assets/about-us/mario-vhs.jpg";
-import marioSkim from "@/assets/about-us/mario-skim.jpg";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 import { aboutUsFaqItems } from "@/lib/faq";
 import { FaqSection } from "@/components/public/FaqSection";
 
+const marioSkate = getLocalImage("about-us/mario-skate-web.jpg");
+const marioSnow = getLocalImage("about-us/mario-snow.jpg");
+const marioTrip = getLocalImage("about-us/mario-trip-web.jpg");
+const marioVhs = getLocalImage("about-us/mario-vhs.jpg");
+const marioSkim = getLocalImage("about-us/mario-skim.jpg");
+
 export const Route = createFileRoute("/o-nas")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.about,
       path: "/o-nas",
       title: "O nas | VHSBOARD",
       description: "Poznaj VHSBOARD — ludzi i aktywności, które stoją za naszymi wyjazdami.",
@@ -52,11 +57,10 @@ function AboutPage() {
             </p>
           </div>
           <figure className="relative">
-            <img
-              src={marioVhs}
+            <ResponsiveImage
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              image={marioVhs}
               alt="Uczestnicy surf campu VHS ułożeni w znak VHS na plaży"
-              width={1973}
-              height={1315}
               className="aspect-[4/3] w-full rounded-3xl object-cover shadow-warm"
             />
           </figure>
@@ -68,11 +72,11 @@ function AboutPage() {
         >
           <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-center lg:gap-16">
             <figure className="overflow-hidden rounded-3xl shadow-warm">
-              <img
-                src={marioSkate}
+              <ResponsiveImage
+                loading="lazy"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                image={marioSkate}
                 alt="Mariusz podczas jazdy na deskorolce na miejskim skateparku"
-                width={4398}
-                height={6597}
                 className="aspect-[4/5] w-full object-cover object-center"
               />
             </figure>
@@ -120,29 +124,29 @@ function AboutPage() {
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:grid-rows-2 md:gap-6">
             <figure className="order-first overflow-hidden rounded-3xl shadow-warm md:row-span-2">
-              <img
-                src={marioSnow}
+              <ResponsiveImage
+                loading="lazy"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                image={marioSnow}
                 alt="Snowboardzista w locie nad śnieżnym skokiem"
-                width={1365}
-                height={2048}
                 className="aspect-[3/4] w-full object-cover md:h-full md:aspect-auto"
               />
             </figure>
             <figure className="overflow-hidden rounded-3xl shadow-warm">
-              <img
-                src={marioSkim}
+              <ResponsiveImage
+                loading="lazy"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                image={marioSkim}
                 alt="Mobilny tor skimboardowy VHS przygotowany do aktywności na świeżym powietrzu"
-                width={5331}
-                height={3000}
                 className="aspect-[16/8] w-full object-cover"
               />
             </figure>
             <figure className="overflow-hidden rounded-3xl shadow-warm">
-              <img
-                src={marioTrip}
+              <ResponsiveImage
+                loading="lazy"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                image={marioTrip}
                 alt="Mariusz w koszulce VHS podczas surfowego wyjazdu"
-                width={5331}
-                height={3000}
                 className="aspect-[16/8] w-full object-cover"
               />
             </figure>

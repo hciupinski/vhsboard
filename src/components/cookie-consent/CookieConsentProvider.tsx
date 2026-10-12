@@ -207,7 +207,12 @@ function CookieCategory({
         </label>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{description}</p>
       </div>
-      <Switch checked={checked} disabled={disabled} id={id} onCheckedChange={onCheckedChange} />
+      <Switch
+        checked={checked}
+        disabled={disabled}
+        id={id}
+        {...(onCheckedChange ? { onCheckedChange } : {})}
+      />
     </div>
   );
 }

@@ -21,7 +21,7 @@ export function getVisibleDayCampSections(offer: DayCampOffer): DayCampSection[]
     content.dayProgram.length > 0,
     content.included.length > 0 || content.excluded.length > 0,
     content.terms.length > 0,
-    Object.values(content.parentInfo).some((value) => value?.trim().length > 0),
+    Object.values(content.parentInfo).some((value) => (value?.trim().length ?? 0) > 0),
     Boolean(content.accommodation),
     offer.images.some((image) => image.signedUrl !== null),
   ];

@@ -1,17 +1,19 @@
+import { getLocalImage } from "@/lib/images/responsive";
+import { ResponsiveImage } from "@/components/public/ResponsiveImage";
 import { Link } from "@tanstack/react-router";
 
-import marioVhs from "@/assets/about-us/mario-vhs.jpg";
 import { Button } from "@/components/ui/button";
+
+const marioVhs = getLocalImage("about-us/mario-vhs.jpg");
 
 export function HomeBrandStory() {
   return (
     <section className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
       <figure className="order-last lg:order-first">
-        <img
-          src={marioVhs}
+        <ResponsiveImage
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          image={marioVhs}
           alt="Uczestnicy surf campu VHS ułożeni w znak VHS na plaży"
-          width={1973}
-          height={1315}
           loading="lazy"
           className="aspect-[4/3] w-full rounded-3xl object-cover shadow-warm"
         />

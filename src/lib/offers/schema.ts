@@ -102,7 +102,7 @@ const offerDetailRowShape = offerBaseRowSchema.extend({
 });
 
 const validateOfferDetailRow = (
-  offer: z.infer<typeof offerDetailRowShape>,
+  offer: Omit<z.infer<typeof offerDetailRowShape>, "status">,
   ctx: z.RefinementCtx,
 ) => {
   const isTrip = offer.offer_kind === "trip" && ["surf", "snow", "combo"].includes(offer.activity);

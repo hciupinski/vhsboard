@@ -7,7 +7,7 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 import { cleanup, render, screen } from "@testing-library/react";
-import type { ComponentType } from "react";
+import type { FunctionComponent } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
@@ -76,7 +76,7 @@ const renderCampsPage = async () => {
   }
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const rootRoute = createRootRoute();
-  const CampsPage = CampsRoute.options.component as ComponentType;
+  const CampsPage = CampsRoute.options.component as FunctionComponent;
   const campsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/obozy",

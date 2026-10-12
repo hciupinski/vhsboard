@@ -1,3 +1,4 @@
+import { required } from "@/test/required";
 import { useState } from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -175,7 +176,7 @@ describe("OfferEditorForm", () => {
     );
 
     await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
-    await user.click(screen.getAllByRole("button", { name: "Dodaj pozycję" })[0]);
+    await user.click(required(screen.getAllByRole("button", { name: "Dodaj pozycję" })[0]));
 
     expect(onChange).toHaveBeenCalledWith({
       ...completeInput,
@@ -232,7 +233,7 @@ describe("OfferEditorForm", () => {
         ],
       },
     });
-    expect(value.content.schedule[1].text).toBe("Pierwsza sesja.");
+    expect(required(value.content.schedule[1]).text).toBe("Pierwsza sesja.");
   });
 
   it("adds a numbered part rather than a pre-grouped day", async () => {
@@ -267,7 +268,7 @@ describe("OfferEditorForm", () => {
     expect(screen.getByLabelText("Rodzaj wyjazdu")).toBeDisabled();
 
     await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
-    expect(screen.getAllByRole("button", { name: "Dodaj pozycję" })[0]).toBeDisabled();
+    expect(required(screen.getAllByRole("button", { name: "Dodaj pozycję" })[0])).toBeDisabled();
 
     await user.click(screen.getByRole("tab", { name: "W programie" }));
     expect(screen.getByLabelText("W programie 1")).toBeDisabled();

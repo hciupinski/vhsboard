@@ -8,6 +8,10 @@ import { routeTree } from "@/routeTree.gen";
 
 import { Route } from "./obozy.$slug";
 
+const routeLoader = Route.options.loader;
+if (typeof routeLoader !== "function") throw new Error("Expected a function loader");
+const loadOffer = routeLoader;
+
 const { mockedGetPublishedOfferBySlug } = vi.hoisted(() => ({
   mockedGetPublishedOfferBySlug: vi.fn(),
 }));
@@ -86,9 +90,10 @@ describe("day-camp detail route", () => {
     const ensureQueryData = vi.fn().mockResolvedValue(offer);
 
     await expect(
-      Route.options.loader?.({
+      loadOffer({
         context: { queryClient: { ensureQueryData } },
         params: { slug: offer.slug },
+        deps: { preview: false },
       } as never),
     ).resolves.toEqual({ offer, slug: offer.slug, preview: false });
   });
@@ -103,10 +108,10 @@ describe("day-camp detail route", () => {
     const ensureQueryData = vi.fn().mockResolvedValue(offer);
 
     await expect(
-      Route.options.loader?.({
+      loadOffer({
         context: { queryClient: { ensureQueryData } },
         params: { slug: offer.slug },
-        search: { preview: true },
+        deps: { preview: true },
       } as never),
     ).resolves.toEqual({ offer, slug: offer.slug, preview: true });
     expect(ensureQueryData).toHaveBeenCalledWith(
@@ -118,9 +123,10 @@ describe("day-camp detail route", () => {
     const ensureQueryData = vi.fn().mockResolvedValue({ offerKind: "trip" });
 
     await expect(
-      Route.options.loader?.({
+      loadOffer({
         context: { queryClient: { ensureQueryData } },
         params: { slug: "atlantic-surf-week" },
+        deps: { preview: false },
       } as never),
     ).rejects.toMatchObject({ isNotFound: true });
   });

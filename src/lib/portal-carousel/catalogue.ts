@@ -1,16 +1,13 @@
 import type { PortalCarouselImage } from "./types";
-
-const modules = import.meta.glob("/src/assets/carousel/*.{jpg,jpeg,png,webp,avif}", {
-  eager: true,
-  import: "default",
-  query: "?url",
-}) as Record<string, string>;
+import { LOCAL_IMAGE_ASSETS } from "../images/local-assets.generated";
 
 export const PORTAL_CAROUSEL_IMAGES: ReadonlyArray<PortalCarouselImage> = Object.freeze(
-  Object.entries(modules)
-    .map(([modulePath, src]) => ({
-      path: modulePath.replace("/src/assets/", ""),
-      src,
+  Object.entries(LOCAL_IMAGE_ASSETS)
+    .filter(([path]) => path.startsWith("carousel/"))
+    .map(([modulePath, image]) => ({
+      path: modulePath,
+      src: image.src,
+      responsive: image,
       label: modulePath
         .split("/")
         .at(-1)!

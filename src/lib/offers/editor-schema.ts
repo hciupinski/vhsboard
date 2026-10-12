@@ -135,38 +135,38 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const normalizeEditorOfferInput = (input: unknown): unknown => {
   if (!isRecord(input)) return input;
 
-  const content = input.content;
+  const content = input["content"];
   const schedule =
-    isRecord(content) && Array.isArray(content.schedule) ? content.schedule : undefined;
+    isRecord(content) && Array.isArray(content["schedule"]) ? content["schedule"] : undefined;
 
   return {
     ...input,
-    offerKind: input.offerKind === "day_camp" ? "day_camp" : "trip",
-    slug: trimValue(input.slug),
-    title: trimValue(input.title),
-    subtitle: trimValue(input.subtitle),
-    shortDescription: trimValue(input.shortDescription),
-    location: trimValue(input.location),
-    startDate: normalizeNullableText(input.startDate),
-    endDate: normalizeNullableText(input.endDate),
-    bookingUrl: trimValue(input.bookingUrl),
-    heroImagePath: normalizeNullableText(input.heroImagePath),
+    offerKind: input["offerKind"] === "day_camp" ? "day_camp" : "trip",
+    slug: trimValue(input["slug"]),
+    title: trimValue(input["title"]),
+    subtitle: trimValue(input["subtitle"]),
+    shortDescription: trimValue(input["shortDescription"]),
+    location: trimValue(input["location"]),
+    startDate: normalizeNullableText(input["startDate"]),
+    endDate: normalizeNullableText(input["endDate"]),
+    bookingUrl: trimValue(input["bookingUrl"]),
+    heroImagePath: normalizeNullableText(input["heroImagePath"]),
     content: isRecord(content)
       ? {
           ...content,
-          accommodation: isRecord(content.accommodation)
+          accommodation: isRecord(content["accommodation"])
             ? {
-                ...content.accommodation,
-                description: trimValue(content.accommodation.description),
+                ...content["accommodation"],
+                description: trimValue(content["accommodation"]["description"]),
               }
-            : content.accommodation,
-          paragraphs: normalizeList(content.paragraphs),
-          highlights: normalizeList(content.highlights),
-          included: normalizeList(content.included),
-          excluded: normalizeList(content.excluded),
+            : content["accommodation"],
+          paragraphs: normalizeList(content["paragraphs"]),
+          highlights: normalizeList(content["highlights"]),
+          included: normalizeList(content["included"]),
+          excluded: normalizeList(content["excluded"]),
           schedule: schedule?.map((item) =>
             isRecord(item)
-              ? { ...item, day: trimValue(item.day), text: trimValue(item.text) }
+              ? { ...item, day: trimValue(item["day"]), text: trimValue(item["text"]) }
               : item,
           ),
         }
@@ -382,7 +382,7 @@ const dayCampEditorOfferInputSchema = z
   });
 
 const schemaForOfferKind = (value: unknown) =>
-  isRecord(value) && value.offerKind === "day_camp"
+  isRecord(value) && value["offerKind"] === "day_camp"
     ? dayCampEditorOfferInputSchema
     : tripEditorOfferInputSchema;
 

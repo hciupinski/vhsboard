@@ -75,3 +75,45 @@ describe("serializeJsonLd", () => {
     expect(serialized).not.toMatch(/[<>&\u2028\u2029]/);
   });
 });
+
+it("provides stable default offer and explicit home social images", () => {
+  setSeoEnvironment();
+  const input = { path: "/wyjazdy", title: "Wyjazdy", description: "Opis wyjazdów" };
+  expect(createPageMetadata(input).meta).toEqual(
+    expect.arrayContaining([
+      { property: "og:image", content: "https://vhsboard.pages.dev/og/offers.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:type", content: "image/jpeg" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://vhsboard.pages.dev/og/offers.jpg" },
+    ]),
+  );
+  expect(
+    createPageMetadata({
+      ...input,
+      socialImage: { path: "/og/home.jpg", alt: "VHSBOARD na fali", width: 1200, height: 630 },
+    }).meta,
+  ).toEqual(
+    expect.arrayContaining([
+      { property: "og:image", content: "https://vhsboard.pages.dev/og/home.jpg" },
+      { property: "og:image:alt", content: "VHSBOARD na fali" },
+      { name: "twitter:image:alt", content: "VHSBOARD na fali" },
+    ]),
+  );
+});
+it.each([
+  "https://storage.example/object/sign/photo?token=secret",
+  "/og/offers.jpg?token=secret",
+  "//external.example/photo.jpg",
+])("rejects unsafe social image %s", (path) => {
+  setSeoEnvironment();
+  expect(() =>
+    createPageMetadata({
+      path: "/",
+      title: "VHSBOARD",
+      description: "Opis",
+      socialImage: { path, alt: "Zdjęcie", width: 1200, height: 630 },
+    }),
+  ).toThrow();
+});

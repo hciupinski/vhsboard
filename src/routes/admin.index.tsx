@@ -214,8 +214,12 @@ function AdminListContent() {
                   <Badge variant={o.status === "published" ? "default" : "secondary"}>
                     {statusLabels[o.status]}
                   </Badge>
-                  <Badge variant="outline">{offerKindLabels[o.offerKind]}</Badge>
-                  <Badge variant="outline">{activityLabels[o.activity]}</Badge>
+                  <Badge variant="outline">
+                    {o.offerKind ? offerKindLabels[o.offerKind] : "Brak rodzaju"}
+                  </Badge>
+                  <Badge variant="outline">
+                    {o.activity ? activityLabels[o.activity] : "Brak aktywności"}
+                  </Badge>
                 </div>
                 <p className="mt-1 truncate text-sm text-muted-foreground">{o.location}</p>
                 <p className="mt-1 text-xs text-muted-foreground">

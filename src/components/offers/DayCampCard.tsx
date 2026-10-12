@@ -13,7 +13,7 @@ export function DayCampCard({ offer }: { offer: DayCampOffer }) {
   const { isFinished, showLastPlacesBadge } = getOfferCardStatus(offer);
   const content = (
     <article
-      className={`flex min-w-0 flex-col overflow-hidden rounded-3xl border border-border bg-card transition-transform duration-300${isFinished ? "" : " group-hover:-translate-y-1 group-hover:shadow-warm"}`}
+      className={`flex min-w-0 flex-col overflow-hidden rounded-3xl border border-border bg-card transition-transform duration-160 ease-out motion-reduce:transition-none${isFinished ? "" : " hover-lift"}`}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
         {offer.heroImageUrl ? (
@@ -23,13 +23,13 @@ export function DayCampCard({ offer }: { offer: DayCampOffer }) {
             loading="lazy"
             width={1200}
             height={900}
-            className={`h-full w-full object-cover transition-transform duration-500${isFinished ? " grayscale" : " group-hover:scale-105"}`}
+            className={`h-full w-full object-cover transition-transform duration-160 ease-out motion-reduce:transition-none${isFinished ? " grayscale" : " hover-zoom"}`}
           />
         ) : (
           <div aria-hidden="true" className="h-full w-full bg-sunset-gradient opacity-40" />
         )}
         <div className="absolute inset-x-0 top-0 flex flex-wrap gap-2 p-4">
-          <span className="rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground">
+          <span className="rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-sunset-foreground">
             {activityLabels[offer.activity]}
           </span>
           {showLastPlacesBadge && (

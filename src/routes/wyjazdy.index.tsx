@@ -9,11 +9,13 @@ import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { tripFaqItems } from "@/lib/faq";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
 import type { TripOffer } from "@/lib/offers/types";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 
 export const Route = createFileRoute("/wyjazdy/")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.trips,
       path: "/wyjazdy",
       title: "Wyjazdy | VHSBOARD",
       description: "Aktualne wyjazdy organizowane przez VHSBOARD.",

@@ -6,6 +6,9 @@ const mockedSupabase = vi.hoisted(() => ({
   storage: { from: vi.fn() },
 }));
 
+const optimizer = vi.hoisted(() => vi.fn());
+vi.mock("./optimization", () => ({ optimizeImageForUpload: optimizer }));
+
 vi.mock("../supabase", () => ({ supabase: mockedSupabase }));
 
 import {
@@ -20,7 +23,7 @@ import {
 
 const offerId = "123e4567-e89b-12d3-a456-426614174000";
 const uploadId = "987e6543-e21b-42d3-a456-426614174000";
-const expectedPath = `offers/${offerId}/${uploadId}.jpeg`;
+const expectedPath = `offers/${offerId}/${uploadId}.webp`;
 const validAlt = "Surfer na fali w Ericeirze";
 const imageRow = {
   id: "223e4567-e89b-42d3-a456-426614174000",
@@ -67,6 +70,9 @@ describe("offer image repository upload", () => {
   const storageRemove = vi.fn();
 
   beforeEach(() => {
+    optimizer.mockImplementation(
+      async () => new File(["optimized"], "optimized.webp", { type: "image/webp" }),
+    );
     vi.spyOn(globalThis.crypto, "randomUUID").mockReturnValue(uploadId);
     storageUpload.mockResolvedValue({ data: { path: expectedPath }, error: null });
     storageRemove.mockResolvedValue({ data: [], error: null });
@@ -101,9 +107,10 @@ describe("offer image repository upload", () => {
       insertQuery.insert.mock.invocationCallOrder[0]!,
     );
     expect(storageUpload).toHaveBeenCalledWith(expectedPath, expect.any(Blob), {
-      contentType: "image/jpeg",
+      contentType: "image/webp",
       upsert: false,
     });
+    expect(await storageUpload.mock.calls[0]?.[1].text()).toBe("optimized");
     expect(expectedPath).not.toContain(file.name);
     expect(insertQuery.insert).toHaveBeenCalledWith({
       offer_id: offerId,
@@ -114,6 +121,32 @@ describe("offer image repository upload", () => {
     });
   });
 
+  it("stops before Storage and DB when optimization fails", async () => {
+    optimizer.mockRejectedValue(new Error("Nie udało się przygotować zdjęcia."));
+    await expect(
+      uploadOfferImage(
+        offerId,
+        new File(["jpeg"], "image.jpeg", { type: "image/jpeg" }),
+        validAlt,
+        0,
+      ),
+    ).rejects.toThrow("Nie udało się przygotować zdjęcia");
+    expect(mockedSupabase.storage.from).not.toHaveBeenCalled();
+    expect(mockedSupabase.from).not.toHaveBeenCalled();
+  });
+  it("accepts a jpg photograph and persists its optimized WebP", async () => {
+    mockedSupabase.from.mockReturnValue(createInsertQuery({ data: imageRow, error: null }));
+    const file = new File(["jpeg-data"], "aparat.jpg", { type: "image/jpeg" });
+
+    const image = await uploadOfferImage(offerId, file, validAlt, 0);
+
+    expect(image.path).toBe(`offers/${offerId}/${uploadId}.webp`);
+    expect(storageUpload).toHaveBeenCalledWith(image.path, expect.any(Blob), {
+      contentType: "image/webp",
+      upsert: false,
+    });
+    expect(await storageUpload.mock.calls[0]?.[1].text()).toBe("optimized");
+  });
   it("persists accommodation as a separate image category", async () => {
     const accommodationRow = { ...imageRow, category: "accommodation" };
     const insertQuery = createInsertQuery({ data: accommodationRow, error: null });
