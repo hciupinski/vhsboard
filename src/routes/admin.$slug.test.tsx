@@ -1,3 +1,4 @@
+import { required } from "@/test/required";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   createMemoryHistory,
@@ -8,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { ComponentType, PropsWithChildren } from "react";
+import type { FunctionComponent, PropsWithChildren } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { EditableOffer, EditableOfferInput } from "@/lib/offers/editor-schema";
@@ -164,13 +165,15 @@ const createDeferred = <Value,>() => {
 };
 
 const expectInvalidationAfterStatusChange = (
-  invalidateQueries: ReturnType<typeof vi.spyOn>,
+  invalidateQueries: {
+    mock: { calls: Parameters<QueryClient["invalidateQueries"]>[]; invocationCallOrder: number[] };
+  },
   queryKey: string[],
 ) => {
-  const statusCallOrder = mockedSetOfferStatus.mock.invocationCallOrder[0];
+  const statusCallOrder = required(mockedSetOfferStatus.mock.invocationCallOrder[0]);
   const matchingInvalidationOrders = invalidateQueries.mock.calls.flatMap(([filters], index) =>
-    JSON.stringify(filters.queryKey) === JSON.stringify(queryKey)
-      ? [invalidateQueries.mock.invocationCallOrder[index]]
+    JSON.stringify(filters?.queryKey) === JSON.stringify(queryKey)
+      ? [required(invalidateQueries.mock.invocationCallOrder[index])]
       : [],
   );
 
@@ -182,6 +185,7 @@ const setValue = (label: string | RegExp, value: string) => {
 };
 
 const fillEditor = async (value: EditableOfferInput) => {
+  if (!("schedule" in value.content)) throw new Error("Expected trip fixture");
   const user = userEvent.setup();
   setValue("Tytuł wyjazdu", value.title);
   setValue("Adres URL oferty", value.slug);
@@ -193,17 +197,17 @@ const fillEditor = async (value: EditableOfferInput) => {
 
   setValue("Zdanie wprowadzające", value.subtitle);
   await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
-  setValue("Akapity opisu 1", value.content.paragraphs[0]);
+  setValue("Akapity opisu 1", required(value.content.paragraphs[0]));
   await user.click(screen.getByRole("tab", { name: "W programie" }));
-  setValue("W programie 1", value.content.highlights[0]);
+  setValue("W programie 1", required(value.content.highlights[0]));
 
   await user.click(screen.getByRole("tab", { name: "Co jest w cenie" }));
-  setValue("W cenie 1", value.content.included[0]);
-  setValue("Poza ceną 1", value.content.excluded[0]);
+  setValue("W cenie 1", required(value.content.included[0]));
+  setValue("Poza ceną 1", required(value.content.excluded[0]));
 
   await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
-  setValue("Dzień 1 — nazwa", value.content.schedule[0].day);
-  setValue("Dzień 1 — opis", value.content.schedule[0].text);
+  setValue("Dzień 1 — nazwa", required(value.content.schedule[0]).day);
+  setValue("Dzień 1 — opis", required(value.content.schedule[0]).text);
 };
 
 const renderAdminEditor = async ({
@@ -222,7 +226,7 @@ const renderAdminEditor = async ({
     },
   });
   const rootRoute = createRootRoute();
-  const EditorComponent = AdminEditorRoute.options.component as ComponentType;
+  const EditorComponent = AdminEditorRoute.options.component as FunctionComponent;
   const editorRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/admin/$slug",
@@ -467,7 +471,7 @@ describe("admin offer editor route", () => {
     expect(mockedUpdateOffer).toHaveBeenCalledWith(readyDraftOffer.id, readyInput);
     expect(mockedCreateOffer).not.toHaveBeenCalled();
     expect(mockedUpdateOffer.mock.invocationCallOrder[0]).toBeLessThan(
-      mockedSetOfferStatus.mock.invocationCallOrder[0],
+      required(mockedSetOfferStatus.mock.invocationCallOrder[0]),
     );
     expectInvalidationAfterStatusChange(invalidateQueries, ["admin-offers"]);
     expectInvalidationAfterStatusChange(invalidateQueries, [

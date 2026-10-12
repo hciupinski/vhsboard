@@ -163,7 +163,7 @@ export function OfferEditorForm({
       label="Zdanie wprowadzające"
       hint="Pod tytułem oferty"
       characterCount={{ value: value.subtitle, max: 280 }}
-      error={errors.subtitle}
+      error={errors["subtitle"]}
     >
       <Textarea
         id="subtitle"
@@ -221,7 +221,7 @@ export function OfferEditorForm({
           className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
         >
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field id="offer-kind" label="Rodzaj oferty" error={errors.offerKind}>
+            <Field id="offer-kind" label="Rodzaj oferty" error={errors["offerKind"]}>
               <Select
                 value={offerKind}
                 disabled={disabled}
@@ -242,7 +242,7 @@ export function OfferEditorForm({
               id="title"
               label={dayCamp ? "Tytuł obozów" : "Tytuł wyjazdu"}
               characterCount={{ value: value.title, max: 120 }}
-              error={errors.title}
+              error={errors["title"]}
             >
               <Input
                 id="title"
@@ -265,7 +265,7 @@ export function OfferEditorForm({
               id="slug"
               label="Adres URL oferty"
               hint="Tworzy się z tytułu; możesz go zmienić"
-              error={errors.slug}
+              error={errors["slug"]}
             >
               <Input
                 id="slug"
@@ -278,7 +278,7 @@ export function OfferEditorForm({
             <Field
               id="activity"
               label={dayCamp ? "Aktywność" : "Rodzaj wyjazdu"}
-              error={errors.activity}
+              error={errors["activity"]}
             >
               <Select
                 value={value.activity}
@@ -308,7 +308,7 @@ export function OfferEditorForm({
               id="location"
               label="Miejsce"
               characterCount={{ value: value.location, max: 120 }}
-              error={errors.location}
+              error={errors["location"]}
             >
               <Input
                 id="location"
@@ -326,7 +326,7 @@ export function OfferEditorForm({
             label="Krótki opis"
             hint="Widoczny na liście ofert"
             characterCount={{ value: value.shortDescription, max: 500 }}
-            error={errors.shortDescription}
+            error={errors["shortDescription"]}
           >
             <Textarea
               id="short-description"
@@ -402,7 +402,7 @@ export function OfferEditorForm({
           >
             <ListField
               label={trip ? "W programie" : "Atrakcje"}
-              values={(trip ?? dayCamp).highlights}
+              values={trip?.highlights ?? dayCamp?.highlights ?? []}
               placeholder="Małe grupy i dużo aktywności"
               error={errorFor(errors, "content.highlights")}
               onChange={(next) => listChange("highlights", next)}
@@ -497,9 +497,9 @@ export function OfferEditorForm({
             Tutaj zarządzasz galerią i zdjęciem głównym oferty.
           </p>
         ) : null}
-        {errors.heroImagePath ? (
+        {errors["heroImagePath"] ? (
           <p className="text-sm font-medium text-destructive" role="alert">
-            {errors.heroImagePath}
+            {errors["heroImagePath"]}
           </p>
         ) : null}
         {imageManager ?? (
@@ -603,7 +603,7 @@ function TripBasics({
 }) {
   return (
     <div className="grid gap-4 border-t border-border pt-6 sm:grid-cols-2">
-      <Field id="start-date" label="Data rozpoczęcia" error={errors.startDate}>
+      <Field id="start-date" label="Data rozpoczęcia" error={errors["startDate"]}>
         <Input
           id="start-date"
           type="date"
@@ -615,7 +615,7 @@ function TripBasics({
           }}
         />
       </Field>
-      <Field id="end-date" label="Data zakończenia" error={errors.endDate}>
+      <Field id="end-date" label="Data zakończenia" error={errors["endDate"]}>
         <Input
           id="end-date"
           type="date"
@@ -627,7 +627,7 @@ function TripBasics({
           }}
         />
       </Field>
-      <Field id="duration-days" label="Liczba dni" error={errors.durationDays}>
+      <Field id="duration-days" label="Liczba dni" error={errors["durationDays"]}>
         <Input
           id="duration-days"
           type="number"
@@ -639,7 +639,7 @@ function TripBasics({
           onChange={(event) => set("durationDays", Number(event.target.value))}
         />
       </Field>
-      <Field id="price-from" label="Cena od" error={errors.priceFrom}>
+      <Field id="price-from" label="Cena od" error={errors["priceFrom"]}>
         <div className="flex gap-2">
           <Input
             id="price-from"
@@ -659,7 +659,11 @@ function TripBasics({
           />
         </div>
       </Field>
-      <Field id="group-size-min" label="Minimalna liczba uczestników" error={errors.groupSizeMin}>
+      <Field
+        id="group-size-min"
+        label="Minimalna liczba uczestników"
+        error={errors["groupSizeMin"]}
+      >
         <Input
           id="group-size-min"
           type="number"
@@ -671,7 +675,11 @@ function TripBasics({
           onChange={(event) => set("groupSizeMin", nullableNumber(event.target.value))}
         />
       </Field>
-      <Field id="group-size-max" label="Maksymalna liczba uczestników" error={errors.groupSizeMax}>
+      <Field
+        id="group-size-max"
+        label="Maksymalna liczba uczestników"
+        error={errors["groupSizeMax"]}
+      >
         <Input
           id="group-size-max"
           type="number"
@@ -684,7 +692,7 @@ function TripBasics({
         />
       </Field>
       <div className="sm:col-span-2">
-        <Field id="booking-url" label="Adres zapisów" error={errors.bookingUrl}>
+        <Field id="booking-url" label="Adres zapisów" error={errors["bookingUrl"]}>
           <Input
             id="booking-url"
             type="url"

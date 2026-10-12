@@ -10,6 +10,8 @@ import {
 describe("validateImageFile", () => {
   it.each([
     ["image/jpeg", "surfer.jpeg"],
+    ["image/jpeg", "surfer.jpg"],
+    ["image/jpeg", "SURFER.JPG"],
     ["image/png", "foka.png"],
     ["image/webp", "deska.webp"],
   ])("accepts a %s exactly at 8 MiB", (type, name) => {
@@ -24,6 +26,7 @@ describe("validateImageFile", () => {
     ["image/svg+xml", "logo.svg", "format"],
     ["", "bez-typu.jpg", "typ"],
     ["image/jpeg", "fala.png", "rozszerzenie"],
+    ["image/png", "fala.jpg", "rozszerzenie"],
   ])("rejects %s (%s)", (type, name, reason) => {
     const result = validateImageFile(new File(["x"], name, { type }));
 

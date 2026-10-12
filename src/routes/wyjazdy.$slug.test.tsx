@@ -15,6 +15,10 @@ import type { TripOffer } from "@/lib/offers/types";
 
 import { Route } from "./wyjazdy.$slug";
 
+const routeLoader = Route.options.loader;
+if (typeof routeLoader !== "function") throw new Error("Expected a function loader");
+const loadOffer = routeLoader;
+
 vi.mock("@/lib/offers/public-repository", () => ({ getPublishedOfferBySlug: vi.fn() }));
 
 describe("trip detail route", () => {
@@ -29,9 +33,10 @@ describe("trip detail route", () => {
     const ensureQueryData = vi.fn().mockResolvedValue(offer);
 
     await expect(
-      Route.options.loader?.({
+      loadOffer({
         context: { queryClient: { ensureQueryData } },
         params: { slug: offer.slug },
+        deps: { preview: false },
       } as never),
     ).resolves.toEqual({ offer, slug: offer.slug, preview: false });
   });
@@ -47,10 +52,10 @@ describe("trip detail route", () => {
     const ensureQueryData = vi.fn().mockResolvedValue(offer);
 
     await expect(
-      Route.options.loader?.({
+      loadOffer({
         context: { queryClient: { ensureQueryData } },
         params: { slug: offer.slug },
-        search: { preview: true },
+        deps: { preview: true },
       } as never),
     ).resolves.toEqual({ offer, slug: offer.slug, preview: true });
     expect(ensureQueryData).toHaveBeenCalledWith(

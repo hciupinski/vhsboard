@@ -6,6 +6,9 @@ import {
 } from "./catalogue";
 
 describe("portal carousel catalogue", () => {
+  it("keeps the old CMS path while serving an optimized image", () => {
+    expect(getPortalCarouselImage("carousel/hero-surf.jpg")?.src).toMatch(/^\/images\/generated\//);
+  });
   it("orders repository images by stable path", () => {
     const paths = PORTAL_CAROUSEL_IMAGES.map(({ path }) => path);
     expect(paths).toEqual([...paths].sort((left, right) => left.localeCompare(right)));

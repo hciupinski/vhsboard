@@ -3,6 +3,7 @@ export type AdminPath = "/admin" | `/admin/${string}`;
 
 const applicationOrigin = "https://vhsboard.local";
 const adminPathPattern = /^\/admin(?:\/[^/?#]+)?$/;
+const isAdminPath = (value: string): value is AdminPath => adminPathPattern.test(value);
 const getSupabase = async () => (await import("../supabase")).supabase;
 
 export const getAdminSession = async (): Promise<AdminSession | null> => {
@@ -62,7 +63,7 @@ export const sanitizeAdminNext = (next: string | undefined): AdminPath => {
       destination.origin !== applicationOrigin ||
       destination.search !== "" ||
       destination.hash !== "" ||
-      !adminPathPattern.test(destination.pathname)
+      !isAdminPath(destination.pathname)
     ) {
       return "/admin";
     }

@@ -40,7 +40,8 @@ export const validateImageFile = (file: File): Result<void, ImageValidationError
   }
 
   const fileExtension = file.name.split(".").at(-1)?.toLowerCase();
-  if (fileExtension !== extension) {
+  const isJpegAlias = extension === "jpeg" && fileExtension === "jpg";
+  if (fileExtension !== extension && !isJpegAlias) {
     return error("rozszerzenie", "Rozszerzenie pliku nie pasuje do jego typu MIME.");
   }
 

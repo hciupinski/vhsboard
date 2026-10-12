@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminShellRouteImport } from './routes/admin-shell'
 import { Route as EventyRouteImport } from './routes/eventy'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as ONasRouteImport } from './routes/o-nas'
@@ -29,6 +30,11 @@ import { Route as WyjazdySlugRouteImport } from './routes/wyjazdy.$slug'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminShellRoute = AdminShellRouteImport.update({
+  id: '/admin-shell',
+  path: '/admin-shell',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventyRoute = EventyRouteImport.update({
@@ -109,6 +115,7 @@ const WyjazdySlugRoute = WyjazdySlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin-shell': typeof AdminShellRoute
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin-shell': typeof AdminShellRoute
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
@@ -145,6 +153,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin-shell': typeof AdminShellRoute
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin-shell'
     | '/eventy'
     | '/kontakt'
     | '/o-nas'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin-shell'
     | '/eventy'
     | '/kontakt'
     | '/o-nas'
@@ -200,6 +211,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin-shell'
     | '/eventy'
     | '/kontakt'
     | '/o-nas'
@@ -219,6 +231,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminShellRoute: typeof AdminShellRoute
   EventyRoute: typeof EventyRoute
   KontaktRoute: typeof KontaktRoute
   ONasRoute: typeof ONasRoute
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-shell': {
+      id: '/admin-shell'
+      path: '/admin-shell'
+      fullPath: '/admin-shell'
+      preLoaderRoute: typeof AdminShellRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eventy': {
@@ -365,6 +385,7 @@ const ObozyRouteWithChildren = ObozyRoute._addFileChildren(ObozyRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminShellRoute: AdminShellRoute,
   EventyRoute: EventyRoute,
   KontaktRoute: KontaktRoute,
   ONasRoute: ONasRoute,

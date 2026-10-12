@@ -28,8 +28,9 @@ export const Route = createFileRoute("/wyjazdy/$slug")({
       .optional()
       .transform((value) => value === true || value === "true"),
   }),
-  loader: async ({ context, params, search }) => {
-    const preview = search?.preview ?? false;
+  loaderDeps: ({ search }) => ({ preview: search.preview }),
+  loader: async ({ context, params, deps }) => {
+    const preview = deps.preview;
     const offer = await context.queryClient.ensureQueryData(
       offerDetailQueryOptions(params.slug, "trip", preview),
     );
@@ -96,7 +97,7 @@ function TripDetail() {
           )}
           <div className="absolute inset-0 bg-foreground/55" />
           <div className="relative mx-auto max-w-6xl px-5 pb-14 pt-16 sm:pb-20 sm:pt-24">
-            <span className="inline-block rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary-foreground">
+            <span className="inline-block rounded-full bg-sunset-gradient px-3 py-1 text-xs font-semibold uppercase tracking-widest text-sunset-foreground">
               {activityLabels[offer.activity]}
             </span>
             <h1 className="mt-4 max-w-2xl text-5xl leading-[0.95] text-background sm:text-7xl">

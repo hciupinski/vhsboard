@@ -10,6 +10,7 @@ import {
 import { type ReactNode } from "react";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
+import { getRobotsContent } from "@/lib/seo";
 
 import appCss from "../styles.css?url";
 
@@ -25,7 +26,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/wyjazdy"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
           >
             Zobacz wyjazdy
           </Link>
@@ -53,7 +54,7 @@ function ErrorComponent({ reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
           >
             Spróbuj ponownie
           </button>
@@ -75,15 +76,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "VHSBOARD — wyjazdy, eventy i obozy" },
-      { name: "robots", content: "noindex, nofollow" },
+      { name: "robots", content: getRobotsContent(false) },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap",
-      },
       {
         rel: "stylesheet",
         href: appCss,

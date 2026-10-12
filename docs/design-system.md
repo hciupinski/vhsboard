@@ -22,8 +22,8 @@ hex values or a second palette.
 | ------------- | ------------------- | ------------------------- | ---------------------------------------------- |
 | Page ground   | `--background`      | `oklch(0.985 0.012 85)`   | Warm cream, never sterile white.               |
 | Main text     | `--foreground`      | `oklch(0.22 0.03 60)`     | Deep warm brown for high contrast.             |
-| Brand action  | `--primary`         | `oklch(0.63 0.19 42)`     | Volcanic orange for primary CTAs and emphasis. |
-| Place/context | `--accent`          | `oklch(0.55 0.11 210)`    | Ocean blue, used with restraint.               |
+| Brand action  | `--primary`         | `oklch(0.56 0.17 42)`     | Volcanic orange for primary CTAs and emphasis. |
+| Place/context | `--accent`          | `oklch(0.54 0.11 210)`    | Ocean blue, used with restraint.               |
 | Quiet section | `--secondary`       | `oklch(0.94 0.03 85)`     | Sand-tinted surface.                           |
 | Boundaries    | `--border`          | `oklch(0.9 0.02 80)`      | Soft separation without cold grey.             |
 | Warm emphasis | `--gradient-sunset` | Orange-to-golden gradient | Use for memorable small surfaces and CTAs.     |
@@ -78,9 +78,9 @@ All CSS color additions must use OKLCH, matching the existing stylesheet.
 
 - Use existing Radix-based UI primitives from `src/components/ui` before adding
   a dependency or reimplementing accessible behavior.
-- Public cards and gallery tiles may use the established, restrained lift on
-  hover (`hover:-translate-y-1`) and `shadow-warm`. Avoid exaggerated parallax,
-  autoplay, or decorative animation.
+- Public cards and gallery tiles use named `hover-lift` / `hover-zoom` classes,
+  guarded by fine-pointer, hover-capable, and no-reduced-motion media queries.
+  Avoid exaggerated parallax and decorative animation.
 - Use `rounded-full` for compact CTAs, pills, and tags. Use `rounded-2xl` or
   `rounded-3xl` for cards, images, and major content panels.
 - Primary actions use the orange `primary` token. Outline/secondary actions
@@ -129,3 +129,31 @@ Before approving a UI change, check:
    handoff?
 5. Has it reused an existing Radix primitive or focused component where one
    already exists?
+
+### Contrast and focus
+
+Primary actions use solid `--primary-hover: oklch(0.52 0.17 42)` on hover. Avoid
+opacity blends that lighten their background. Gradient labels and contact text
+use `--sunset-foreground`. The shared focus ring is `oklch(0.56 0.17 42)`; native
+interactive controls have a 2px outline with 3px offset. On dark photographs use
+a cream focus ring, and on the sunset gradient use the dark sunset foreground.
+
+### Header and motion
+
+The public header has a consistent 73 px height; desktop navigation starts at
+1024 px (`lg`), with the mobile menu below it. Keep the matching section anchor
+offset so headings remain visible below the sticky navigation. Escape closes
+the mobile menu and returns focus to its trigger.
+
+Buttons transition for 160 ms and press to scale .98 only without reduced
+motion. Cards and gallery tiles animate opacity/transform for 160 ms. Keyboard
+focus reveals hidden actions immediately; touch/mobile content remains visible.
+Topic panels use layout/snap widths without animating dimensions.
+Dialogs/sheets open in 200 ms and close in 150 ms; reduced motion disables
+these transitions. The homepage carousel only autoplays when there are at least
+two images, the page is visible, and reduced motion is off; it listens for live
+preference changes. Offer scrollers use immediate movement for keyboard access
+and reduced motion, smooth movement for pointer use otherwise.
+
+Keep descriptive section eyebrows where they add context. Do not restore the
+homepage's decorative 01/02/03 labels.

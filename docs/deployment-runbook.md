@@ -23,6 +23,7 @@ w Cloudflare.
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
    - `VITE_SITE_URL`
+   - `VITE_SEO_INDEXING` (`false` na obecnym adresie Pages)
    - `VITE_CONTACT_EMAIL`
    - `VITE_CONTACT_PHONE`
    - `VITE_BUSINESS_NAME`
@@ -53,7 +54,7 @@ w Cloudflare.
    `main`.
 2. W zakładce Actions otwórz uruchomienie **Deploy production** dla merge
    commitu. Zweryfikuj kolejność zakończonych zadań:
-   `verify` (testy i lint), potem `deploy-supabase`, a na końcu
+   `verify` (typecheck, testy i lint), potem `deploy-supabase`, a na końcu
    `deploy-cloudflare` (pełny build, kontrola SEO i upload do Pages).
 3. W podsumowaniu zadania wdrożenia otwórz adres Pages `*.pages.dev` zwrócony
    przez krok `pages_deploy`. Potwierdź, że korzysta z HTTPS, ładuje stronę
@@ -63,14 +64,19 @@ w Cloudflare.
 5. Dopiero po pomyślnym pierwszym wdrożeniu ustaw dla gałęzi `main` jako
    wymagane kontrole ochrony gałęzi:
 
-   - `verify / test`
-   - `verify / lint`
-   - `verify / build`
+   - workflow **Verify**, job `test`
+   - workflow **Verify**, job `lint`
+   - workflow **Verify**, job `typecheck`
+   - workflow **Verify**, job `build`
+
+   Wybierz rzeczywiste kontrole widoczne po uruchomieniu PR w ustawieniach
+   GitHub. Powyższe to nazwy workflow i jobs z repozytorium, a nie potwierdzenie,
+   że ochrona gałęzi jest już skonfigurowana.
 
 ## Bezpieczna diagnostyka
 
 - Jeśli `verify` nie przejdzie, popraw zmianę w pull requeście i poczekaj na
-  trzy kontrole `verify`; nie omijaj ochrony gałęzi.
+  cztery kontrole workflow **Verify**; nie omijaj ochrony gałęzi.
 - Jeśli nie powiedzie się `deploy-supabase`, przejrzyj log kroku migracji i
   sprawdź nazwy oraz uprawnienia sekretów środowiska `production`. Nie uruchamiaj
   ręcznego rollbacku, seedów ani napraw migracji z tego workflow.
@@ -84,9 +90,70 @@ w Cloudflare.
 ## Rutynowe użycie
 
 Pull requesty do `main` uruchamiają nieuprzywilejowany workflow **Verify**:
-testy, lintowanie i kompilację aplikacji bez prerenderingu. Ten build celowo
+testy, lintowanie, typecheck i kompilację aplikacji bez prerenderingu. Ten build celowo
 nie odpyta produkcyjnego Supabase ani nie tworzy sitemapy. Merge do `main`
-ponownie wykonuje testy i lintowanie, następnie wdraża migracje Supabase, a
+ponownie wykonuje typecheck, testy i lintowanie, następnie wdraża migracje Supabase, a
 dopiero potem wykonuje pełny prerender, kontrolę SEO i wdrożenie statycznego
 frontendu do Pages. Ręczne
 uruchomienie workflow z innej gałęzi nie wykonuje zadań produkcyjnych.
+
+## Zmiany treści a deploy
+
+CMS zapisuje oferty, metadane galerii, dokumenty PDF i wybór karuzeli w Supabase.
+Nowo otwarta strona pobiera aktualną zawartość bez przebudowy Pages. CMS nie
+zmienia kodu, stałych opisów stron, danych firmy z `VITE_*` ani katalogu zdjęć.
+Takie zmiany wymagają zwykłego PR i deployu z `main`.
+
+## Zdjęcia, fonty i podglądy udostępniania
+
+Po zmianie oryginałów w `src/assets` uruchom:
+
+```bash
+bun run images:generate
+bun run images:check
+bun run og:generate
+bun run build
+bun run check:seo
+```
+
+Zacommituj warianty `public/images/generated`, manifest oraz
+`src/lib/images/local-assets.generated.ts` razem ze źródłami. Generator tworzy
+AVIF/WebP dla szerokości 480, 960 i 1600 px (bez powiększania i kadrowania,
+maksymalna wysokość 1920 px); budżety to 180 KiB dla najmniejszego i 450 KiB
+na każdy większy wariant. Checker wykrywa brak plików, rozbieżne hashe źródeł,
+rozmiary i nieaktualny katalog TypeScript. `images:check` jest obecnie kontrolą
+lokalną, nie osobnym krokiem CI.
+
+`og:generate` zapisuje siedem JPEG-ów 1200×630 w `public/og`, do 300 KiB każdy.
+`check:seo` weryfikuje ich obecność, rozmiar i metadane. Obejrzyj wygenerowane
+kadry przed commitem. Te grafiki są ogólne dla sekcji, nie powstają przy edycji
+oferty w CMS.
+
+Fonty są importowane z `@fontsource` w `src/styles.css`: Bebas Neue 400 oraz
+Barlow 400/500/600/700 i kursywa 400, z latin i latin-ext. Przy zmianie fontów
+zaktualizuj importy i lockfile, sprawdź polskie znaki oraz łamanie nagłówków na
+telefonie, następnie wykonaj build/deploy. Nie przywracaj Google Fonts CSS.
+
+## Kontrola i diagnoza przed merge
+
+```bash
+bun run typecheck
+bun run test
+bun run lint
+bun run build:ci
+bun run build
+bun run check:seo
+bun run images:check
+```
+
+Pełny build wymaga prawidłowych publicznych zmiennych w `.env.local`. Kontrola
+PR `build:ci` nie zastępuje pełnego prerenderingu ani `check:seo`. Jeśli problem
+występuje tylko na deployu, zacznij od logów konkretnego kroku w Actions,
+porównaj nazwy i konfigurację publicznych zmiennych, potem sprawdź stronę Pages
+oraz dostępność Supabase. Do problemów z logowaniem sprawdź Auth i rekord roli;
+do błędów treści — odpowiednią tabelę, RLS i logi Storage. Nie obchodź RLS.
+
+Repozytorium nie wdraża automatycznych backupów, alertów ani rollbacku bazy.
+Sprawdź możliwości i aktualną konfigurację kopii w projekcie Supabase przed
+operacją na danych. Nie traktuj ponownego deployu starego frontendu jako
+cofnięcia migracji bazy. Migracje powinny zachowywać zgodność ze starszym kodem.

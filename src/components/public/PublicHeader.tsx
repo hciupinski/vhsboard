@@ -38,7 +38,7 @@ export function PublicHeader() {
           <Brand size="large" />
         </Link>
 
-        <div className="hidden items-center gap-6 sm:flex">
+        <div className="hidden items-center gap-6 lg:flex">
           {navigationItems.map(({ to, label }) => (
             <Link
               key={to}
@@ -52,13 +52,13 @@ export function PublicHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <SocialLinks className="hidden sm:flex" />
+          <SocialLinks className="hidden lg:flex" />
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 size="icon"
                 variant="ghost"
-                className="rounded-full hover:bg-primary hover:text-primary-foreground sm:hidden"
+                className="rounded-full hover:bg-primary hover:text-primary-foreground lg:hidden"
                 aria-label="Otwórz menu"
               >
                 <Menu aria-hidden="true" />

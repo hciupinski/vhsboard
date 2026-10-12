@@ -6,6 +6,7 @@ import { SocialLinks } from "@/components/public/SocialLinks";
 import { ContactDocuments } from "@/components/public/ContactDocuments";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { getPublicSiteConfig } from "@/lib/site-config";
+import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 
 const toTelHref = (phone: string) => `tel:${phone.replace(/[^+0-9]/g, "")}`;
@@ -13,6 +14,7 @@ const toTelHref = (phone: string) => `tel:${phone.replace(/[^+0-9]/g, "")}`;
 export const Route = createFileRoute("/kontakt")({
   head: () =>
     createPageMetadata({
+      socialImage: SOCIAL_IMAGES.contact,
       path: "/kontakt",
       title: "Kontakt | VHSBOARD",
       description: "Skontaktuj się z VHSBOARD w sprawie wyjazdu lub eventu.",
@@ -35,7 +37,7 @@ function ContactPage() {
           dzieci.
         </p>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          <section className="flex flex-col rounded-3xl bg-sunset-gradient p-7 text-primary-foreground shadow-warm">
+          <section className="flex flex-col rounded-3xl bg-sunset-gradient p-7 text-sunset-foreground shadow-warm [&_a]:focus-visible:outline-sunset-foreground [&_a]:focus-visible:ring-sunset-foreground">
             <h2 className="text-3xl">SKONTAKTUJ SIĘ Z NAMI</h2>
             <p className="mt-4">
               <a

@@ -48,13 +48,13 @@ export function OfferGallery({
               loading="lazy"
               width={1200}
               height={900}
-              className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              className="aspect-[4/3] w-full object-cover hover-zoom transition-transform duration-160 ease-out motion-reduce:transition-none"
             />
             <span
               aria-hidden="true"
-              className="absolute inset-0 flex items-end bg-foreground/0 p-4 text-sm font-semibold text-background transition-colors group-hover:bg-foreground/35"
+              className="absolute inset-0 flex items-end p-4 text-sm font-semibold text-background gallery-shade transition-colors duration-160 motion-reduce:transition-none"
             >
-              <span className="translate-y-2 rounded-full bg-background/90 px-3 py-1.5 text-foreground opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
+              <span className="gallery-action rounded-full bg-background/90 px-3 py-1.5 text-foreground transition-[opacity,transform] duration-160 ease-out motion-reduce:transition-none">
                 Powiększ
               </span>
             </span>
@@ -67,7 +67,7 @@ export function OfferGallery({
         onOpenChange={(open) => !open && setSelectedImage(null)}
       >
         {selectedImage ? (
-          <DialogContent className="w-[calc(100vw-2.5rem)] max-w-5xl border-border/40 bg-foreground p-3 text-background shadow-warm [&>button]:text-background sm:p-4">
+          <DialogContent className="w-[calc(100vw-2.5rem)] max-w-5xl border-border/40 bg-foreground p-3 text-background shadow-warm [&>button]:text-background [&>button]:focus-visible:ring-background [&>button]:focus-visible:ring-offset-foreground sm:p-4">
             <DialogTitle>{`Powiększone zdjęcie: ${selectedImage.alt}`}</DialogTitle>
             <DialogDescription className="sr-only">
               Pełny widok zdjęcia oferty. Naciśnij Escape, aby zamknąć.

@@ -1,3 +1,4 @@
+import { required } from "@/test/required";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -216,7 +217,7 @@ describe("editor offer input schema", () => {
               bookingUrl: "http://zapisy.example.test/wake",
               priceOptions: [
                 {
-                  ...completeDayCamp.content.terms[0].priceOptions[0],
+                  ...required(completeDayCamp.content.terms[0]).priceOptions[0],
                 },
               ],
             },

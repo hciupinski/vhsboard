@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { ComponentType, PropsWithChildren } from "react";
+import type { FunctionComponent, PropsWithChildren } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AdminOfferListItem } from "@/lib/offers/admin-repository";
@@ -74,7 +74,7 @@ const renderAdminList = async () => {
     },
   });
   const rootRoute = createRootRoute();
-  const AdminList = AdminListRoute.options.component as ComponentType;
+  const AdminList = AdminListRoute.options.component as FunctionComponent;
   const adminListRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/admin",
