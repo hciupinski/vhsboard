@@ -160,6 +160,10 @@
     outline: 2px solid var(--ring);
     outline-offset: 3px;
   }
+  /* Anchor destinations receive focus for reading, not an interactive outline. */
+  [data-trip-detail] section[tabindex="-1"]:focus-visible {
+    outline: none;
+  }
   * {
     border-color: var(--color-border);
   }
