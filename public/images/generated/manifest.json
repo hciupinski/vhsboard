@@ -649,6 +649,114 @@
         }
       ]
     },
+    "carousel/skim_main.png": {
+      "sourceHash": "a326b8b9b875207ff41343c1cc29182b3e6d24bda0bafc4a77f1b67050c7587b",
+      "asset": {
+        "src": "/images/generated/carousel-skim_main-1010-29b129b81dfc.webp",
+        "width": 1010,
+        "height": 630,
+        "webpSrcSet": "/images/generated/carousel-skim_main-480-0fd77304a777.webp 480w, /images/generated/carousel-skim_main-960-facd8ca7878d.webp 960w, /images/generated/carousel-skim_main-1010-29b129b81dfc.webp 1010w",
+        "avifSrcSet": "/images/generated/carousel-skim_main-480-98e8beceee8f.avif 480w, /images/generated/carousel-skim_main-960-2dd0efe5ab57.avif 960w, /images/generated/carousel-skim_main-1010-bd261a0a95f0.avif 1010w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/carousel-skim_main-480-0fd77304a777.webp",
+          "width": 480,
+          "height": 299,
+          "format": "webp",
+          "bytes": 30962
+        },
+        {
+          "path": "/images/generated/carousel-skim_main-480-98e8beceee8f.avif",
+          "width": 480,
+          "height": 299,
+          "format": "avif",
+          "bytes": 17000
+        },
+        {
+          "path": "/images/generated/carousel-skim_main-960-facd8ca7878d.webp",
+          "width": 960,
+          "height": 599,
+          "format": "webp",
+          "bytes": 93914
+        },
+        {
+          "path": "/images/generated/carousel-skim_main-960-2dd0efe5ab57.avif",
+          "width": 960,
+          "height": 599,
+          "format": "avif",
+          "bytes": 46469
+        },
+        {
+          "path": "/images/generated/carousel-skim_main-1010-29b129b81dfc.webp",
+          "width": 1010,
+          "height": 630,
+          "format": "webp",
+          "bytes": 107122
+        },
+        {
+          "path": "/images/generated/carousel-skim_main-1010-bd261a0a95f0.avif",
+          "width": 1010,
+          "height": 630,
+          "format": "avif",
+          "bytes": 51256
+        }
+      ]
+    },
+    "carousel/surf_girl.jpg": {
+      "sourceHash": "4df61673f1f7916ea2e5222b6c4724c84ba7eb9f3e167e436ec268b22af45815",
+      "asset": {
+        "src": "/images/generated/carousel-surf_girl-1080-b7007b75d019.webp",
+        "width": 1080,
+        "height": 1919,
+        "webpSrcSet": "/images/generated/carousel-surf_girl-480-556a64913871.webp 480w, /images/generated/carousel-surf_girl-960-0df832059cc9.webp 960w, /images/generated/carousel-surf_girl-1080-b7007b75d019.webp 1080w",
+        "avifSrcSet": "/images/generated/carousel-surf_girl-480-2bfb4b07e1cc.avif 480w, /images/generated/carousel-surf_girl-960-0b9151fd6183.avif 960w, /images/generated/carousel-surf_girl-1080-3f984bd7631b.avif 1080w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/carousel-surf_girl-480-556a64913871.webp",
+          "width": 480,
+          "height": 852,
+          "format": "webp",
+          "bytes": 31836
+        },
+        {
+          "path": "/images/generated/carousel-surf_girl-480-2bfb4b07e1cc.avif",
+          "width": 480,
+          "height": 852,
+          "format": "avif",
+          "bytes": 18537
+        },
+        {
+          "path": "/images/generated/carousel-surf_girl-960-0df832059cc9.webp",
+          "width": 960,
+          "height": 1706,
+          "format": "webp",
+          "bytes": 98408
+        },
+        {
+          "path": "/images/generated/carousel-surf_girl-960-0b9151fd6183.avif",
+          "width": 960,
+          "height": 1706,
+          "format": "avif",
+          "bytes": 57523
+        },
+        {
+          "path": "/images/generated/carousel-surf_girl-1080-b7007b75d019.webp",
+          "width": 1080,
+          "height": 1919,
+          "format": "webp",
+          "bytes": 120220
+        },
+        {
+          "path": "/images/generated/carousel-surf_girl-1080-3f984bd7631b.avif",
+          "width": 1080,
+          "height": 1919,
+          "format": "avif",
+          "bytes": 70054
+        }
+      ]
+    },
     "carousel/wyjazdy.jpg": {
       "sourceHash": "8dd9699e23de2241719a8cc89cb91babaf2552e802e6ac32a4ceef178b31eb3a",
       "asset": {

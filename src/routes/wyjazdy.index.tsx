@@ -54,7 +54,12 @@ function TripsPage() {
             onRetry={() => void refetch()}
           />
         </section>
-        <FaqSection headingId="trip-faq-heading" items={tripFaqItems} />
+        <FaqSection
+          headingId="trip-faq-heading"
+          items={tripFaqItems}
+          desktopTypography="large"
+          description="Zebraliśmy najważniejsze informacje dotyczące wyjazdów na snowboard, narty czy surfing. Masz dodatkowe wątpliwości? Zawsze możesz skontaktować się z nami mailowo lub telefonicznie."
+        />
         <section
           className="border-t border-border bg-secondary/55 py-12 sm:py-14"
           aria-labelledby="trips-video-heading"

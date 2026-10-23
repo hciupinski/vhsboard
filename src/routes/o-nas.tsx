@@ -39,7 +39,7 @@ function AboutPage() {
             <h1 className="mt-3 text-5xl leading-[0.92] text-balance sm:text-7xl">
               NIEWAŻNE GDZIE. WAŻNE, ŻE NA DESCE
             </h1>
-            <p className="mt-6 max-w-prose text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-6 max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg">
               VHS powstał w 2017 roku i jest doskonałym przykładem tego, jak pasja naturalnie
               przemieniła się w pracę. Od zawsze byliśmy związani ze sportami deskowymi — nieważne,
               czy na śniegu, czy na wodzie. Ważne, że na desce.
@@ -156,6 +156,7 @@ function AboutPage() {
           headingId="about-us-faq-heading"
           items={aboutUsFaqItems}
           headerLabel="VHS od kuchni"
+          descriptionClassName="lg:max-w-4xl"
         />
       </main>
       <PublicFooter />

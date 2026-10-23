@@ -154,6 +154,12 @@ describe("trips list route", () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Obóz wakeboardowy" })).not.toBeInTheDocument();
 
+    expect(
+      screen.getByText(
+        "Zebraliśmy najważniejsze informacje dotyczące wyjazdów na snowboard, narty czy surfing. Masz dodatkowe wątpliwości? Zawsze możesz skontaktować się z nami mailowo lub telefonicznie.",
+      ),
+    ).toBeInTheDocument();
+
     const offersHeading = screen.getByRole("heading", { name: /aktualne kierunki/i });
     const faqHeading = screen.getByRole("heading", { name: "Najczęściej zadawane pytania" });
     const videoHeading = screen.getByRole("heading", { name: /zobacz nasze wyjazdy/i });

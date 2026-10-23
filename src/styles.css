@@ -246,6 +246,11 @@
       opacity 160ms ease-out,
       transform 160ms ease-out;
   }
+  @media (min-width: 1024px) {
+    .topic-selector__content {
+      margin-block-end: max(0px, calc(clamp(0.75rem, 1.2vw, 1.25rem) - 1rem));
+    }
+  }
   @media (min-width: 768px) {
     .topic-selector__item:is(:focus-visible, :focus-within) .topic-selector__content {
       inline-size: var(--topic-panel-expanded-width);

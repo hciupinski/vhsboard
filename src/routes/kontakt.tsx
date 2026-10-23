@@ -55,7 +55,7 @@ function ContactPage() {
                 {config.contactPhone}
               </a>
             </p>
-            <h3 className="mt-auto">Sprawdź co u nas słychać i dołącz do społeczności VHS</h3>
+            <h3 className="mt-auto pt-8">Sprawdź co u nas słychać i dołącz do społeczności VHS</h3>
             <SocialLinks className="mt-2" />
           </section>
           <section className="rounded-3xl border border-border bg-card p-7">

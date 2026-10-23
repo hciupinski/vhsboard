@@ -10,11 +10,9 @@ export function HomeContactCta() {
     >
       <div className="mx-auto max-w-6xl px-5">
         <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-            Masz pytanie?
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">KONTAKT</p>
           <h2 id="home-contact-heading" className="mt-3 text-4xl leading-[0.92] sm:text-6xl">
-            GOTOWY NA COŚ POZA PLANEM?
+            MASZ PYTANIA? POGADAJMY!
           </h2>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/80">
             Nie wiesz jeszcze, który kierunek jest dla Ciebie? Napisz do nas — pomożemy wybrać
