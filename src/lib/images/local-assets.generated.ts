@@ -109,6 +109,24 @@ export const LOCAL_IMAGE_ASSETS: Readonly<Record<string, ResponsiveImageAsset>> 
     avifSrcSet:
       "/images/generated/carousel-obozy-zima-480-3a83cf5ea7ba.avif 480w, /images/generated/carousel-obozy-zima-960-77dbae121933.avif 960w, /images/generated/carousel-obozy-zima-1600-03fc356846c7.avif 1600w",
   },
+  "carousel/skim_main.png": {
+    src: "/images/generated/carousel-skim_main-1010-29b129b81dfc.webp",
+    width: 1010,
+    height: 630,
+    webpSrcSet:
+      "/images/generated/carousel-skim_main-480-0fd77304a777.webp 480w, /images/generated/carousel-skim_main-960-facd8ca7878d.webp 960w, /images/generated/carousel-skim_main-1010-29b129b81dfc.webp 1010w",
+    avifSrcSet:
+      "/images/generated/carousel-skim_main-480-98e8beceee8f.avif 480w, /images/generated/carousel-skim_main-960-2dd0efe5ab57.avif 960w, /images/generated/carousel-skim_main-1010-bd261a0a95f0.avif 1010w",
+  },
+  "carousel/surf_girl.jpg": {
+    src: "/images/generated/carousel-surf_girl-1080-b7007b75d019.webp",
+    width: 1080,
+    height: 1919,
+    webpSrcSet:
+      "/images/generated/carousel-surf_girl-480-556a64913871.webp 480w, /images/generated/carousel-surf_girl-960-0df832059cc9.webp 960w, /images/generated/carousel-surf_girl-1080-b7007b75d019.webp 1080w",
+    avifSrcSet:
+      "/images/generated/carousel-surf_girl-480-2bfb4b07e1cc.avif 480w, /images/generated/carousel-surf_girl-960-0b9151fd6183.avif 960w, /images/generated/carousel-surf_girl-1080-3f984bd7631b.avif 1080w",
+  },
   "carousel/wyjazdy.jpg": {
     src: "/images/generated/carousel-wyjazdy-1600-7e0597525543.webp",
     width: 1600,
