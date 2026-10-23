@@ -74,6 +74,29 @@ photographs, fonts, and OG images require a Git build/deploy.
   photographs. Do not restore eager imports of full-size originals.
 - Use local Fontsource fonts, semantic contrast tokens, and reduced-motion guards.
 
+## Task tracking and client review
+
+- The [shared Google Sheets tracker](https://docs.google.com/spreadsheets/d/1MLn5I9EcpKrJRD6PP8rUxh8OoaHaeqMyHkwvmYN6sQQ/edit)
+  is the source of truth for client feedback. Read its current state before
+  selecting tasks and identify each task by its stable `VHS-###` ID, not a saved
+  row number.
+- Before implementing a batch, prepare its scope and plan for the user's
+  approval. Keep tasks requiring client decisions or missing materials separate.
+- For every completed task, verify the actual behavior and capture a real
+  screenshot as evidence. Embed the screenshot in the matching task's
+  `Po / dowód` cell and fill in `Co poprawiono` and `Weryfikacja / wersja`,
+  including the tested URL/environment, viewport, result, and commit/version.
+  Keep screenshots accessible in the project Drive folder; link additional
+  viewport screenshots from the same row.
+- Re-read the tracker before updating a row so sorting or concurrent edits do
+  not attach results to the wrong task. Preserve the original report and `Przed`
+  evidence. Use `Do akceptacji` only after verification and screenshot evidence;
+  leave `Akceptacja klientki` for human review. Never close partially completed
+  requests or claim that a local fix is deployed publicly.
+- For the approved 2026-10-23 batch, the user explicitly accepted durable Drive
+  screenshot links in the existing `Po / dowód` cells instead of inline images.
+  Preserve these links; do not replace them with expiring tool URLs.
+
 ## Useful commands
 
 ```bash
