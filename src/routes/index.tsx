@@ -56,7 +56,7 @@ const entryPoints = [
   {
     to: "/obozy",
     title: "Obozy",
-    text: "Wakacje po naszemu? Aktywne dni pełne sportu, zabawy i nowych doświadczeń.",
+    text: "Obozy po naszemu? Aktywne dni pełne sportu, zabawy i nowych doświadczeń.",
     action: "Poznaj obozy",
     image: obozy,
     imageAlt: "Dziecko na snowboardzie podczas zimowego obozu VHSBOARD",
