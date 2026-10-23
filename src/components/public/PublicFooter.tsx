@@ -21,7 +21,7 @@ export function PublicFooter() {
           >
             <Brand />
           </Link>
-          <p className="mt-3 hidden max-w-md sm:block">Robione między falami a opadami śniegu.</p>
+          <p className="mt-3 max-w-md">Robione między falami a opadami śniegu.</p>
           <button
             className="mt-3 rounded-sm font-medium text-foreground underline-offset-4 hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             onClick={openPreferences}
@@ -48,7 +48,7 @@ export function PublicFooter() {
             </a>
           </p>
         </div>
-        <address className="hidden not-italic sm:block sm:text-right">
+        <address className="not-italic text-center sm:text-right">
           <p className="font-medium text-foreground">{config.businessName}</p>
           <p>{config.businessStreet}</p>
           <p>

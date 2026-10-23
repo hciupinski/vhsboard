@@ -47,10 +47,10 @@ export function HomeUpcomingOffersSection({
           Wyjazdy i obozy
         </p>
         <h2 id="home-upcoming-heading" className="mt-3 text-4xl leading-[0.95] sm:text-6xl">
-          NAJBLIŻSZE NA RADARZE
+          ROZKŁAD JAZDY
         </h2>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Sprawdź, co szykujemy najbliżej — na wodzie, śniegu i w dobrym towarzystwie.
+          Sprawdź, co szykujemy w najbliższym czasie i dołącz do przygody.
         </p>
 
         {isPending ? (

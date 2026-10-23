@@ -291,9 +291,7 @@ describe("static public pages", () => {
 
     await renderRoute("/", HomeRoute);
 
-    expect(
-      await screen.findByRole("heading", { name: "NAJBLIŻSZE NA RADARZE" }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "ROZKŁAD JAZDY" })).toBeInTheDocument();
     expect(await screen.findByRole("link", { name: homeTrip.title })).toHaveAttribute(
       "href",
       "/wyjazdy/atlantic-surf-week",
@@ -307,7 +305,7 @@ describe("static public pages", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/VHSBOARD działa od 2017 roku\./i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Poznaj VHSBOARD" })).toHaveAttribute("href", "/o-nas");
-    const contactHeading = screen.getByRole("heading", { name: "GOTOWY NA COŚ POZA PLANEM?" });
+    const contactHeading = screen.getByRole("heading", { name: "MASZ PYTANIA? POGADAJMY!" });
     expect(contactHeading).toBeInTheDocument();
     const contactSection = contactHeading.closest("section");
     if (!contactSection) throw new Error("Nie znaleziono końcowej sekcji kontaktowej");
@@ -346,17 +344,45 @@ describe("static public pages", () => {
     await renderRoute("/eventy", EventsRoute);
 
     expect(
-      screen.getByRole("heading", { name: /przyciąga ludzi.*surfing dla każdego/i }),
+      screen.getByRole("heading", {
+        level: 1,
+        name: "TOR SKIMBOARDOWY – PRZYCIĄGA LUDZI, WCIĄGA DO ZABAWY.",
+      }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Strefa Skate" })).toBeInTheDocument();
+    expect(screen.getByText("Strefa Skate").tagName).toBe("P");
+    const skateHeading = screen.getByRole("heading", {
+      level: 2,
+      name: "MIEJSKIE SPORTY, KTÓRE ŁĄCZĄ",
+    });
+    expect(screen.getAllByText("Strefa Skate")).toHaveLength(1);
     expect(
       screen.getByRole("heading", { name: /strefa letnia w centrum handlowym/i }),
     ).toBeInTheDocument();
+    const useCases = screen.getByRole("list", { name: "Zastosowania toru skimboardowego" });
     expect(
-      screen.getByText(/integracjach firmowych i piknikach pracowniczych/i),
-    ).toBeInTheDocument();
-    expect(screen.getByText("obozach dla dzieci i młodzieży")).toBeInTheDocument();
-    expect(screen.queryByText("obozach i obozach dla dzieci i młodzieży")).not.toBeInTheDocument();
+      within(useCases)
+        .getAllByRole("listitem")
+        .map((item) => item.querySelector("p")?.textContent),
+    ).toEqual([
+      "Integracje i pikniki firmowe",
+      "obchody miast, gmin",
+      "imprezy plenerowe, festiwale, juwenalia",
+      "pikniki rodzinne, festyny",
+      "obozy dla dzieci i młodzieży",
+      "eventy w galeriach handlowych",
+      "wydarzenia sportowe, targi",
+    ]);
+    expect(
+      screen.queryByRole("heading", { name: /czym jest skimboarding/i }),
+    ).not.toBeInTheDocument();
+    const trackHeading = screen.getByRole("heading", { name: /tor skrojony pod twój event/i });
+    const galleryHeading = screen.getByRole("heading", { name: /zobacz nas w akcji/i });
+    expect(
+      trackHeading.compareDocumentPosition(skateHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      skateHeading.compareDocumentPosition(galleryHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(screen.getByText(/15 m, 20 m, 22 m, 30 m/i)).toBeInTheDocument();
 
     const gallery = screen.getByRole("heading", { name: /zobacz nas w akcji/i }).closest("section");
@@ -393,7 +419,7 @@ describe("static public pages", () => {
       screen.getByRole("img", {
         name: /uczestnik obozu wakeboardowego na jeziorze podczas letnich zajęć/i,
       }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute("src", expect.stringContaining("carousel-obozy-lato-wakeboard-"));
     expect(
       screen.getByRole("img", {
         name: /uczestniczka obozu snowboardowego podczas zimowej jazdy w górach/i,

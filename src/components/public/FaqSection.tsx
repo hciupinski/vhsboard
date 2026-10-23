@@ -5,15 +5,25 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import type { FaqItem } from "@/lib/faq";
+import { cn } from "@/lib/utils";
 
 type FaqSectionProps = {
   headingId: string;
   items: readonly FaqItem[];
   headerLabel?: string;
   description?: string;
+  desktopTypography?: "default" | "large";
+  descriptionClassName?: string;
 };
 
-export function FaqSection({ headingId, items, headerLabel, description }: FaqSectionProps) {
+export function FaqSection({
+  headingId,
+  items,
+  headerLabel,
+  description,
+  desktopTypography = "default",
+  descriptionClassName,
+}: FaqSectionProps) {
   return (
     <section
       className="border-t border-border bg-background py-12 sm:py-14"
@@ -26,17 +36,32 @@ export function FaqSection({ headingId, items, headerLabel, description }: FaqSe
         <h2 id={headingId} className="mt-3 text-4xl leading-[0.95] uppercase sm:text-5xl">
           {headerLabel || "Najczęściej zadawane pytania"}
         </h2>
-        <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+        <p
+          className={cn(
+            "mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground",
+            descriptionClassName,
+          )}
+        >
           {description ||
             "Zebraliśmy najważniejsze informacje, żeby łatwiej było wybrać właściwy termin i ruszyć w drogę."}
         </p>
         <Accordion type="single" collapsible className="mt-8 border-t border-border">
           {items.map(({ question, answer }, index) => (
             <AccordionItem key={question} value={`faq-${index}`} className="border-border">
-              <AccordionTrigger className="py-5 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <AccordionTrigger
+                className={cn(
+                  "py-5 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  desktopTypography === "large" && "lg:text-xl",
+                )}
+              >
                 {question}
               </AccordionTrigger>
-              <AccordionContent className="max-w-3xl space-y-4 text-base leading-relaxed text-muted-foreground text-justify">
+              <AccordionContent
+                className={cn(
+                  "max-w-3xl space-y-4 text-base leading-relaxed text-muted-foreground text-justify",
+                  desktopTypography === "large" && "lg:text-lg",
+                )}
+              >
                 {answer
                   .split(/\n\s*\n/)
                   .map((paragraph) => paragraph.trim())

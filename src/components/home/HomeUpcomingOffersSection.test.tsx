@@ -62,9 +62,7 @@ describe("HomeUpcomingOffersSection", () => {
   it("keeps three card-sized placeholders while upcoming offers load", async () => {
     await renderSection({ offers: [], isPending: true, isError: false });
 
-    const section = screen
-      .getByRole("heading", { name: "NAJBLIŻSZE NA RADARZE" })
-      .closest("section");
+    const section = screen.getByRole("heading", { name: "ROZKŁAD JAZDY" }).closest("section");
     if (!section) throw new Error("Nie znaleziono sekcji najbliższych ofert");
 
     expect(within(section).getAllByTestId("home-offer-skeleton")).toHaveLength(3);

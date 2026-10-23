@@ -14,7 +14,7 @@ import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 
 const wakeparkCampImage = getLocalImage("obozy-wake.jpg");
-const summerCampImage = getLocalImage("obozy-lato.jpg");
+const summerCampImage = getLocalImage("carousel/obozy-lato-wakeboard.png");
 const winterCampImage = getLocalImage("obozy-zima.jpg");
 
 export const Route = createFileRoute("/obozy/")({
