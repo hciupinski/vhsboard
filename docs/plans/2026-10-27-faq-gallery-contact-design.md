@@ -1,6 +1,6 @@
 # FAQ, galeria i napisy na stronie Kontakt — propozycja zakresu
 
-**Stan:** użytkownik zaakceptował zakres 27.10.2026; realizacja na `codex/faq-gallery-contact` z `origin/main` (`686f062`).
+**Stan:** użytkownik zaakceptował zakres 27.10.2026. Kod wykonany i zweryfikowany na `codex/faq-gallery-contact`, z `origin/main` (`686f062`), w [PR #44](https://github.com/hciupinski/vhsboard/pull/44). [Wynik weryfikacji](2026-10-27-faq-gallery-contact-verification.md); osadzenie obrazów w trackerze nadal oczekuje.
 
 **Źródła:** polecenie użytkownika z 27.10.2026 oraz aktualny [tracker](https://docs.google.com/spreadsheets/d/1MLn5I9EcpKrJRD6PP8rUxh8OoaHaeqMyHkwvmYN6sQQ/edit?gid=1028330015). Dla VHS-044 sprawdzono oryginalny obraz IMG-26 z fragmentu B21 maila, odpowiadający karcie „Obrazy z maila”.
 
@@ -10,7 +10,7 @@ Wzorem jest obecne `/wyjazdy`: od 1024 px pytania 20 px, odpowiedzi 18 px; poni�
 
 Ustawić te wartości we wspólnym `src/components/public/FaqSection.tsx`, usuwając rozróżnienie `desktopTypography` i jego przekazanie w `src/routes/wyjazdy.index.tsx`. Efekt obejmie `/wyjazdy`, `/obozy`, `/eventy` i `/o-nas`.
 
-Nie zmieniać treści, szerokości odpowiedzi ani sposobu rozwijania. W trackerze opisać wykonany zakres typografii osobno: dopiski FAQ w VHS-038 (ogólny zakres Eventów) i VHS-040 nie oznaczają wykonania pozostałych części tych zgłoszeń. VHS-037 dotyczy szerokości, a VHS-017 treści; nie zamykać ich na podstawie tej zmiany.
+Nie zmieniać treści, szerokości odpowiedzi ani sposobu rozwijania. Nowe wspólne zadanie FAQ zapisano jako VHS-052. W trackerze opisać wykonany zakres typografii osobno: dopiski FAQ w VHS-038 (ogólny zakres Eventów) i VHS-040 nie oznaczają wykonania pozostałych części tych zgłoszeń. VHS-037 dotyczy szerokości, a VHS-017 treści; nie zamykać ich na podstawie tej zmiany.
 
 ## 2. VHS-018 — Galeria
 

@@ -59,8 +59,8 @@
 
 ### Task 4: Odbiór i tracker
 
-- [ ] Uruchomić `bun run typecheck`, `bun run test`, `bun run lint`, `bun run build`; oczekiwany PASS (wcześniejsze ostrzeżenia lint opisać).
-- [ ] Zrobić przegląd całej gałęzi przez świeżego recenzenta, poprawić istotne problemy i ponowić odpowiednie kontrole.
-- [ ] Przechować screenshoty na Dysku projektu; uzupełnić właściwe wiersze po ponownym odczycie ID i kategorii, zachowując stare dowody i akceptację klientki.
+- [x] Uruchomić `bun run typecheck`, `bun run test`, `bun run lint`, `bun run build`; oczekiwany PASS (wcześniejsze ostrzeżenia lint opisać).
+- [x] Zrobić przegląd całej gałęzi przez świeżego recenzenta, poprawić istotne problemy i ponowić odpowiednie kontrole.
+- [x] Przechować screenshoty na Dysku projektu; uzupełnić właściwe wiersze po ponownym odczycie ID i kategorii, zachowując stare dowody i akceptację klientki.
 - [ ] Osadzenie obrazu w komórce zweryfikować osobno; dopóki niewykonane, nie twierdzić, że wymaganie dowodu jest spełnione.
-- [ ] Zapisać wynik weryfikacji i wersję w repozytorium. Wystawić PR do przeglądu zgodnie z dotychczasowym trybem współpracy; nie mergować.
+- [x] Zapisać wynik weryfikacji i wersję w repozytorium. Wystawić PR do przeglądu zgodnie z dotychczasowym trybem współpracy; nie mergować.
