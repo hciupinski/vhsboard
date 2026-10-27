@@ -16,7 +16,7 @@ export function HomeOfferCard({ offer }: { offer: PublicOffer }) {
   const linkLabel = `${offer.title}${showLastPlacesBadge ? ". Ostatnie miejsca" : ""}`;
   const content = (
     <article
-      className={`relative isolate flex min-h-[26rem] min-w-0 flex-col overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-160 ease-out motion-reduce:transition-none${isFinished ? "" : " hover-lift"}`}
+      className={`relative isolate flex h-full min-h-[26rem] min-w-0 flex-col overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-160 ease-out motion-reduce:transition-none${isFinished ? "" : " hover-lift"}`}
     >
       <div className="absolute inset-0">
         {offer.heroImageUrl ? (
@@ -82,7 +82,7 @@ export function HomeOfferCard({ offer }: { offer: PublicOffer }) {
         to="/wyjazdy/$slug"
         params={{ slug: offer.slug }}
         aria-label={linkLabel}
-        className="group block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="group block h-full rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         {content}
       </Link>
@@ -94,7 +94,7 @@ export function HomeOfferCard({ offer }: { offer: PublicOffer }) {
       to="/obozy/$slug"
       params={{ slug: offer.slug }}
       aria-label={linkLabel}
-      className="group block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group block h-full rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       {content}
     </Link>

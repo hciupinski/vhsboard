@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { selectUpcomingHomeOffers } from "@/lib/offers/home-offers";
 import type { PublicOffer } from "@/lib/offers/types";
 
-import { HomeOfferCard } from "./HomeOfferCard";
+import { HomeOffersList } from "./HomeOffersList";
 
 type HomeUpcomingOffersSectionProps = {
   offers: PublicOffer[];
@@ -93,11 +93,7 @@ export function HomeUpcomingOffersSection({
         ) : null}
 
         {!isPending && !isError && upcomingOffers.length > 0 ? (
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {upcomingOffers.map((offer) => (
-              <HomeOfferCard key={offer.id} offer={offer} />
-            ))}
-          </div>
+          <HomeOffersList offers={upcomingOffers} />
         ) : null}
       </div>
     </section>
