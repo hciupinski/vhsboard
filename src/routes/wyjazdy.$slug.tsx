@@ -4,6 +4,7 @@ import { CalendarDays, MapPin, Wallet } from "lucide-react";
 import { z } from "zod";
 
 import { MobileTripBookingCta } from "@/components/offers/MobileTripBookingCta";
+import { RelatedTripsSection } from "@/components/offers/RelatedTripsSection";
 import { OfferFacts } from "@/components/offers/OfferFacts";
 import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation";
 import { getVisibleTripSections, tripSections } from "@/lib/offers/trip-sections";
@@ -276,6 +277,7 @@ function TripDetail() {
         {offer.images.length > 0 ? (
           <OfferGallery id={gallery.id} title={gallery.label} images={offer.images} />
         ) : null}
+        <RelatedTripsSection currentOfferId={offer.id} />
       </main>
       <PublicFooter />
       <MobileTripBookingCta bookingUrl={offer.bookingUrl} />
