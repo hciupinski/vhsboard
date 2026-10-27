@@ -373,14 +373,30 @@
       padding: 1rem 1.25rem;
     }
     .topic-selector__content {
-      inline-size: min(100%, 24rem);
-      margin-inline: auto;
+      position: relative;
+      isolation: isolate;
+      inline-size: 100%;
+      margin-inline: 0;
       margin-block-end: 0;
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius);
-      background: oklch(0 0 0 / 0.1);
-      backdrop-filter: blur(0.1rem) brightness(0.4);
-      text-align: center;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      text-align: start;
+    }
+    .topic-selector__content::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -5rem -1.25rem -1rem;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        oklch(0 0 0 / 0) 0,
+        oklch(0 0 0 / 0.72) 5rem,
+        oklch(0 0 0 / 0.9) 100%
+      );
     }
   }
   .offer-card-action,
