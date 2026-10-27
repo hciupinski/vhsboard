@@ -96,21 +96,22 @@ function HomePage() {
       <main className="flex-1">
         <section className="relative isolate overflow-hidden">
           <HeroCarousel images={heroImages} />
-          <div className="absolute inset-0 bg-foreground/55" />
           <div className="relative mx-auto max-w-6xl px-5 pb-20 pt-24 sm:pb-28 sm:pt-36">
-            <p className="mb-4 inline-block rounded-full border border-background/40 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background">
-              Wyjazdy · Eventy · Obozy
-            </p>
-            <h1 className="max-w-3xl text-5xl leading-[0.95] text-background sm:text-7xl">
-              Dobre rzeczy dzieją się poza codziennym planem
-            </h1>
-            <p className="mt-5 max-w-xl text-base text-background/85 sm:text-lg">
-              Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
-              eventach i podczas aktywności dla dzieci.
-            </p>
-            <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
-              <Link to="/wyjazdy">Zobacz wyjazdy</Link>
-            </Button>
+            <div className="max-w-3xl rounded-3xl bg-foreground/80 p-5 sm:p-8">
+              <p className="mb-4 inline-block rounded-full border border-background/40 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background">
+                Wyjazdy · Eventy · Obozy
+              </p>
+              <h1 className="max-w-3xl text-5xl leading-[0.95] text-background sm:text-7xl">
+                Dobre rzeczy dzieją się poza codziennym planem
+              </h1>
+              <p className="mt-5 max-w-xl text-base text-background/85 sm:text-lg">
+                Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
+                eventach i podczas aktywności dla dzieci.
+              </p>
+              <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
+                <Link to="/wyjazdy">Zobacz wyjazdy</Link>
+              </Button>
+            </div>
           </div>
         </section>
         <section className="py-12 sm:py-14" aria-labelledby="entry-points-heading">
@@ -134,7 +135,7 @@ function HomePage() {
               <Link
                 key={to}
                 to={to}
-                className={`topic-selector__item topic-selector__item--${index + 1} topic-selector__item--mobile-stack group isolate flex overflow-hidden py-8 text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-inset sm:py-10`}
+                className={`topic-selector__item topic-selector__item--${index + 1} topic-selector__item--mobile-stack group isolate flex overflow-hidden text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-inset md:py-10`}
               >
                 <ResponsiveImage
                   sizes="(min-width: 768px) 33vw, 100vw"
@@ -143,7 +144,7 @@ function HomePage() {
                   loading="lazy"
                   className="absolute inset-0 -z-20 size-full object-cover hover-zoom transition-transform duration-160 ease-out motion-reduce:transition-none"
                 />
-                <div className="absolute inset-0 -z-10 bg-gradient-to-t from-foreground/90 via-foreground/25 to-foreground/5" />
+                <div className="absolute inset-0 -z-10 hidden md:block bg-gradient-to-t from-foreground/90 via-foreground/25 to-foreground/5" />
                 <div
                   className={`topic-selector__content topic-selector__content--contrast topic-selector__content--flush-left topic-selector__content--safe-text-inset topic-selector__content--${index + 1}`}
                 >
@@ -152,7 +153,7 @@ function HomePage() {
                     <p className="mt-3 text-sm leading-relaxed text-background/85 sm:text-base">
                       {text}
                     </p>
-                    <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
+                    <span className="mt-6 hidden md:inline-flex items-center gap-2 text-sm font-semibold">
                       {action}
                       <span className="grid size-7 mr-2 place-items-center rounded-full bg-background/15 hover-nudge transition-[transform,background-color] duration-160 ease-out motion-reduce:transition-none">
                         <ArrowUpRight aria-hidden="true" className="size-4" />

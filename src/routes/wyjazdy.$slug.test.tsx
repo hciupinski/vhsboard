@@ -10,7 +10,7 @@ import {
 import type { FunctionComponent } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
-import { getPublishedOfferBySlug } from "@/lib/offers/public-repository";
+import { getPublishedOfferBySlug, listPublishedOffers } from "@/lib/offers/public-repository";
 import type { TripOffer } from "@/lib/offers/types";
 
 import { Route } from "./wyjazdy.$slug";
@@ -19,7 +19,10 @@ const routeLoader = Route.options.loader;
 if (typeof routeLoader !== "function") throw new Error("Expected a function loader");
 const loadOffer = routeLoader;
 
-vi.mock("@/lib/offers/public-repository", () => ({ getPublishedOfferBySlug: vi.fn() }));
+vi.mock("@/lib/offers/public-repository", () => ({
+  getPublishedOfferBySlug: vi.fn(),
+  listPublishedOffers: vi.fn().mockResolvedValue([]),
+}));
 
 describe("trip detail route", () => {
   it("loads a published offer under /wyjazdy/:slug", async () => {
@@ -138,6 +141,10 @@ afterEach(() => {
 describe("trip section navigation integration", () => {
   it("links to the rendered trip sections in reading order", async () => {
     await renderDetail(detailOffer);
+    expect(await screen.findByRole("link", { name: "Zapisz się" })).toHaveAttribute(
+      "href",
+      detailOffer.bookingUrl,
+    );
     const navigation = await screen.findByRole("navigation", { name: "Sekcje wyjazdu" });
     const links = within(navigation).getAllByRole("link");
     expect(links.map((link) => link.textContent)).toEqual([
@@ -211,5 +218,43 @@ describe("trip section navigation integration", () => {
     });
     expect(await screen.findByRole("heading", { name: detailOffer.title })).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Sekcje wyjazdu" })).not.toBeInTheDocument();
+  });
+});
+
+describe("related trips placement and failure isolation", () => {
+  it("places alternatives after the gallery and before the footer", async () => {
+    vi.mocked(listPublishedOffers).mockResolvedValue([
+      {
+        ...detailOffer,
+        id: "other",
+        slug: "other-trip",
+        title: "Inny wyjazd",
+        startDate: "2099-06-12",
+        endDate: "2099-06-18",
+      },
+    ]);
+    await renderDetail(detailOffer);
+    const alternatives = await screen.findByRole("region", { name: "Inne wyjazdy" });
+    await within(alternatives).findByRole("heading", { name: "Zobacz inne wyjazdy" });
+    const gallery = screen.getByRole("heading", { name: "Galeria" }).closest("section")!;
+    expect(
+      gallery.compareDocumentPosition(alternatives) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      alternatives.compareDocumentPosition(screen.getByRole("contentinfo")) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+  it("keeps details and registration usable when alternatives fail", async () => {
+    vi.mocked(listPublishedOffers).mockRejectedValue(new Error("offline"));
+    await renderDetail(detailOffer);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Nie udało się pobrać innych wyjazdów.",
+    );
+    expect(screen.getByRole("heading", { name: detailOffer.title })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Zapisz się" })).toHaveAttribute(
+      "href",
+      detailOffer.bookingUrl,
+    );
   });
 });

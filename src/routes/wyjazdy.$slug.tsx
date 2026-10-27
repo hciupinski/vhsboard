@@ -3,6 +3,8 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Wallet } from "lucide-react";
 import { z } from "zod";
 
+import { MobileTripBookingCta } from "@/components/offers/MobileTripBookingCta";
+import { RelatedTripsSection } from "@/components/offers/RelatedTripsSection";
 import { OfferFacts } from "@/components/offers/OfferFacts";
 import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation";
 import { getVisibleTripSections, tripSections } from "@/lib/offers/trip-sections";
@@ -126,7 +128,7 @@ function TripDetail() {
           </div>
         </section>
 
-        <TripSectionNavigation key={offer.slug} sections={sections} />
+        <TripSectionNavigation key={offer.slug} sections={sections} linkClassName="lg:text-lg" />
 
         <div className="mx-auto grid max-w-6xl gap-12 px-5 py-12 sm:py-14 lg:grid-cols-[1.6fr_1fr]">
           <div className="min-w-0">
@@ -275,8 +277,10 @@ function TripDetail() {
         {offer.images.length > 0 ? (
           <OfferGallery id={gallery.id} title={gallery.label} images={offer.images} />
         ) : null}
+        <RelatedTripsSection currentOfferId={offer.id} />
       </main>
       <PublicFooter />
+      <MobileTripBookingCta bookingUrl={offer.bookingUrl} />
     </div>
   );
 }

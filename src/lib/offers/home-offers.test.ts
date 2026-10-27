@@ -63,7 +63,7 @@ const camp = (title: string, startDate: string): DayCampOffer => ({
 });
 
 describe("selectUpcomingHomeOffers", () => {
-  it("keeps dated upcoming offers in date and Polish title order, limited to three", () => {
+  it("keeps dated upcoming offers in date and Polish title order without dropping later offers", () => {
     const offers = [
       trip("Później", "2026-10-01"),
       trip("Zeta", "2026-09-28"),
@@ -78,6 +78,17 @@ describe("selectUpcomingHomeOffers", () => {
       "Dzisiaj",
       "Alfa",
       "Zeta",
+      "Obóz wake",
+      "Później",
+    ]);
+    expect(offers.map((offer) => offer.title)).toEqual([
+      "Później",
+      "Zeta",
+      "Obóz wake",
+      "Alfa",
+      "Dzisiaj",
+      "Miniony",
+      "Termin wkrótce",
     ]);
   });
 

@@ -314,10 +314,9 @@ describe("static public pages", () => {
       "href",
       "/kontakt",
     );
-    expect(within(contactSection).getByRole("link", { name: "Zobacz wyjazdy" })).toHaveAttribute(
-      "href",
-      "/wyjazdy",
-    );
+    expect(
+      within(contactSection).queryByRole("link", { name: "Zobacz wyjazdy" }),
+    ).not.toBeInTheDocument();
   });
 
   it("keeps category links when the home offer request fails", async () => {

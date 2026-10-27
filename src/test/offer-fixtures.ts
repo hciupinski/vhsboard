@@ -1,0 +1,25 @@
+import type { TripOffer } from "@/lib/offers/types";
+
+export const tripOffer: TripOffer = {
+  id: "trip-1",
+  slug: "atlantic-surf-week",
+  offerKind: "trip",
+  activity: "surf",
+  title: "Atlantycki tydzień surfingu",
+  subtitle: "",
+  shortDescription: "Poranne sesje na oceanie.",
+  location: "Ericeira, Portugalia",
+  startDate: "2099-06-12",
+  endDate: "2099-06-18",
+  durationDays: 7,
+  groupSizeMin: null,
+  groupSizeMax: null,
+  priceFrom: 3100,
+  currency: "PLN",
+  bookingUrl: "https://example.test/zapisy",
+  showLastPlacesBadge: false,
+  heroImageUrl: null,
+  images: [],
+  accommodationImages: [],
+  content: { paragraphs: [], highlights: [], included: [], excluded: [], schedule: [] },
+};
