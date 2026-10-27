@@ -37,7 +37,7 @@ W [trackerze](https://docs.google.com/spreadsheets/d/1MLn5I9EcpKrJRD6PP8rUxh8Ooa
 
 VHS-018 Galeria, VHS-044 i VHS-052 mają status `W trakcie`, ponieważ obrazy nadal wymagają osadzenia w `Po / dowód`. Dostępne narzędzia nie udostępniają trwałego natywnego osadzania, nie ma podłączonej sesji dokumentu Sheets, a użytkownik wcześniej wskazał brak możliwości zalogowania do przeglądarki. Kolumny z obrazami nie zastąpiono formułami ani linkami. W `Weryfikacja / wersja` zapisano trwałe linki do dodatkowych materiałów i jawnie opisano brak osadzenia.
 
-[Folder dowodów](https://drive.google.com/drive/folders/1hMDfg4zBTVGCy5tYSOtJwt9x6jcg1Vws): początkowe 16 screenshotów oraz 2 dodatkowe ujęcia korekty VHS-005 opisanej poniżej. Upload i zawartość początkowej partii potwierdzono odczytem. Lokalne kopie i pomiary zachowano w `.superpowers/evidence/2026-10-27-faq-gallery-contact/` (ignorowane przez Git).
+[Folder dowodów](https://drive.google.com/drive/folders/1hMDfg4zBTVGCy5tYSOtJwt9x6jcg1Vws): początkowe 16 screenshotów, 2 ujęcia pierwszej korekty VHS-005 oraz 2 ujęcia finalnego gradientu. Upload i zawartość początkowej partii potwierdzono odczytem. Lokalne kopie i pomiary zachowano w `.superpowers/evidence/2026-10-27-faq-gallery-contact/` (ignorowane przez Git).
 
 - [FAQ-wyjazdy-1440.png](https://drive.google.com/file/d/1rVKknGFEpP-oGuacRdxETM0UqNBY1CDr/view?usp=drivesdk)
 - [FAQ-wyjazdy-390.png](https://drive.google.com/file/d/1I1OdX3OFev34X5ykAApF6It6fSfgPMXp/view?usp=drivesdk)
@@ -58,6 +58,8 @@ VHS-018 Galeria, VHS-044 i VHS-052 mają status `W trakcie`, ponieważ obrazy na
 
 ## Korekta VHS-005 po uwadze użytkownika
 
+Ten wariant zastąpiono gradientem opisanym w następnej sekcji.
+
 Użytkownik zgłosił zbyt wysokie podpisy kategorii na mobile i brązowe wypełnienie. Przyczyną było tło `oklch(0.22 0.03 60 / 0.8)` dodane w poprzedniej partii.
 
 Poniżej 768 px zmniejszono odstęp tytuł–opis z 12 do 4 px oraz pionowy padding z 16 do 12 px. Usunięto kryjący brąz: tło ma neutralny czarny kolor z kryciem 10%, przywrócono wcześniejszy blur 1,6 px. `brightness(0.4)` przyciemnia obraz wyłącznie pod panelem, utrzymując czytelność tekstu i prześwitywanie fotografii. Pozycja paneli, tytuły, opisy i ukryte mobilne CTA zachowano.
@@ -68,3 +70,16 @@ Po korekcie: typecheck OK, 471/471 testów OK, lint 0 błędów / 7 wcześniejsz
 
 - [VHS-005 — mobile 390](https://drive.google.com/file/d/1n_vLh7VuIAaDAkULf5h9LuVFBrb3e9c0/view?usp=drivesdk)
 - [VHS-005 — mobile 594](https://drive.google.com/file/d/1fjf1a_wpXTDZTpZRP7EEnthiZG3DT_aP/view?usp=drivesdk)
+
+## Aktualny VHS-005 — zaakceptowany gradient mobilny
+
+Użytkownik wybrał gradient i po obejrzeniu wyniku zaakceptował wysłanie poprawki do PR. Kod: `764b4bd` na `codex/faq-gallery-contact`, [PR #44](https://github.com/hciupinski/vhsboard/pull/44).
+
+Poniżej 768 px usunięto prostokątny panel, blur i cień. Neutralny czarny gradient obejmuje pełną szerokość dolnej części fotografii i dopasowuje wysokość do tekstu. W obszarze tekstu ma krycie co najmniej 72%, schodzące do 90% przy dolnej krawędzi. Górna część zdjęcia pozostaje odsłonięta. Tytuł i opis wyrównano do lewej, 20 px od brzegu; opis ma 16 px i pełne krycie, odstęp tytuł–opis 4 px. Cały kafelek pozostaje linkiem, bez dodatkowego mobilnego CTA.
+
+Weryfikacja na `http://127.0.0.1:3000/`: wszystkie trzy kafelki przy szerokościach 320, 390, 594, 640 i 767 px — gradient na pełną szerokość, brak panelu i blura, brak poziomego overflow. Przy 768 i 1440 px parametry desktopowe są identyczne z wcześniejszym pomiarem. Obliczony minimalny kontrast opisu na najjaśniejszym możliwym tle (białe zdjęcie pod najsłabszą częścią gradientu obszaru tekstu) wynosi 8,92:1. To obliczenie graniczne, nie odczyt pikseli fotografii. Screenshoty rzeczywistych zdjęć sprawdzono wizualnie.
+
+Kontrole po zmianie: typecheck OK, 71 plików / 471 testów OK, lint 0 błędów / 7 wcześniejszych ostrzeżeń, pełny build OK. Dane i pomiary: `.superpowers/evidence/2026-10-27-mobile-gradient/`. Nowe obrazy nadal wymagają osadzenia w komórce trackera; wcześniejsze dowody pozostawiono.
+
+- [VHS-005 — gradient mobile 390](https://drive.google.com/file/d/1oP89r6bxb3I_n2fPXIjraCh9TN1oYB6m/view?usp=drivesdk)
+- [VHS-005 — gradient mobile 594](https://drive.google.com/file/d/1uboUhL4XDrozgFD0nbyIxO3owMK5NNQ3/view?usp=drivesdk)
