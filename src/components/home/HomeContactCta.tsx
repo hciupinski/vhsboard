@@ -22,12 +22,6 @@ export function HomeContactCta() {
             <Button asChild size="lg" className="rounded-full">
               <Link to="/kontakt">Napisz do nas</Link>
             </Button>
-            <Link
-              to="/wyjazdy"
-              className="rounded-sm font-semibold text-background underline decoration-primary decoration-2 underline-offset-4 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Zobacz wyjazdy
-            </Link>
           </div>
         </div>
       </div>
