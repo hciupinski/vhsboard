@@ -96,21 +96,22 @@ function HomePage() {
       <main className="flex-1">
         <section className="relative isolate overflow-hidden">
           <HeroCarousel images={heroImages} />
-          <div className="absolute inset-0 bg-foreground/55" />
           <div className="relative mx-auto max-w-6xl px-5 pb-20 pt-24 sm:pb-28 sm:pt-36">
-            <p className="mb-4 inline-block rounded-full border border-background/40 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background">
-              Wyjazdy · Eventy · Obozy
-            </p>
-            <h1 className="max-w-3xl text-5xl leading-[0.95] text-background sm:text-7xl">
-              Dobre rzeczy dzieją się poza codziennym planem
-            </h1>
-            <p className="mt-5 max-w-xl text-base text-background/85 sm:text-lg">
-              Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
-              eventach i podczas aktywności dla dzieci.
-            </p>
-            <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
-              <Link to="/wyjazdy">Zobacz wyjazdy</Link>
-            </Button>
+            <div className="max-w-3xl rounded-3xl bg-foreground/80 p-5 sm:p-8">
+              <p className="mb-4 inline-block rounded-full border border-background/40 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background">
+                Wyjazdy · Eventy · Obozy
+              </p>
+              <h1 className="max-w-3xl text-5xl leading-[0.95] text-background sm:text-7xl">
+                Dobre rzeczy dzieją się poza codziennym planem
+              </h1>
+              <p className="mt-5 max-w-xl text-base text-background/85 sm:text-lg">
+                Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
+                eventach i podczas aktywności dla dzieci.
+              </p>
+              <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
+                <Link to="/wyjazdy">Zobacz wyjazdy</Link>
+              </Button>
+            </div>
           </div>
         </section>
         <section className="py-12 sm:py-14" aria-labelledby="entry-points-heading">
