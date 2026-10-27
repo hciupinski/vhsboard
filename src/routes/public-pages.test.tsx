@@ -189,7 +189,7 @@ describe("static public pages", () => {
     await renderRoute("/", HomeRoute);
 
     await waitFor(() => expect(mockedListPublicPortalCarouselImages).toHaveBeenCalledOnce());
-    expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(3);
+    expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(5);
   });
 
   it("uses ordered public carousel images when configuration loads", async () => {
@@ -418,7 +418,7 @@ describe("static public pages", () => {
       screen.getByRole("img", {
         name: /uczestnik obozu wakeboardowego na jeziorze podczas letnich zajęć/i,
       }),
-    ).toHaveAttribute("src", expect.stringContaining("carousel-obozy-lato-wakeboard-"));
+    ).toHaveAttribute("src", expect.stringMatching(/^\/images\/generated\/obozy-lato-wakeboard-/));
     expect(
       screen.getByRole("img", {
         name: /uczestniczka obozu snowboardowego podczas zimowej jazdy w górach/i,

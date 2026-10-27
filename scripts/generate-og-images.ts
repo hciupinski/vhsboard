@@ -2,13 +2,13 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 const artwork = {
-  home: { source: "carousel/hero-surf.jpg", lines: ["POZA CODZIENNYM", "PLANEM."] },
+  home: { source: "carousel/3karuzela_surf.png", lines: ["POZA CODZIENNYM", "PLANEM."] },
   about: { source: "about-us/mario-vhs.jpg", lines: ["POZNAJ EKIPĘ."] },
   trips: { source: "main/wyjazdy.jpg", lines: ["WYJAZDY.", "NA DESCE. RAZEM."] },
   events: { source: "main/eventy-1.jpg", lines: ["EVENTY.", "DOBRA ENERGIA."] },
   camps: { source: "main/obozy-zima.jpg", lines: ["OBOZY.", "SPORT I PRZYGODA."] },
   contact: { source: "about-us/mario-vhs.jpg", lines: ["POROZMAWIAJMY."] },
-  offers: { source: "carousel/hero-surf.jpg", lines: ["TWÓJ KOLEJNY", "WYJAZD."] },
+  offers: { source: "carousel/3karuzela_surf.png", lines: ["TWÓJ KOLEJNY", "WYJAZD."] },
 };
 export async function generateOgImages(rootDirectory: string): Promise<void> {
   const output = join(rootDirectory, "public/og");

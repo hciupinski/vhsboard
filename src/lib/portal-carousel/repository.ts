@@ -20,13 +20,16 @@ const listPortalCarouselImages = async (): Promise<PortalCarouselImage[]> => {
       .order("position", { ascending: true });
     if (error || !Array.isArray(data)) throw error;
 
+    const seenPaths = new Set<string>();
     return portalCarouselRowSchema
       .array()
       .parse(data)
       .sort((left, right) => left.position - right.position)
       .flatMap(({ image_path }) => {
         const image = getPortalCarouselImage(image_path);
-        return image ? [image] : [];
+        if (!image || seenPaths.has(image.path)) return [];
+        seenPaths.add(image.path);
+        return [image];
       });
   } catch (cause) {
     throw new PortalCarouselRepositoryError("Nie udało się pobrać karuzeli.", { cause });
