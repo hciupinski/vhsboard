@@ -126,7 +126,7 @@ function TripDetail() {
           </div>
         </section>
 
-        <TripSectionNavigation key={offer.slug} sections={sections} />
+        <TripSectionNavigation key={offer.slug} sections={sections} linkClassName="lg:text-lg" />
 
         <div className="mx-auto grid max-w-6xl gap-12 px-5 py-12 sm:py-14 lg:grid-cols-[1.6fr_1fr]">
           <div className="min-w-0">

@@ -7,9 +7,11 @@ type OfferSection = { id: string; label: string };
 export function TripSectionNavigation({
   sections,
   ariaLabel = "Sekcje wyjazdu",
+  linkClassName,
 }: {
   sections: readonly OfferSection[];
   ariaLabel?: string;
+  linkClassName?: string;
 }) {
   const navigationRef = useRef<HTMLElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -150,6 +152,7 @@ export function TripSectionNavigation({
             aria-current={activeId === id ? "location" : undefined}
             className={cn(
               "flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              linkClassName,
               activeId === id
                 ? "bg-secondary text-foreground underline decoration-primary decoration-2 underline-offset-4"
                 : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
