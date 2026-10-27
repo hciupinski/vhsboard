@@ -1,14 +1,7 @@
+import { isValidBookingUrl } from "@/lib/offers/booking-url";
 import { Button } from "@/components/ui/button";
 import { formatGroupSize, formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
 import type { PublicOffer } from "@/lib/offers/types";
-
-const isHttpsUrl = (value: string): boolean => {
-  try {
-    return new URL(value).protocol === "https:";
-  } catch {
-    return false;
-  }
-};
 
 export function OfferFacts({
   offer,
@@ -17,7 +10,7 @@ export function OfferFacts({
   offer: PublicOffer;
   showBookingCta?: boolean;
 }) {
-  const isBookingUrlValid = isHttpsUrl(offer.bookingUrl);
+  const isBookingUrlValid = isValidBookingUrl(offer.bookingUrl);
 
   return (
     <div>

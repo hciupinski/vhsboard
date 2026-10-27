@@ -3,6 +3,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Wallet } from "lucide-react";
 import { z } from "zod";
 
+import { MobileTripBookingCta } from "@/components/offers/MobileTripBookingCta";
 import { OfferFacts } from "@/components/offers/OfferFacts";
 import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation";
 import { getVisibleTripSections, tripSections } from "@/lib/offers/trip-sections";
@@ -277,6 +278,7 @@ function TripDetail() {
         ) : null}
       </main>
       <PublicFooter />
+      <MobileTripBookingCta bookingUrl={offer.bookingUrl} />
     </div>
   );
 }

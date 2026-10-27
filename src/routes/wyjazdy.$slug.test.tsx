@@ -138,6 +138,10 @@ afterEach(() => {
 describe("trip section navigation integration", () => {
   it("links to the rendered trip sections in reading order", async () => {
     await renderDetail(detailOffer);
+    expect(await screen.findByRole("link", { name: "Zapisz się" })).toHaveAttribute(
+      "href",
+      detailOffer.bookingUrl,
+    );
     const navigation = await screen.findByRole("navigation", { name: "Sekcje wyjazdu" });
     const links = within(navigation).getAllByRole("link");
     expect(links.map((link) => link.textContent)).toEqual([
