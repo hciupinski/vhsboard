@@ -4,6 +4,7 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { SocialLinks } from "@/components/public/SocialLinks";
 import { ContactDocuments } from "@/components/public/ContactDocuments";
+import { ContactDisciplines } from "@/components/public/ContactDisciplines";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { getPublicSiteConfig } from "@/lib/site-config";
 import { SOCIAL_IMAGES } from "@/lib/social-images";
@@ -72,6 +73,7 @@ function ContactPage() {
             </address>
           </section>
         </div>
+        <ContactDisciplines />
         <ContactDocuments />
       </main>
       <PublicFooter />

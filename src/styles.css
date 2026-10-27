@@ -10,6 +10,36 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.contact-disciplines {
+  position: relative;
+  left: 50%;
+  display: grid;
+  width: min(calc(100vw - 2.5rem), 90rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  row-gap: 1.5rem;
+  margin-block: 3rem;
+  transform: translateX(-50%);
+  font-size: clamp(3.5rem, 12vw, 7rem);
+  line-height: 0.9;
+  text-align: center;
+}
+
+.contact-disciplines > span:nth-child(even) {
+  border-left: 1px solid var(--primary);
+}
+
+@media (min-width: 64rem) {
+  .contact-disciplines {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-block: 3.5rem;
+    font-size: clamp(6rem, 10.2vw, 9rem);
+  }
+
+  .contact-disciplines > span + span {
+    border-left: 1px solid var(--primary);
+  }
+}
+
 /*
  * Design system definition.
  *
