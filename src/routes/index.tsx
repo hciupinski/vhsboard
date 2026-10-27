@@ -144,7 +144,7 @@ function HomePage() {
                   loading="lazy"
                   className="absolute inset-0 -z-20 size-full object-cover hover-zoom transition-transform duration-160 ease-out motion-reduce:transition-none"
                 />
-                <div className="absolute inset-0 -z-10 bg-gradient-to-t from-foreground/90 via-foreground/25 to-foreground/5" />
+                <div className="absolute inset-0 -z-10 hidden md:block bg-gradient-to-t from-foreground/90 via-foreground/25 to-foreground/5" />
                 <div
                   className={`topic-selector__content topic-selector__content--contrast topic-selector__content--flush-left topic-selector__content--safe-text-inset topic-selector__content--${index + 1}`}
                 >
@@ -153,7 +153,7 @@ function HomePage() {
                     <p className="mt-3 text-sm leading-relaxed text-background/85 sm:text-base">
                       {text}
                     </p>
-                    <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
+                    <span className="mt-6 hidden md:inline-flex items-center gap-2 text-sm font-semibold">
                       {action}
                       <span className="grid size-7 mr-2 place-items-center rounded-full bg-background/15 hover-nudge transition-[transform,background-color] duration-160 ease-out motion-reduce:transition-none">
                         <ArrowUpRight aria-hidden="true" className="size-4" />
