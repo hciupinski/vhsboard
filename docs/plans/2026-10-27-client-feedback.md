@@ -1,6 +1,6 @@
 # Poprawki klientki 2026-10-27 — plan implementacji
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Ten dokument jest propozycją do akceptacji, nie poleceniem rozpoczęcia kodowania.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Użytkownik zatwierdził plan i implementację 27.10.2026. Kod wykonany; odbiór czeka na osadzenie obrazów w komórkach.
 
 **Goal:** Zrealizować i udokumentować osiem wybranych zgłoszeń klientki: VHS-003, VHS-005, VHS-008a, VHS-010, VHS-012, VHS-018 — menu, VHS-023a i VHS23-b.
 
@@ -9,6 +9,8 @@
 **Tech Stack:** React 19, TypeScript, TanStack Router/Query, Tailwind CSS 4, istniejące Radix UI, Vitest/Testing Library, Bun, Supabase.
 
 **Spec:** [Zakres i zachowanie do akceptacji](2026-10-27-client-feedback-design.md), [AGENTS.md](../../AGENTS.md), [design system](../design-system.md), [architektura](../architecture.md).
+
+**Wynik:** [raport weryfikacji i dowody](2026-10-27-client-feedback-verification.md). Wersja aplikacji `7a8af20`; testy i pełny build przechodzą. Statusy nadal `W trakcie`, ponieważ brakuje obrazów osadzonych w komórkach. Checklisty obejmujące odbiór nie oznaczają zamkniętych zadań.
 
 **Branch:** lokalne `fix/20261027`, utworzone z pobranego 27.10.2026 `origin/main` = `3f95fd15fdf664b1688cb3b3cdac799dc24999bc`. Docelowa referencja zdalna: `origin/fix/20261027`. Gałąź nie jest jeszcze wypchnięta.
 

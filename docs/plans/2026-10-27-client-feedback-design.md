@@ -1,6 +1,6 @@
-# Poprawki klientki 2026-10-27 — zakres do akceptacji
+# Poprawki klientki 2026-10-27 — zaakceptowany zakres
 
-**Stan:** projekt zakresu i zachowania, przed implementacją. Wybrano osiem zgłoszeń; wartości wizualne i reguły doboru innych wyjazdów poniżej są propozycją autora do zatwierdzenia z planem.
+**Stan:** użytkownik zaakceptował zakres i plan 27.10.2026. Kod wykonano i zweryfikowano lokalnie; do odbioru pozostaje osadzenie obrazów w komórkach trackera. Szczegóły: [wynik weryfikacji](2026-10-27-client-feedback-verification.md).
 
 **Źródło:** [tracker, karta „Zgłoszenia”](https://docs.google.com/spreadsheets/d/1MLn5I9EcpKrJRD6PP8rUxh8OoaHaeqMyHkwvmYN6sQQ/edit?gid=1028330015#gid=1028330015), odczyt 27.10.2026. Wszystkie wybrane zgłoszenia miały status `Do zrobienia`. Dopiski w `Decyzja / materiały` precyzują zakres względem pierwotnego opisu.
 
@@ -35,7 +35,7 @@ Dla VHS23-b użytkownik wybrał **sekcję z kafelkami innych wyjazdów**, zamias
 | VHS-023a       | Na `/wyjazdy/:slug`, poniżej 1024 px, stały dolny pasek z przyciskiem „Zapisz się” od pierwszego renderu oferty. Ten sam prawidłowy HTTPS `bookingUrl`, `target="_blank"`, `rel="noopener noreferrer"` co obecny przycisk. Bez poprawnego URL pasek i jego rezerwa miejsca nie są renderowane. Przycisk ma wysokość 48 px, marginesy 12 px i safe area urządzenia; rezerwa na dole dokumentu 80 px + safe area zapobiega zakrywaniu ostatnich linków stopki. Pasek `z-30`, poniżej nagłówka, menu, banera cookies i dialogów; nie może utrudniać obsługi prywatności. Od 1024 px pasek i rezerwa są ukryte. Nie zmieniamy istniejącego przycisku w `OfferFacts`.                                                        |
 | VHS23-b        | Ostatnia sekcja treści `/wyjazdy/:slug`, po zakwaterowaniu i galerii, przed stopką: „Zobacz inne wyjazdy”. Maks. trzy inne opublikowane wyjazdy z `startDate >= dzisiaj w Warszawie`, najbliższe datą, potem tytułem po polsku; wykluczamy aktualny `id`, obozy i oferty bez terminu. Kafelki `OfferCard`, 1/2/3 kolumny przy progach 768/1024 px, plus „Zobacz wszystkie wyjazdy” do `/wyjazdy`. Układ mobile też zachowuje logiczną kolejność na końcu. Pobieranie listy jest niezależne od loadera szczegółów. Loading: trzy szkielety i link do listy; pusta lista: sam link, bez pustych kart i mylącego nagłówka; błąd: „Nie udało się pobrać innych wyjazdów.” i link. Błąd listy nie wyłącza opisu ani zapisów. |
 
-Reguły „maksymalnie trzy”, wyboru najbliższych terminów oraz zachowania przy pustej liście w VHS23-b są propozycją autora. Użytkownik potwierdził formę kafelków; nie potwierdził jeszcze tych szczegółów.
+Reguły „maksymalnie trzy”, wyboru najbliższych terminów oraz zachowania przy pustej liście w VHS23-b zatwierdzono razem z planem.
 
 ## Weryfikacja i przekazanie klientce
 
@@ -49,4 +49,4 @@ Reguły „maksymalnie trzy”, wyboru najbliższych terminów oraz zachowania p
 
 ## Zgoda na wykonanie
 
-Do zatwierdzenia pozostają cały powyższy zakres, proponowany lokalny panel pod tekstem hero oraz techniczne szczegóły responsywności i doboru innych ofert. Do tego momentu zmieniamy wyłącznie dokumentację planowania; statusy w trackerze i kod aplikacji pozostają bez zmian. Powiązany [plan implementacji](2026-10-27-client-feedback.md) rozpisuje pliki, kolejność i weryfikację.
+Użytkownik zatwierdził powyższy zakres i implementację 27.10.2026. Statusy trackera pozostają `W trakcie`, ponieważ użytkownik wymaga obrazów osadzonych w komórkach i nie może teraz zalogować się w przeglądarce potrzebnej do tej operacji. Powiązany [plan implementacji](2026-10-27-client-feedback.md) rozpisuje pliki, kolejność i weryfikację.
