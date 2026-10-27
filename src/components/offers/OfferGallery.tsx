@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -18,7 +19,21 @@ export function OfferGallery({
   id?: string;
 }) {
   const visibleImages = images.filter((image) => image.signedUrl !== null);
-  const [selectedImage, setSelectedImage] = useState<OfferImage | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const openingThumbnail = useRef<HTMLButtonElement | null>(null);
+  const selectedIndex = visibleImages.findIndex((image) => image.id === selectedId);
+  const selectedImage = visibleImages[selectedIndex];
+  const hasNavigation = visibleImages.length > 1;
+
+  useEffect(() => {
+    if (selectedId !== null && selectedIndex === -1) setSelectedId(null);
+  }, [selectedId, selectedIndex]);
+
+  const movePhoto = (direction: number) => {
+    if (!hasNavigation || selectedIndex === -1) return;
+    const nextIndex = (selectedIndex + direction + visibleImages.length) % visibleImages.length;
+    setSelectedId(visibleImages[nextIndex]?.id ?? null);
+  };
 
   if (visibleImages.length === 0) {
     return null;
@@ -40,7 +55,10 @@ export function OfferGallery({
             variant="ghost"
             className="group relative block h-auto w-full overflow-hidden rounded-2xl p-0 focus-visible:ring-offset-2"
             aria-label={`Powiększ zdjęcie: ${image.alt}`}
-            onClick={() => setSelectedImage(image)}
+            onClick={(event) => {
+              openingThumbnail.current = event.currentTarget;
+              setSelectedId(image.id);
+            }}
           >
             <img
               src={image.signedUrl ?? undefined}
@@ -62,24 +80,69 @@ export function OfferGallery({
         ))}
       </div>
 
-      <Dialog
-        open={selectedImage !== null}
-        onOpenChange={(open) => !open && setSelectedImage(null)}
-      >
+      <Dialog open={Boolean(selectedImage)} onOpenChange={(open) => !open && setSelectedId(null)}>
         {selectedImage ? (
-          <DialogContent className="w-[calc(100vw-2.5rem)] max-w-5xl border-border/40 bg-foreground p-3 text-background shadow-warm [&>button]:text-background [&>button]:focus-visible:ring-background [&>button]:focus-visible:ring-offset-foreground sm:p-4">
-            <DialogTitle>{`Powiększone zdjęcie: ${selectedImage.alt}`}</DialogTitle>
+          <DialogContent
+            className="flex h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-6xl flex-col gap-3 border-0 bg-transparent p-0 text-background shadow-none sm:rounded-none [&>button]:right-0 [&>button]:top-0 [&>button]:grid [&>button]:size-11 [&>button]:place-items-center [&>button]:rounded-full [&>button]:bg-black/70 [&>button]:text-background [&>button]:opacity-100 [&>button]:focus-visible:ring-background [&>button]:focus-visible:ring-offset-black"
+            onCloseAutoFocus={(event) => {
+              event.preventDefault();
+              openingThumbnail.current?.focus({ preventScroll: true });
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+              event.preventDefault();
+              movePhoto(event.key === "ArrowLeft" ? -1 : 1);
+            }}
+          >
+            <DialogTitle className="sr-only">{`Powiększone zdjęcie: ${selectedImage.alt}`}</DialogTitle>
             <DialogDescription className="sr-only">
-              Pełny widok zdjęcia oferty. Naciśnij Escape, aby zamknąć.
+              Pełny widok zdjęcia oferty. Użyj strzałek w lewo i w prawo, aby zmienić zdjęcie.
+              Naciśnij Escape, aby zamknąć.
             </DialogDescription>
-            <img
-              src={selectedImage.signedUrl ?? undefined}
-              alt={selectedImage.alt}
-              width={1600}
-              height={1200}
-              className="max-h-[78dvh] w-full rounded-xl object-contain"
-            />
-            <p className="px-1 text-sm text-background/75">{selectedImage.alt}</p>
+            <p
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              className="flex h-11 shrink-0 items-center pr-14 text-sm"
+            >
+              <span className="sr-only">Zdjęcie </span>
+              {selectedIndex + 1} / {visibleImages.length}
+              <span className="sr-only">: {selectedImage.alt}</span>
+            </p>
+            <div className="flex min-h-0 flex-1 items-center justify-center">
+              <img
+                src={selectedImage.signedUrl ?? undefined}
+                alt={selectedImage.alt}
+                width={1600}
+                height={1200}
+                className="h-auto max-h-full w-auto max-w-full border border-black object-contain"
+              />
+            </div>
+            <div className="flex min-h-11 shrink-0 items-center justify-between gap-3">
+              {hasNavigation ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="size-11 shrink-0 rounded-full bg-black/70 p-0 text-background hover:bg-black hover:text-background focus-visible:ring-background focus-visible:ring-offset-black"
+                  aria-label="Poprzednie zdjęcie"
+                  onClick={() => movePhoto(-1)}
+                >
+                  <ChevronLeft className="size-6" aria-hidden="true" />
+                </Button>
+              ) : null}
+              <p className="line-clamp-2 flex-1 text-center text-sm">{selectedImage.alt}</p>
+              {hasNavigation ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="size-11 shrink-0 rounded-full bg-black/70 p-0 text-background hover:bg-black hover:text-background focus-visible:ring-background focus-visible:ring-offset-black"
+                  aria-label="Następne zdjęcie"
+                  onClick={() => movePhoto(1)}
+                >
+                  <ChevronRight className="size-6" aria-hidden="true" />
+                </Button>
+              ) : null}
+            </div>
           </DialogContent>
         ) : null}
       </Dialog>
