@@ -57,7 +57,6 @@ function TripsPage() {
         <FaqSection
           headingId="trip-faq-heading"
           items={tripFaqItems}
-          desktopTypography="large"
           description="Zebraliśmy najważniejsze informacje dotyczące wyjazdów na snowboard, narty czy surfing. Masz dodatkowe wątpliwości? Zawsze możesz skontaktować się z nami mailowo lub telefonicznie."
         />
         <section

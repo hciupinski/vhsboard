@@ -12,7 +12,6 @@ type FaqSectionProps = {
   items: readonly FaqItem[];
   headerLabel?: string;
   description?: string;
-  desktopTypography?: "default" | "large";
   descriptionClassName?: string;
 };
 
@@ -21,7 +20,6 @@ export function FaqSection({
   items,
   headerLabel,
   description,
-  desktopTypography = "default",
   descriptionClassName,
 }: FaqSectionProps) {
   return (
@@ -48,20 +46,10 @@ export function FaqSection({
         <Accordion type="single" collapsible className="mt-8 border-t border-border">
           {items.map(({ question, answer }, index) => (
             <AccordionItem key={question} value={`faq-${index}`} className="border-border">
-              <AccordionTrigger
-                className={cn(
-                  "py-5 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  desktopTypography === "large" && "lg:text-xl",
-                )}
-              >
+              <AccordionTrigger className="py-5 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:text-xl">
                 {question}
               </AccordionTrigger>
-              <AccordionContent
-                className={cn(
-                  "max-w-3xl space-y-4 text-base leading-relaxed text-muted-foreground text-justify",
-                  desktopTypography === "large" && "lg:text-lg",
-                )}
-              >
+              <AccordionContent className="max-w-3xl space-y-4 text-base leading-relaxed text-muted-foreground text-justify lg:text-lg">
                 {answer
                   .split(/\n\s*\n/)
                   .map((paragraph) => paragraph.trim())

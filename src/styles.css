@@ -10,6 +10,36 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.contact-disciplines {
+  position: relative;
+  left: 50%;
+  display: grid;
+  width: min(calc(100vw - 2.5rem), 90rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  row-gap: 1.5rem;
+  margin-block: 3rem;
+  transform: translateX(-50%);
+  font-size: clamp(3.5rem, 12vw, 7rem);
+  line-height: 0.9;
+  text-align: center;
+}
+
+.contact-disciplines > span:nth-child(even) {
+  border-left: 1px solid var(--primary);
+}
+
+@media (min-width: 64rem) {
+  .contact-disciplines {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-block: 3.5rem;
+    font-size: clamp(6rem, 10.2vw, 9rem);
+  }
+
+  .contact-disciplines > span + span {
+    border-left: 1px solid var(--primary);
+  }
+}
+
 /*
  * Design system definition.
  *
@@ -343,14 +373,30 @@
       padding: 1rem 1.25rem;
     }
     .topic-selector__content {
-      inline-size: min(100%, 24rem);
-      margin-inline: auto;
+      position: relative;
+      isolation: isolate;
+      inline-size: 100%;
+      margin-inline: 0;
       margin-block-end: 0;
-      padding: 1rem;
-      border-radius: var(--radius);
-      background: oklch(0.22 0.03 60 / 0.8);
-      backdrop-filter: blur(0.25rem);
-      text-align: center;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      text-align: start;
+    }
+    .topic-selector__content::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -5rem -1.25rem -1rem;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        oklch(0 0 0 / 0) 0,
+        oklch(0 0 0 / 0.72) 5rem,
+        oklch(0 0 0 / 0.9) 100%
+      );
     }
   }
   .offer-card-action,

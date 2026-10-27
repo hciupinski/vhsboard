@@ -64,77 +64,50 @@ export const LOCAL_IMAGE_ASSETS: Readonly<Record<string, ResponsiveImageAsset>> 
     avifSrcSet:
       "/images/generated/about-us-mario-vhs-480-1128a7ba14ff.avif 480w, /images/generated/about-us-mario-vhs-960-bc208ffe25fa.avif 960w, /images/generated/about-us-mario-vhs-1600-0053b20335d2.avif 1600w",
   },
-  "carousel/eventy.jpg": {
-    src: "/images/generated/carousel-eventy-1200-7d8028770963.webp",
-    width: 1200,
-    height: 1200,
-    webpSrcSet:
-      "/images/generated/carousel-eventy-480-97fea312abef.webp 480w, /images/generated/carousel-eventy-960-70b07bff559b.webp 960w, /images/generated/carousel-eventy-1200-7d8028770963.webp 1200w",
-    avifSrcSet:
-      "/images/generated/carousel-eventy-480-c158ec55df3b.avif 480w, /images/generated/carousel-eventy-960-a6a1fa2280f2.avif 960w, /images/generated/carousel-eventy-1200-b9b34b7fc6e4.avif 1200w",
-  },
-  "carousel/hero-surf-3.jpg": {
-    src: "/images/generated/carousel-hero-surf-3-1600-8f5b4fbb4904.webp",
+  "carousel/1karuzela_snb.png": {
+    src: "/images/generated/carousel-1karuzela_snb-1600-5a8a0d02da61.webp",
     width: 1600,
-    height: 900,
+    height: 622,
     webpSrcSet:
-      "/images/generated/carousel-hero-surf-3-480-14a25cc84898.webp 480w, /images/generated/carousel-hero-surf-3-960-0fed8c03378f.webp 960w, /images/generated/carousel-hero-surf-3-1600-8f5b4fbb4904.webp 1600w",
+      "/images/generated/carousel-1karuzela_snb-480-a45632f65f4e.webp 480w, /images/generated/carousel-1karuzela_snb-960-48a734ecff0f.webp 960w, /images/generated/carousel-1karuzela_snb-1600-5a8a0d02da61.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-hero-surf-3-480-7f7dbde371d2.avif 480w, /images/generated/carousel-hero-surf-3-960-bb21947a3f7e.avif 960w, /images/generated/carousel-hero-surf-3-1600-8d247d20aad9.avif 1600w",
+      "/images/generated/carousel-1karuzela_snb-480-465c4597b299.avif 480w, /images/generated/carousel-1karuzela_snb-960-24a964220d89.avif 960w, /images/generated/carousel-1karuzela_snb-1600-7e27db72bdf2.avif 1600w",
   },
-  "carousel/hero-surf.jpg": {
-    src: "/images/generated/carousel-hero-surf-1600-67035f818021.webp",
+  "carousel/2karuzela_oboz1.png": {
+    src: "/images/generated/carousel-2karuzela_oboz1-1600-1d988bedf642.webp",
     width: 1600,
-    height: 1067,
+    height: 622,
     webpSrcSet:
-      "/images/generated/carousel-hero-surf-480-0df186a9fd69.webp 480w, /images/generated/carousel-hero-surf-960-78d3142516fc.webp 960w, /images/generated/carousel-hero-surf-1600-67035f818021.webp 1600w",
+      "/images/generated/carousel-2karuzela_oboz1-480-2fe6c2b4045e.webp 480w, /images/generated/carousel-2karuzela_oboz1-960-c6bcb6a436a9.webp 960w, /images/generated/carousel-2karuzela_oboz1-1600-1d988bedf642.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-hero-surf-480-f06cc20fd11d.avif 480w, /images/generated/carousel-hero-surf-960-abe6e1c4892b.avif 960w, /images/generated/carousel-hero-surf-1600-c66775666f46.avif 1600w",
+      "/images/generated/carousel-2karuzela_oboz1-480-d6370c526c37.avif 480w, /images/generated/carousel-2karuzela_oboz1-960-38f07c8f169f.avif 960w, /images/generated/carousel-2karuzela_oboz1-1600-df9f23052e9f.avif 1600w",
   },
-  "carousel/obozy-lato-wakeboard.png": {
-    src: "/images/generated/carousel-obozy-lato-wakeboard-1533-6d9110928e73.webp",
-    width: 1533,
-    height: 1026,
-    webpSrcSet:
-      "/images/generated/carousel-obozy-lato-wakeboard-480-7d74099f2573.webp 480w, /images/generated/carousel-obozy-lato-wakeboard-960-e0b61748af3a.webp 960w, /images/generated/carousel-obozy-lato-wakeboard-1533-6d9110928e73.webp 1533w",
-    avifSrcSet:
-      "/images/generated/carousel-obozy-lato-wakeboard-480-86ecfa74ca37.avif 480w, /images/generated/carousel-obozy-lato-wakeboard-960-60507cb413d2.avif 960w, /images/generated/carousel-obozy-lato-wakeboard-1533-c81780dffaff.avif 1533w",
-  },
-  "carousel/obozy-zima.jpg": {
-    src: "/images/generated/carousel-obozy-zima-1600-ff1841bcd45c.webp",
+  "carousel/3karuzela_surf.png": {
+    src: "/images/generated/carousel-3karuzela_surf-1600-510e662469e6.webp",
     width: 1600,
-    height: 1069,
+    height: 622,
     webpSrcSet:
-      "/images/generated/carousel-obozy-zima-480-220e201cc8ac.webp 480w, /images/generated/carousel-obozy-zima-960-549d0753a557.webp 960w, /images/generated/carousel-obozy-zima-1600-ff1841bcd45c.webp 1600w",
+      "/images/generated/carousel-3karuzela_surf-480-1db2527c4938.webp 480w, /images/generated/carousel-3karuzela_surf-960-b97b0436bc7b.webp 960w, /images/generated/carousel-3karuzela_surf-1600-510e662469e6.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-obozy-zima-480-3a83cf5ea7ba.avif 480w, /images/generated/carousel-obozy-zima-960-77dbae121933.avif 960w, /images/generated/carousel-obozy-zima-1600-03fc356846c7.avif 1600w",
+      "/images/generated/carousel-3karuzela_surf-480-44cabe740437.avif 480w, /images/generated/carousel-3karuzela_surf-960-018fbafe4dc8.avif 960w, /images/generated/carousel-3karuzela_surf-1600-7d9a9902f4a1.avif 1600w",
   },
-  "carousel/skim_main.png": {
-    src: "/images/generated/carousel-skim_main-1010-29b129b81dfc.webp",
-    width: 1010,
-    height: 630,
-    webpSrcSet:
-      "/images/generated/carousel-skim_main-480-0fd77304a777.webp 480w, /images/generated/carousel-skim_main-960-facd8ca7878d.webp 960w, /images/generated/carousel-skim_main-1010-29b129b81dfc.webp 1010w",
-    avifSrcSet:
-      "/images/generated/carousel-skim_main-480-98e8beceee8f.avif 480w, /images/generated/carousel-skim_main-960-2dd0efe5ab57.avif 960w, /images/generated/carousel-skim_main-1010-bd261a0a95f0.avif 1010w",
-  },
-  "carousel/surf_girl.jpg": {
-    src: "/images/generated/carousel-surf_girl-1080-b7007b75d019.webp",
-    width: 1080,
-    height: 1919,
-    webpSrcSet:
-      "/images/generated/carousel-surf_girl-480-556a64913871.webp 480w, /images/generated/carousel-surf_girl-960-0df832059cc9.webp 960w, /images/generated/carousel-surf_girl-1080-b7007b75d019.webp 1080w",
-    avifSrcSet:
-      "/images/generated/carousel-surf_girl-480-2bfb4b07e1cc.avif 480w, /images/generated/carousel-surf_girl-960-0b9151fd6183.avif 960w, /images/generated/carousel-surf_girl-1080-3f984bd7631b.avif 1080w",
-  },
-  "carousel/wyjazdy.jpg": {
-    src: "/images/generated/carousel-wyjazdy-1600-7e0597525543.webp",
+  "carousel/4eventy_karuzela.png": {
+    src: "/images/generated/carousel-4eventy_karuzela-1600-0d3b402593f6.webp",
     width: 1600,
-    height: 1066,
+    height: 622,
     webpSrcSet:
-      "/images/generated/carousel-wyjazdy-480-e62def13817f.webp 480w, /images/generated/carousel-wyjazdy-960-e94208e7813c.webp 960w, /images/generated/carousel-wyjazdy-1600-7e0597525543.webp 1600w",
+      "/images/generated/carousel-4eventy_karuzela-480-317e3d381699.webp 480w, /images/generated/carousel-4eventy_karuzela-960-7402145a2587.webp 960w, /images/generated/carousel-4eventy_karuzela-1600-0d3b402593f6.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-wyjazdy-480-1c000ac4574a.avif 480w, /images/generated/carousel-wyjazdy-960-0f7b7eb97a92.avif 960w, /images/generated/carousel-wyjazdy-1600-5d4503c14f43.avif 1600w",
+      "/images/generated/carousel-4eventy_karuzela-480-78fc253833a9.avif 480w, /images/generated/carousel-4eventy_karuzela-960-7e31614d7734.avif 960w, /images/generated/carousel-4eventy_karuzela-1600-667e3022eb12.avif 1600w",
+  },
+  "carousel/karuzela_oboz2.png": {
+    src: "/images/generated/carousel-karuzela_oboz2-1600-ebe3deb78d96.webp",
+    width: 1600,
+    height: 622,
+    webpSrcSet:
+      "/images/generated/carousel-karuzela_oboz2-480-f16600917c1b.webp 480w, /images/generated/carousel-karuzela_oboz2-960-6cb95b698f51.webp 960w, /images/generated/carousel-karuzela_oboz2-1600-ebe3deb78d96.webp 1600w",
+    avifSrcSet:
+      "/images/generated/carousel-karuzela_oboz2-480-145fd2c2816a.avif 480w, /images/generated/carousel-karuzela_oboz2-960-55a7eefef6e8.avif 960w, /images/generated/carousel-karuzela_oboz2-1600-c7d5df3c1d2f.avif 1600w",
   },
   "main/eventy-1.jpg": {
     src: "/images/generated/main-eventy-1-1535-ffe389a6d3ce.webp",
