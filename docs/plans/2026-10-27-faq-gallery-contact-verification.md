@@ -37,7 +37,7 @@ W [trackerze](https://docs.google.com/spreadsheets/d/1MLn5I9EcpKrJRD6PP8rUxh8Ooa
 
 VHS-018 Galeria, VHS-044 i VHS-052 mają status `W trakcie`, ponieważ obrazy nadal wymagają osadzenia w `Po / dowód`. Dostępne narzędzia nie udostępniają trwałego natywnego osadzania, nie ma podłączonej sesji dokumentu Sheets, a użytkownik wcześniej wskazał brak możliwości zalogowania do przeglądarki. Kolumny z obrazami nie zastąpiono formułami ani linkami. W `Weryfikacja / wersja` zapisano trwałe linki do dodatkowych materiałów i jawnie opisano brak osadzenia.
 
-[Folder 16 screenshotów](https://drive.google.com/drive/folders/1hMDfg4zBTVGCy5tYSOtJwt9x6jcg1Vws). Upload i zawartość folderu potwierdzono odczytem. Lokalne kopie i pomiary zachowano w `.superpowers/evidence/2026-10-27-faq-gallery-contact/` (ignorowane przez Git).
+[Folder dowodów](https://drive.google.com/drive/folders/1hMDfg4zBTVGCy5tYSOtJwt9x6jcg1Vws): początkowe 16 screenshotów oraz 2 dodatkowe ujęcia korekty VHS-005 opisanej poniżej. Upload i zawartość początkowej partii potwierdzono odczytem. Lokalne kopie i pomiary zachowano w `.superpowers/evidence/2026-10-27-faq-gallery-contact/` (ignorowane przez Git).
 
 - [FAQ-wyjazdy-1440.png](https://drive.google.com/file/d/1rVKknGFEpP-oGuacRdxETM0UqNBY1CDr/view?usp=drivesdk)
 - [FAQ-wyjazdy-390.png](https://drive.google.com/file/d/1I1OdX3OFev34X5ykAApF6It6fSfgPMXp/view?usp=drivesdk)
@@ -55,3 +55,16 @@ VHS-018 Galeria, VHS-044 i VHS-052 mają status `W trakcie`, ponieważ obrazy na
 - [VHS-018-gallery-portrait-320x568.png](https://drive.google.com/file/d/1Lj54QNW9ZKYfZldaqVP4cyWaTsv36L1-/view?usp=drivesdk)
 - [VHS-018-gallery-portrait-844x390.png](https://drive.google.com/file/d/1pXy_ZN8WuCDZ_x2b5XRsN6YucCnRg0MT/view?usp=drivesdk)
 - [VHS-018-gallery-landscape-1440.png](https://drive.google.com/file/d/1__AnjI_waGs9jlHJLrO_1buiDfz_OflU/view?usp=drivesdk)
+
+## Korekta VHS-005 po uwadze użytkownika
+
+Użytkownik zgłosił zbyt wysokie podpisy kategorii na mobile i brązowe wypełnienie. Przyczyną było tło `oklch(0.22 0.03 60 / 0.8)` dodane w poprzedniej partii.
+
+Poniżej 768 px zmniejszono odstęp tytuł–opis z 12 do 4 px oraz pionowy padding z 16 do 12 px. Usunięto kryjący brąz: tło ma neutralny czarny kolor z kryciem 10%, przywrócono wcześniejszy blur 1,6 px. `brightness(0.4)` przyciemnia obraz wyłącznie pod panelem, utrzymując czytelność tekstu i prześwitywanie fotografii. Pozycja paneli, tytuły, opisy i ukryte mobilne CTA zachowano.
+
+Weryfikacja rzeczywistą przeglądarką na `http://127.0.0.1:3000/`: 320, 390, 594 i 767 px — każdy panel niższy dokładnie o 16 px, bez poziomego overflow. Przy 390 px wysokość spadła ze 121,89 do 105,89 px. Przy 768 i 1440 px porównanie parametrów przed/po potwierdziło niezmieniony desktop. Sprawdzono screenshoty trzech kategorii przy 390 i 594 px. Lokalne kopie i pomiary: `.superpowers/evidence/2026-10-27-mobile-captions/`.
+
+Po korekcie: typecheck OK, 471/471 testów OK, lint 0 błędów / 7 wcześniejszych ostrzeżeń, pełny build OK. Nowy dowód nadal wymaga osadzenia w komórce trackera; materiały dodatkowe:
+
+- [VHS-005 — mobile 390](https://drive.google.com/file/d/1n_vLh7VuIAaDAkULf5h9LuVFBrb3e9c0/view?usp=drivesdk)
+- [VHS-005 — mobile 594](https://drive.google.com/file/d/1fjf1a_wpXTDZTpZRP7EEnthiZG3DT_aP/view?usp=drivesdk)

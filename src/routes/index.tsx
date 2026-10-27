@@ -149,7 +149,7 @@ function HomePage() {
                 >
                   <h3 className="text-4xl leading-[0.9] sm:text-5xl">{title}</h3>
                   <div className="topic-selector__details">
-                    <p className="mt-3 text-sm leading-relaxed text-background/85 sm:text-base">
+                    <p className="mt-1 text-sm leading-relaxed text-background/85 sm:text-base md:mt-3">
                       {text}
                     </p>
                     <span className="mt-6 hidden md:inline-flex items-center gap-2 text-sm font-semibold">
