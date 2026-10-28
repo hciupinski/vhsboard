@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createClient } from "@supabase/supabase-js";
 
 import type { EditableOfferInput } from "./editor-schema";
 
@@ -97,11 +98,13 @@ const createQuery = (result: QueryResult) => {
     select: vi.fn(),
     eq: vi.fn(),
     order: vi.fn(),
+    limit: vi.fn(),
     maybeSingle: vi.fn(),
   });
   query.select.mockReturnValue(query);
   query.eq.mockReturnValue(query);
   query.order.mockReturnValue(query);
+  query.limit.mockReturnValue(query);
   query.maybeSingle.mockReturnValue(query);
   return query;
 };
@@ -314,6 +317,62 @@ describe("administrator offer repository", () => {
     await expect(canPublishOffer(offerId)).resolves.toBe(false);
     expect(accommodationQuery.eq).toHaveBeenCalledWith("category", "accommodation");
   });
+
+  it.each([
+    { imageCount: 0, expected: false },
+    { imageCount: 1, expected: true },
+    { imageCount: 4, expected: true },
+  ])(
+    "checks publication readiness with $imageCount accommodation images",
+    async ({ imageCount, expected }) => {
+      const offer = {
+        ...draftRow,
+        description: {
+          ...completeInput.content,
+          accommodation: { description: "Dom przy plaży." },
+        },
+      };
+      const images = [
+        {
+          id: "hero",
+          offer_id: offerId,
+          storage_path: heroPath,
+          category: "gallery",
+          alt_text: "Opis głównego zdjęcia",
+        },
+        ...Array.from({ length: imageCount }, (_, index) => ({
+          id: `accommodation-${index}`,
+          offer_id: offerId,
+          category: "accommodation",
+        })),
+        { id: "other-offer-image", offer_id: otherOfferId, category: "accommodation" },
+      ];
+      const client = createClient("https://supabase.example", "test-anon-key", {
+        accessToken: async () => "test-access-token",
+        global: {
+          fetch: async (input) => {
+            const url = new URL(String(input));
+            let rows: Array<Record<string, unknown>> = url.pathname.endsWith("/offers")
+              ? [offer]
+              : images;
+            for (const [column, filter] of url.searchParams) {
+              if (filter.startsWith("eq."))
+                rows = rows.filter((row) => row[column] === filter.slice(3));
+            }
+            const limit = url.searchParams.get("limit");
+            if (limit !== null) rows = rows.slice(0, Number(limit));
+            return new Response(JSON.stringify(rows), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            });
+          },
+        },
+      });
+      mockedSupabase.from.mockImplementation(client.from.bind(client));
+
+      await expect(canPublishOffer(offerId)).resolves.toBe(expected);
+    },
+  );
 
   it("rejects publication when the matching hero path exists only on another offer", async () => {
     const offerQuery = createQuery({ data: draftRow, error: null });

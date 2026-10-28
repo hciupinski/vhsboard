@@ -264,6 +264,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 
@@ -359,6 +360,71 @@ describe("admin offer editor route", () => {
     await user.click(publishButton);
     expect(mockedUpdateOffer).not.toHaveBeenCalled();
     expect(mockedSetOfferStatus).not.toHaveBeenCalled();
+  });
+
+  it("logs validation blockers without an action or form values and avoids duplicate warnings", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+    await renderAdminEditor({ slug: readyDraftOffer.slug });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+    expect(warn).not.toHaveBeenCalled();
+
+    setValue("Krótki opis", "x");
+
+    await waitFor(() =>
+      expect(warn).toHaveBeenCalledWith("[VHSBOARD CMS] Publikacja zablokowana.", {
+        fieldErrors: { shortDescription: "Krótki opis musi mieć od 20 do 500 znaków." },
+        readiness: null,
+      }),
+    );
+    expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
+    setValue("Krótki opis", "xx");
+    setValue("Miejsce", "Prywatna lokalizacja testowa");
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(warn.mock.calls)).not.toContain("Prywatna lokalizacja testowa");
+    expect(JSON.stringify(warn.mock.calls)).not.toContain(readyDraftOffer.bookingUrl);
+    expect(mockedUpdateOffer).not.toHaveBeenCalled();
+    expect(mockedSetOfferStatus).not.toHaveBeenCalled();
+
+    setValue("Krótki opis", readyDraftOffer.shortDescription);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+    setValue("Krótki opis", "x");
+    expect(warn).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows and logs a readiness lookup failure without leaking the raw error", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+    mockedCanPublishOffer.mockRejectedValue(new Error("private backend response"));
+
+    await renderAdminEditor({ slug: readyDraftOffer.slug });
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Nie udało się sprawdzić gotowości oferty. Odśwież stronę i spróbuj ponownie.",
+    );
+    expect(warn).toHaveBeenCalledWith("[VHSBOARD CMS] Publikacja zablokowana.", {
+      fieldErrors: {},
+      readiness: "error",
+    });
+    expect(JSON.stringify(warn.mock.calls)).not.toContain("private backend response");
+    expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
+  });
+
+  it("disables publishing when a readiness refetch fails after an earlier success", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+    const { queryClient } = await renderAdminEditor({ slug: readyDraftOffer.slug });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+    mockedCanPublishOffer.mockRejectedValue(new Error("failed refetch"));
+
+    await queryClient.invalidateQueries({
+      queryKey: ["admin-offer-publish-readiness", readyDraftOffer.id],
+    });
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Nie udało się sprawdzić gotowości oferty.",
+    );
+    expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
   });
 
   it("keeps publishing disabled for a complete but unsaved offer", async () => {
