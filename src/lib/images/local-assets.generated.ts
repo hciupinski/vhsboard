@@ -145,6 +145,15 @@ export const LOCAL_IMAGE_ASSETS: Readonly<Record<string, ResponsiveImageAsset>> 
     avifSrcSet:
       "/images/generated/o-nas-480-e19488258f29.avif 480w, /images/generated/o-nas-960-e3fdb2ca0483.avif 960w, /images/generated/o-nas-1600-5cdb704f087c.avif 1600w",
   },
+  "obozy-lato-wakeboard.png": {
+    src: "/images/generated/obozy-lato-wakeboard-1533-6d9110928e73.webp",
+    width: 1533,
+    height: 1026,
+    webpSrcSet:
+      "/images/generated/obozy-lato-wakeboard-480-7d74099f2573.webp 480w, /images/generated/obozy-lato-wakeboard-960-e0b61748af3a.webp 960w, /images/generated/obozy-lato-wakeboard-1533-6d9110928e73.webp 1533w",
+    avifSrcSet:
+      "/images/generated/obozy-lato-wakeboard-480-86ecfa74ca37.avif 480w, /images/generated/obozy-lato-wakeboard-960-60507cb413d2.avif 960w, /images/generated/obozy-lato-wakeboard-1533-c81780dffaff.avif 1533w",
+  },
   "obozy-lato.jpg": {
     src: "/images/generated/obozy-lato-1600-a1880f167b77.webp",
     width: 1600,

@@ -865,6 +865,60 @@
         }
       ]
     },
+    "obozy-lato-wakeboard.png": {
+      "sourceHash": "307f57cfb41960b58175a9e2c8fca95cd2767e84c6bdea088bfe5f9f35d77a3c",
+      "asset": {
+        "src": "/images/generated/obozy-lato-wakeboard-1533-6d9110928e73.webp",
+        "width": 1533,
+        "height": 1026,
+        "webpSrcSet": "/images/generated/obozy-lato-wakeboard-480-7d74099f2573.webp 480w, /images/generated/obozy-lato-wakeboard-960-e0b61748af3a.webp 960w, /images/generated/obozy-lato-wakeboard-1533-6d9110928e73.webp 1533w",
+        "avifSrcSet": "/images/generated/obozy-lato-wakeboard-480-86ecfa74ca37.avif 480w, /images/generated/obozy-lato-wakeboard-960-60507cb413d2.avif 960w, /images/generated/obozy-lato-wakeboard-1533-c81780dffaff.avif 1533w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/obozy-lato-wakeboard-480-7d74099f2573.webp",
+          "width": 480,
+          "height": 321,
+          "format": "webp",
+          "bytes": 38896
+        },
+        {
+          "path": "/images/generated/obozy-lato-wakeboard-480-86ecfa74ca37.avif",
+          "width": 480,
+          "height": 321,
+          "format": "avif",
+          "bytes": 17028
+        },
+        {
+          "path": "/images/generated/obozy-lato-wakeboard-960-e0b61748af3a.webp",
+          "width": 960,
+          "height": 643,
+          "format": "webp",
+          "bytes": 105602
+        },
+        {
+          "path": "/images/generated/obozy-lato-wakeboard-960-60507cb413d2.avif",
+          "width": 960,
+          "height": 643,
+          "format": "avif",
+          "bytes": 45748
+        },
+        {
+          "path": "/images/generated/obozy-lato-wakeboard-1533-6d9110928e73.webp",
+          "width": 1533,
+          "height": 1026,
+          "format": "webp",
+          "bytes": 185882
+        },
+        {
+          "path": "/images/generated/obozy-lato-wakeboard-1533-c81780dffaff.avif",
+          "width": 1533,
+          "height": 1026,
+          "format": "avif",
+          "bytes": 86718
+        }
+      ]
+    },
     "obozy-lato.jpg": {
       "sourceHash": "b487b8dc6b483b4680f5daa82e4f116bce816435696352cf83a703d0cf1d9d24",
       "asset": {

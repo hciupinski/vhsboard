@@ -16,12 +16,10 @@ import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { homeOffersQueryOptions } from "@/lib/offers/query-options";
 import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
+import { DEFAULT_PORTAL_CAROUSEL_IMAGES } from "@/lib/portal-carousel/catalogue";
 
 const obozy = getLocalImage("main/obozy-zima.jpg");
 const eventy = getLocalImage("main/eventy-1.jpg");
-const heroEventy = getLocalImage("carousel/eventy.jpg");
-const heroSurf = getLocalImage("carousel/hero-surf.jpg");
-const heroWyjazdy = getLocalImage("carousel/wyjazdy.jpg");
 const trips = getLocalImage("main/wyjazdy.jpg");
 
 export const Route = createFileRoute("/")({
@@ -63,17 +61,6 @@ const entryPoints = [
   },
 ] as const;
 
-const fallbackImages = [
-  { path: "fallback/hero-surf", src: heroSurf.src, responsive: heroSurf, label: "Hero surf" },
-  { path: "fallback/eventy", src: heroEventy.src, responsive: heroEventy, label: "Hero zima" },
-  {
-    path: "fallback/wyjazdy",
-    src: heroWyjazdy.src,
-    responsive: heroWyjazdy,
-    label: "Hero wyjazdy",
-  },
-];
-
 function HomePage() {
   const { data: configuredImages } = useQuery({
     queryKey: ["public-portal-carousel"],
@@ -81,7 +68,7 @@ function HomePage() {
       (await import("@/lib/portal-carousel/repository")).listPublicPortalCarouselImages(),
     retry: false,
   });
-  const heroImages = configuredImages?.length ? configuredImages : fallbackImages;
+  const heroImages = configuredImages?.length ? configuredImages : DEFAULT_PORTAL_CAROUSEL_IMAGES;
   const {
     data: homeOffers = [],
     isPending: areHomeOffersPending,

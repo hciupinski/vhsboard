@@ -12,14 +12,14 @@ vi.mock("@/lib/portal-carousel/repository", () => mockedRepository);
 import { PortalCarouselManager } from "./PortalCarouselManager";
 
 const hero = {
-  path: "carousel/hero-surf.jpg",
-  src: "/src/assets/carousel/hero-surf.jpg",
-  label: "hero surf",
+  path: "carousel/3karuzela_surf.png",
+  src: "/src/assets/carousel/3karuzela_surf.png",
+  label: "3karuzela_surf",
 };
 const winter = {
-  path: "carousel/obozy-zima.jpg",
-  src: "/src/assets/carousel/obozy-zima.jpg",
-  label: "obozy zima",
+  path: "carousel/2karuzela_oboz1.png",
+  src: "/src/assets/carousel/2karuzela_oboz1.png",
+  label: "2karuzela_oboz1",
 };
 
 beforeEach(() => {
@@ -37,15 +37,15 @@ describe("PortalCarouselManager", () => {
     const user = userEvent.setup();
     render(<PortalCarouselManager />);
 
-    await user.click(await screen.findByRole("checkbox", { name: /obozy zima/i }));
+    await user.click(await screen.findByRole("checkbox", { name: /2karuzela_oboz1/i }));
     expect(mockedRepository.savePortalCarouselImages).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole("button", { name: /zapisz karuzelę/i }));
 
     await waitFor(() =>
       expect(mockedRepository.savePortalCarouselImages).toHaveBeenCalledWith([
-        "carousel/hero-surf.jpg",
-        "carousel/obozy-zima.jpg",
+        "carousel/3karuzela_surf.png",
+        "carousel/2karuzela_oboz1.png",
       ]),
     );
     expect(screen.getByRole("status")).toHaveTextContent("Karuzela została zapisana.");
@@ -56,13 +56,15 @@ describe("PortalCarouselManager", () => {
     const user = userEvent.setup();
     render(<PortalCarouselManager />);
 
-    await user.click(await screen.findByRole("button", { name: /przenieś wyżej: obozy zima/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /przenieś wyżej: 2karuzela_oboz1/i }),
+    );
     await user.click(screen.getByRole("button", { name: /zapisz karuzelę/i }));
 
     await waitFor(() =>
       expect(mockedRepository.savePortalCarouselImages).toHaveBeenCalledWith([
-        "carousel/obozy-zima.jpg",
-        "carousel/hero-surf.jpg",
+        "carousel/2karuzela_oboz1.png",
+        "carousel/3karuzela_surf.png",
       ]),
     );
   });
@@ -72,15 +74,15 @@ describe("PortalCarouselManager", () => {
     const user = userEvent.setup();
     render(<PortalCarouselManager />);
 
-    await user.click(await screen.findByRole("checkbox", { name: "hero surf" }));
+    await user.click(await screen.findByRole("checkbox", { name: "3karuzela_surf" }));
     await user.click(screen.getByRole("button", { name: /zapisz karuzelę/i }));
 
     await waitFor(() =>
       expect(mockedRepository.savePortalCarouselImages).toHaveBeenCalledWith([
-        "carousel/obozy-zima.jpg",
+        "carousel/2karuzela_oboz1.png",
       ]),
     );
-    expect(screen.queryByRole("listitem", { name: "hero surf" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("listitem", { name: "3karuzela_surf" })).not.toBeInTheDocument();
   });
 
   it("disables controls that would move an image past either boundary", async () => {
@@ -91,16 +93,16 @@ describe("PortalCarouselManager", () => {
     const selectedItems = within(selectedList).getAllByRole("listitem");
 
     expect(
-      within(selectedItems[0]!).getByRole("button", { name: /przenieś wyżej: hero surf/i }),
+      within(selectedItems[0]!).getByRole("button", { name: /przenieś wyżej: 3karuzela_surf/i }),
     ).toBeDisabled();
     expect(
-      within(selectedItems[0]!).getByRole("button", { name: /przenieś niżej: hero surf/i }),
+      within(selectedItems[0]!).getByRole("button", { name: /przenieś niżej: 3karuzela_surf/i }),
     ).toBeEnabled();
     expect(
-      within(selectedItems[1]!).getByRole("button", { name: /przenieś wyżej: obozy zima/i }),
+      within(selectedItems[1]!).getByRole("button", { name: /przenieś wyżej: 2karuzela_oboz1/i }),
     ).toBeEnabled();
     expect(
-      within(selectedItems[1]!).getByRole("button", { name: /przenieś niżej: obozy zima/i }),
+      within(selectedItems[1]!).getByRole("button", { name: /przenieś niżej: 2karuzela_oboz1/i }),
     ).toBeDisabled();
   });
 
@@ -111,7 +113,7 @@ describe("PortalCarouselManager", () => {
     const user = userEvent.setup();
     render(<PortalCarouselManager />);
 
-    await screen.findByRole("checkbox", { name: "hero surf" });
+    await screen.findByRole("checkbox", { name: "3karuzela_surf" });
     await user.click(screen.getByRole("button", { name: /zapisz karuzelę/i }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
@@ -131,6 +133,6 @@ describe("PortalCarouselManager", () => {
 
     await screen.findByRole("alert");
     expect(saveButton).toBeEnabled();
-    expect(screen.getByRole("checkbox", { name: "hero surf" })).toBeEnabled();
+    expect(screen.getByRole("checkbox", { name: "3karuzela_surf" })).toBeEnabled();
   });
 });
