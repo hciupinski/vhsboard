@@ -9,6 +9,7 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant winter (&:where([data-portal-theme="winter"], [data-portal-theme="winter"] *));
 
 .contact-disciplines {
   position: relative;
@@ -77,6 +78,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-interaction: var(--interaction);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -115,6 +117,7 @@
   --popover-foreground: oklch(0.22 0.03 60);
   --primary: oklch(0.56 0.17 42);
   --primary-hover: oklch(0.52 0.17 42);
+  --interaction: oklch(0.56 0.17 42);
   --primary-foreground: oklch(0.99 0.01 85);
   --secondary: oklch(0.94 0.03 85);
   --secondary-foreground: oklch(0.28 0.04 60);
@@ -133,6 +136,7 @@
   --sand: oklch(0.93 0.04 82);
   --gradient-sunset: linear-gradient(120deg, oklch(0.63 0.19 42), oklch(0.78 0.16 72));
   --shadow-warm: 0 18px 40px -18px oklch(0.63 0.19 42 / 0.45);
+  --photo-shadow: oklch(0.1 0.02 60 / 0.9);
   --chart-1: oklch(0.646 0.222 41.116);
 
   --chart-2: oklch(0.6 0.118 184.704);
@@ -183,6 +187,34 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+:root[data-portal-theme="winter"] {
+  --background: oklch(0.97799 0.00622 255.475);
+  --foreground: oklch(0.26438 0.04846 253.2);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.49174 0.11133 244.139);
+  --primary-hover: var(--interaction);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.94966 0.01426 238.011);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--secondary);
+  --muted-foreground: oklch(0.49564 0.03758 249.983);
+  --accent: var(--primary);
+  --accent-foreground: var(--primary-foreground);
+  --border: oklch(0.88333 0.02489 242.373);
+  --input: var(--border);
+  --ring: var(--interaction);
+  --sunset: oklch(0.85 0.06 235);
+  --sunset-foreground: var(--foreground);
+  --ocean: oklch(0.42826 0.08621 238.653);
+  --sand: var(--secondary);
+  --gradient-sunset: linear-gradient(120deg, oklch(0.85 0.06 235), oklch(0.96 0.025 230));
+  --shadow-warm: 0 18px 40px -18px oklch(0.49174 0.11133 244.139 / 0.28);
+  --photo-shadow: oklch(0.15 0.025 253.2 / 0.9);
 }
 
 @layer base {
@@ -254,8 +286,8 @@
     padding-inline-end: clamp(1rem, 1.2vw, 1.5rem);
     padding-inline-start: clamp(1.5rem, 4vw, 5rem);
     border-radius: 0 var(--radius) var(--radius) 0;
-    background: oklch(0.22 0.03 60 / 0.1);
-    box-shadow: 0 16px 32px -22px oklch(0.1 0.02 60 / 0.9);
+    background: oklch(from var(--foreground) l c h / 0.1);
+    box-shadow: 0 16px 32px -22px var(--photo-shadow);
     backdrop-filter: blur(0.1rem);
     text-align: end;
     transform-origin: bottom left;
@@ -286,7 +318,7 @@
       inline-size: var(--topic-panel-expanded-width);
       padding-block: clamp(1.25rem, 1.8vw, 2rem);
       padding-inline-end: clamp(2rem, 2.5vw, 2.5rem);
-      background: oklch(0.22 0.03 60 / 0.18);
+      background: oklch(from var(--foreground) l c h / 0.18);
     }
     .topic-selector__item:is(:focus-visible, :focus-within) .topic-selector__details {
       max-block-size: none;
@@ -300,7 +332,7 @@
       inline-size: var(--topic-panel-expanded-width);
       padding-block: clamp(1.25rem, 1.8vw, 2rem);
       padding-inline-end: clamp(2rem, 2.5vw, 2.5rem);
-      background: oklch(0.22 0.03 60 / 0.18);
+      background: oklch(from var(--foreground) l c h / 0.18);
     }
     .topic-selector__item:hover .topic-selector__details {
       max-block-size: 12rem;
@@ -426,7 +458,7 @@
       pointer-events: auto;
     }
     .group:hover .gallery-shade {
-      background-color: oklch(0.22 0.03 60 / 0.35);
+      background-color: oklch(from var(--foreground) l c h / 0.35);
     }
   }
   .group:focus-visible .offer-card-action,

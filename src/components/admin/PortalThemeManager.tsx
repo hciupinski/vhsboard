@@ -33,7 +33,11 @@ export function PortalThemeManager() {
   const selected = draft ?? settings.data ?? "original";
   const mutation = useMutation({
     mutationFn: (theme: PortalTheme) => savePortalTheme(theme),
-    onSuccess: (_, theme) => {
+    onSuccess: async (_, theme) => {
+      await Promise.all([
+        client.cancelQueries({ queryKey: adminPortalThemeKey }),
+        client.cancelQueries({ queryKey: publicPortalThemeKey }),
+      ]);
       client.setQueryData(adminPortalThemeKey, theme);
       client.setQueryData(publicPortalThemeKey, theme);
       void client.invalidateQueries({ queryKey: publicPortalThemeKey });

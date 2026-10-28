@@ -22,7 +22,7 @@ const navigationItems = [
 ] as const;
 
 const navigationLinkClassName =
-  "rounded-sm text-sm font-bold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  "rounded-sm text-sm font-bold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 export function PublicHeader() {
   return (
@@ -58,7 +58,7 @@ export function PublicHeader() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="rounded-full hover:bg-primary hover:text-primary-foreground lg:hidden"
+                className="rounded-full hover:bg-interaction hover:text-primary-foreground lg:hidden"
                 aria-label="Otwórz menu"
               >
                 <Menu aria-hidden="true" />
@@ -78,7 +78,7 @@ export function PublicHeader() {
                   <SheetClose key={to} asChild>
                     <Link
                       to={to}
-                      className="rounded-sm text-2xl font-bold uppercase tracking-[0.08em] text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="rounded-sm text-2xl font-bold uppercase tracking-[0.08em] text-foreground transition-colors hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       activeProps={{ "aria-current": "page", className: "text-primary" }}
                     >
                       {label}

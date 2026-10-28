@@ -11,7 +11,11 @@ describe("SocialLinks", () => {
       const link = screen.getByRole("link", { name });
 
       expect(link.querySelector("svg")).toBeInTheDocument();
-      expect(link).toHaveClass("text-foreground", "hover:text-primary", "active:text-primary");
+      expect(link).toHaveClass(
+        "text-foreground",
+        "hover:text-interaction",
+        "active:text-interaction",
+      );
     }
   });
 });

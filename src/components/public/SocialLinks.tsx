@@ -5,7 +5,7 @@ type SocialLinksProps = {
 };
 
 const linkClassName =
-  "inline-flex size-9 items-center justify-center rounded-full bg-background/90 text-foreground transition-colors hover:text-primary focus-visible:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:text-primary";
+  "inline-flex size-9 items-center justify-center rounded-full bg-background/90 text-foreground transition-colors hover:text-interaction focus-visible:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:text-interaction";
 
 export function SocialLinks({ className }: SocialLinksProps) {
   return (

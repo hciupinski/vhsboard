@@ -100,7 +100,7 @@ function CookieConsentBanner({
         </p>
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           <Button
-            className="h-11 border-background/70 bg-transparent text-background hover:bg-background hover:text-foreground"
+            className="h-11 border-background/70 bg-transparent text-background hover:bg-background hover:text-foreground winter:hover:bg-interaction winter:hover:text-primary-foreground"
             onClick={onCustomize}
             size="lg"
             variant="outline"
@@ -108,7 +108,7 @@ function CookieConsentBanner({
             Dostosuj
           </Button>
           <Button
-            className="h-11 bg-ocean text-accent-foreground hover:bg-ocean/85"
+            className="h-11 bg-ocean text-accent-foreground hover:bg-ocean/85 winter:hover:bg-interaction"
             onClick={onRejectAll}
             size="lg"
           >

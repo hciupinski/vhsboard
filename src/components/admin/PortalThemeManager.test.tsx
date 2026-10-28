@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -35,6 +35,30 @@ afterEach(() => {
 });
 
 describe("CMS global portal theme", () => {
+  it("keeps the confirmed choice when an older background read finishes after saving", async () => {
+    const client = setup();
+    await waitFor(() => expect(screen.getByRole("radio", { name: /^Zimowy/ })).toBeEnabled());
+    let finishOldRead!: (theme: string) => void;
+    read.mockImplementationOnce(
+      () =>
+        new Promise<string>((resolve) => {
+          finishOldRead = resolve;
+        }),
+    );
+    act(() => {
+      void client.refetchQueries({ queryKey: ["admin", "portal-theme"] });
+    });
+    await userEvent.click(screen.getByRole("radio", { name: /^Zimowy/ }));
+    await userEvent.click(screen.getByRole("button", { name: "Zapisz i zastosuj globalnie" }));
+    await screen.findByRole("status");
+    await act(async () => {
+      finishOldRead("original");
+    });
+    expect(screen.getByRole("radio", { name: /^Zimowy/ })).toBeChecked();
+    await userEvent.click(screen.getByRole("radio", { name: /^Obecny/ }));
+    expect(screen.getByRole("button", { name: "Zapisz i zastosuj globalnie" })).toBeEnabled();
+  });
+
   it("loads the saved choice without publishing a new selection before explicit save", async () => {
     setup();
     await waitFor(() => expect(screen.getByRole("radio", { name: /^Obecny/ })).toBeChecked());

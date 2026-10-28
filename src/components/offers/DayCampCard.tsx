@@ -57,7 +57,7 @@ export function DayCampCard({ offer }: { offer: DayCampOffer }) {
           </span>
         </div>
         {!isFinished && (
-          <span className="mt-4 block w-full rounded-full bg-secondary px-4 py-2 text-center text-sm font-medium text-secondary-foreground shadow-sm transition-colors group-hover:bg-secondary/80">
+          <span className="mt-4 block w-full rounded-full bg-secondary px-4 py-2 text-center text-sm font-medium text-secondary-foreground shadow-sm transition-colors group-hover:bg-secondary/80 winter:group-hover:bg-interaction winter:group-hover:text-primary-foreground">
             Szczegóły
           </span>
         )}
