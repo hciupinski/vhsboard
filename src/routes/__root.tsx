@@ -10,6 +10,7 @@ import {
 import { type ReactNode } from "react";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
+import { PortalThemeProvider } from "@/components/public/PortalThemeProvider";
 import { getRobotsContent } from "@/lib/seo";
 
 import appCss from "../styles.css?url";
@@ -111,10 +112,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CookieConsentProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-      </CookieConsentProvider>
+      <PortalThemeProvider>
+        <CookieConsentProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </CookieConsentProvider>
+      </PortalThemeProvider>
     </QueryClientProvider>
   );
 }

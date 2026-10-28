@@ -25,10 +25,13 @@ describe("portal theme repository", () => {
     expect(request.eq).toHaveBeenCalledWith("id", 1);
   });
 
-  it.each([null, { theme: "unknown" }, {}])("rejects missing or invalid settings: %j", async (data) => {
-    query(data);
-    await expect(getAdminPortalTheme()).rejects.toThrow("Nie udało się pobrać wyglądu strony");
-  });
+  it.each([null, { theme: "unknown" }, {}])(
+    "rejects missing or invalid settings: %j",
+    async (data) => {
+      query(data);
+      await expect(getAdminPortalTheme()).rejects.toThrow("Nie udało się pobrać wyglądu strony");
+    },
+  );
 
   it("does not turn a failed read into a successful default", async () => {
     query(null, { message: "unavailable" });
