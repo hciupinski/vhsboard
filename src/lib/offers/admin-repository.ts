@@ -316,6 +316,7 @@ export const canPublishOffer = async (id: string): Promise<boolean> => {
       .select("id")
       .eq("offer_id", id)
       .eq("category", "accommodation")
+      .limit(1)
       .maybeSingle();
     if (accommodationError) {
       throw new OfferRepositoryError("Nie udało się sprawdzić gotowości oferty.", {

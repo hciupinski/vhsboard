@@ -43,6 +43,8 @@ const statusLabels: Record<OfferStatus, string> = {
   archived: "Zarchiwizowana",
 };
 const publishReadinessMessage = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
+const readinessCheckErrorMessage =
+  "Nie udało się sprawdzić gotowości oferty. Odśwież stronę i spróbuj ponownie.";
 
 const toEditableInput = ({ id: _id, status: _status, ...input }: EditableOffer) => input;
 
@@ -127,14 +129,45 @@ function OfferEditorContent() {
   });
   const isSubmitting =
     createMutation.isPending || updateMutation.isPending || statusMutation.isPending;
-  const isFormValid = editorOfferInputSchema.safeParse(formValue).success;
+  const formValidation = editorOfferInputSchema.safeParse(formValue);
+  const isFormValid = formValidation.success;
   const canPublish =
-    !isNew && persistedOffer !== null && isFormValid && readinessQuery.data === true;
+    !isNew &&
+    persistedOffer !== null &&
+    isFormValid &&
+    !readinessQuery.isError &&
+    readinessQuery.data === true;
+  const readiness = readinessQuery.isError
+    ? "error"
+    : readinessQuery.data === false
+      ? "missing_images"
+      : null;
   const visibleError =
     actionError ??
-    (!isNew && persistedOffer !== null && currentStatus === "draft" && readinessQuery.data === false
-      ? publishReadinessMessage
+    (!isNew && persistedOffer !== null && currentStatus === "draft"
+      ? readiness === "error"
+        ? readinessCheckErrorMessage
+        : readiness === "missing_images"
+          ? publishReadinessMessage
+          : null
       : null);
+  // Stable diagnostics avoid repeating the same warning on every keystroke.
+  // Only field paths and validation messages are logged, never form values or raw API errors.
+  const publishDiagnostics =
+    currentStatus === "draft" &&
+    (persistedOffer !== null || isFormDirty.current) &&
+    (!isFormValid || readiness !== null)
+      ? JSON.stringify({
+          fieldErrors: formValidation.success ? {} : getEditorFieldErrors(formValidation.error),
+          readiness,
+        })
+      : null;
+
+  useEffect(() => {
+    if (publishDiagnostics) {
+      console.warn("[VHSBOARD CMS] Publikacja zablokowana.", JSON.parse(publishDiagnostics));
+    }
+  }, [publishDiagnostics]);
 
   const validateForm = () => {
     const result = editorOfferInputSchema.safeParse(formValue);
