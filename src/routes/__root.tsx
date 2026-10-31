@@ -10,6 +10,7 @@ import {
 import { type ReactNode } from "react";
 
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
+import { PortalThemeProvider } from "@/components/public/PortalThemeProvider";
 import { getRobotsContent } from "@/lib/seo";
 
 import appCss from "../styles.css?url";
@@ -60,7 +61,7 @@ function ErrorComponent({ reset }: { error: Error; reset: () => void }) {
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent winter:hover:bg-interaction winter:hover:text-primary-foreground"
           >
             Strona główna
           </a>
@@ -111,10 +112,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CookieConsentProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-      </CookieConsentProvider>
+      <PortalThemeProvider>
+        <CookieConsentProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </CookieConsentProvider>
+      </PortalThemeProvider>
     </QueryClientProvider>
   );
 }

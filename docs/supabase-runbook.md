@@ -151,3 +151,26 @@ repozytorium. Administrator zapisuje pełną listę przez
 zmienić. CMS wybiera istniejące ścieżki — nie wysyła nowych plików karuzeli.
 Dodanie nowego zdjęcia do katalogu wymaga wygenerowania wariantów i deployu;
 zmiana wyboru istniejących zdjęć wymaga tylko zapisu w CMS.
+
+## Globalny motyw portalu
+
+`public.portal_settings` przechowuje jeden rekord (`id = 1`) z motywem
+`original` albo `winter`. Migracja tworzy ustawienie `original`; wdrożenie
+nie przełącza samoczynnie wyglądu produkcji. Następnie administrator wybiera
+motyw w CMS → Portal → „Wygląd strony” i naciska „Zapisz i zastosuj globalnie”.
+Powrót do „Obecny” przywraca ciepłą paletę.
+
+Odczyt jest publiczny. UPDATE kolumny `theme` wymaga roli `admin`, sprawdzanej
+przez RLS; klient nie ma INSERT, DELETE ani prawa zmiany `id` czy `updated_at`.
+Trigger bazy aktualizuje czas zapisu. Formularz uznaje sukces dopiero po
+otrzymaniu zmienionego rekordu; brak wiersza w odpowiedzi nie oznacza sukcesu.
+
+Otwarte, widoczne strony pobierają zmianę w ciągu 30 sekund lub po powrocie
+do karty. Pierwszy odczyt i awaria sieci mają bezpieczny fallback opisany w
+[architekturze](architecture.md#global-appearance). Wdrożenie migracji i kodu
+wykonuje istniejący pipeline, w kolejności baza → frontend.
+
+Testy `supabase/tests/portal_settings_security.sql` sprawdzają anonimowy
+odczyt, brak zapisu dla anon i zwykłego konta, admin-only UPDATE, ograniczenie
+wartości oraz ochronę singletona. Test kończy się ROLLBACK i nie zapisuje
+trwale wybranego motywu.

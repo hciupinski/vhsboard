@@ -42,7 +42,7 @@ function ContactPage() {
             <h2 className="text-3xl">SKONTAKTUJ SIĘ Z NAMI</h2>
             <p className="mt-4">
               <a
-                className="underline-offset-4 hover:underline"
+                className="rounded-sm underline-offset-4 hover:underline winter:hover:bg-background winter:hover:text-interaction"
                 href={`mailto:${config.contactEmail}`}
               >
                 {config.contactEmail}
@@ -50,7 +50,7 @@ function ContactPage() {
             </p>
             <p className="mt-2">
               <a
-                className="underline-offset-4 hover:underline"
+                className="rounded-sm underline-offset-4 hover:underline winter:hover:bg-background winter:hover:text-interaction"
                 href={toTelHref(config.contactPhone)}
               >
                 {config.contactPhone}

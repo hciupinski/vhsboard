@@ -155,7 +155,7 @@ export function TripSectionNavigation({
               linkClassName,
               activeId === id
                 ? "bg-secondary text-foreground underline decoration-primary decoration-2 underline-offset-4"
-                : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
+                : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground winter:hover:bg-interaction winter:hover:text-primary-foreground",
             )}
           >
             {label}

@@ -23,7 +23,7 @@ export function PublicFooter() {
           </Link>
           <p className="mt-3 max-w-md">Robione między falami a opadami śniegu.</p>
           <button
-            className="mt-3 rounded-sm font-medium text-foreground underline-offset-4 hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="mt-3 rounded-sm font-medium text-foreground underline-offset-4 hover:text-interaction hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             onClick={openPreferences}
             type="button"
           >
@@ -33,7 +33,7 @@ export function PublicFooter() {
           <Link
             to="/kontakt"
             hash="dokumenty"
-            className="text-foreground font-medium hover:text-primary hover:underline"
+            className="text-foreground font-medium hover:text-interaction hover:underline"
           >
             Dokumenty do pobrania
           </Link>
@@ -43,7 +43,7 @@ export function PublicFooter() {
           </p>
           <p className="sm:mt-4">
             © {new Date().getFullYear()}{" "}
-            <a href="https://theconstruct.ing" className="hover:text-primary hover:underline">
+            <a href="https://theconstruct.ing" className="hover:text-interaction hover:underline">
               theconstruct.ing
             </a>
           </p>
@@ -56,14 +56,17 @@ export function PublicFooter() {
           </p>
           <p className="mt-3">
             <a
-              className="hover:text-primary hover:underline"
+              className="hover:text-interaction hover:underline"
               href={`mailto:${config.contactEmail}`}
             >
               {config.contactEmail}
             </a>
           </p>
           <p>
-            <a className="hover:text-primary hover:underline" href={toTelHref(config.contactPhone)}>
+            <a
+              className="hover:text-interaction hover:underline"
+              href={toTelHref(config.contactPhone)}
+            >
               {config.contactPhone}
             </a>
           </p>

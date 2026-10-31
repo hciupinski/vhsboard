@@ -31,6 +31,26 @@ hex values or a second palette.
 Supporting tokens are `--sunset`, `--ocean`, `--sand`, and `--shadow-warm`.
 All CSS color additions must use OKLCH, matching the existing stylesheet.
 
+## Seasonal portal theme
+
+CMS → Portal can publish either the original palette above or the winter
+palette selected for VHS-050. The public site applies the shared setting on
+`html[data-portal-theme="winter"]`, including body-level dialogs. The CMS
+keeps its original operational palette.
+
+Winter uses snow-white ground (`oklch(0.97799 0.00622 255.475)`), navy text
+(`oklch(0.26438 0.04846 253.2)`), glacier-blue primary actions
+(`oklch(0.49174 0.11133 244.139)`), pale ice surfaces, and slate supporting
+text. Existing semantic utilities, photographs, fonts and layouts remain.
+Warm decorative gradients and shadows receive cool equivalents.
+
+Winter buttons are blue at rest and use the original orange
+`--interaction: oklch(0.56 0.17 42)` on hover. Text links use orange text on
+hover; filled controls keep light, readable labels. The `winter:` variant
+handles secondary/outline controls without changing their original-theme
+behavior. Photo overlays remain readable and error/destructive states keep
+their semantic colors. Hover never becomes a requirement for touch use.
+
 ## Typography
 
 - Use **Bebas Neue** (`font-display`) for display headings, card titles, prices,

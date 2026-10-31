@@ -133,7 +133,7 @@ describe("public navigation", () => {
     await renderPublicChrome("/");
 
     expect(screen.getByRole("button", { name: "Otwórz menu" })).toHaveClass(
-      "hover:bg-primary",
+      "hover:bg-interaction",
       "hover:text-primary-foreground",
     );
   });

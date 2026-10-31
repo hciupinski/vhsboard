@@ -49,7 +49,7 @@ export function ContactDocuments() {
                 href={document.signedUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="underline decoration-1 underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="underline decoration-1 underline-offset-4 hover:text-foreground winter:hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {document.title}
               </a>

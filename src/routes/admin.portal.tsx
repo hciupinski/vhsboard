@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Brand } from "@/components/Brand";
 import { AdminGuard, AdminSignOutButton } from "@/components/admin/AdminGuard";
 import { PortalCarouselManager } from "@/components/admin/PortalCarouselManager";
+import { PortalThemeManager } from "@/components/admin/PortalThemeManager";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin/portal")({
@@ -41,11 +42,12 @@ function PortalPage() {
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-5 py-10">
-        <h1 className="font-display text-4xl tracking-wide">Karuzela strony głównej</h1>
+        <h1 className="font-display text-4xl tracking-wide">Ustawienia portalu</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Wybierz zdjęcia widoczne w karuzeli na stronie głównej i ustaw ich kolejność.
+          Ustaw wygląd strony i wybierz zdjęcia karuzeli na stronie głównej.
         </p>
-        <div className="mt-8">
+        <div className="mt-8 space-y-8">
+          <PortalThemeManager />
           <PortalCarouselManager />
         </div>
       </main>

@@ -59,6 +59,9 @@ Only the six marketing pages enter the sitemap. See the [SEO runbook](seo-runboo
   Gallery reordering uses the transactional `reorder_offer_images` RPC.
 - `contact_documents` stores public PDF metadata. `portal_carousel_images`
   stores selected local asset paths and order; it does not upload carousel files.
+- `portal_settings` is a singleton (`id = 1`) storing the global
+  `original | winter` theme. Public visitors can read it; only CMS administrators
+  can update its `theme` column. Client roles cannot insert, delete or move it.
 - `profiles.role = 'admin'` is manually granted to approved Auth users. Login alone
   does not authorize editing. Route checks improve UX; database and Storage RLS
   protect every mutation. Public and administrator repositories and query keys
@@ -68,6 +71,25 @@ Implementation modules live under `src/lib/offers`, `src/lib/images`,
 `src/lib/documents`, `src/lib/portal-carousel`, and `src/lib/auth`. Schema changes
 live in `supabase/migrations`; security tests live in `supabase/tests`.
 The [Supabase runbook](supabase-runbook.md) describes local database checks and roles.
+
+## Global appearance
+
+CMS → Portal publishes the shared theme independently of carousel selection.
+`PortalThemeProvider` reads it with a separate public Query key and applies a
+root HTML attribute so dialogs and cookie preferences share the palette.
+Admin routes and the admin build shell do not apply the public theme.
+
+New entries fetch the current setting. Visible open pages poll every 30 seconds
+and refetch when the tab becomes active; background pages do not poll. On a
+temporary failure the existing page retains its last fetched theme. On the
+first fetch, or without JavaScript, the static original palette remains until
+settings are available. This may briefly show the original palette before
+the winter setting arrives; it does not block the marketing content. The
+browser does not store a visitor-specific theme preference.
+
+The initial release requires a forward migration followed by a frontend deploy.
+The migration seeds `original`; later switches require only a CMS save and no
+Cloudflare rebuild. Publishing the code does not itself activate winter.
 
 ## Media
 

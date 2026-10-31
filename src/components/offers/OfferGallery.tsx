@@ -72,7 +72,7 @@ export function OfferGallery({
               aria-hidden="true"
               className="absolute inset-0 flex items-end p-4 text-sm font-semibold text-background gallery-shade transition-colors duration-160 motion-reduce:transition-none"
             >
-              <span className="gallery-action rounded-full bg-background/90 px-3 py-1.5 text-foreground transition-[opacity,transform] duration-160 ease-out motion-reduce:transition-none">
+              <span className="gallery-action winter:group-hover:bg-interaction winter:group-hover:text-primary-foreground rounded-full bg-background/90 px-3 py-1.5 text-foreground transition-[opacity,transform] duration-160 ease-out motion-reduce:transition-none">
                 Powiększ
               </span>
             </span>
@@ -83,7 +83,7 @@ export function OfferGallery({
       <Dialog open={Boolean(selectedImage)} onOpenChange={(open) => !open && setSelectedId(null)}>
         {selectedImage ? (
           <DialogContent
-            className="flex h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-6xl flex-col gap-3 border-0 bg-transparent p-0 text-background shadow-none sm:rounded-none [&>button]:right-0 [&>button]:top-0 [&>button]:grid [&>button]:size-11 [&>button]:place-items-center [&>button]:rounded-full [&>button]:bg-black/70 [&>button]:text-background [&>button]:opacity-100 [&>button]:focus-visible:ring-background [&>button]:focus-visible:ring-offset-black"
+            className="flex h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-6xl flex-col gap-3 border-0 bg-transparent p-0 text-background shadow-none sm:rounded-none [&>button]:right-0 [&>button]:top-0 [&>button]:grid [&>button]:size-11 [&>button]:place-items-center [&>button]:rounded-full [&>button]:bg-black/70 [&>button]:text-background [&>button]:opacity-100 winter:[&>button:hover]:bg-interaction winter:[&>button:hover]:text-primary-foreground [&>button]:focus-visible:ring-background [&>button]:focus-visible:ring-offset-black"
             onCloseAutoFocus={(event) => {
               event.preventDefault();
               openingThumbnail.current?.focus({ preventScroll: true });
@@ -123,7 +123,7 @@ export function OfferGallery({
                 <Button
                   type="button"
                   variant="ghost"
-                  className="size-11 shrink-0 rounded-full bg-black/70 p-0 text-background hover:bg-black hover:text-background focus-visible:ring-background focus-visible:ring-offset-black"
+                  className="size-11 shrink-0 rounded-full bg-black/70 p-0 text-background hover:bg-black hover:text-background winter:hover:bg-interaction winter:hover:text-primary-foreground focus-visible:ring-background focus-visible:ring-offset-black"
                   aria-label="Poprzednie zdjęcie"
                   onClick={() => movePhoto(-1)}
                 >
@@ -135,7 +135,7 @@ export function OfferGallery({
                 <Button
                   type="button"
                   variant="ghost"
-                  className="size-11 shrink-0 rounded-full bg-black/70 p-0 text-background hover:bg-black hover:text-background focus-visible:ring-background focus-visible:ring-offset-black"
+                  className="size-11 shrink-0 rounded-full bg-black/70 p-0 text-background hover:bg-black hover:text-background winter:hover:bg-interaction winter:hover:text-primary-foreground focus-visible:ring-background focus-visible:ring-offset-black"
                   aria-label="Następne zdjęcie"
                   onClick={() => movePhoto(1)}
                 >

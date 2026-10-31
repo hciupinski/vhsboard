@@ -1,9 +1,11 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   createMemoryHistory,
   createRootRoute,
   createRoute,
   createRouter,
   RouterProvider,
+  Outlet,
 } from "@tanstack/react-router";
 import { cleanup, render, screen } from "@testing-library/react";
 import type { FunctionComponent } from "react";
@@ -12,10 +14,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Route as AdminDocumentsRoute } from "./admin.dokumenty";
 import { Route as AdminPortalRoute } from "./admin.portal";
 
-const { mockedGetAdminSession, mockedListAdminPortalCarouselImages } = vi.hoisted(() => ({
-  mockedGetAdminSession: vi.fn(),
-  mockedListAdminPortalCarouselImages: vi.fn(),
-}));
+const { mockedGetAdminSession, mockedListAdminPortalCarouselImages, mockedGetAdminPortalTheme } =
+  vi.hoisted(() => ({
+    mockedGetAdminSession: vi.fn(),
+    mockedListAdminPortalCarouselImages: vi.fn(),
+    mockedGetAdminPortalTheme: vi.fn(),
+  }));
 
 vi.mock("@/lib/auth/session", () => ({
   getAdminSession: mockedGetAdminSession,
@@ -27,12 +31,24 @@ vi.mock("@/lib/portal-carousel/repository", () => ({
   savePortalCarouselImages: vi.fn(),
 }));
 
+vi.mock("@/lib/portal-theme/repository", () => ({
+  getAdminPortalTheme: mockedGetAdminPortalTheme,
+  savePortalTheme: vi.fn(),
+}));
+
 vi.mock("@/components/admin/ContactDocumentManager", () => ({
   ContactDocumentManager: () => null,
 }));
 
 const renderAdminPage = async (Component: FunctionComponent, initialEntry: string) => {
-  const rootRoute = createRootRoute();
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+  const rootRoute = createRootRoute({
+    component: () => (
+      <QueryClientProvider client={client}>
+        <Outlet />
+      </QueryClientProvider>
+    ),
+  });
   const currentRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: initialEntry,
@@ -69,6 +85,7 @@ const expectMobileSafeHeader = (actionLinkName: string) => {
 
 beforeEach(() => {
   mockedListAdminPortalCarouselImages.mockResolvedValue([]);
+  mockedGetAdminPortalTheme.mockResolvedValue("original");
 });
 
 afterEach(() => {
@@ -83,7 +100,7 @@ describe("admin portal route", () => {
     await renderAdminPage(AdminPortalRoute.options.component as FunctionComponent, "/admin/portal");
 
     expect(screen.getByText("Sprawdzamy dostęp…")).toBeInTheDocument();
-    expect(screen.queryByText("Karuzela strony głównej")).not.toBeInTheDocument();
+    expect(screen.queryByText("Ustawienia portalu")).not.toBeInTheDocument();
   });
 
   it("keeps the Portal route out of search indexes", () => {
@@ -100,10 +117,9 @@ describe("admin portal route", () => {
 
     await renderAdminPage(AdminPortalRoute.options.component as FunctionComponent, "/admin/portal");
 
-    expect(
-      await screen.findByRole("heading", { name: "Karuzela strony głównej" }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Ustawienia portalu" })).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Karuzela portalu" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Wygląd strony" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Oferty" })).toHaveAttribute("href", "/admin");
     expect(screen.getByRole("link", { name: "Dokumenty" })).toHaveAttribute(
       "href",

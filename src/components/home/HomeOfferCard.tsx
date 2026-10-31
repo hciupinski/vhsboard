@@ -64,7 +64,7 @@ export function HomeOfferCard({ offer }: { offer: PublicOffer }) {
           {!isFinished && (
             <span
               aria-hidden="true"
-              className="mt-5 flex w-full items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-[opacity,transform] duration-160 ease-out motion-reduce:transition-none"
+              className="mt-5 flex w-full items-center justify-center rounded-full bg-primary winter:group-hover:bg-interaction px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-[opacity,transform] duration-160 ease-out motion-reduce:transition-none"
             >
               Sprawdź szczegóły
             </span>
