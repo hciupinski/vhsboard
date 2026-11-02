@@ -6,6 +6,15 @@ const markerKey = "vhsboard-password-recovery";
 const maxRecoveryAge = 30 * 60 * 1000;
 type RecoveryMarker = { userId: string; expiresAt: number };
 
+export const isRetryableAuthFailure = (error: {
+  status?: number | undefined;
+  name?: string | undefined;
+}) =>
+  error.name === "AuthRetryableFetchError" ||
+  error.status === 0 ||
+  error.status === 429 ||
+  (error.status !== undefined && error.status >= 500);
+
 export function readRecoveryMarker(): RecoveryMarker | null {
   if (typeof window === "undefined") return null;
   try {
@@ -82,7 +91,14 @@ export function installPasswordRecoveryHandler(
     void client.auth
       .initialize()
       .then(({ error }) => {
-        if (error) redirectError(error.code === "otp_expired");
+        if (!error) return;
+        if (isRetryableAuthFailure(error)) {
+          // The SDK has not saved the session yet. Keep the original fragment
+          // for a page reload; never copy these credentials to storage or query.
+          if (window.location.pathname !== recoveryPath)
+            navigate(recoveryPath + window.location.hash);
+          else window.dispatchEvent(new Event(recoveryContextEvent));
+        } else redirectError(error.code === "otp_expired");
       })
       .catch(() => redirectError(false));
   }

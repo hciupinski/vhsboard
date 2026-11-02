@@ -250,6 +250,10 @@ przez pocztę. Implementacja nie zmienia szablonów maili ani reguł antyspamowy
 - Błędy sieci pozwalają ponowić sprawdzenie lub zapis. Po sukcesie zmiany aplikacja
   usuwa kontekst i wywołuje `signOut({ scope: "global" })`, odwołując sesje Auth,
   a następnie prowadzi do zwykłego logowania z kontrolą `profiles.role` i RLS.
+- Jeżeli pierwsza weryfikacja callbacku nie powiedzie się z powodu chwilowej
+  awarii Auth lub sieci, zachowujemy oryginalny fragment adresu do ponowienia
+  przez przycisk „Odśwież i ponów”. Nie kopiujemy tokenów do własnego magazynu
+  ani parametrów query. Po poprawnej inicjalizacji fragment usuwa SDK.
 - Błąd wylogowania po skutecznej zmianie hasła jest osobnym ostrzeżeniem. Nie
   sugerujemy wtedy, że hasło nie zostało zapisane.
 - Tokeny nie trafiają do własnych logów ani query parametrów. SDK przechowuje

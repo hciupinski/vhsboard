@@ -86,4 +86,22 @@ describe("password recovery bootstrap", () => {
     expect(readRecoveryMarker()).toBeNull();
     clearRecoveryMarker();
   });
+  it.each(["/", recoveryPath])(
+    "retains the original callback after a temporary initialization failure on %s",
+    async (path) => {
+      const fragment = "#type=recovery&access_token=test-access&refresh_token=test-refresh";
+      window.history.replaceState({}, "", path + fragment);
+      const c = client(),
+        navigate = vi.fn();
+      c.value.auth.initialize = vi.fn().mockResolvedValue({
+        error: { name: "AuthRetryableFetchError", status: 503 },
+      });
+      installPasswordRecoveryHandler(c.value, navigate);
+      await Promise.resolve();
+      expect(window.location.hash).toBe(fragment);
+      if (path === recoveryPath) expect(navigate).not.toHaveBeenCalled();
+      else expect(navigate).toHaveBeenCalledWith(recoveryPath + fragment);
+      expect(window.location.search).toBe("");
+    },
+  );
 });

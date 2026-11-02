@@ -1,16 +1,13 @@
-import { clearRecoveryMarker, readRecoveryMarker, recoveryPath } from "./recovery-bootstrap";
-
-const isRetryableAuthFailure = (error: {
-  status?: number | undefined;
-  name?: string | undefined;
-}) =>
-  error.name === "AuthRetryableFetchError" ||
-  error.status === 0 ||
-  error.status === 429 ||
-  (error.status !== undefined && error.status >= 500);
+import {
+  clearRecoveryMarker,
+  readRecoveryMarker,
+  recoveryPath,
+  isRetryableAuthFailure,
+} from "./recovery-bootstrap";
 
 const getClient = async () => (await import("../supabase")).supabase;
-export type PasswordRecoveryState = "request" | "ready" | "expired" | "invalid" | "error";
+export type PasswordRecoveryState =
+  "request" | "ready" | "expired" | "invalid" | "error" | "callback-error";
 export class PasswordRecoveryError extends Error {
   constructor(
     message: string,
@@ -45,6 +42,11 @@ export async function getPasswordRecoveryState(): Promise<PasswordRecoveryState>
   const error = new URLSearchParams(window.location.search).get("error");
   if (error === "expired" || error === "invalid") return error;
   try {
+    if (new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery") {
+      const { error: initializationError } = await client.auth.initialize();
+      if (initializationError && isRetryableAuthFailure(initializationError))
+        return "callback-error";
+    }
     // Wait for the SDK to process an initial hash. A late PASSWORD_RECOVERY
     // event also refreshes the mounted page through recoveryContextEvent.
     const { data, error: sessionError } = await client.auth.getSession();
@@ -81,10 +83,10 @@ export async function updateRecoveredPassword(
   const state = await getPasswordRecoveryState();
   if (state !== "ready")
     throw new PasswordRecoveryError(
-      state === "error"
+      state === "error" || state === "callback-error"
         ? "Nie udało się potwierdzić sesji. Spróbuj ponownie."
         : "Link jest nieprawidłowy lub wygasł. Poproś o nowy.",
-      state !== "error",
+      state !== "error" && state !== "callback-error",
     );
   const client = await getClient();
   const { error } = await client.auth.updateUser({ password });

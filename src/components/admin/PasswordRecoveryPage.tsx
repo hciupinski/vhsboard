@@ -57,6 +57,14 @@ export function PasswordRecoveryPage() {
           <p role="status" className="mt-5 text-sm text-muted-foreground">
             Sprawdzamy link…
           </p>
+        ) : state === "callback-error" ? (
+          <div className="mt-5 space-y-4">
+            <p role="alert" className="text-sm text-destructive">
+              Nie udało się sprawdzić linku. Sprawdź połączenie i odśwież stronę, aby ponowić próbę.
+              Nie musisz zamawiać nowego linku.
+            </p>
+            <Button onClick={() => window.location.reload()}>Odśwież i ponów</Button>
+          </div>
         ) : state === "error" ? (
           <div className="mt-5 space-y-4">
             <p role="alert" className="text-sm text-destructive">

@@ -42,6 +42,13 @@ describe("password recovery page", () => {
     expect(screen.getByLabelText("E-mail")).toBeInTheDocument();
     expect(screen.queryByLabelText("Nowe hasło")).not.toBeInTheDocument();
   });
+  it("offers page reload when the initial callback could not be verified", async () => {
+    api.getPasswordRecoveryState.mockResolvedValue("callback-error");
+    render(<PasswordRecoveryPage />);
+    expect(await screen.findByRole("alert")).toHaveTextContent("odśwież stronę");
+    expect(screen.getByRole("button", { name: "Odśwież i ponów" })).toBeInTheDocument();
+    expect(screen.queryByLabelText("E-mail")).not.toBeInTheDocument();
+  });
   it("does not update for mismatching passwords", async () => {
     api.getPasswordRecoveryState.mockResolvedValue("ready");
     render(<PasswordRecoveryPage />);

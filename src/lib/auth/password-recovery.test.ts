@@ -5,6 +5,7 @@ const auth = vi.hoisted(() => ({
   getUser: vi.fn(),
   updateUser: vi.fn(),
   signOut: vi.fn(),
+  initialize: vi.fn(),
 }));
 vi.mock("../supabase", () => ({ supabase: { auth } }));
 import {
@@ -58,6 +59,16 @@ describe("password recovery API", () => {
     expect(await getPasswordRecoveryState()).toBe("expired");
     window.history.replaceState({}, "", "/admin/reset-password?error=expired");
     expect(await getPasswordRecoveryState()).toBe("expired");
+  });
+  it("offers reload after a retryable callback initialization failure without losing its hash", async () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/admin/reset-password#type=recovery&access_token=test-access",
+    );
+    auth.initialize.mockResolvedValue({ error: { name: "AuthRetryableFetchError", status: 503 } });
+    expect(await getPasswordRecoveryState()).toBe("callback-error");
+    expect(window.location.hash).toContain("access_token=test-access");
   });
   it("does not discard a valid marker on a transient verification failure", async () => {
     mark();
