@@ -48,7 +48,9 @@ function HalfDayCampsPage() {
       <PublicHeader />
       <PublicJsonLd path="/obozy" label="Obozy" />
       <main className="flex-1">
-        <section className="relative isolate overflow-hidden">
+        <section
+          className={`relative isolate overflow-hidden ${isWinter ? "lg:flex lg:min-h-[35vw] lg:items-center" : ""}`}
+        >
           <ResponsiveImage
             sizes="100vw"
             image={isWinter ? winterHeroImage : summerHeroImage}
@@ -57,10 +59,10 @@ function HalfDayCampsPage() {
                 ? "Zimowy obóz snowboardowy VHSBOARD w górach"
                 : "Letni obóz sportowy VHSBOARD nad wodą"
             }
-            className="absolute inset-0 -z-20 size-full object-cover"
+            className={`absolute inset-0 -z-20 size-full object-cover ${isWinter ? "lg:object-[center_42%]" : ""}`}
           />
           <div className="absolute inset-0 -z-10 bg-foreground/65" />
-          <div className="mx-auto max-w-6xl px-5 py-24 sm:py-36">
+          <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:py-36">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
               Dla dzieci
             </p>
