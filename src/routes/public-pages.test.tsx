@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import type { FunctionComponent } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -15,6 +15,11 @@ import type { DayCampOffer, TripOffer } from "@/lib/offers/types";
 
 const mockedListPublicPortalCarouselImages = vi.hoisted(() => vi.fn());
 const mockedListPublishedOffers = vi.hoisted(() => vi.fn());
+const mockedGetPublicPortalTheme = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/portal-theme/repository", () => ({
+  getPublicPortalTheme: mockedGetPublicPortalTheme,
+}));
 
 vi.mock("@/lib/portal-carousel/repository", () => ({
   listPublicPortalCarouselImages: mockedListPublicPortalCarouselImages,
@@ -129,13 +134,14 @@ const renderRoute = async (path: string, route: { options: { component?: unknown
   await router.load();
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   queryClient.setQueryData(["published-offers", "day_camp"], []);
-  return render(
+  const view = render(
     <QueryClientProvider client={queryClient}>
       <CookieConsentProvider>
         <RouterProvider router={router} />
       </CookieConsentProvider>
     </QueryClientProvider>,
   );
+  return { ...view, queryClient };
 };
 
 afterEach(() => {
@@ -145,6 +151,8 @@ afterEach(() => {
 });
 
 beforeEach(() => {
+  mockedGetPublicPortalTheme.mockReset();
+  mockedGetPublicPortalTheme.mockResolvedValue("original");
   mockedListPublicPortalCarouselImages.mockReset();
   mockedListPublicPortalCarouselImages.mockResolvedValue([]);
   mockedListPublishedOffers.mockReset();
@@ -418,18 +426,57 @@ describe("static public pages", () => {
       screen.getByRole("img", {
         name: /uczestnik obozu wakeboardowego na jeziorze podczas letnich zajęć/i,
       }),
-    ).toHaveAttribute("src", expect.stringMatching(/^\/images\/generated\/obozy-lato-wakeboard-/));
+    ).toHaveAttribute(
+      "src",
+      expect.stringMatching(/^\/images\/generated\/obozy-obozy-lato-wakeboard-/),
+    );
     expect(
       screen.getByRole("img", {
-        name: /uczestniczka obozu snowboardowego podczas zimowej jazdy w górach/i,
+        name: /snowboardzista w czerwonej kurtce podczas zimowej jazdy w górach/i,
       }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute("src", expect.stringMatching(/^\/images\/generated\/obozy-obozy-zima-/));
     expect(screen.getByRole("heading", { name: /najbliższe terminy/i })).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
         name: "Dla dzieci w jakim wieku są obozy i półkolonie VHS?",
       }),
     ).toBeInTheDocument();
+  });
+
+  it("updates the camp hero when the global portal theme changes in either direction", async () => {
+    const { queryClient } = await renderRoute("/obozy", HalfDayCampsRoute);
+    await waitFor(() =>
+      expect(queryClient.getQueryData(["public", "portal-theme"])).toBe("original"),
+    );
+    const hero = screen.getByRole("heading", { name: /zajawkowe obozy/i }).closest("section")!;
+    const image = () => within(hero).getByRole("img");
+
+    expect(image()).toHaveAttribute(
+      "src",
+      expect.stringMatching(/^\/images\/generated\/obozy-main-obozy-lato-/),
+    );
+
+    await act(async () => {
+      mockedGetPublicPortalTheme.mockResolvedValue("winter");
+      await queryClient.invalidateQueries({ queryKey: ["public", "portal-theme"] });
+    });
+    await waitFor(() =>
+      expect(image()).toHaveAttribute(
+        "src",
+        expect.stringMatching(/^\/images\/generated\/obozy-main-obozy-zima-/),
+      ),
+    );
+
+    await act(async () => {
+      mockedGetPublicPortalTheme.mockResolvedValue("original");
+      await queryClient.invalidateQueries({ queryKey: ["public", "portal-theme"] });
+    });
+    await waitFor(() =>
+      expect(image()).toHaveAttribute(
+        "src",
+        expect.stringMatching(/^\/images\/generated\/obozy-main-obozy-lato-/),
+      ),
+    );
   });
 
   it("keeps discontinued services as company background rather than separate sales pages", async () => {

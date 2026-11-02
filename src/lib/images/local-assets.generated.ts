@@ -145,42 +145,6 @@ export const LOCAL_IMAGE_ASSETS: Readonly<Record<string, ResponsiveImageAsset>> 
     avifSrcSet:
       "/images/generated/o-nas-480-e19488258f29.avif 480w, /images/generated/o-nas-960-e3fdb2ca0483.avif 960w, /images/generated/o-nas-1600-5cdb704f087c.avif 1600w",
   },
-  "obozy-lato-wakeboard.png": {
-    src: "/images/generated/obozy-lato-wakeboard-1533-6d9110928e73.webp",
-    width: 1533,
-    height: 1026,
-    webpSrcSet:
-      "/images/generated/obozy-lato-wakeboard-480-7d74099f2573.webp 480w, /images/generated/obozy-lato-wakeboard-960-e0b61748af3a.webp 960w, /images/generated/obozy-lato-wakeboard-1533-6d9110928e73.webp 1533w",
-    avifSrcSet:
-      "/images/generated/obozy-lato-wakeboard-480-86ecfa74ca37.avif 480w, /images/generated/obozy-lato-wakeboard-960-60507cb413d2.avif 960w, /images/generated/obozy-lato-wakeboard-1533-c81780dffaff.avif 1533w",
-  },
-  "obozy-lato.jpg": {
-    src: "/images/generated/obozy-lato-1600-a1880f167b77.webp",
-    width: 1600,
-    height: 1066,
-    webpSrcSet:
-      "/images/generated/obozy-lato-480-9b38a7c40e94.webp 480w, /images/generated/obozy-lato-960-de0be7a0cceb.webp 960w, /images/generated/obozy-lato-1600-a1880f167b77.webp 1600w",
-    avifSrcSet:
-      "/images/generated/obozy-lato-480-628f20e6a95d.avif 480w, /images/generated/obozy-lato-960-16d8c8831aa1.avif 960w, /images/generated/obozy-lato-1600-ab50cd31e99e.avif 1600w",
-  },
-  "obozy-wake.jpg": {
-    src: "/images/generated/obozy-wake-1600-25720ea52223.webp",
-    width: 1600,
-    height: 1069,
-    webpSrcSet:
-      "/images/generated/obozy-wake-480-0085940e65ab.webp 480w, /images/generated/obozy-wake-960-abbd757f6d3c.webp 960w, /images/generated/obozy-wake-1600-25720ea52223.webp 1600w",
-    avifSrcSet:
-      "/images/generated/obozy-wake-480-b1d7a88a4eb1.avif 480w, /images/generated/obozy-wake-960-25ad50d6ea5f.avif 960w, /images/generated/obozy-wake-1600-165894ac5b11.avif 1600w",
-  },
-  "obozy-zima.jpg": {
-    src: "/images/generated/obozy-zima-1600-ff1841bcd45c.webp",
-    width: 1600,
-    height: 1069,
-    webpSrcSet:
-      "/images/generated/obozy-zima-480-220e201cc8ac.webp 480w, /images/generated/obozy-zima-960-549d0753a557.webp 960w, /images/generated/obozy-zima-1600-ff1841bcd45c.webp 1600w",
-    avifSrcSet:
-      "/images/generated/obozy-zima-480-3a83cf5ea7ba.avif 480w, /images/generated/obozy-zima-960-77dbae121933.avif 960w, /images/generated/obozy-zima-1600-03fc356846c7.avif 1600w",
-  },
   "obozy.jpg": {
     src: "/images/generated/obozy-1600-075502252a02.webp",
     width: 1600,
@@ -189,6 +153,42 @@ export const LOCAL_IMAGE_ASSETS: Readonly<Record<string, ResponsiveImageAsset>> 
       "/images/generated/obozy-480-d6f9d6e42abc.webp 480w, /images/generated/obozy-960-d3a2b04c5738.webp 960w, /images/generated/obozy-1600-075502252a02.webp 1600w",
     avifSrcSet:
       "/images/generated/obozy-480-6439f0b0a2d0.avif 480w, /images/generated/obozy-960-0357f547cade.avif 960w, /images/generated/obozy-1600-3dcc1f24c2cd.avif 1600w",
+  },
+  "obozy/main-obozy-lato.jpg": {
+    src: "/images/generated/obozy-main-obozy-lato-1600-25720ea52223.webp",
+    width: 1600,
+    height: 1069,
+    webpSrcSet:
+      "/images/generated/obozy-main-obozy-lato-480-0085940e65ab.webp 480w, /images/generated/obozy-main-obozy-lato-960-abbd757f6d3c.webp 960w, /images/generated/obozy-main-obozy-lato-1600-25720ea52223.webp 1600w",
+    avifSrcSet:
+      "/images/generated/obozy-main-obozy-lato-480-b1d7a88a4eb1.avif 480w, /images/generated/obozy-main-obozy-lato-960-25ad50d6ea5f.avif 960w, /images/generated/obozy-main-obozy-lato-1600-165894ac5b11.avif 1600w",
+  },
+  "obozy/main-obozy-zima.jpg": {
+    src: "/images/generated/obozy-main-obozy-zima-1600-d684373965d3.webp",
+    width: 1600,
+    height: 1067,
+    webpSrcSet:
+      "/images/generated/obozy-main-obozy-zima-480-9b8addcec78b.webp 480w, /images/generated/obozy-main-obozy-zima-960-8ccdee33dc89.webp 960w, /images/generated/obozy-main-obozy-zima-1600-d684373965d3.webp 1600w",
+    avifSrcSet:
+      "/images/generated/obozy-main-obozy-zima-480-11d14d89b97e.avif 480w, /images/generated/obozy-main-obozy-zima-960-e75fbbd3d9a2.avif 960w, /images/generated/obozy-main-obozy-zima-1600-940321405fde.avif 1600w",
+  },
+  "obozy/obozy-lato-wakeboard.png": {
+    src: "/images/generated/obozy-obozy-lato-wakeboard-1533-6d9110928e73.webp",
+    width: 1533,
+    height: 1026,
+    webpSrcSet:
+      "/images/generated/obozy-obozy-lato-wakeboard-480-7d74099f2573.webp 480w, /images/generated/obozy-obozy-lato-wakeboard-960-e0b61748af3a.webp 960w, /images/generated/obozy-obozy-lato-wakeboard-1533-6d9110928e73.webp 1533w",
+    avifSrcSet:
+      "/images/generated/obozy-obozy-lato-wakeboard-480-86ecfa74ca37.avif 480w, /images/generated/obozy-obozy-lato-wakeboard-960-60507cb413d2.avif 960w, /images/generated/obozy-obozy-lato-wakeboard-1533-c81780dffaff.avif 1533w",
+  },
+  "obozy/obozy-zima.jpg": {
+    src: "/images/generated/obozy-obozy-zima-1280-3ffe8cdcab90.webp",
+    width: 1280,
+    height: 1920,
+    webpSrcSet:
+      "/images/generated/obozy-obozy-zima-480-c22f6160a335.webp 480w, /images/generated/obozy-obozy-zima-960-1fb8138510cb.webp 960w, /images/generated/obozy-obozy-zima-1280-3ffe8cdcab90.webp 1280w",
+    avifSrcSet:
+      "/images/generated/obozy-obozy-zima-480-e9cec0f3033b.avif 480w, /images/generated/obozy-obozy-zima-960-faee215db3cb.avif 960w, /images/generated/obozy-obozy-zima-1280-8890fbe14a8a.avif 1280w",
   },
   "skim-laczy.jpg": {
     src: "/images/generated/skim-laczy-888-3f14063ceff1.webp",

@@ -10,12 +10,14 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { campFaqItems } from "@/lib/faq";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
+import { publicPortalThemeOptions } from "@/lib/portal-theme/query-options";
 import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 
-const wakeparkCampImage = getLocalImage("obozy-wake.jpg");
-const summerCampImage = getLocalImage("obozy-lato-wakeboard.png");
-const winterCampImage = getLocalImage("obozy-zima.jpg");
+const summerHeroImage = getLocalImage("obozy/main-obozy-lato.jpg");
+const winterHeroImage = getLocalImage("obozy/main-obozy-zima.jpg");
+const summerCampImage = getLocalImage("obozy/obozy-lato-wakeboard.png");
+const winterCampImage = getLocalImage("obozy/obozy-zima.jpg");
 
 export const Route = createFileRoute("/obozy/")({
   head: () =>
@@ -30,6 +32,11 @@ export const Route = createFileRoute("/obozy/")({
 });
 
 function HalfDayCampsPage() {
+  const { data: theme = "original" } = useQuery({
+    ...publicPortalThemeOptions(),
+    enabled: typeof window !== "undefined",
+  });
+  const isWinter = theme === "winter";
   const {
     data: offers = [],
     isPending,
@@ -43,9 +50,13 @@ function HalfDayCampsPage() {
       <main className="flex-1">
         <section className="relative isolate overflow-hidden">
           <ResponsiveImage
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            image={wakeparkCampImage}
-            alt="Dziecko płynące na wakeboardzie podczas obozów VHSBOARD, obserwowane przez instruktora i grupę dzieci"
+            sizes="100vw"
+            image={isWinter ? winterHeroImage : summerHeroImage}
+            alt={
+              isWinter
+                ? "Zimowy obóz snowboardowy VHSBOARD w górach"
+                : "Letni obóz sportowy VHSBOARD nad wodą"
+            }
             className="absolute inset-0 -z-20 size-full object-cover"
           />
           <div className="absolute inset-0 -z-10 bg-foreground/65" />
@@ -97,10 +108,10 @@ function HalfDayCampsPage() {
                 loading="lazy"
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 image={winterCampImage}
-                alt="Uczestniczka obozu snowboardowego podczas zimowej jazdy w górach"
+                alt="Snowboardzista w czerwonej kurtce podczas zimowej jazdy w górach"
                 className="absolute inset-0 -z-20 size-full object-cover object-center"
               />
-              <div className="absolute inset-0 -z-10 bg-gradient-to-t from-foreground via-foreground/80 to-foreground/15" />
+              <div className="absolute inset-0 -z-10 bg-gradient-to-t from-foreground/50 via-foreground/40 to-foreground/[0.075]" />
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground">
                 Zima
               </p>
