@@ -138,7 +138,7 @@ function HomePage() {
                     {title}
                     <span
                       aria-hidden="true"
-                      className="inline-grid size-7 shrink-0 place-items-center rounded-full bg-interaction text-primary-foreground md:hidden"
+                      className="inline-grid size-7 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground md:hidden"
                     >
                       <ArrowUpRight className="size-4" />
                     </span>
