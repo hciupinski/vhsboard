@@ -134,7 +134,15 @@ function HomePage() {
                 <div
                   className={`topic-selector__content topic-selector__content--contrast topic-selector__content--flush-left topic-selector__content--safe-text-inset topic-selector__content--${index + 1}`}
                 >
-                  <h3 className="text-4xl leading-[0.9] sm:text-5xl">{title}</h3>
+                  <h3 className="flex items-center gap-3 text-4xl leading-[0.9] sm:text-5xl md:block">
+                    {title}
+                    <span
+                      aria-hidden="true"
+                      className="inline-grid size-7 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground md:hidden"
+                    >
+                      <ArrowUpRight className="size-4" />
+                    </span>
+                  </h3>
                   <div className="topic-selector__details">
                     <p className="mt-1 text-base leading-relaxed text-background md:mt-3 md:text-background/85">
                       {text}

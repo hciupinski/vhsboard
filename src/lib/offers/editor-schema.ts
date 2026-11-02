@@ -1,3 +1,4 @@
+import { contentSectionsShape, getSectionIssues, getContentIdentityIssues } from "./content-v2";
 import { z } from "zod";
 
 import type {
@@ -55,10 +56,6 @@ const optionalText = (maximum: number) =>
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
     z.string().trim().min(1).max(maximum).optional(),
   );
-
-const accommodationEditorSchema = z.object({
-  description: trimmedText("Opis zakwaterowania", 3, 1000),
-});
 
 const dateSchema = z.preprocess(
   (value) => (typeof value === "string" && value.trim() === "" ? null : value),
@@ -201,7 +198,7 @@ const tripEditorOfferInputSchema = z
           included: nonEmptyList,
           excluded: nonEmptyList,
           schedule: scheduleSchema,
-          accommodation: accommodationEditorSchema.optional(),
+          ...contentSectionsShape,
         },
         {
           required_error: "Uzupełnij opis oferty.",
@@ -269,6 +266,7 @@ const timeSchema = trimmedText("Godzina", 1, 120);
 
 const dayCampTermSchema = z
   .object({
+    id: z.string().uuid().optional(),
     label: trimmedText("Nazwa turnusu", 1, 120),
     startDate: textField("Data rozpoczęcia turnusu jest wymagana.")
       .trim()
@@ -319,7 +317,7 @@ const dayCampContentSchema = z.object({
     .array(dayCampTermSchema)
     .min(1, "Dodaj co najmniej jeden turnus.")
     .max(2, "Możesz dodać najwyżej dwa turnusy."),
-  accommodation: accommodationEditorSchema.optional(),
+  ...contentSectionsShape,
 });
 
 const daysInTerm = (startDate: string, endDate: string): number =>
@@ -394,6 +392,12 @@ export const editorOfferInputSchema = z.preprocess(
       const result = schemaForOfferKind(value).safeParse(value);
       if (!result.success) {
         for (const issue of result.error.issues) ctx.addIssue(issue);
+      } else {
+        for (const issue of getContentIdentityIssues(
+          result.data.content,
+          result.data.offerKind ?? "trip",
+        ))
+          ctx.addIssue({ ...issue, path: ["content", ...issue.path] });
       }
     })
     .transform((value) => schemaForOfferKind(value).parse(value)),
@@ -503,4 +507,18 @@ export function changeEditableOfferKind(
     priceFrom: 0,
     bookingUrl: "",
   };
+}
+
+export function validateOfferForPublication(input: EditableOfferInput) {
+  const base = editorOfferInputSchema.safeParse(input);
+  if (!base.success) return base;
+  const issues = getSectionIssues(base.data.content, base.data.offerKind ?? "trip");
+  return issues.length
+    ? {
+        success: false as const,
+        error: new z.ZodError(
+          issues.map((issue) => ({ ...issue, path: ["content", ...issue.path] })),
+        ),
+      }
+    : base;
 }

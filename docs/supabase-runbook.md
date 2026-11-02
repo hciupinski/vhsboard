@@ -174,3 +174,91 @@ Testy `supabase/tests/portal_settings_security.sql` sprawdzają anonimowy
 odczyt, brak zapisu dla anon i zwykłego konta, admin-only UPDATE, ograniczenie
 wartości oraz ochronę singletona. Test kończy się ROLLBACK i nie zapisuje
 trwale wybranego motywu.
+
+## Offer sections v2 rollout (VHS-020 / VHS-020a)
+
+Apply `supabase/migrations/20261102120000_add_offer_content_sections.sql` after all
+previous migrations, before deploying the matching frontend. It adds v2 validators,
+protects against legacy CMS overwrites and creates the resort-map category, unique
+index and replacement RPC. It does not enable optional sections or add commercial
+insurance/transport content to existing offers.
+
+Old offers are not bulk rewritten. Opening and saving in the new CMS writes v2;
+camp term UUIDs are generated once and preserved. Older tabs attempting to save a
+v2 offer receive “Odśwież CMS przed zapisaniem oferty.” Refresh before editing again.
+To hide an optional section, disable its switch; do not delete its content or images.
+An incomplete enabled section can be saved in a draft but cannot be published.
+
+The map RPC requires an existing object in the same offer folder and valid alt text.
+It serializes replacements with a row lock. Cleanup failure is recoverable through
+the existing CMS retry action, which checks references again before deleting. A
+network failure during replacement requires refetching metadata before retrying;
+never manually remove a currently referenced object. Maps cannot be hero images.
+
+Run the existing `supabase/tests/cms_security.sql` and the new
+`supabase/tests/offer_content_sections.sql` against a local/disposable database with
+all migrations applied and pgTAP available. Both files use transactions and roll back
+their fixtures. The new suite verifies optional Transport, disabled accommodation,
+direct-API publication validation, version protection and map permissions. Never run
+QA fixture publication against production. Roll back a deployment by retaining the
+forward database migration; do not drop v2 JSON data to make an old CMS writable.
+
+## Odzyskiwanie hasła administratora
+
+Ekran `/admin/login` zawiera link „Nie pamiętasz hasła?”. Trasa
+`/admin/reset-password` wysyła natywny mail Supabase i po otwarciu ważnego linku
+pozwala ustawić nowe hasło. Wszystkie trasy pozostają `noindex, nofollow`.
+Frontend używa wyłącznie publicznego klucza; Supabase Auth autoryzuje zmianę
+własnego hasła. Reset nie tworzy kont ani nie nadaje roli administratora.
+
+### Konfiguracja hostowanego projektu Supabase
+
+W **Authentication → URL Configuration → Redirect URLs** dodaj dokładne adresy,
+zachowując dotychczasowe wpisy:
+
+```text
+https://vhsboard.pages.dev/admin/reset-password
+http://localhost:3000/admin/reset-password
+http://127.0.0.1:3000/admin/reset-password
+```
+
+Pozostaw produkcyjny **Site URL** `https://vhsboard.pages.dev` jako domyślny.
+Nie przełączaj globalnego Site URL na localhost. Po zmianie domeny produkcyjnej
+zaktualizuj również jej dokładny adres odzyskiwania. Wysyłka z aplikacji podaje
+bieżący origin w `redirectTo`; Supabase dopuszcza tylko adresy ze swojej listy.
+Lokalny `supabase/config.toml` zawiera analogiczne adresy lokalne i wymaga restartu
+lokalnego Auth, by nowe wpisy zaczęły obowiązywać. Ten plik nie aktualizuje
+automatycznie konfiguracji hostowanego projektu; nie używaj całego lokalnego pliku
+jako konfiguracji produkcyjnej.
+
+Link z Dashboardu może wracać na domyślną stronę główną. Wczesny listener klienta
+wychwytuje `PASSWORD_RECOVERY` i kieruje użytkownika do ekranu nowego hasła.
+Tak samo obsługiwany jest błąd `otp_expired` z fragmentu adresu: użytkownik widzi
+wyjaśnienie i formularz wysłania nowego linku, bez ujawniania surowego opisu błędu.
+Nie można odzyskać ważności zużytego tokenu. Używaj najnowszej wiadomości; jeżeli
+linki wygasają przed pierwszym kliknięciem, sprawdź logi Auth i skanowanie linków
+przez pocztę. Implementacja nie zmienia szablonów maili ani reguł antyspamowych.
+
+### Zachowanie aplikacji
+
+- Kontekst odzyskiwania zapisuje tylko UUID użytkownika i termin ważności w
+  `sessionStorage` (do 30 minut i nie dłużej niż sesja). To stan interfejsu,
+  nie dodatkowe uprawnienie; `getUser` weryfikuje tożsamość po stronie Auth.
+- Zwykła zalogowana sesja bez kontekstu odzyskiwania pokazuje formularz wysyłki.
+  Nowy formularz wymaga zgodnych haseł długości co najmniej 8 znaków, nie przycina
+  spacji i respektuje dodatkowe wymagania serwera.
+- Błędy sieci pozwalają ponowić sprawdzenie lub zapis. Po sukcesie zmiany aplikacja
+  usuwa kontekst i wywołuje `signOut({ scope: "global" })`, odwołując sesje Auth,
+  a następnie prowadzi do zwykłego logowania z kontrolą `profiles.role` i RLS.
+- Jeżeli pierwsza weryfikacja callbacku nie powiedzie się z powodu chwilowej
+  awarii Auth lub sieci, zachowujemy oryginalny fragment adresu do ponowienia
+  przez przycisk „Odśwież i ponów”. Nie kopiujemy tokenów do własnego magazynu
+  ani parametrów query. Po poprawnej inicjalizacji fragment usuwa SDK.
+- Błąd wylogowania po skutecznej zmianie hasła jest osobnym ostrzeżeniem. Nie
+  sugerujemy wtedy, że hasło nie zostało zapisane.
+- Tokeny nie trafiają do własnych logów ani query parametrów. SDK przechowuje
+  sesję swoim standardowym mechanizmem; aplikacja nie kopiuje jej tokenów.
+
+Opis API: [resetPasswordForEmail](https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail),
+[updateUser](https://supabase.com/docs/reference/javascript/auth-updateuser),
+[Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls).

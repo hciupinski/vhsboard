@@ -13,6 +13,11 @@ type HeroCarouselProps = {
   images: readonly PortalCarouselImage[];
 };
 
+const mobileImageClasses: Readonly<Record<string, string>> = {
+  "carousel/3karuzela_surf.png": "object-[75%_center] md:object-center",
+  "carousel/4eventy_karuzela.png": "object-[68%_center] md:object-center",
+};
+
 const HeroCarousel = ({ images }: HeroCarouselProps) => {
   const [api, setApi] = React.useState<CarouselApi>();
 
@@ -52,17 +57,19 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
             {image.responsive ? (
               <ResponsiveImage
                 image={image.responsive}
-                sizes="100vw"
+                sizes={
+                  mobileImageClasses[image.path] ? "(max-width: 767px) 1600px, 100vw" : "100vw"
+                }
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
                 alt=""
-                className="h-full w-full object-cover"
+                className={`h-full w-full object-cover ${mobileImageClasses[image.path] ?? ""}`}
                 data-testid="hero-carousel-slide"
               />
             ) : (
               <img
                 alt=""
-                className="h-full w-full object-cover"
+                className={`h-full w-full object-cover ${mobileImageClasses[image.path] ?? ""}`}
                 data-testid="hero-carousel-slide"
                 src={image.src}
                 loading={index === 0 ? "eager" : "lazy"}

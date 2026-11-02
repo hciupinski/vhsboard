@@ -16,6 +16,7 @@ import { createPageMetadata } from "@/lib/seo";
 
 const summerHeroImage = getLocalImage("obozy/main-obozy-lato.jpg");
 const winterHeroImage = getLocalImage("obozy/main-obozy-zima.jpg");
+const winterWideHeroImage = getLocalImage("carousel/2karuzela_oboz1.png");
 const summerCampImage = getLocalImage("obozy/obozy-lato-wakeboard.png");
 const winterCampImage = getLocalImage("obozy/obozy-zima.jpg");
 
@@ -48,10 +49,13 @@ function HalfDayCampsPage() {
       <PublicHeader />
       <PublicJsonLd path="/obozy" label="Obozy" />
       <main className="flex-1">
-        <section className="relative isolate overflow-hidden">
+        <section className="relative isolate overflow-hidden lg:flex lg:min-h-[36.5rem] lg:items-center">
           <ResponsiveImage
             sizes="100vw"
             image={isWinter ? winterHeroImage : summerHeroImage}
+            artDirection={
+              isWinter ? [{ media: "(min-width: 1024px)", image: winterWideHeroImage }] : []
+            }
             alt={
               isWinter
                 ? "Zimowy obóz snowboardowy VHSBOARD w górach"
@@ -60,7 +64,7 @@ function HalfDayCampsPage() {
             className="absolute inset-0 -z-20 size-full object-cover"
           />
           <div className="absolute inset-0 -z-10 bg-foreground/65" />
-          <div className="mx-auto max-w-6xl px-5 py-24 sm:py-36">
+          <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:py-36">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
               Dla dzieci
             </p>

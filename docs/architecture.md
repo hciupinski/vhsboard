@@ -117,3 +117,37 @@ GitHub; repository files alone do not prove they are enabled.
 Keep this architecture small. No separate backend, queues, asset platform, or
 booking feature is needed for the current product. See the
 [deployment runbook](deployment-runbook.md) for logs and operational checks.
+
+## Structured offer sections (VHS-020 / VHS-020a)
+
+The editor normalizes saved content to `schemaVersion: 2`. Legacy offers remain
+readable without new blocks. A database trigger rejects overwriting v2 with a
+legacy payload, prompting an older CMS tab to refresh before saving.
+
+The shared section registry in `src/lib/offers/sections.ts` controls CMS tabs,
+public menu order and visibility: About → Program → Price → Accommodation →
+Resort → Training → Transport → Insurance → Gallery. Program retains the existing
+schedule, Price includes camp terms, and camp parent information belongs to About.
+Existing nested hash anchors continue working.
+
+Accommodation, Resort, Training, Transport and Insurance are optional. Switching
+one off preserves its content and images, hides its public section and skips its
+publication completeness checks. Drafts may contain incomplete new sections;
+published offers require complete enabled sections in both frontend and SQL.
+Storage metadata, safe links, structural limits and price bounds remain validated.
+
+Camp terms gain stable UUIDs on first edit. Transport has shared mode/copy and a
+journey per term UUID; reordering or renaming never changes the assignment. Deleting
+a term removes its journey from the next saved payload. Own travel requires no
+invented dates. The old parent transport paragraph stays editable and visible in
+About until the new Transport section is enabled, avoiding silent loss or duplicate
+public copy. New insurance packages/extensions are descriptive only; the site does
+not select packages or implement bookings.
+
+The optional resort trail map uses a separate `resort_map` image category, excluded
+from hero and gallery selection. A partial unique index permits one map per offer.
+The administrator-only `replace_offer_resort_map` RPC locks the offer row and
+atomically replaces metadata after upload; the old object is cleaned only after
+success and reference checks. Failed cleanup exposes a safe retry. An uncertain
+RPC response must never cause deletion of a referenced new map. Normal private
+Storage, signed URL TTL and RLS boundaries apply.

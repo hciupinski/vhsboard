@@ -1,11 +1,9 @@
+import { contentSectionsShape, getSectionIssues } from "./content-v2";
 import { z } from "zod";
 
 const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const optionalGroupSizeSchema = z.number().int().min(1).max(99).nullable();
 const requiredTextSchema = z.string().trim().min(1);
-const accommodationContentSchema = z.object({
-  description: requiredTextSchema.min(3).max(1000),
-});
 const bookingUrlSchema = z
   .string()
   .url()
@@ -24,7 +22,7 @@ export const offerContentSchema = z.object({
       text: requiredTextSchema,
     }),
   ),
-  accommodation: accommodationContentSchema.optional(),
+  ...contentSectionsShape,
 });
 
 export const dayCampContentSchema = z.object({
@@ -47,6 +45,7 @@ export const dayCampContentSchema = z.object({
     .array(
       z
         .object({
+          id: z.string().uuid().optional(),
           label: requiredTextSchema,
           startDate: dateSchema,
           endDate: dateSchema,
@@ -71,7 +70,7 @@ export const dayCampContentSchema = z.object({
     )
     .min(1)
     .max(2),
-  accommodation: accommodationContentSchema.optional(),
+  ...contentSectionsShape,
 });
 
 const offerBaseRowSchema = z.object({
@@ -134,7 +133,11 @@ const validateOfferDetailRow = (
     });
 };
 
-export const offerDetailRowSchema = offerDetailRowShape.superRefine(validateOfferDetailRow);
+export const offerDetailRowSchema = offerDetailRowShape.superRefine((offer, ctx) => {
+  validateOfferDetailRow(offer, ctx);
+  for (const issue of getSectionIssues(offer.description, offer.offer_kind))
+    ctx.addIssue({ ...issue, path: ["description", ...issue.path] });
+});
 
 export const adminPreviewOfferDetailRowSchema = offerDetailRowShape
   .extend({ status: z.enum(["draft", "published", "archived"]) })
@@ -145,7 +148,7 @@ export const offerImageRowSchema = z.object({
   offer_id: z.string().uuid(),
   storage_path: z.string().trim().min(1),
   alt_text: z.string().trim().min(5).max(180),
-  category: z.enum(["gallery", "accommodation"]).default("gallery"),
+  category: z.enum(["gallery", "accommodation", "resort_map"]).default("gallery"),
   position: z.number().int().nonnegative(),
 });
 

@@ -62,7 +62,7 @@ const validateGroupSize = (offer: OfferListRow | AdminPreviewOfferDetailRow): vo
 };
 
 const validateImageOrder = (images: OfferImageRow[], offerId: string): void => {
-  for (const category of ["gallery", "accommodation"] as const) {
+  for (const category of ["gallery", "accommodation", "resort_map"] as const) {
     const categoryImages = images.filter((image) => image.category === category);
     for (let index = 0; index < categoryImages.length; index += 1) {
       const image = categoryImages[index];
@@ -116,6 +116,9 @@ const mapOffer = (
     heroImageUrl: toSignedUrlOrNull(row.hero_image, signedUrls),
     images: images.filter((image) => image.category === "gallery"),
     accommodationImages: images.filter((image) => image.category === "accommodation"),
+    ...(images.some((image) => image.category === "resort_map")
+      ? { resortMap: images.find((image) => image.category === "resort_map") ?? null }
+      : {}),
   };
 
   if (row.offer_kind === "day_camp") {

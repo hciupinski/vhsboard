@@ -11,7 +11,7 @@ let resize: () => void;
 beforeEach(() => {
   vi.useFakeTimers();
   headerHeight = 61;
-  sectionTops = { "o-wyjezdzie": 300, program: 600, "plan-wyjazdu": 900 };
+  sectionTops = { "o-wyjezdzie": 300, program: 600, "w-cenie": 900 };
   vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) =>
     window.setTimeout(() => callback(0), 1),
   );
@@ -124,7 +124,7 @@ describe("TripSectionNavigation", () => {
       "aria-current",
       "location",
     );
-    sectionTops = { "o-wyjezdzie": -400, program: 130, "plan-wyjazdu": 500 };
+    sectionTops = { "o-wyjezdzie": -400, program: 130, "w-cenie": 500 };
     fireEvent.scroll(window);
     act(() => vi.advanceTimersByTime(10));
     expect(screen.getByRole("link", { name: "W programie" })).toHaveAttribute(
@@ -132,7 +132,7 @@ describe("TripSectionNavigation", () => {
       "location",
     );
     expect(screen.getByRole("link", { name: "O wyjeździe" })).not.toHaveAttribute("aria-current");
-    sectionTops = { "o-wyjezdzie": 130, program: 600, "plan-wyjazdu": 900 };
+    sectionTops = { "o-wyjezdzie": 130, program: 600, "w-cenie": 900 };
     fireEvent.scroll(window);
     act(() => vi.advanceTimersByTime(10));
     expect(screen.getByRole("link", { name: "O wyjeździe" })).toHaveAttribute(
@@ -156,10 +156,7 @@ describe("TripSectionNavigation", () => {
     vi.spyOn(document.documentElement, "scrollHeight", "get").mockReturnValue(window.innerHeight);
     fireEvent.scroll(window);
     act(() => vi.advanceTimersByTime(10));
-    expect(screen.getByRole("link", { name: "Plan wyjazdu" })).toHaveAttribute(
-      "aria-current",
-      "location",
-    );
+    expect(screen.getByRole("link", { name: "Cena" })).toHaveAttribute("aria-current", "location");
   });
 
   it("reveals the active link within its row when the viewport narrows", () => {

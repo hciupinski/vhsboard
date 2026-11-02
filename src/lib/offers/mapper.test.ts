@@ -50,6 +50,13 @@ const completeImageRows = [
 ];
 
 describe("offer row mappers", () => {
+  it("maps resort maps separately and safely omits their missing signed URL", () => {
+    const image = { ...completeImageRows[0]!, category: "resort_map" };
+    const mapped = mapOfferDetailRow(completeOfferRow, [image], new Map());
+    expect(mapped.images).toEqual([]);
+    expect(mapped.accommodationImages).toEqual([]);
+    expect(mapped.resortMap).toMatchObject({ category: "resort_map", signedUrl: null });
+  });
   it("maps a published day camp without exposing trip-only group limits", () => {
     const row = {
       ...completeOfferRow,

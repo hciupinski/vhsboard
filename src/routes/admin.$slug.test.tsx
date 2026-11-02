@@ -78,6 +78,7 @@ const completeInput: EditableOfferInput = {
   subtitle: "Siedem dni w Ericeirze.",
   shortDescription: "Poranne sesje, dobry surf house i kolacje po wodzie.",
   content: {
+    schemaVersion: 2,
     paragraphs: ["Tekst o wyjeździe."],
     highlights: ["Dwie sesje dziennie"],
     included: ["Nocleg"],
@@ -201,11 +202,11 @@ const fillEditor = async (value: EditableOfferInput) => {
   await user.click(screen.getByRole("tab", { name: "W programie" }));
   setValue("W programie 1", required(value.content.highlights[0]));
 
-  await user.click(screen.getByRole("tab", { name: "Co jest w cenie" }));
+  await user.click(screen.getByRole("tab", { name: "Cena" }));
   setValue("W cenie 1", required(value.content.included[0]));
   setValue("Poza ceną 1", required(value.content.excluded[0]));
 
-  await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
+  await user.click(screen.getByRole("tab", { name: "W programie" }));
   setValue("Dzień 1 — nazwa", required(value.content.schedule[0]).day);
   setValue("Dzień 1 — opis", required(value.content.schedule[0]).text);
 };
@@ -341,7 +342,7 @@ describe("admin offer editor route", () => {
     await user.click(await screen.findByRole("button", { name: "Ustaw testowy obraz główny" }));
 
     expect(await screen.findByText("Zarchiwizowana")).toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "Podstawy" }));
+    await user.click(screen.getByRole("tab", { name: "Dane oferty" }));
     expect(screen.getByLabelText("Tytuł wyjazdu")).toHaveValue("Tytuł zapisany tylko w formularzu");
   });
 
@@ -468,6 +469,35 @@ describe("admin offer editor route", () => {
     await user.click(publishButton);
     expect(mockedUpdateOffer).not.toHaveBeenCalled();
     expect(mockedSetOfferStatus).not.toHaveBeenCalled();
+  });
+
+  it("refreshes publication readiness after disabling an incomplete saved section", async () => {
+    const user = userEvent.setup();
+    let saved = {
+      ...readyDraftOffer,
+      content: {
+        ...readyDraftOffer.content,
+        training: { enabled: true, description: "", items: [] },
+      },
+    };
+    mockedGetAdminOffer.mockImplementation(async () => saved);
+    mockedCanPublishOffer.mockImplementation(async () => !saved.content.training.enabled);
+    mockedUpdateOffer.mockImplementation(async (_id, input) => {
+      saved = { ...saved, ...input } as typeof saved;
+      return saved;
+    });
+    await renderAdminEditor({ slug: saved.slug });
+    await waitFor(() => expect(mockedCanPublishOffer).toHaveBeenCalled());
+    expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
+    expect(
+      screen.getByText("Uzupełnij lub wyłącz opcjonalne sekcje i zapisz szkic przed publikacją."),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: /^Szkolenia/ }));
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    await user.click(screen.getByRole("button", { name: "Zapisz szkic" }));
+    await waitFor(() => expect(mockedUpdateOffer).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+    expect(mockedCanPublishOffer.mock.calls.length).toBeGreaterThan(1);
   });
 
   it("enables publishing for a complete persisted offer with ready hero metadata", async () => {

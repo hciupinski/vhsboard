@@ -1,3 +1,4 @@
+import { normalizeOfferContentV2, getSectionIssues } from "@/lib/offers/content-v2";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import {
   createEmptyEditableOfferInput,
   editorOfferInputSchema,
+  validateOfferForPublication,
   getEditorFieldErrors,
   type EditableOffer,
   type EditableOfferInput,
@@ -46,7 +48,10 @@ const publishReadinessMessage = "Dodaj obraz główny z opisem alternatywnym prz
 const readinessCheckErrorMessage =
   "Nie udało się sprawdzić gotowości oferty. Odśwież stronę i spróbuj ponownie.";
 
-const toEditableInput = ({ id: _id, status: _status, ...input }: EditableOffer) => input;
+const toEditableInput = ({ id: _id, status: _status, ...input }: EditableOffer) => ({
+  ...input,
+  content: normalizeOfferContentV2(input.content, input.offerKind ?? "trip"),
+});
 
 const getAdminOffer = async (slug: string) => {
   const repository = await import("@/lib/offers/admin-repository");
@@ -129,7 +134,7 @@ function OfferEditorContent() {
   });
   const isSubmitting =
     createMutation.isPending || updateMutation.isPending || statusMutation.isPending;
-  const formValidation = editorOfferInputSchema.safeParse(formValue);
+  const formValidation = validateOfferForPublication(formValue);
   const isFormValid = formValidation.success;
   const canPublish =
     !isNew &&
@@ -137,19 +142,26 @@ function OfferEditorContent() {
     isFormValid &&
     !readinessQuery.isError &&
     readinessQuery.data === true;
+  const persistedSectionsIncomplete =
+    persistedOffer !== null &&
+    getSectionIssues(persistedOffer.content, persistedOffer.offerKind ?? "trip").length > 0;
   const readiness = readinessQuery.isError
     ? "error"
     : readinessQuery.data === false
-      ? "missing_images"
+      ? persistedSectionsIncomplete
+        ? "incomplete_content"
+        : "missing_images"
       : null;
   const visibleError =
     actionError ??
     (!isNew && persistedOffer !== null && currentStatus === "draft"
       ? readiness === "error"
         ? readinessCheckErrorMessage
-        : readiness === "missing_images"
-          ? publishReadinessMessage
-          : null
+        : readiness === "incomplete_content"
+          ? "Uzupełnij lub wyłącz opcjonalne sekcje i zapisz szkic przed publikacją."
+          : readiness === "missing_images"
+            ? publishReadinessMessage
+            : null
       : null);
   // Stable diagnostics avoid repeating the same warning on every keystroke.
   // Only field paths and validation messages are logged, never form values or raw API errors.
@@ -170,7 +182,10 @@ function OfferEditorContent() {
   }, [publishDiagnostics]);
 
   const validateForm = () => {
-    const result = editorOfferInputSchema.safeParse(formValue);
+    const result =
+      currentStatus === "published"
+        ? validateOfferForPublication(formValue)
+        : editorOfferInputSchema.safeParse(formValue);
     if (!result.success) {
       setFieldErrors(getEditorFieldErrors(result.error));
       setActionError("Popraw oznaczone pola przed zapisaniem oferty.");
@@ -235,6 +250,7 @@ function OfferEditorContent() {
     setFormValue(toEditableInput(offer));
     setSaved(true);
     await invalidateAdminCaches(offer.slug);
+    await queryClient.invalidateQueries({ queryKey: ["admin-offer-publish-readiness", offer.id] });
     return offer;
   };
 
@@ -393,8 +409,12 @@ function OfferEditorContent() {
           disabled={isSubmitting || currentStatus === "archived"}
           onChange={(value) => {
             isFormDirty.current = true;
-            setFormValue(value);
-            setFieldErrors((current) => getLiveFieldErrors(formValue, value, current));
+            const next = {
+              ...value,
+              content: normalizeOfferContentV2(value.content, value.offerKind ?? "trip"),
+            };
+            setFormValue(next);
+            setFieldErrors((current) => getLiveFieldErrors(formValue, next, current));
             setActionError(null);
             setSaved(false);
           }}
@@ -408,6 +428,21 @@ function OfferEditorContent() {
                 onImagesChanged={invalidateImageDependentCaches}
               />
             ) : undefined
+          }
+          resortMapManager={
+            persistedOffer ? (
+              <OfferImageManager
+                offerId={persistedOffer.id}
+                heroImagePath={null}
+                category="resort_map"
+                disabled={isSubmitting || currentStatus === "archived"}
+                onImagesChanged={invalidateImageDependentCaches}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Najpierw zapisz szkic, aby dodać mapę resortu.
+              </p>
+            )
           }
           accommodationImageManager={
             persistedOffer ? (

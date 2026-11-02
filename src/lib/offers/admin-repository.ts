@@ -1,3 +1,4 @@
+import { getSectionIssues } from "./content-v2";
 import { supabase } from "../supabase";
 import { z } from "zod";
 import { mapAdminPreviewOfferDetailRow } from "./mapper";
@@ -38,6 +39,12 @@ const throwRepositoryError = (error: unknown, message: string): never => {
 };
 
 const throwMutationError = (error: unknown, message: string): never => {
+  if (
+    isRecord(error) &&
+    typeof error["message"] === "string" &&
+    error["message"].includes("Odśwież CMS")
+  )
+    throw new OfferRepositoryError("Odśwież CMS przed zapisaniem oferty.", { cause: error });
   if (isDuplicateSlugError(error)) {
     throw new OfferRepositoryError("Taki adres oferty już istnieje", { cause: error });
   }
@@ -280,7 +287,9 @@ export const canPublishOffer = async (id: string): Promise<boolean> => {
       return false;
     }
 
-    const { heroImagePath } = toEditableOfferInput(offerData);
+    const editable = toEditableOfferInput(offerData);
+    if (getSectionIssues(editable.content, editable.offerKind ?? "trip").length) return false;
+    const { heroImagePath } = editable;
     if (heroImagePath === null) {
       return false;
     }
@@ -308,6 +317,7 @@ export const canPublishOffer = async (id: string): Promise<boolean> => {
     const accommodationEnabled =
       isRecord(content) &&
       isRecord(content["accommodation"]) &&
+      content["accommodation"]["enabled"] !== false &&
       typeof content["accommodation"]["description"] === "string";
     if (!accommodationEnabled) return true;
 

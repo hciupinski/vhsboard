@@ -5,6 +5,7 @@ import {
   changeEditableOfferKind,
   createEmptyEditableOfferInput,
   editorOfferInputSchema,
+  validateOfferForPublication,
   getEditorFieldErrors,
   normalizeEditableOfferInput,
   type EditableOfferInput,
@@ -186,9 +187,9 @@ describe("editor offer input schema", () => {
     ).toBe(true);
   });
 
-  it("rejects an enabled accommodation section with a too-short description", () => {
+  it("rejects publication of enabled accommodation with a too-short description", () => {
     expect(
-      editorOfferInputSchema.safeParse({
+      validateOfferForPublication({
         ...completeInput,
         content: { ...completeInput.content, accommodation: { description: "  " } },
       }).success,

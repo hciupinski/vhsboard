@@ -150,8 +150,7 @@ describe("trip section navigation integration", () => {
     expect(links.map((link) => link.textContent)).toEqual([
       "O wyjeździe",
       "W programie",
-      "Plan wyjazdu",
-      "Co jest w cenie",
+      "Cena",
       "Galeria",
     ]);
     for (const link of links) {
@@ -178,7 +177,7 @@ describe("trip section navigation integration", () => {
       within(navigation)
         .getAllByRole("link")
         .map((link) => link.textContent),
-    ).toEqual(["Co jest w cenie"]);
+    ).toEqual(["Cena"]);
     expect(screen.queryByRole("heading", { name: "Galeria" })).not.toBeInTheDocument();
   });
 

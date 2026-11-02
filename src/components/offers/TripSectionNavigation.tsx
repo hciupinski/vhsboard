@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-type OfferSection = { id: string; label: string };
+type OfferSection = { id: string; label: string; aliases?: readonly string[] };
 
 export function TripSectionNavigation({
   sections,
@@ -70,7 +70,10 @@ export function TripSectionNavigation({
     let disposed = false;
     let alignmentFrame = 0;
     const initialHash = window.location.hash;
-    const hashSection = sections.find(({ id }) => `#${id}` === initialHash);
+    const hashSection = sections.find(
+      ({ id, aliases }) =>
+        `#${id}` === initialHash || aliases?.some((alias) => `#${alias}` === initialHash),
+    );
     const cancelInitialAlignment = () => {
       initialHashAligned.current = true;
     };
@@ -88,7 +91,9 @@ export function TripSectionNavigation({
         alignmentFrame = window.requestAnimationFrame(() => {
           if (disposed || initialHashAligned.current || window.location.hash !== initialHash)
             return;
-          const target = document.getElementById(hashSection.id);
+          const target =
+            document.getElementById(initialHash.slice(1)) ??
+            document.getElementById(hashSection.id);
           measure();
           target?.scrollIntoView({ behavior: "instant", block: "start" });
           target?.focus({ preventScroll: true });

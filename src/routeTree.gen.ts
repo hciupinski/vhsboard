@@ -21,6 +21,7 @@ import { Route as AdminSlugRouteImport } from './routes/admin.$slug'
 import { Route as AdminDokumentyRouteImport } from './routes/admin.dokumenty'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminPortalRouteImport } from './routes/admin.portal'
+import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as ObozyIndexRouteImport } from './routes/obozy.index'
 import { Route as ObozySlugRouteImport } from './routes/obozy.$slug'
 import { Route as TripsSlugRouteImport } from './routes/trips.$slug'
@@ -87,6 +88,11 @@ const AdminPortalRoute = AdminPortalRouteImport.update({
   path: '/admin/portal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
+  id: '/admin/reset-password',
+  path: '/admin/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ObozyIndexRoute = ObozyIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/portal': typeof AdminPortalRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/portal': typeof AdminPortalRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/admin/dokumenty': typeof AdminDokumentyRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/portal': typeof AdminPortalRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/obozy/$slug': typeof ObozySlugRoute
   '/trips/$slug': typeof TripsSlugRoute
   '/wyjazdy/$slug': typeof WyjazdySlugRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/admin/dokumenty'
     | '/admin/login'
     | '/admin/portal'
+    | '/admin/reset-password'
     | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/admin/dokumenty'
     | '/admin/login'
     | '/admin/portal'
+    | '/admin/reset-password'
     | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/admin/dokumenty'
     | '/admin/login'
     | '/admin/portal'
+    | '/admin/reset-password'
     | '/obozy/$slug'
     | '/trips/$slug'
     | '/wyjazdy/$slug'
@@ -241,6 +253,7 @@ export interface RootRouteChildren {
   AdminDokumentyRoute: typeof AdminDokumentyRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminPortalRoute: typeof AdminPortalRoute
+  AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   TripsSlugRoute: typeof TripsSlugRoute
   WyjazdySlugRoute: typeof WyjazdySlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -333,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPortalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/reset-password': {
+      id: '/admin/reset-password'
+      path: '/admin/reset-password'
+      fullPath: '/admin/reset-password'
+      preLoaderRoute: typeof AdminResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/obozy/': {
       id: '/obozy/'
       path: '/'
@@ -395,6 +415,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDokumentyRoute: AdminDokumentyRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminPortalRoute: AdminPortalRoute,
+  AdminResetPasswordRoute: AdminResetPasswordRoute,
   TripsSlugRoute: TripsSlugRoute,
   WyjazdySlugRoute: WyjazdySlugRoute,
   AdminIndexRoute: AdminIndexRoute,
