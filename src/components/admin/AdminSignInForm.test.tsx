@@ -31,6 +31,27 @@ beforeEach(() => {
 });
 
 describe("AdminSignInForm", () => {
+  it("submits visible autofilled credentials even without input events", async () => {
+    mockedSession.signInWithPassword.mockResolvedValue(undefined);
+    mockedSession.getAdminSession.mockResolvedValue({
+      userId: "user-1",
+      email: "admin@example.test",
+      role: "admin",
+    });
+    const onSuccess = vi.fn();
+    const user = userEvent.setup();
+    render(<AdminSignInForm onSuccess={onSuccess} />);
+    // Password managers can update DOM values without updating React state.
+    (screen.getByLabelText("E-mail") as HTMLInputElement).value = "admin@example.test";
+    (screen.getByLabelText("Hasło") as HTMLInputElement).value = "  saved-password  ";
+    await user.click(screen.getByRole("button", { name: "Zaloguj się" }));
+    expect(mockedSession.signInWithPassword).toHaveBeenCalledWith(
+      "admin@example.test",
+      "  saved-password  ",
+    );
+    expect(onSuccess).toHaveBeenCalledWith("/admin");
+  });
+
   it("labels fields and prevents a second submission while the first is pending", async () => {
     let resolveSignIn: (() => void) | undefined;
     mockedSession.signInWithPassword.mockReturnValue(
