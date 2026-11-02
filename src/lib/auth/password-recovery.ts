@@ -1,5 +1,11 @@
 import { clearRecoveryMarker, readRecoveryMarker, recoveryPath } from "./recovery-bootstrap";
 
+const isRetryableAuthFailure = (error: { status?: number; name?: string }) =>
+  error.name === "AuthRetryableFetchError" ||
+  error.status === 0 ||
+  error.status === 429 ||
+  (error.status !== undefined && error.status >= 500);
+
 const getClient = async () => (await import("../supabase")).supabase;
 export type PasswordRecoveryState = "request" | "ready" | "expired" | "invalid" | "error";
 export class PasswordRecoveryError extends Error {
@@ -45,13 +51,14 @@ export async function getPasswordRecoveryState(): Promise<PasswordRecoveryState>
       clearRecoveryMarker();
       return "expired";
     }
+    if (sessionError && isRetryableAuthFailure(sessionError)) return "error";
     if (sessionError || !data.session) {
       clearRecoveryMarker();
       return "invalid";
     }
     const { data: userData, error: userError } = await client.auth.getUser();
     if (userError) {
-      if (userError.status && userError.status >= 500) return "error";
+      if (isRetryableAuthFailure(userError)) return "error";
       clearRecoveryMarker();
       return "invalid";
     }

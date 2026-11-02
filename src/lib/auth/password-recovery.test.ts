@@ -65,6 +65,18 @@ describe("password recovery API", () => {
     expect(await getPasswordRecoveryState()).toBe("error");
     expect(sessionStorage.getItem("vhsboard-password-recovery")).not.toBeNull();
   });
+  it.each(["getSession", "getUser"] as const)(
+    "retains recovery for a retryable %s network failure",
+    async (method) => {
+      mark();
+      auth[method].mockResolvedValue({
+        data: { session: null, user: null },
+        error: { name: "AuthRetryableFetchError", status: 0 },
+      });
+      expect(await getPasswordRecoveryState()).toBe("error");
+      expect(sessionStorage.getItem("vhsboard-password-recovery")).not.toBeNull();
+    },
+  );
   it("preserves password bytes, consumes recovery context and clears the local session", async () => {
     mark();
     expect(await updateRecoveredPassword("  new-password  ")).toEqual({ sessionCleared: true });

@@ -85,6 +85,12 @@ export function AdminSignInForm({ next, onSuccess }: AdminSignInFormProps) {
           onChange={(event) => setPassword(event.target.value)}
         />
       </div>
+      <a
+        href="/admin/reset-password"
+        className="inline-block text-sm font-semibold underline underline-offset-4 hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        Nie pamiętasz hasła?
+      </a>
       {errorKind ? (
         <p
           role="alert"
