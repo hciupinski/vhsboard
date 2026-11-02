@@ -175,6 +175,20 @@ odczyt, brak zapisu dla anon i zwykłego konta, admin-only UPDATE, ograniczenie
 wartości oraz ochronę singletona. Test kończy się ROLLBACK i nie zapisuje
 trwale wybranego motywu.
 
+## Production CLI target
+
+The production workflow pins Supabase CLI to `3.0.0` and logs its version.
+CLI v3 defaults database commands to the local stack even after `supabase link`.
+Both migration steps explicitly select the linked production project:
+`supabase db push --remote --dry-run`, then `supabase db push --remote --yes`.
+The second command supplies the hosted-change confirmation required in CI.
+The `production` environment, main-only guard and database-before-frontend job
+dependency remain in place. Review CLI release notes before changing the pin.
+After merging a workflow fix, use the deployment run for the new main commit;
+rerunning an older failed run still uses that commit's older workflow.
+
+Reference: [Supabase CLI v3 release notes](https://github.com/supabase/cli/releases/tag/v3.0.0).
+
 ## Offer sections v2 rollout (VHS-020 / VHS-020a)
 
 Apply `supabase/migrations/20261102120000_add_offer_content_sections.sql` after all
