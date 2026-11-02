@@ -48,9 +48,12 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: supabase/setup-cli@3c2f5e2ae34c34e428e8e206e2c4d21fa2d20fbf # v2.1.1
+        with:
+          version: "3.0.0"
+      - run: supabase --version
       - run: supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
-      - run: supabase db push --dry-run
-      - run: supabase db push
+      - run: supabase db push --remote --dry-run
+      - run: supabase db push --remote --yes
 
   deploy-cloudflare:
     if: github.ref == 'refs/heads/main'
