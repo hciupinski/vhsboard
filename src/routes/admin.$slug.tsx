@@ -1,4 +1,4 @@
-import { normalizeOfferContentV2 } from "@/lib/offers/content-v2";
+import { normalizeOfferContentV2, getSectionIssues } from "@/lib/offers/content-v2";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -142,19 +142,26 @@ function OfferEditorContent() {
     isFormValid &&
     !readinessQuery.isError &&
     readinessQuery.data === true;
+  const persistedSectionsIncomplete =
+    persistedOffer !== null &&
+    getSectionIssues(persistedOffer.content, persistedOffer.offerKind ?? "trip").length > 0;
   const readiness = readinessQuery.isError
     ? "error"
     : readinessQuery.data === false
-      ? "missing_images"
+      ? persistedSectionsIncomplete
+        ? "incomplete_content"
+        : "missing_images"
       : null;
   const visibleError =
     actionError ??
     (!isNew && persistedOffer !== null && currentStatus === "draft"
       ? readiness === "error"
         ? readinessCheckErrorMessage
-        : readiness === "missing_images"
-          ? publishReadinessMessage
-          : null
+        : readiness === "incomplete_content"
+          ? "Uzupełnij lub wyłącz opcjonalne sekcje i zapisz szkic przed publikacją."
+          : readiness === "missing_images"
+            ? publishReadinessMessage
+            : null
       : null);
   // Stable diagnostics avoid repeating the same warning on every keystroke.
   // Only field paths and validation messages are logged, never form values or raw API errors.
@@ -243,6 +250,7 @@ function OfferEditorContent() {
     setFormValue(toEditableInput(offer));
     setSaved(true);
     await invalidateAdminCaches(offer.slug);
+    await queryClient.invalidateQueries({ queryKey: ["admin-offer-publish-readiness", offer.id] });
     return offer;
   };
 

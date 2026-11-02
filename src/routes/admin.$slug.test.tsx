@@ -471,6 +471,35 @@ describe("admin offer editor route", () => {
     expect(mockedSetOfferStatus).not.toHaveBeenCalled();
   });
 
+  it("refreshes publication readiness after disabling an incomplete saved section", async () => {
+    const user = userEvent.setup();
+    let saved = {
+      ...readyDraftOffer,
+      content: {
+        ...readyDraftOffer.content,
+        training: { enabled: true, description: "", items: [] },
+      },
+    };
+    mockedGetAdminOffer.mockImplementation(async () => saved);
+    mockedCanPublishOffer.mockImplementation(async () => !saved.content.training.enabled);
+    mockedUpdateOffer.mockImplementation(async (_id, input) => {
+      saved = { ...saved, ...input } as typeof saved;
+      return saved;
+    });
+    await renderAdminEditor({ slug: saved.slug });
+    await waitFor(() => expect(mockedCanPublishOffer).toHaveBeenCalled());
+    expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
+    expect(
+      screen.getByText("Uzupełnij lub wyłącz opcjonalne sekcje i zapisz szkic przed publikacją."),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: /^Szkolenia/ }));
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    await user.click(screen.getByRole("button", { name: "Zapisz szkic" }));
+    await waitFor(() => expect(mockedUpdateOffer).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+    expect(mockedCanPublishOffer.mock.calls.length).toBeGreaterThan(1);
+  });
+
   it("enables publishing for a complete persisted offer with ready hero metadata", async () => {
     mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
 
