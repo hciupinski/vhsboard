@@ -31,7 +31,11 @@ file_size_limit = "50MiB"
 [auth]
 enabled = true
 site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["http://127.0.0.1:3000"]
+additional_redirect_urls = [
+  "http://127.0.0.1:3000",
+  "http://localhost:3000/admin/reset-password",
+  "http://127.0.0.1:3000/admin/reset-password",
+]
 enable_signup = false
 
 [auth.email]

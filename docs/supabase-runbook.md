@@ -202,3 +202,59 @@ their fixtures. The new suite verifies optional Transport, disabled accommodatio
 direct-API publication validation, version protection and map permissions. Never run
 QA fixture publication against production. Roll back a deployment by retaining the
 forward database migration; do not drop v2 JSON data to make an old CMS writable.
+
+## Odzyskiwanie hasła administratora
+
+Ekran `/admin/login` zawiera link „Nie pamiętasz hasła?”. Trasa
+`/admin/reset-password` wysyła natywny mail Supabase i po otwarciu ważnego linku
+pozwala ustawić nowe hasło. Wszystkie trasy pozostają `noindex, nofollow`.
+Frontend używa wyłącznie publicznego klucza; Supabase Auth autoryzuje zmianę
+własnego hasła. Reset nie tworzy kont ani nie nadaje roli administratora.
+
+### Konfiguracja hostowanego projektu Supabase
+
+W **Authentication → URL Configuration → Redirect URLs** dodaj dokładne adresy,
+zachowując dotychczasowe wpisy:
+
+```text
+https://vhsboard.pages.dev/admin/reset-password
+http://localhost:3000/admin/reset-password
+http://127.0.0.1:3000/admin/reset-password
+```
+
+Pozostaw produkcyjny **Site URL** `https://vhsboard.pages.dev` jako domyślny.
+Nie przełączaj globalnego Site URL na localhost. Po zmianie domeny produkcyjnej
+zaktualizuj również jej dokładny adres odzyskiwania. Wysyłka z aplikacji podaje
+bieżący origin w `redirectTo`; Supabase dopuszcza tylko adresy ze swojej listy.
+Lokalny `supabase/config.toml` zawiera analogiczne adresy lokalne i wymaga restartu
+lokalnego Auth, by nowe wpisy zaczęły obowiązywać. Ten plik nie aktualizuje
+automatycznie konfiguracji hostowanego projektu; nie używaj całego lokalnego pliku
+jako konfiguracji produkcyjnej.
+
+Link z Dashboardu może wracać na domyślną stronę główną. Wczesny listener klienta
+wychwytuje `PASSWORD_RECOVERY` i kieruje użytkownika do ekranu nowego hasła.
+Tak samo obsługiwany jest błąd `otp_expired` z fragmentu adresu: użytkownik widzi
+wyjaśnienie i formularz wysłania nowego linku, bez ujawniania surowego opisu błędu.
+Nie można odzyskać ważności zużytego tokenu. Używaj najnowszej wiadomości; jeżeli
+linki wygasają przed pierwszym kliknięciem, sprawdź logi Auth i skanowanie linków
+przez pocztę. Implementacja nie zmienia szablonów maili ani reguł antyspamowych.
+
+### Zachowanie aplikacji
+
+- Kontekst odzyskiwania zapisuje tylko UUID użytkownika i termin ważności w
+  `sessionStorage` (do 30 minut i nie dłużej niż sesja). To stan interfejsu,
+  nie dodatkowe uprawnienie; `getUser` weryfikuje tożsamość po stronie Auth.
+- Zwykła zalogowana sesja bez kontekstu odzyskiwania pokazuje formularz wysyłki.
+  Nowy formularz wymaga zgodnych haseł długości co najmniej 8 znaków, nie przycina
+  spacji i respektuje dodatkowe wymagania serwera.
+- Błędy sieci pozwalają ponowić sprawdzenie lub zapis. Po sukcesie zmiany aplikacja
+  usuwa kontekst i wywołuje `signOut({ scope: "global" })`, odwołując sesje Auth,
+  a następnie prowadzi do zwykłego logowania z kontrolą `profiles.role` i RLS.
+- Błąd wylogowania po skutecznej zmianie hasła jest osobnym ostrzeżeniem. Nie
+  sugerujemy wtedy, że hasło nie zostało zapisane.
+- Tokeny nie trafiają do własnych logów ani query parametrów. SDK przechowuje
+  sesję swoim standardowym mechanizmem; aplikacja nie kopiuje jej tokenów.
+
+Opis API: [resetPasswordForEmail](https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail),
+[updateUser](https://supabase.com/docs/reference/javascript/auth-updateuser),
+[Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls).

@@ -1,6 +1,9 @@
 import { clearRecoveryMarker, readRecoveryMarker, recoveryPath } from "./recovery-bootstrap";
 
-const isRetryableAuthFailure = (error: { status?: number; name?: string }) =>
+const isRetryableAuthFailure = (error: {
+  status?: number | undefined;
+  name?: string | undefined;
+}) =>
   error.name === "AuthRetryableFetchError" ||
   error.status === 0 ||
   error.status === 429 ||
