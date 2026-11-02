@@ -9,12 +9,20 @@ import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 import { aboutUsFaqItems } from "@/lib/faq";
 import { FaqSection } from "@/components/public/FaqSection";
+import { HeroCarousel } from "@/components/public/HeroCarousel";
 
-const marioSkate = getLocalImage("about-us/mario-skate-web.jpg");
-const marioSnow = getLocalImage("about-us/mario-snow.jpg");
-const marioTrip = getLocalImage("about-us/mario-trip-web.jpg");
+const founderImages = [
+  { path: "about-us/mario-skate.jpg", label: "Mariusz podczas jazdy na deskorolce" },
+  { path: "about-us/mario-skim-2.jpg", label: "Mariusz podczas jazdy na skimboardzie" },
+  { path: "about-us/mario-snow.jpg", label: "Mariusz podczas skoku na snowboardzie" },
+].map(({ path, label }) => {
+  const responsive = getLocalImage(path);
+  return { path, label, src: responsive.src, responsive };
+});
+const cityAndMoreSurf = getLocalImage("about-us/city-and-more-1.jpg");
+const cityAndMoreSkate = getLocalImage("about-us/city-and-more-2.JPG");
+const cityAndMoreSnow = getLocalImage("about-us/city-and-more-3.jpg");
 const marioVhs = getLocalImage("about-us/mario-vhs.jpg");
-const marioSkim = getLocalImage("about-us/mario-skim.jpg");
 
 export const Route = createFileRoute("/o-nas")({
   head: () =>
@@ -33,30 +41,14 @@ function AboutPage() {
       <PublicHeader />
       <PublicJsonLd path="/o-nas" label="O nas" />
       <main className="flex-1">
-        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
-          <div className="max-w-xl">
+        <section className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-x-16 lg:gap-y-0">
+          <div className="max-w-xl lg:col-start-1 lg:row-start-1 lg:self-end">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">O nas</p>
             <h1 className="mt-3 text-5xl leading-[0.92] text-balance sm:text-7xl">
               NIEWAŻNE GDZIE. WAŻNE, ŻE NA DESCE
             </h1>
-            <p className="mt-6 max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg">
-              VHS powstał w 2017 roku i jest doskonałym przykładem tego, jak pasja naturalnie
-              przemieniła się w pracę. Od zawsze byliśmy związani ze sportami deskowymi — nieważne,
-              czy na śniegu, czy na wodzie. Ważne, że na desce.
-            </p>
-            <p className="mt-4 max-w-prose leading-relaxed text-muted-foreground">
-              Zajawka do sportów — surfingu, snowboardingu i deskorolki — naturalnie przerodziła się
-              w organizację wyjazdów snowboardowych i surfingowych oraz eventów z torem
-              skimboardowym w roli głównej. Z czasem przyszły także półkolonie i obozy dla dzieci i
-              młodzieży.
-            </p>
-            <p className="mt-4 max-w-prose leading-relaxed text-muted-foreground">
-              Od zawsze jesteśmy lokalnym biurem podróży i właśnie taki charakter chcemy zachować.
-              Nie interesuje nas masówka, dlatego nasze wyjazdy pozostają kameralne, a każdy
-              uczestnik jest częścią ekipy, a nie kolejnym numerem na liście.
-            </p>
           </div>
-          <figure className="relative">
+          <figure className="relative lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-center">
             <ResponsiveImage
               sizes="(min-width: 1024px) 50vw, 100vw"
               image={marioVhs}
@@ -64,30 +56,47 @@ function AboutPage() {
               className="aspect-[4/3] w-full rounded-3xl object-cover shadow-warm"
             />
           </figure>
+          <div className="max-w-xl lg:col-start-1 lg:row-start-2 lg:self-start">
+            <p className="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg lg:mt-6">
+              VHS powstał w 2017 roku i jest doskonałym przykładem tego, jak pasja naturalnie
+              przemieniła się w pracę. Od zawsze byliśmy związani ze sportami deskowymi — nieważne,
+              czy na śniegu, czy na wodzie. Ważne, że na desce.
+            </p>
+            <p className="mt-4 max-w-prose leading-relaxed text-muted-foreground sm:text-lg">
+              Zajawka do sportów — surfingu, snowboardingu i deskorolki — naturalnie przerodziła się
+              w organizację wyjazdów snowboardowych i surfingowych oraz eventów z torem
+              skimboardowym w roli głównej. Z czasem przyszły także półkolonie i obozy dla dzieci i
+              młodzieży.
+            </p>
+            <p className="mt-4 max-w-prose leading-relaxed text-muted-foreground sm:text-lg">
+              Od zawsze jesteśmy lokalnym biurem podróży i właśnie taki charakter chcemy zachować.
+              Nie interesuje nas masówka, dlatego nasze wyjazdy pozostają kameralne, a każdy
+              uczestnik jest częścią ekipy, a nie kolejnym numerem na liście.
+            </p>
+          </div>
         </section>
 
         <section
           className="border-y border-border bg-secondary/50 py-12 sm:py-14"
           aria-labelledby="about-founder-heading"
         >
-          <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-center lg:gap-16">
-            <figure className="overflow-hidden rounded-3xl shadow-warm">
-              <ResponsiveImage
-                loading="lazy"
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                image={marioSkate}
-                alt="Mariusz podczas jazdy na deskorolce na miejskim skateparku"
-                className="aspect-[4/5] w-full object-cover object-center"
-              />
-            </figure>
-            <div className="max-w-2xl">
+          <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-x-16 lg:gap-y-0">
+            <div className="max-w-2xl lg:col-start-2 lg:row-start-1 lg:self-end">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
                 Za sterami VHS
               </p>
               <h2 id="about-founder-heading" className="mt-3 text-4xl leading-[0.92] sm:text-6xl">
                 POZNAJ MARIUSZA
               </h2>
-              <p className="mt-6 text-lg leading-relaxed text-foreground">
+            </div>
+            <figure
+              aria-label="Mariusz na deskorolce, skimboardzie i snowboardzie"
+              className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-warm lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:self-center"
+            >
+              <HeroCarousel images={founderImages} />
+            </figure>
+            <div className="max-w-2xl lg:col-start-2 lg:row-start-2 lg:self-start">
+              <p className="text-lg leading-relaxed text-foreground lg:mt-6">
                 Mariusz Wójt — całe życie na desce, całe życie na zajawie.
               </p>
               <p className="mt-4 max-w-prose leading-relaxed text-muted-foreground">
@@ -127,8 +136,8 @@ function AboutPage() {
               <ResponsiveImage
                 loading="lazy"
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                image={marioSnow}
-                alt="Snowboardzista w locie nad śnieżnym skokiem"
+                image={cityAndMoreSurf}
+                alt="Uczestnicy wyjazdu surfingowego z deskami na plaży"
                 className="aspect-[3/4] w-full object-cover md:h-full md:aspect-auto"
               />
             </figure>
@@ -136,8 +145,8 @@ function AboutPage() {
               <ResponsiveImage
                 loading="lazy"
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                image={marioSkim}
-                alt="Mobilny tor skimboardowy VHS przygotowany do aktywności na świeżym powietrzu"
+                image={cityAndMoreSkate}
+                alt="Dzieci ćwiczące jazdę na deskorolkach z instruktorem podczas miejskiego eventu"
                 className="aspect-[16/8] w-full object-cover"
               />
             </figure>
@@ -145,8 +154,8 @@ function AboutPage() {
               <ResponsiveImage
                 loading="lazy"
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                image={marioTrip}
-                alt="Mariusz w koszulce VHS podczas surfowego wyjazdu"
+                image={cityAndMoreSnow}
+                alt="Grupa snowboardzistów z deskami na tle ośnieżonych gór"
                 className="aspect-[16/8] w-full object-cover"
               />
             </figure>

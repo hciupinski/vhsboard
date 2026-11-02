@@ -493,15 +493,23 @@ describe("static public pages", () => {
 
     expect(screen.getByRole("heading", { name: /poznaj mariusza/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /od miasta po góry/i })).toBeInTheDocument();
+    const founderPhotos = screen.getByRole("figure", {
+      name: "Mariusz na deskorolce, skimboardzie i snowboardzie",
+    });
     expect(
-      screen.getByRole("img", { name: /mariusz podczas jazdy na deskorolce/i }),
-    ).toBeInTheDocument();
+      Array.from(founderPhotos.querySelectorAll("img"), (image) => image.getAttribute("src")),
+    ).toEqual([
+      expect.stringMatching(/\/about-us-mario-skate-\d+-/),
+      expect.stringMatching(/\/about-us-mario-skim-2-\d+-/),
+      expect.stringMatching(/\/about-us-mario-snow-\d+-/),
+    ]);
+    expect(within(founderPhotos).queryByRole("button")).not.toBeInTheDocument();
     expect(
-      screen.getByRole("img", { name: /snowboardzista w locie nad śnieżnym skokiem/i }),
+      screen.getByRole("img", { name: /uczestnicy wyjazdu surfingowego z deskami na plaży/i }),
     ).toBeInTheDocument();
   });
 
-  it("leads the VHS activity story from the mountains into skimboarding and surfing", async () => {
+  it("shows the supplied surfing, city skateboarding and mountain photos in the activity story", async () => {
     await renderRoute("/o-nas", AboutRoute);
 
     const activities = screen
@@ -516,9 +524,9 @@ describe("static public pages", () => {
         .getAllByRole("img")
         .map((image) => image.getAttribute("alt")),
     ).toEqual([
-      "Snowboardzista w locie nad śnieżnym skokiem",
-      "Mobilny tor skimboardowy VHS przygotowany do aktywności na świeżym powietrzu",
-      "Mariusz w koszulce VHS podczas surfowego wyjazdu",
+      "Uczestnicy wyjazdu surfingowego z deskami na plaży",
+      "Dzieci ćwiczące jazdę na deskorolkach z instruktorem podczas miejskiego eventu",
+      "Grupa snowboardzistów z deskami na tle ośnieżonych gór",
     ]);
   });
 
