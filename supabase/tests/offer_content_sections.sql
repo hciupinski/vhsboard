@@ -1,0 +1,60 @@
+-- Run against a disposable/local database; every mutation is rolled back.
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path = public, extensions;
+select no_plan();
+select ok(public.is_valid_offer_sections('{"schemaVersion":2}', 'trip', true), 'all optional sections absent');
+select ok(public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":false,"description":"","type":"coach","journeys":[]}}', 'trip', true), 'disabled incomplete transport publishes');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"","type":"coach","journeys":[]}}', 'trip', true), 'enabled incomplete transport cannot publish');
+select ok(public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"","type":"coach","journeys":[]}}', 'trip', false), 'incomplete enabled transport can be a draft');
+select ok(public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Dojazd własny na miejsce.","type":"own","journeys":[]}}', 'trip', true), 'own transport needs no invented dates');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Autokar testowy","type":"coach","journeys":[{"departureDate":"2027-02-30","departureTime":"","departurePlace":"Warszawa","returnDate":"2027-03-05","returnTime":"","returnPlace":"Warszawa","note":""}]}}', 'trip', true), 'invalid calendar date rejected');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Autokar testowy","type":"coach","journeys":[{"departureDate":"2027-03-02","departureTime":"","departurePlace":"Warszawa","returnDate":"2027-03-01","returnTime":"","returnPlace":"Warszawa","note":""}]}}', 'trip', true), 'return before departure rejected');
+select ok(not public.is_valid_offer_sections('{"resort":{"enabled":true,"name":"test","description":"test","mapUrl":""}}', 'trip', true), 'new fields require version marker');
+select ok(public.is_valid_offer_sections('{"schemaVersion":2,"resort":{"enabled":false,"name":"","description":"","mapUrl":""}}', 'trip', true), 'disabled resort retains incomplete fields');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"resort":{"enabled":true,"name":"test","description":"test","mapUrl":"javascript:alert(1)"}}', 'trip', true), 'unsafe URL rejected');
+select ok(public.vhs_extra_price('{"kind":"extra","amount":12.34,"from":true,"unit":"osoba"}', true), 'decimal PLN supplement');
+select ok(not public.vhs_extra_price('{"kind":"extra","amount":-1,"from":false,"unit":"osoba"}', true), 'negative supplement rejected');
+select ok(not public.vhs_extra_price('{"kind":"extra","amount":12.345,"from":false,"unit":"osoba"}', true), 'sub-cent supplement rejected');
+select ok(not public.vhs_extra_price('{"kind":"included","amount":50,"from":false,"unit":"osoba"}', true), 'included price cannot conceal a supplement');
+select ok(public.is_valid_trip_content('{"schemaVersion":2,"paragraphs":["Opis wyjazdu"],"highlights":["Program"],"included":["Opieka"],"excluded":["Dojazd"],"schedule":[{"day":"Dzień 1","text":"Przyjazd"}],"accommodation":{"enabled":false,"description":""}}'), 'legacy base and disabled accommodation publish without photos');
+
+insert into auth.users(id) values ('90000000-0000-4000-8000-000000000001'),('90000000-0000-4000-8000-000000000002');
+insert into public.profiles(id,role) values ('90000000-0000-4000-8000-000000000001','admin'),('90000000-0000-4000-8000-000000000002','editor');
+insert into public.offers(id,slug,activity,title,subtitle,short_description,location,duration_days,price_from,booking_url,status,description)
+values ('90000000-0000-4000-8000-000000000003','qa-vhs020-local-only','snow','Test oferty','Podtytuł testowy','Opis oferty używanej wyłącznie do testu lokalnego.','Test',7,100,'https://example.test','draft','{"schemaVersion":2,"paragraphs":["Opis wyjazdu"],"highlights":["Program"],"included":["Opieka"],"excluded":["Dojazd"],"schedule":[{"day":"Dzień 1","text":"Przyjazd"}]}');
+insert into storage.objects(bucket_id,name) values
+('offer-images','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000004.webp'),
+('offer-images','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000005.webp');
+select throws_ok($$update public.offers set description=description-'schemaVersion' where id='90000000-0000-4000-8000-000000000003'$$, '23514', 'Odśwież CMS przed zapisaniem oferty.', 'old client cannot drop v2 content');
+set local role anon;
+select is((select count(*)::integer from public.offers where id='90000000-0000-4000-8000-000000000003'),0,'anonymous cannot read draft');
+reset role;
+select set_config('request.jwt.claim.sub','90000000-0000-4000-8000-000000000002',true);
+set local role authenticated;
+select throws_ok($$select * from public.replace_offer_resort_map('90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000004.webp','Mapa testowego resortu')$$,'42501','Brak uprawnień do mapy resortu.','non-admin cannot replace map');
+reset role;
+select set_config('request.jwt.claim.sub','90000000-0000-4000-8000-000000000001',true);
+set local role authenticated;
+select lives_ok($$select * from public.replace_offer_resort_map('90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000004.webp','Mapa testowego resortu')$$,'admin installs first map');
+select lives_ok($$select * from public.replace_offer_resort_map('90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000005.webp','Nowa mapa testowego resortu')$$,'admin atomically replaces map');
+select is((select count(*)::integer from public.offer_images where offer_id='90000000-0000-4000-8000-000000000003' and category='resort_map'),1,'exactly one active map after replacement');
+select throws_ok($$select * from public.replace_offer_resort_map('90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000002/90000000-0000-4000-8000-000000000005.webp','Obca mapa testowa')$$,'22023','Nieprawidłowy obraz mapy.','cannot attach another offer storage path');
+reset role;
+set local role anon;
+select is((select count(*)::integer from public.offer_images where offer_id='90000000-0000-4000-8000-000000000003'),0,'anonymous cannot read draft map');
+reset role;
+-- Exercise the real publication trigger as an administrator, not only helpers.
+select set_config('request.jwt.claim.sub','90000000-0000-4000-8000-000000000001',true);
+set local role authenticated;
+insert into public.offer_images(offer_id,storage_path,alt_text,category,position) values ('90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000004.webp','Zdjęcie główne testowej oferty','gallery',0);
+update public.offers set hero_image='offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000004.webp' where id='90000000-0000-4000-8000-000000000003';
+select lives_ok($$update public.offers set description=description || '{"transport":{"enabled":false,"type":"coach","description":"","journeys":[]},"accommodation":{"enabled":false,"description":""}}'::jsonb, status='published' where id='90000000-0000-4000-8000-000000000003'$$, 'v2 publishes with disabled incomplete transport and accommodation without accommodation photos');
+select throws_ok($$update public.offers set description=jsonb_set(description,'{transport,enabled}','true') where id='90000000-0000-4000-8000-000000000003'$$,'23514','Opublikowana oferta wymaga kompletnej treści właściwej dla rodzaju.','direct API cannot publish incomplete enabled transport');
+select is((select description #>> '{transport,enabled}' from public.offers where id='90000000-0000-4000-8000-000000000003'),'false','failed publication retains previous public data');
+reset role;
+set local role anon;
+select is((select count(*)::integer from public.offer_images where offer_id='90000000-0000-4000-8000-000000000003' and category='resort_map'),1,'anonymous can read the published map');
+reset role;
+select * from finish();
+rollback;

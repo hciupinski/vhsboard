@@ -1,0 +1,117 @@
+import { describe, expect, it } from "vitest";
+import {
+  contentSectionsSchema,
+  emptyPrice,
+  getSectionIssues,
+  normalizeOfferContentV2,
+} from "./content-v2";
+
+describe("optional offer sections", () => {
+  it("allows legacy content and disabled incomplete transport without requiring new data", () => {
+    expect(contentSectionsSchema.parse({})).toEqual({});
+    const content = { transport: { enabled: false, type: "coach", description: "", journeys: [] } };
+    expect(getSectionIssues(content)).toEqual([]);
+    expect(contentSectionsSchema.parse(content)).toEqual(content);
+  });
+  it("rejects publication of enabled incomplete transport while permitting a draft", () => {
+    const content = { transport: { enabled: true, type: "coach", description: "", journeys: [] } };
+    expect(contentSectionsSchema.safeParse(content).success).toBe(true);
+    expect(getSectionIssues(content).map((i) => i.path.join("."))).toContain(
+      "transport.description",
+    );
+  });
+  it("retains disabled content and stable term IDs across normalization", () => {
+    const content = {
+      paragraphs: ["opis"],
+      highlights: [],
+      included: [],
+      excluded: [],
+      dayProgram: [],
+      venueDescription: "miejsce",
+      parentInfo: {
+        ageRange: "7–14",
+        supervision: "opieka",
+        safety: "kaski",
+        transport: "Autokar z Warszawy",
+      },
+      terms: [
+        {
+          label: "I",
+          startDate: "2027-01-01",
+          endDate: "2027-01-05",
+          bookingUrl: "https://example.com",
+          priceOptions: [],
+        },
+      ],
+    };
+    const first = normalizeOfferContentV2(content, "day_camp");
+    expect(first).toMatchObject({
+      schemaVersion: 2,
+      transport: { enabled: false, description: "Autokar z Warszawy" },
+    });
+    expect(normalizeOfferContentV2(first, "day_camp")).toEqual(first);
+    expect(first).toMatchObject({ terms: [{ id: expect.any(String), label: "I" }] });
+  });
+});
+
+describe("v2 identity and publication validation", () => {
+  it("rejects duplicate card IDs before saving a draft", () => {
+    const item = {
+      id: "10000000-0000-4000-8000-000000000001",
+      title: "",
+      description: "",
+      price: emptyPrice(),
+      level: "",
+      scope: "",
+    };
+    expect(
+      contentSectionsSchema.safeParse({
+        training: { enabled: false, description: "", items: [item, item] },
+      }).success,
+    ).toBe(false);
+  });
+  it.each(["2027-02-30", "2027-13-01", "2027-00-01"])(
+    "rejects invalid calendar date %s",
+    (date) => {
+      expect(
+        getSectionIssues({
+          transport: {
+            enabled: true,
+            type: "coach",
+            description: "Autokar",
+            journeys: [
+              {
+                departureDate: date,
+                returnDate: "2027-12-31",
+                departureTime: "",
+                returnTime: "",
+                departurePlace: "Warszawa",
+                returnPlace: "Warszawa",
+                note: "",
+              },
+            ],
+          },
+        }).some((i) => i.path.join(".") === "transport.journeys.0.departureDate"),
+      ).toBe(true);
+    },
+  );
+  it("retains every disabled section across JSON save and reload", () => {
+    const content = {
+      resort: { enabled: false, name: "Miejsce", description: "", mapUrl: "" },
+      training: { enabled: false, description: "", items: [] },
+      transport: { enabled: false, type: "coach", description: "Opis roboczy", journeys: [] },
+      insurance: {
+        enabled: false,
+        description: "",
+        provider: "",
+        informationUrl: "",
+        packages: [],
+        extensions: [],
+      },
+      accommodation: { enabled: false, description: "" },
+    };
+    const saved = contentSectionsSchema.parse(JSON.parse(JSON.stringify(content)));
+    expect(saved).toEqual(content);
+    expect(getSectionIssues(saved)).toEqual([]);
+  });
+});

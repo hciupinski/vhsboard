@@ -1,10 +1,11 @@
+import { OfferDetailSections } from "@/components/offers/sections/OfferDetailSections";
+import { getOfferSections } from "@/lib/offers/sections";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Wallet } from "lucide-react";
 import { z } from "zod";
 
 import { OfferFacts } from "@/components/offers/OfferFacts";
-import { OfferGallery } from "@/components/offers/OfferGallery";
 import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation";
 import { DeferredYouTubeEmbed } from "@/components/public/DeferredYouTubeEmbed";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -12,7 +13,6 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { Button } from "@/components/ui/button";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
-import { dayCampSections, getVisibleDayCampSections } from "@/lib/offers/day-camp-sections";
 import { offerDetailQueryOptions } from "@/lib/offers/query-options";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -59,12 +59,8 @@ function DayCampDetail() {
   const { slug, preview } = Route.useLoaderData();
   const { data: offer } = useSuspenseQuery(offerDetailQueryOptions(slug, "day_camp", preview));
   if (offer === null || offer.offerKind !== "day_camp") throw notFound();
-  const { content } = offer;
-  const sections = getVisibleDayCampSections(offer);
-  const [about, highlights, dayProgram, price, terms, parentInfo, accommodation, gallery] =
-    dayCampSections;
-  const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
-  const hasTerms = content.terms.length > 0;
+  const sections = getOfferSections(offer);
+  const hasTerms = offer.content.terms.length > 0;
   return (
     <div data-trip-detail className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
@@ -111,217 +107,9 @@ function DayCampDetail() {
           </div>
         </section>
         <TripSectionNavigation key={offer.slug} sections={sections} ariaLabel="Sekcje obozu" />
-        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-12 sm:py-14 lg:grid-cols-[1.6fr_1fr]">
-          <div className="min-w-0">
-            {content.paragraphs.length > 0 || content.venueDescription ? (
-              <section id={about.id} tabIndex={-1} aria-labelledby="about-day-camp-title">
-                <h2 id="about-day-camp-title" className="text-3xl sm:text-4xl">
-                  {about.label}
-                </h2>
-                {content.paragraphs.map((paragraph, index) => (
-                  <p
-                    key={`${index}-${paragraph.slice(0, 24)}`}
-                    className="mt-4 text-muted-foreground"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-                {content.venueDescription ? (
-                  <div className="mt-8 rounded-3xl border border-border bg-secondary/55 p-6 sm:p-8">
-                    <h3 className="text-2xl">Miejsce zajęć</h3>
-                    <p className="mt-3 text-muted-foreground">{content.venueDescription}</p>
-                  </div>
-                ) : null}
-              </section>
-            ) : null}
-
-            {content.highlights.length > 0 ? (
-              <section
-                className={
-                  content.paragraphs.length > 0 || content.venueDescription ? "mt-12" : undefined
-                }
-                id={highlights.id}
-                tabIndex={-1}
-                aria-labelledby="highlights-title"
-              >
-                <h2 id="highlights-title" className="text-3xl sm:text-4xl">
-                  {highlights.label}
-                </h2>
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {content.highlights.map((highlight) => (
-                    <li
-                      key={highlight}
-                      className="rounded-2xl border border-border bg-card px-4 py-3 text-sm"
-                    >
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-
-            {content.dayProgram.length > 0 ? (
-              <section
-                className={
-                  content.paragraphs.length > 0 ||
-                  content.venueDescription ||
-                  content.highlights.length > 0
-                    ? "mt-12"
-                    : undefined
-                }
-                id={dayProgram.id}
-                tabIndex={-1}
-                aria-labelledby="day-program-title"
-              >
-                <h2 id="day-program-title" className="text-3xl sm:text-4xl">
-                  {dayProgram.label}
-                </h2>
-                <ol className="mt-4 space-y-4 border-l border-border pl-5">
-                  {content.dayProgram.map((item) => (
-                    <li key={item.time} className="relative">
-                      <span className="absolute -left-[27px] top-1.5 size-3 rounded-full bg-sunset-gradient" />
-                      <p className="font-display text-xl text-foreground">{item.time}</p>
-                      <p className="text-sm text-muted-foreground">{item.text}</p>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            ) : null}
-
-            {hasPriceDetails ? (
-              <section
-                className={
-                  content.paragraphs.length > 0 ||
-                  content.venueDescription ||
-                  content.highlights.length > 0 ||
-                  content.dayProgram.length > 0
-                    ? "mt-12"
-                    : undefined
-                }
-                id={price.id}
-                tabIndex={-1}
-                aria-labelledby="price-details-title"
-              >
-                <h2 id="price-details-title" className="text-3xl sm:text-4xl">
-                  {price.label}
-                </h2>
-                <div className="mt-4 grid gap-6 sm:grid-cols-2">
-                  {content.included.length > 0 ? (
-                    <ul className="space-y-2.5">
-                      {content.included.map((item) => (
-                        <li key={item} className="flex gap-2.5 text-sm">
-                          <span
-                            aria-hidden="true"
-                            className="mt-1 size-2 shrink-0 rounded-full bg-accent"
-                          />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  {content.excluded.length > 0 ? (
-                    <div>
-                      <h3 className="font-display text-xl text-muted-foreground">Poza ceną</h3>
-                      <ul className="mt-2.5 space-y-2.5">
-                        {content.excluded.map((item) => (
-                          <li key={item} className="flex gap-2.5 text-sm text-muted-foreground">
-                            <span
-                              aria-hidden="true"
-                              className="mt-1 size-2 shrink-0 rounded-full bg-destructive"
-                            />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-            ) : null}
-
-            {hasTerms ? (
-              <section className="mt-12" id={terms.id} tabIndex={-1} aria-labelledby="terms-title">
-                <h2 id="terms-title" className="text-3xl sm:text-4xl">
-                  {terms.label}
-                </h2>
-                <div className="mt-4 grid gap-5 md:grid-cols-2">
-                  {content.terms.map((term) => (
-                    <article
-                      key={term.label}
-                      className="rounded-3xl border border-border bg-card p-6 shadow-warm"
-                    >
-                      <h3 className="text-2xl">{term.label}</h3>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        {formatTripDates(term.startDate, term.endDate)}
-                      </p>
-                      {term.priceOptions.map((option) => (
-                        <div key={option.label} className="mt-4 border-t border-border pt-4">
-                          <p className="font-medium">{option.label}</p>
-                          <p className="mt-1 font-display text-2xl text-primary">
-                            {formatPriceFrom(option.price, "PLN")}
-                          </p>
-                        </div>
-                      ))}
-                      <Button asChild className="mt-5 w-full rounded-full">
-                        <a href={term.bookingUrl} target="_blank" rel="noopener noreferrer">
-                          Zapisz się
-                        </a>
-                      </Button>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            <section
-              className="mt-12"
-              id={parentInfo.id}
-              tabIndex={-1}
-              aria-labelledby="parent-info-title"
-            >
-              <h2 id="parent-info-title" className="text-3xl sm:text-4xl">
-                {parentInfo.label}
-              </h2>
-              <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-border bg-card p-4">
-                  <dt className="font-medium">Wiek uczestników</dt>
-                  <dd className="mt-1 text-sm text-muted-foreground">
-                    {content.parentInfo.ageRange}
-                  </dd>
-                </div>
-                <div className="rounded-2xl border border-border bg-card p-4">
-                  <dt className="font-medium">Opieka</dt>
-                  <dd className="mt-1 text-sm text-muted-foreground">
-                    {content.parentInfo.supervision}
-                  </dd>
-                </div>
-                <div className="rounded-2xl border border-border bg-card p-4">
-                  <dt className="font-medium">Bezpieczeństwo</dt>
-                  <dd className="mt-1 text-sm text-muted-foreground">
-                    {content.parentInfo.safety}
-                  </dd>
-                </div>
-                {content.parentInfo.transport ? (
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <dt className="font-medium">Transport</dt>
-                    <dd className="mt-1 text-sm text-muted-foreground">
-                      {content.parentInfo.transport}
-                    </dd>
-                  </div>
-                ) : null}
-                {content.parentInfo.meals ? (
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <dt className="font-medium">Wyżywienie</dt>
-                    <dd className="mt-1 text-sm text-muted-foreground">
-                      {content.parentInfo.meals}
-                    </dd>
-                  </div>
-                ) : null}
-              </dl>
-            </section>
-          </div>
-
-          <aside className="lg:sticky lg:top-[calc(var(--trip-header-height,61px)+var(--trip-nav-height,0px)+24px)] lg:self-start">
+        <OfferDetailSections
+          offer={offer}
+          sidebar={
             <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
               <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">
                 Twój obóz
@@ -333,28 +121,8 @@ function DayCampDetail() {
                 </Button>
               ) : null}
             </div>
-          </aside>
-        </div>
-        {content.accommodation ? (
-          <section
-            id={accommodation.id}
-            tabIndex={-1}
-            className="border-t border-border py-12 sm:py-14"
-          >
-            <div className="mx-auto max-w-6xl px-5">
-              <h2 className="text-3xl sm:text-4xl">{accommodation.label}</h2>
-              <p className="mt-4 max-w-3xl text-muted-foreground">
-                {content.accommodation.description}
-              </p>
-            </div>
-            {offer.accommodationImages.length > 0 ? (
-              <OfferGallery title="Galeria zakwaterowania" images={offer.accommodationImages} />
-            ) : null}
-          </section>
-        ) : null}
-        {offer.images.length > 0 ? (
-          <OfferGallery id={gallery.id} images={offer.images} title={gallery.label} />
-        ) : null}
+          }
+        />
         <DeferredYouTubeEmbed
           className="mx-auto max-w-6xl px-5 py-12 sm:py-14"
           title="Obozy VHSBOARD"

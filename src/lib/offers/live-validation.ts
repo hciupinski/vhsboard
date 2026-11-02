@@ -1,5 +1,5 @@
 import {
-  editorOfferInputSchema,
+  validateOfferForPublication,
   getEditorFieldErrors,
   type EditableOfferInput,
 } from "./editor-schema";
@@ -45,7 +45,7 @@ export const getLiveFieldErrors = (
   const changed = changedPaths(previous, next);
   if (changed.includes("offerKind")) return {};
 
-  const validation = editorOfferInputSchema.safeParse(next);
+  const validation = validateOfferForPublication(next);
   const validationErrors = validation.success ? {} : getEditorFieldErrors(validation.error);
   const nextErrors = { ...currentErrors };
 

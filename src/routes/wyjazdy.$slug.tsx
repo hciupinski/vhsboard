@@ -1,3 +1,5 @@
+import { OfferDetailSections } from "@/components/offers/sections/OfferDetailSections";
+import { getOfferSections } from "@/lib/offers/sections";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Wallet } from "lucide-react";
@@ -7,8 +9,6 @@ import { MobileTripBookingCta } from "@/components/offers/MobileTripBookingCta";
 import { RelatedTripsSection } from "@/components/offers/RelatedTripsSection";
 import { OfferFacts } from "@/components/offers/OfferFacts";
 import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation";
-import { getVisibleTripSections, tripSections } from "@/lib/offers/trip-sections";
-import { OfferGallery } from "@/components/offers/OfferGallery";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
@@ -73,11 +73,7 @@ function TripDetail() {
     throw notFound();
   }
 
-  const { content } = offer;
-  const sections = getVisibleTripSections(offer);
-  const [about, highlights, schedule, price, accommodation, gallery] = tripSections;
-  const hasPriceDetails = content.included.length > 0 || content.excluded.length > 0;
-
+  const sections = getOfferSections(offer);
   return (
     <div data-trip-detail className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
@@ -130,153 +126,15 @@ function TripDetail() {
 
         <TripSectionNavigation key={offer.slug} sections={sections} linkClassName="lg:text-lg" />
 
-        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-12 sm:py-14 lg:grid-cols-[1.6fr_1fr]">
-          <div className="min-w-0">
-            {content.paragraphs.length > 0 ? (
-              <section id={about.id} tabIndex={-1} aria-labelledby="about-trip-title">
-                <h2 id="about-trip-title" className="text-3xl sm:text-4xl">
-                  {about.label}
-                </h2>
-                {content.paragraphs.map((paragraph, index) => (
-                  <p
-                    key={`${index}-${paragraph.slice(0, 24)}`}
-                    className="mt-4 text-muted-foreground"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-              </section>
-            ) : null}
-
-            {content.highlights.length > 0 ? (
-              <section
-                className={content.paragraphs.length > 0 ? "mt-12" : undefined}
-                id={highlights.id}
-                tabIndex={-1}
-                aria-labelledby="highlights-title"
-              >
-                <h2 id="highlights-title" className="text-3xl sm:text-4xl">
-                  {highlights.label}
-                </h2>
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {content.highlights.map((highlight) => (
-                    <li
-                      key={highlight}
-                      className="rounded-2xl border border-border bg-card px-4 py-3 text-sm"
-                    >
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-
-            {content.schedule.length > 0 ? (
-              <section
-                className={
-                  content.paragraphs.length > 0 || content.highlights.length > 0
-                    ? "mt-12"
-                    : undefined
-                }
-                id={schedule.id}
-                tabIndex={-1}
-                aria-labelledby="schedule-title"
-              >
-                <h2 id="schedule-title" className="text-3xl sm:text-4xl">
-                  {schedule.label}
-                </h2>
-                <ol className="mt-4 space-y-4 border-l border-border pl-5">
-                  {content.schedule.map((scheduleItem) => (
-                    <li key={`${scheduleItem.day}-${scheduleItem.text}`} className="relative">
-                      <span className="absolute -left-[27px] top-1.5 size-3 rounded-full bg-sunset-gradient" />
-                      <p className="font-display text-xl text-foreground">{scheduleItem.day}</p>
-                      <p className="text-sm text-muted-foreground">{scheduleItem.text}</p>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            ) : null}
-
-            {hasPriceDetails ? (
-              <section
-                className={
-                  content.paragraphs.length > 0 ||
-                  content.highlights.length > 0 ||
-                  content.schedule.length > 0
-                    ? "mt-12"
-                    : undefined
-                }
-                id={price.id}
-                tabIndex={-1}
-                aria-labelledby="price-details-title"
-              >
-                <h2 id="price-details-title" className="text-3xl sm:text-4xl">
-                  {price.label}
-                </h2>
-                <div className="mt-4 grid gap-6 sm:grid-cols-2">
-                  {content.included.length > 0 ? (
-                    <ul className="space-y-2.5">
-                      {content.included.map((item) => (
-                        <li key={item} className="flex gap-2.5 text-sm">
-                          <span
-                            aria-hidden="true"
-                            className="mt-1 size-2 shrink-0 rounded-full bg-accent"
-                          />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  {content.excluded.length > 0 ? (
-                    <div>
-                      <h3 className="font-display text-xl text-muted-foreground">Poza ceną</h3>
-                      <ul className="mt-2.5 space-y-2.5">
-                        {content.excluded.map((item) => (
-                          <li key={item} className="flex gap-2.5 text-sm text-muted-foreground">
-                            <span
-                              aria-hidden="true"
-                              className="mt-1 size-2 shrink-0 rounded-full bg-destructive"
-                            />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-            ) : null}
-          </div>
-
-          <aside className="lg:sticky lg:top-[calc(var(--trip-header-height,61px)+var(--trip-nav-height,0px)+24px)] lg:self-start">
+        <OfferDetailSections
+          offer={offer}
+          sidebar={
             <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Twój wyjazd</p>
               <OfferFacts offer={offer} />
             </div>
-          </aside>
-        </div>
-
-        {content.accommodation ? (
-          <section
-            id={accommodation.id}
-            tabIndex={-1}
-            className="border-t border-border py-12 sm:py-14"
-          >
-            <div className="mx-auto max-w-6xl px-5 pb-4">
-              <h2 className="text-3xl sm:text-4xl">{accommodation.label}</h2>
-              <p className="mt-4 max-w-3xl text-muted-foreground">
-                {content.accommodation.description}
-              </p>
-            </div>
-            {offer.accommodationImages.length > 0 ? (
-              <OfferGallery images={offer.accommodationImages} />
-            ) : null}
-          </section>
-        ) : null}
-
-        {offer.images.length > 0 ? (
-          <OfferGallery id={gallery.id} title={gallery.label} images={offer.images} />
-        ) : null}
+          }
+        />
         <RelatedTripsSection currentOfferId={offer.id} />
       </main>
       <PublicFooter />

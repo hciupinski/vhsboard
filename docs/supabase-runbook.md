@@ -174,3 +174,31 @@ Testy `supabase/tests/portal_settings_security.sql` sprawdzają anonimowy
 odczyt, brak zapisu dla anon i zwykłego konta, admin-only UPDATE, ograniczenie
 wartości oraz ochronę singletona. Test kończy się ROLLBACK i nie zapisuje
 trwale wybranego motywu.
+
+## Offer sections v2 rollout (VHS-020 / VHS-020a)
+
+Apply `supabase/migrations/20261102120000_add_offer_content_sections.sql` after all
+previous migrations, before deploying the matching frontend. It adds v2 validators,
+protects against legacy CMS overwrites and creates the resort-map category, unique
+index and replacement RPC. It does not enable optional sections or add commercial
+insurance/transport content to existing offers.
+
+Old offers are not bulk rewritten. Opening and saving in the new CMS writes v2;
+camp term UUIDs are generated once and preserved. Older tabs attempting to save a
+v2 offer receive “Odśwież CMS przed zapisaniem oferty.” Refresh before editing again.
+To hide an optional section, disable its switch; do not delete its content or images.
+An incomplete enabled section can be saved in a draft but cannot be published.
+
+The map RPC requires an existing object in the same offer folder and valid alt text.
+It serializes replacements with a row lock. Cleanup failure is recoverable through
+the existing CMS retry action, which checks references again before deleting. A
+network failure during replacement requires refetching metadata before retrying;
+never manually remove a currently referenced object. Maps cannot be hero images.
+
+Run the existing `supabase/tests/cms_security.sql` and the new
+`supabase/tests/offer_content_sections.sql` against a local/disposable database with
+all migrations applied and pgTAP available. Both files use transactions and roll back
+their fixtures. The new suite verifies optional Transport, disabled accommodation,
+direct-API publication validation, version protection and map permissions. Never run
+QA fixture publication against production. Roll back a deployment by retaining the
+forward database migration; do not drop v2 JSON data to make an old CMS writable.

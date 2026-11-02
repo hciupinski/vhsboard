@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { sectionOffer } from "@/lib/offers/__fixtures__/sections";
 import type { EditableOfferInput } from "@/lib/offers/editor-schema";
 
 import { OfferEditorForm } from "./OfferEditorForm";
@@ -15,6 +16,7 @@ const completeInput: EditableOfferInput = {
   subtitle: "Siedem dni w Ericeirze.",
   shortDescription: "Poranne sesje, dobry surf house i kolacje po wodzie.",
   content: {
+    schemaVersion: 2,
     paragraphs: ["Tekst o wyjeździe."],
     highlights: ["Dwie sesje dziennie"],
     included: ["Nocleg"],
@@ -71,6 +73,61 @@ const dayCampInput: EditableOfferInput = {
 afterEach(cleanup);
 
 describe("OfferEditorForm", () => {
+  it("retains transport text after disabling and reopening its optional section", async () => {
+    const user = userEvent.setup();
+    function Editor() {
+      const [value, setValue] = useState(completeInput);
+      return <OfferEditorForm value={value} errors={{}} disabled={false} onChange={setValue} />;
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "Transport" }));
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    fireEvent.change(screen.getByLabelText("Transport → Opis organizacyjny"), {
+      target: { value: "Autokar z Warszawy." },
+    });
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    await user.click(screen.getByRole("tab", { name: "Cena" }));
+    await user.click(screen.getByRole("tab", { name: "Transport" }));
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    expect(screen.getByLabelText("Transport → Opis organizacyjny")).toHaveValue(
+      "Autokar z Warszawy.",
+    );
+  });
+
+  it("limits insurance packages to six and extensions to twelve with stable IDs", async () => {
+    const user = userEvent.setup();
+    let latest = {
+      ...completeInput,
+      content: { ...completeInput.content, insurance: sectionOffer().content.insurance },
+    };
+    function Editor() {
+      const [value, setValue] = useState(latest);
+      return (
+        <OfferEditorForm
+          value={value}
+          errors={{}}
+          disabled={false}
+          onChange={(next) => {
+            latest = next as typeof latest;
+            setValue(next as typeof latest);
+          }}
+        />
+      );
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "Ubezpieczenie" }));
+    for (let i = 1; i < 6; i++)
+      fireEvent.click(screen.getByRole("button", { name: `Dodaj kartę (${i}/6)` }));
+    expect(screen.getByRole("button", { name: "Dodaj kartę (6/6)" })).toBeDisabled();
+    for (let i = 1; i < 12; i++)
+      fireEvent.click(screen.getByRole("button", { name: `Dodaj kartę (${i}/12)` }));
+    expect(screen.getByRole("button", { name: "Dodaj kartę (12/12)" })).toBeDisabled();
+    expect(new Set(latest.content.insurance!.packages.map((item) => item.id)).size).toBe(6);
+    const firstId = latest.content.insurance!.packages[0]!.id;
+    fireEvent.click(screen.getAllByRole("button", { name: "Niżej" })[0]!);
+    expect(latest.content.insurance!.packages[1]!.id).toBe(firstId);
+  });
+
   it("updates the last-places badge setting from the Basics tab", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
@@ -142,12 +199,15 @@ describe("OfferEditorForm", () => {
     );
 
     expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
-      "Podstawy",
+      "Dane oferty",
       "O wyjeździe",
       "W programie",
-      "Plan wyjazdu",
-      "Co jest w cenie",
+      "Cena",
       "Zakwaterowanie",
+      "Resort",
+      "Szkolenia",
+      "Transport",
+      "Ubezpieczenie",
       "Galeria",
     ]);
   });
@@ -218,7 +278,7 @@ describe("OfferEditorForm", () => {
     };
     render(<OfferEditorForm value={value} errors={{}} disabled={false} onChange={onChange} />);
 
-    await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
     fireEvent.change(screen.getByLabelText("Dzień 2 — opis"), {
       target: { value: "Dwie sesje i analiza nagrań." },
     });
@@ -243,7 +303,7 @@ describe("OfferEditorForm", () => {
       <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={onChange} />,
     );
 
-    await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
     await user.click(screen.getByRole("button", { name: "Dodaj dzień" }));
 
     expect(onChange).toHaveBeenCalledWith({
@@ -274,11 +334,11 @@ describe("OfferEditorForm", () => {
     expect(screen.getByLabelText("W programie 1")).toBeDisabled();
     expect(screen.getByRole("button", { name: "Dodaj pozycję" })).toBeDisabled();
 
-    await user.click(screen.getByRole("tab", { name: "Co jest w cenie" }));
+    await user.click(screen.getByRole("tab", { name: "Cena" }));
     expect(screen.getByLabelText("W cenie 1")).toBeDisabled();
     expect(screen.getByLabelText("Poza ceną 1")).toBeDisabled();
 
-    await user.click(screen.getByRole("tab", { name: "Plan wyjazdu" }));
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
     expect(screen.getByRole("button", { name: "Dodaj dzień" })).toBeDisabled();
   });
 
@@ -318,7 +378,7 @@ describe("OfferEditorForm", () => {
       <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={vi.fn()} />,
     );
 
-    await user.click(screen.getByRole("tab", { name: "Turnusy i ceny" }));
+    await user.click(screen.getByRole("tab", { name: "Cena" }));
     expect(screen.getByText("Turnusy i warianty cen")).toBeInTheDocument();
     expect(screen.getByLabelText("Turnus 1, wariant 1 — cena")).toHaveValue(1290);
     expect(screen.getByLabelText("Turnus 1 — adres zapisów")).toHaveValue(
@@ -326,11 +386,11 @@ describe("OfferEditorForm", () => {
     );
     expect(screen.queryByText("Plan zajęć")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("tab", { name: "Plan dnia" }));
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
     expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("09:00");
     expect(screen.getByText("5/120 znaków")).toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
-    expect(screen.getByLabelText("Transport")).toHaveValue("Dojazd własny.");
+    await user.click(screen.getByRole("tab", { name: "O obozie" }));
+    expect(screen.getByLabelText("Wiek uczestników")).toHaveValue("8–14 lat");
   });
 
   it("keeps trip subtitle in basics and preserves edits across the separate panels", async () => {
@@ -361,7 +421,7 @@ describe("OfferEditorForm", () => {
     fireEvent.change(screen.getByLabelText("W programie 1"), {
       target: { value: "Surf o świcie" },
     });
-    await user.click(screen.getByRole("tab", { name: "Podstawy" }));
+    await user.click(screen.getByRole("tab", { name: "Dane oferty" }));
     expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue("Nowe wprowadzenie.");
     expect(onChange).toHaveBeenLastCalledWith({
       ...completeInput,
@@ -394,12 +454,12 @@ describe("OfferEditorForm", () => {
         "priceFrom",
         "currency",
         "bookingUrl",
-      ].map((path) => [path, "Podstawy"] as const),
+      ].map((path) => [path, "Dane oferty"] as const),
       ["content.paragraphs.0", "O wyjeździe"],
       ["content.highlights.0", "W programie"],
-      ["content.schedule.0.text", "Plan wyjazdu"],
-      ["content.included.0", "Co jest w cenie"],
-      ["content.excluded.0", "Co jest w cenie"],
+      ["content.schedule.0.text", "W programie"],
+      ["content.included.0", "Cena"],
+      ["content.excluded.0", "Cena"],
       ["heroImagePath", "Galeria"],
     ];
     for (const [path, tab] of cases) {
@@ -422,7 +482,7 @@ describe("OfferEditorForm", () => {
     } as DOMRect);
     fireEvent.focus(gallery);
     expect(tablist.scrollLeft).toBe(340);
-    const basics = screen.getByRole("tab", { name: "Podstawy" });
+    const basics = screen.getByRole("tab", { name: "Dane oferty" });
     vi.spyOn(basics, "getBoundingClientRect").mockReturnValue({
       left: -330,
       right: -240,
@@ -437,21 +497,22 @@ describe("OfferEditorForm", () => {
       <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={vi.fn()} />,
     );
     expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual([
-      "Podstawy",
+      "Dane oferty",
       "O obozie",
-      "Atrakcje",
-      "Plan dnia",
-      "W cenie",
-      "Turnusy i ceny",
-      "Dla rodzica",
+      "W programie",
+      "Cena",
       "Zakwaterowanie",
+      "Resort",
+      "Szkolenia",
+      "Transport",
+      "Ubezpieczenie",
       "Galeria",
     ]);
     expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();
     await user.click(screen.getByRole("tab", { name: "O obozie" }));
     expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue(dayCampInput.subtitle);
     expect(screen.queryByLabelText("Atrakcje 1")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "Atrakcje" }));
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
     expect(screen.getByLabelText("Atrakcje 1")).toHaveValue("Małe grupy");
   });
 
@@ -459,13 +520,13 @@ describe("OfferEditorForm", () => {
     const props = { value: dayCampInput, disabled: false, onChange: vi.fn() };
     const { rerender } = render(<OfferEditorForm {...props} errors={{}} />);
     for (const [path, tab] of [
-      ["content.terms.0.bookingUrl", "Turnusy i ceny"],
+      ["content.terms.0.bookingUrl", "Cena"],
       ["subtitle", "O obozie"],
-      ["content.highlights.0", "Atrakcje"],
+      ["content.highlights.0", "W programie"],
       ["content.venueDescription", "O obozie"],
-      ["content.dayProgram.0.time", "Plan dnia"],
-      ["content.parentInfo.safety", "Dla rodzica"],
-      ["content.included.0", "W cenie"],
+      ["content.dayProgram.0.time", "W programie"],
+      ["content.parentInfo.safety", "O obozie"],
+      ["content.included.0", "Cena"],
     ] as const) {
       rerender(<OfferEditorForm {...props} errors={{ [path]: "Popraw to pole." }} />);
       expect(screen.getByRole("tab", { name: `${tab} — zawiera błędy` })).toBeInTheDocument();

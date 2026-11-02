@@ -12,11 +12,13 @@ export function OfferGallery({
   title,
   description,
   id,
+  contain = false,
 }: {
   images: OfferImage[];
   title?: string;
   description?: string;
   id?: string;
+  contain?: boolean;
 }) {
   const visibleImages = images.filter((image) => image.signedUrl !== null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -47,7 +49,9 @@ export function OfferGallery({
         </h2>
       ) : null}
       {description ? <p className="mt-4 max-w-3xl text-muted-foreground">{description}</p> : null}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        className={contain ? "mt-6 grid gap-4" : "mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"}
+      >
         {visibleImages.map((image) => (
           <Button
             key={image.id}
@@ -66,7 +70,11 @@ export function OfferGallery({
               loading="lazy"
               width={1200}
               height={900}
-              className="aspect-[4/3] w-full object-cover hover-zoom transition-transform duration-160 ease-out motion-reduce:transition-none"
+              className={
+                contain
+                  ? "max-h-[32rem] w-full object-contain"
+                  : "aspect-[4/3] w-full object-cover hover-zoom transition-transform duration-160 ease-out motion-reduce:transition-none"
+              }
             />
             <span
               aria-hidden="true"

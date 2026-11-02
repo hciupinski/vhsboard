@@ -1,3 +1,4 @@
+import type { ContentSections } from "./content-v2";
 export type OfferStatus = "draft" | "published" | "archived";
 
 export type OfferKind = "trip" | "day_camp";
@@ -6,10 +7,11 @@ export type TripActivity = "surf" | "snow" | "combo";
 export type DayCampActivity = "wake" | "snow";
 export type OfferActivity = TripActivity | DayCampActivity;
 
-export type OfferImageCategory = "gallery" | "accommodation";
+export type OfferImageCategory = "gallery" | "accommodation" | "resort_map";
 
 export type AccommodationContent = {
   description: string;
+  enabled?: boolean | undefined;
 };
 
 export type OfferImage = {
@@ -21,7 +23,7 @@ export type OfferImage = {
   signedUrl: string | null;
 };
 
-export type TripOfferContent = {
+export type TripOfferContent = ContentSections & {
   paragraphs: string[];
   highlights: string[];
   included: string[];
@@ -36,6 +38,7 @@ export type DayCampPriceOption = {
 };
 
 export type DayCampTerm = {
+  id?: string | undefined;
   label: string;
   startDate: string;
   endDate: string;
@@ -43,7 +46,7 @@ export type DayCampTerm = {
   priceOptions: DayCampPriceOption[];
 };
 
-export type DayCampContent = {
+export type DayCampContent = ContentSections & {
   paragraphs: string[];
   highlights: string[];
   included: string[];
@@ -82,6 +85,7 @@ type PublicOfferBase = {
   heroImageUrl: string | null;
   images: OfferImage[];
   accommodationImages: OfferImage[];
+  resortMap?: OfferImage | null;
 };
 
 export type TripOffer = PublicOfferBase & {

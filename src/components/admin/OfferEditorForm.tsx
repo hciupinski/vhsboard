@@ -1,3 +1,6 @@
+import { OptionalSectionsEditor } from "./offer-sections/OptionalSectionsEditor";
+import { getOfferEditorSections, type OfferSection } from "@/lib/offers/sections";
+import { normalizeOfferContentV2, sectionIsEnabled } from "@/lib/offers/content-v2";
 import type { ChangeEvent, ReactNode } from "react";
 import { Check, Plus, Trash2, X } from "lucide-react";
 
@@ -17,8 +20,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { changeEditableOfferKind, type EditableOfferInput } from "@/lib/offers/editor-schema";
 import { shouldCommitDateValue } from "@/lib/offers/date-input";
-import { dayCampSections, type DayCampSection } from "@/lib/offers/day-camp-sections";
-import { tripSections, type TripSection } from "@/lib/offers/trip-sections";
 import type {
   DayCampContent,
   DayCampTerm,
@@ -27,7 +28,7 @@ import type {
   TripOfferContent,
 } from "@/lib/offers/types";
 
-type EditorTab = "basics" | TripSection["editorTab"] | DayCampSection["editorTab"];
+type EditorTab = "basics" | OfferSection["editorTab"];
 
 type Props = {
   value: EditableOfferInput;
@@ -36,6 +37,7 @@ type Props = {
   onChange: (value: EditableOfferInput) => void;
   imageManager?: ReactNode | undefined;
   accommodationImageManager?: ReactNode | undefined;
+  resortMapManager?: ReactNode | undefined;
 };
 type FieldProps = {
   id: string;
@@ -97,6 +99,7 @@ export function OfferEditorForm({
   onChange,
   imageManager,
   accommodationImageManager,
+  resortMapManager,
 }: Props) {
   const offerKind = value.offerKind ?? "trip";
   const dayCamp = offerKind === "day_camp" ? (value.content as DayCampContent) : null;
@@ -110,8 +113,10 @@ export function OfferEditorForm({
       "aria-invalid": error ? true : undefined,
     };
   };
-  const setDayCamp = (content: DayCampContent) => onChange({ ...value, content });
-  const setTrip = (content: TripOfferContent) => onChange({ ...value, content });
+  const setDayCamp = (content: DayCampContent) =>
+    onChange({ ...value, content: normalizeOfferContentV2(content, offerKind) });
+  const setTrip = (content: TripOfferContent) =>
+    onChange({ ...value, content: normalizeOfferContentV2(content, offerKind) });
   const setTerms = (terms: DayCampTerm[]) => dayCamp && setDayCamp({ ...dayCamp, terms });
   const listChange = (
     field: "paragraphs" | "highlights" | "included" | "excluded",
@@ -123,9 +128,10 @@ export function OfferEditorForm({
   const tabHasError = (prefix: string) =>
     Object.keys(errors).some((path) => path === prefix || path.startsWith(`${prefix}.`));
 
-  const tabs: { editorTab: EditorTab; label: string }[] = dayCamp
-    ? [{ editorTab: "basics", label: "Podstawy" }, ...dayCampSections]
-    : [{ editorTab: "basics", label: "Podstawy" }, ...tripSections];
+  const tabs: { editorTab: EditorTab; label: string }[] = [
+    { editorTab: "basics", label: "Dane oferty" },
+    ...getOfferEditorSections(offerKind),
+  ];
   const tabErrorPaths: Record<EditorTab, string[]> = {
     basics: [
       "offerKind",
@@ -148,12 +154,16 @@ export function OfferEditorForm({
             "bookingUrl",
           ]),
     ],
-    story: ["content.paragraphs", ...(dayCamp ? ["subtitle", "content.venueDescription"] : [])],
-    highlights: ["content.highlights"],
-    days: dayCamp ? ["content.dayProgram"] : ["content.schedule"],
-    inout: ["content.included", "content.excluded"],
-    terms: ["content.terms"],
-    parents: ["content.parentInfo"],
+    story: [
+      "content.paragraphs",
+      ...(dayCamp ? ["subtitle", "content.venueDescription", "content.parentInfo"] : []),
+    ],
+    highlights: ["content.highlights", dayCamp ? "content.dayProgram" : "content.schedule"],
+    inout: ["content.included", "content.excluded", "content.terms"],
+    resort: ["content.resort"],
+    training: ["content.training"],
+    transport: ["content.transport"],
+    insurance: ["content.insurance"],
     accommodation: ["content.accommodation"],
     photos: ["heroImagePath"],
   };
@@ -392,6 +402,14 @@ export function OfferEditorForm({
             </Field>
           ) : null}
         </fieldset>
+        {dayCamp ? (
+          <DayCampParentInfoEditor
+            content={dayCamp}
+            errors={errors}
+            disabled={disabled}
+            onChange={setDayCamp}
+          />
+        ) : null}
       </TabsContent>
 
       {trip || dayCamp ? (
@@ -408,6 +426,24 @@ export function OfferEditorForm({
               onChange={(next) => listChange("highlights", next)}
             />
           </fieldset>
+          <h2 className="mt-6 font-display text-2xl">
+            W programie → {trip ? "Plan wyjazdu" : "Plan dnia"}
+          </h2>
+          {trip ? (
+            <TripScheduleEditor
+              content={trip}
+              errors={errors}
+              disabled={disabled}
+              onChange={setTrip}
+            />
+          ) : dayCamp ? (
+            <DayCampProgramEditor
+              content={dayCamp}
+              errors={errors}
+              disabled={disabled}
+              onChange={setDayCamp}
+            />
+          ) : null}
         </TabsContent>
       ) : null}
 
@@ -441,39 +477,24 @@ export function OfferEditorForm({
             />
           </div>
         </fieldset>
-      </TabsContent>
-      <TabsContent value="days" className="mt-6">
-        {trip ? (
-          <TripScheduleEditor
-            content={trip}
-            errors={errors}
-            disabled={disabled}
-            onChange={setTrip}
-          />
-        ) : dayCamp ? (
-          <DayCampProgramEditor
-            content={dayCamp}
-            errors={errors}
-            disabled={disabled}
-            onChange={setDayCamp}
-          />
+        {dayCamp ? (
+          <TermsEditor content={dayCamp} errors={errors} disabled={disabled} onChange={setTerms} />
         ) : null}
       </TabsContent>
-      {dayCamp ? (
-        <TabsContent value="terms" className="mt-6">
-          <TermsEditor content={dayCamp} errors={errors} disabled={disabled} onChange={setTerms} />
-        </TabsContent>
-      ) : null}
-      {dayCamp ? (
-        <TabsContent value="parents" className="mt-6">
-          <DayCampParentInfoEditor
-            content={dayCamp}
+      {(["resort", "training", "transport", "insurance"] as const).map((key) => (
+        <TabsContent key={key} value={key} className="mt-6">
+          <OptionalSectionsEditor
+            sectionKey={key}
+            content={value.content}
             errors={errors}
             disabled={disabled}
-            onChange={setDayCamp}
+            onChange={(content) =>
+              dayCamp ? setDayCamp(content as DayCampContent) : setTrip(content as TripOfferContent)
+            }
+            mapManager={resortMapManager}
           />
         </TabsContent>
-      ) : null}
+      ))}
       <TabsContent value="accommodation" className="mt-6 space-y-4">
         <AccommodationEditor
           content={dayCamp ?? trip!}
@@ -525,7 +546,7 @@ function AccommodationEditor({
   disabled: boolean;
   onChange: (content: TripOfferContent | DayCampContent) => void;
 }) {
-  const enabled = content.accommodation !== undefined;
+  const enabled = sectionIsEnabled(content.accommodation);
   const description = content.accommodation?.description ?? "";
   const error = errorFor(errors, "content.accommodation.description");
 
@@ -550,7 +571,7 @@ function AccommodationEditor({
             onCheckedChange={(checked) =>
               onChange({
                 ...content,
-                accommodation: checked ? { description: description } : undefined,
+                accommodation: { ...content.accommodation, description, enabled: checked },
               })
             }
           />
@@ -574,7 +595,7 @@ function AccommodationEditor({
             onChange={(event) =>
               onChange({
                 ...content,
-                accommodation: { description: event.target.value },
+                accommodation: { ...content.accommodation, description: event.target.value },
               })
             }
           />
@@ -730,9 +751,50 @@ function TermsEditor({
         </p>
       </div>
       {content.terms.map((term, termIndex) => (
-        <div key={termIndex} className="space-y-4 rounded-xl border border-border/60 p-4">
+        <div
+          key={term.id ?? termIndex}
+          className="space-y-4 rounded-xl border border-border/60 p-4"
+        >
           <div className="flex items-center justify-between">
             <h3 className="font-semibold">Turnus {termIndex + 1}</h3>
+            {content.terms.length > 1 ? (
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={disabled || termIndex === 0}
+                  onClick={() => {
+                    const next = [...content.terms];
+                    [next[termIndex - 1], next[termIndex]] = [
+                      next[termIndex]!,
+                      next[termIndex - 1]!,
+                    ];
+                    onChange(next);
+                  }}
+                  aria-label={`Przenieś turnus ${termIndex + 1} wyżej`}
+                >
+                  Wyżej
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={disabled || termIndex === content.terms.length - 1}
+                  onClick={() => {
+                    const next = [...content.terms];
+                    [next[termIndex + 1], next[termIndex]] = [
+                      next[termIndex]!,
+                      next[termIndex + 1]!,
+                    ];
+                    onChange(next);
+                  }}
+                  aria-label={`Przenieś turnus ${termIndex + 1} niżej`}
+                >
+                  Niżej
+                </Button>
+              </div>
+            ) : null}
             {content.terms.length > 1 ? (
               <Button
                 type="button"
@@ -1130,25 +1192,7 @@ function DayCampParentInfoEditor({
           }
         />
       </Field>
-      <Field
-        id="parent-transport"
-        label="Transport"
-        hint="Opcjonalnie"
-        characterCount={{ value: content.parentInfo.transport ?? "", max: 500 }}
-        error={errorFor(errors, "content.parentInfo.transport")}
-      >
-        <Textarea
-          id="parent-transport"
-          value={content.parentInfo.transport ?? ""}
-          maxLength={500}
-          onChange={(event) =>
-            onChange({
-              ...content,
-              parentInfo: { ...content.parentInfo, transport: event.target.value },
-            })
-          }
-        />
-      </Field>
+
       <Field
         id="parent-supervision"
         label="Opieka"
@@ -1185,6 +1229,26 @@ function DayCampParentInfoEditor({
           }
         />
       </Field>
+      {content.parentInfo.transport !== undefined ? (
+        <Field
+          id="parent-legacy-transport"
+          label="Transport — wcześniejszy opis dla rodzica"
+          hint="Widoczny w O obozie, dopóki nowa sekcja Transport jest wyłączona."
+          error={errorFor(errors, "content.parentInfo.transport")}
+        >
+          <Textarea
+            id="parent-legacy-transport"
+            value={content.parentInfo.transport}
+            maxLength={500}
+            onChange={(event) =>
+              onChange({
+                ...content,
+                parentInfo: { ...content.parentInfo, transport: event.target.value },
+              })
+            }
+          />
+        </Field>
+      ) : null}
       <div className="sm:col-span-2">
         <Field
           id="parent-meals"

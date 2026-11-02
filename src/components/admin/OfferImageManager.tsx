@@ -143,14 +143,25 @@ export function OfferImageManager({
         category === "gallery"
           ? await uploadOfferImage(offerId, selectedFile, altText.trim(), nextPosition)
           : await uploadOfferImage(offerId, selectedFile, altText.trim(), nextPosition, category);
-    } catch {
-      setError("Nie udało się dodać zdjęcia. Spróbuj ponownie.");
+    } catch (caught) {
+      if (caught instanceof ImageCleanupPendingError) {
+        setPendingCleanupPath(caught.storagePath);
+      }
+      if (category === "resort_map" || caught instanceof ImageCleanupPendingError)
+        await synchronizeImageState([refreshImages, onImagesChanged]);
+      setError(
+        caught instanceof ImageCleanupPendingError
+          ? caught.message
+          : "Nie udało się dodać zdjęcia. Spróbuj ponownie.",
+      );
       setIsUploading(false);
       return;
     }
 
     setImages((current) =>
-      [...current, uploadedImage].sort((first, second) => first.position - second.position),
+      (category === "resort_map" ? [uploadedImage] : [...current, uploadedImage]).sort(
+        (first, second) => first.position - second.position,
+      ),
     );
     setSelectedFile(null);
     setAltText("");
@@ -253,7 +264,13 @@ export function OfferImageManager({
   return (
     <section
       className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
-      aria-label={category === "accommodation" ? "Zdjęcia zakwaterowania" : "Zdjęcia oferty"}
+      aria-label={
+        category === "resort_map"
+          ? "Mapa resortu"
+          : category === "accommodation"
+            ? "Zdjęcia zakwaterowania"
+            : "Zdjęcia oferty"
+      }
     >
       <div className="space-y-4 rounded-xl bg-secondary/40 p-4">
         <div className="flex items-center gap-3">
@@ -330,7 +347,11 @@ export function OfferImageManager({
 
       <div>
         <h2 className="font-display text-xl tracking-wide">
-          {category === "accommodation" ? "Galeria zakwaterowania" : "Galeria"}
+          {category === "resort_map"
+            ? "Mapa tras resortu"
+            : category === "accommodation"
+              ? "Galeria zakwaterowania"
+              : "Galeria"}
         </h2>
         {isLoading ? <p className="mt-3 text-sm text-muted-foreground">Ładowanie zdjęć…</p> : null}
         {!isLoading && images.length === 0 ? (
@@ -339,7 +360,11 @@ export function OfferImageManager({
         <ul
           className="mt-4 grid gap-4 sm:grid-cols-2"
           aria-label={
-            category === "accommodation" ? "Galeria zdjęć zakwaterowania" : "Galeria zdjęć oferty"
+            category === "resort_map"
+              ? "Mapa resortu"
+              : category === "accommodation"
+                ? "Galeria zdjęć zakwaterowania"
+                : "Galeria zdjęć oferty"
           }
         >
           {images.map((image, index) => {

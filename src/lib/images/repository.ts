@@ -26,8 +26,11 @@ export class ImageRepositoryError extends Error {
 export class ImageCleanupPendingError extends ImageRepositoryError {
   readonly storagePath: string;
 
-  constructor(storagePath: string) {
-    super("Obraz usunięto z galerii, ale usunięcie pliku wymaga ponowienia.");
+  constructor(
+    storagePath: string,
+    message = "Obraz usunięto z galerii, ale usunięcie pliku wymaga ponowienia.",
+  ) {
+    super(message);
     this.name = "ImageCleanupPendingError";
     this.storagePath = storagePath;
   }
@@ -128,6 +131,54 @@ export const uploadOfferImage = async (
 
   if (uploadError) {
     throw new ImageRepositoryError("Nie udało się wgrać obrazu.", { cause: uploadError });
+  }
+
+  if (category === "resort_map") {
+    const { data, error } = await supabase.rpc("replace_offer_resort_map", {
+      p_offer_id: offerId,
+      p_storage_path: path,
+      p_alt_text: normalizedAltText,
+    });
+    if (error) {
+      // A network error can arrive after the database committed. Never remove
+      // an object whose new map row may already exist.
+      const definitiveDatabaseError =
+        typeof error.code === "string" && /^[0-9A-Z]{5}$/.test(error.code);
+      if (definitiveDatabaseError && !(await hasReferences(path))) {
+        try {
+          await removeObjectOrThrowCleanupPending(path);
+        } catch (cleanupError) {
+          if (cleanupError instanceof ImageCleanupPendingError)
+            throw new ImageCleanupPendingError(
+              path,
+              "Nie zapisano mapy. Ponów usunięcie przesłanego pliku.",
+            );
+          throw cleanupError;
+        }
+      }
+      throw new ImageRepositoryError("Nie udało się zapisać mapy resortu.", { cause: error });
+    }
+    const result = Array.isArray(data) ? data[0] : null;
+    if (!result || typeof result !== "object" || !("image" in result))
+      throw new ImageRepositoryError("Nie udało się odczytać mapy resortu.");
+    const saved = toOfferImage(result.image);
+    if (
+      typeof result.previous_path === "string" &&
+      result.previous_path !== path &&
+      !(await hasReferences(result.previous_path))
+    ) {
+      try {
+        await removeObjectOrThrowCleanupPending(result.previous_path, saved.id);
+      } catch (cleanupError) {
+        if (cleanupError instanceof ImageCleanupPendingError)
+          throw new ImageCleanupPendingError(
+            result.previous_path,
+            "Mapę zapisano. Ponów usunięcie poprzedniego pliku.",
+          );
+        throw cleanupError;
+      }
+    }
+    return saved;
   }
 
   const { data, error } = await supabase
@@ -315,7 +366,7 @@ export const reorderOfferImages = async (
   const rpcArgs = {
     p_offer_id: offerId,
     p_ordered_image_ids: orderedImageIds,
-    ...(category === "accommodation" ? { p_category: category } : {}),
+    ...(category !== "gallery" ? { p_category: category } : {}),
   };
   const { error } = await supabase.rpc("reorder_offer_images", rpcArgs);
   if (error) {

@@ -144,7 +144,7 @@ describe("day-camp detail route", () => {
     render(<RouterProvider router={router} />);
 
     expect(await screen.findByRole("heading", { name: "O obozie" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Atrakcje" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "W programie" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "W cenie" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Poza ceną" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Galeria" })).toBeInTheDocument();
@@ -181,11 +181,8 @@ describe("day-camp detail route", () => {
     const links = within(navigation).getAllByRole("link");
     expect(links.map((link) => link.textContent)).toEqual([
       "O obozie",
-      "Atrakcje",
-      "Plan dnia",
-      "W cenie",
-      "Turnusy i ceny",
-      "Dla rodzica",
+      "W programie",
+      "Cena",
       "Galeria",
     ]);
     for (const link of links) {
