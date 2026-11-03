@@ -6,7 +6,7 @@ export function OfferStoryImages({ images }: { images: OfferImage[] }) {
 
   return (
     <div
-      className={`mt-6 grid grid-cols-2 gap-3 sm:gap-4 ${visible.length > 1 ? "sm:aspect-[2/1] sm:auto-rows-fr" : ""}`}
+      className={`grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2 lg:self-start ${visible.length > 1 ? "lg:aspect-[4/3] lg:auto-rows-fr" : ""}`}
     >
       {visible.map((image, index) => (
         <div
@@ -14,11 +14,11 @@ export function OfferStoryImages({ images }: { images: OfferImage[] }) {
           className={`relative overflow-hidden rounded-2xl bg-secondary ${
             index === 0
               ? visible.length === 1
-                ? "col-span-2 aspect-[16/9]"
-                : "col-span-2 aspect-[16/9] sm:col-span-1 sm:row-span-2 sm:aspect-auto"
+                ? "aspect-[16/9] lg:col-span-2"
+                : "aspect-[16/9] lg:col-span-1 lg:row-span-2 lg:aspect-auto"
               : visible.length === 2
-                ? "col-span-2 aspect-[16/9] sm:col-span-1 sm:row-span-2 sm:aspect-auto"
-                : "aspect-[4/3] sm:aspect-auto"
+                ? "aspect-[16/9] lg:col-span-1 lg:row-span-2 lg:aspect-auto"
+                : "aspect-[16/9] lg:aspect-auto"
           }`}
         >
           <img

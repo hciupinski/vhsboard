@@ -154,13 +154,11 @@ export function OfferEditorForm({
             "bookingUrl",
           ]),
     ],
-    story: [
-      "content.paragraphs",
-      ...(dayCamp ? ["subtitle", "content.venueDescription", "content.parentInfo"] : []),
-    ],
+    story: ["content.paragraphs", ...(dayCamp ? ["subtitle"] : [])],
     highlights: ["content.highlights", dayCamp ? "content.dayProgram" : "content.schedule"],
     inout: ["content.included", "content.excluded", "content.terms"],
-    resort: ["content.resort"],
+    parent: ["content.parentInfo"],
+    resort: ["content.resort", ...(dayCamp ? ["content.venueDescription"] : [])],
     training: ["content.training"],
     transport: ["content.transport"],
     insurance: ["content.insurance"],
@@ -383,34 +381,18 @@ export function OfferEditorForm({
             error={errorFor(errors, "content.paragraphs")}
             onChange={(next) => listChange("paragraphs", next)}
           />
-          {dayCamp ? (
-            <Field
-              id="venue-description"
-              label="Opis miejsca zajęć"
-              characterCount={{ value: dayCamp.venueDescription, max: 500 }}
-              error={errorFor(errors, "content.venueDescription")}
-            >
-              <Textarea
-                id="venue-description"
-                value={dayCamp.venueDescription}
-                maxLength={500}
-                className="min-h-24"
-                onChange={(event) =>
-                  setDayCamp({ ...dayCamp, venueDescription: event.target.value })
-                }
-              />
-            </Field>
-          ) : null}
         </fieldset>
-        {dayCamp ? (
+      </TabsContent>
+      {dayCamp ? (
+        <TabsContent value="parent" className="mt-6">
           <DayCampParentInfoEditor
             content={dayCamp}
             errors={errors}
             disabled={disabled}
             onChange={setDayCamp}
           />
-        ) : null}
-      </TabsContent>
+        </TabsContent>
+      ) : null}
 
       {trip || dayCamp ? (
         <TabsContent value="highlights" className="mt-6">
@@ -483,14 +465,64 @@ export function OfferEditorForm({
       </TabsContent>
       {(["resort", "training", "transport", "insurance"] as const).map((key) => (
         <TabsContent key={key} value={key} className="mt-6">
+          {key === "resort" &&
+          dayCamp &&
+          (!dayCamp.resort ||
+            !dayCamp.resort.enabled ||
+            (dayCamp.venueDescription &&
+              dayCamp.venueDescription !== dayCamp.resort.description.slice(0, 500))) ? (
+            <div className="mb-6 rounded-2xl border border-border bg-background p-6">
+              <Field
+                id="venue-description"
+                label="Resort → Opis miejsca zajęć"
+                characterCount={{ value: dayCamp.venueDescription, max: 500 }}
+                error={errorFor(errors, "content.venueDescription")}
+              >
+                <Textarea
+                  id="venue-description"
+                  value={dayCamp.venueDescription}
+                  maxLength={500}
+                  disabled={disabled}
+                  className="min-h-24"
+                  onChange={(event) =>
+                    setDayCamp({ ...dayCamp, venueDescription: event.target.value })
+                  }
+                />
+              </Field>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {dayCamp.resort?.enabled
+                  ? "Starszy opis miejsca zajęć jest zachowany w sekcji Resort."
+                  : "Włącz resort poniżej, aby dodać nazwę i mapę miejsca."}
+              </p>
+            </div>
+          ) : null}
           <OptionalSectionsEditor
             sectionKey={key}
             content={value.content}
             errors={errors}
             disabled={disabled}
-            onChange={(content) =>
-              dayCamp ? setDayCamp(content as DayCampContent) : setTrip(content as TripOfferContent)
-            }
+            onChange={(content) => {
+              if (!dayCamp) return setTrip(content as TripOfferContent);
+              const next = content as DayCampContent;
+              if (key === "resort" && next.resort) {
+                if (!dayCamp.resort && next.resort.enabled) {
+                  next.resort = {
+                    ...next.resort,
+                    name: value.location,
+                    description: dayCamp.venueDescription,
+                  };
+                }
+                if (
+                  next.resort.description !== dayCamp.resort?.description &&
+                  (!dayCamp.venueDescription ||
+                    !dayCamp.resort ||
+                    dayCamp.venueDescription === dayCamp.resort.description.slice(0, 500))
+                ) {
+                  next.venueDescription = next.resort.description.slice(0, 500);
+                }
+              }
+              setDayCamp(next);
+            }}
             mapManager={resortMapManager}
           />
         </TabsContent>
@@ -1233,7 +1265,7 @@ function DayCampParentInfoEditor({
         <Field
           id="parent-legacy-transport"
           label="Transport — wcześniejszy opis dla rodzica"
-          hint="Widoczny w O obozie, dopóki nowa sekcja Transport jest wyłączona."
+          hint="Widoczny w Dla rodzica, dopóki sekcja Transport jest wyłączona."
           error={errorFor(errors, "content.parentInfo.transport")}
         >
           <Textarea

@@ -8,6 +8,7 @@ export type OfferSection = {
     | "story"
     | "highlights"
     | "inout"
+    | "parent"
     | "accommodation"
     | "resort"
     | "training"
@@ -22,7 +23,7 @@ export function getOfferEditorSections(kind: "trip" | "day_camp"): OfferSection[
       id: kind === "trip" ? "o-wyjezdzie" : "o-obozie",
       label: kind === "trip" ? "O wyjeździe" : "O obozie",
       editorTab: "story",
-      aliases: kind === "day_camp" ? ["dla-rodzica"] : [],
+      aliases: [],
     },
     {
       id: kind === "trip" ? "program" : "atrakcje",
@@ -36,6 +37,9 @@ export function getOfferEditorSections(kind: "trip" | "day_camp"): OfferSection[
       editorTab: "inout",
       aliases: kind === "day_camp" ? ["turnusy"] : [],
     },
+    ...(kind === "day_camp"
+      ? [{ id: "dla-rodzica", label: "Dla rodzica", editorTab: "parent" as const }]
+      : []),
     { id: "zakwaterowanie", label: "Zakwaterowanie", editorTab: "accommodation" },
     { id: "resort", label: "Resort", editorTab: "resort" },
     { id: "szkolenia", label: "Szkolenia", editorTab: "training" },
@@ -63,6 +67,20 @@ export function getOfferSections(offer: PublicOffer): OfferSection[] {
         );
       case "photos":
         return offer.images.some((image) => image.signedUrl !== null);
+      case "parent":
+        return (
+          offer.offerKind === "day_camp" &&
+          (!!offer.content.parentInfo.ageRange ||
+            !!offer.content.parentInfo.supervision ||
+            !!offer.content.parentInfo.safety ||
+            !!offer.content.parentInfo.meals ||
+            (!sectionIsEnabled(content.transport) && !!offer.content.parentInfo.transport))
+        );
+      case "resort":
+        return (
+          sectionIsEnabled(content.resort) ||
+          (offer.offerKind === "day_camp" && !content.resort && !!offer.content.venueDescription)
+        );
       default:
         return sectionIsEnabled(content[section.editorTab]);
     }

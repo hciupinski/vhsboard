@@ -389,7 +389,7 @@ describe("OfferEditorForm", () => {
     await user.click(screen.getByRole("tab", { name: "W programie" }));
     expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("09:00");
     expect(screen.getByText("5/120 znaków")).toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "O obozie" }));
+    await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
     expect(screen.getByLabelText("Wiek uczestników")).toHaveValue("8–14 lat");
   });
 
@@ -501,6 +501,7 @@ describe("OfferEditorForm", () => {
       "O obozie",
       "W programie",
       "Cena",
+      "Dla rodzica",
       "Zakwaterowanie",
       "Resort",
       "Szkolenia",
@@ -516,6 +517,31 @@ describe("OfferEditorForm", () => {
     expect(screen.getByLabelText("Atrakcje 1")).toHaveValue("Małe grupy");
   });
 
+  it("moves the legacy camp venue into the resort editor without losing its text", async () => {
+    if (!("venueDescription" in dayCampInput.content)) throw new Error("expected camp content");
+    const venueDescription = dayCampInput.content.venueDescription;
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+    await user.click(screen.getByRole("tab", { name: "Resort" }));
+    expect(screen.getByLabelText("Resort → Opis miejsca zajęć")).toHaveValue(venueDescription);
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          venueDescription,
+          resort: expect.objectContaining({
+            enabled: true,
+            name: dayCampInput.location,
+            description: venueDescription,
+          }),
+        }),
+      }),
+    );
+  });
+
   it("keeps day-camp validation markers with their existing panels", () => {
     const props = { value: dayCampInput, disabled: false, onChange: vi.fn() };
     const { rerender } = render(<OfferEditorForm {...props} errors={{}} />);
@@ -523,9 +549,9 @@ describe("OfferEditorForm", () => {
       ["content.terms.0.bookingUrl", "Cena"],
       ["subtitle", "O obozie"],
       ["content.highlights.0", "W programie"],
-      ["content.venueDescription", "O obozie"],
+      ["content.venueDescription", "Resort"],
       ["content.dayProgram.0.time", "W programie"],
-      ["content.parentInfo.safety", "O obozie"],
+      ["content.parentInfo.safety", "Dla rodzica"],
       ["content.included.0", "Cena"],
     ] as const) {
       rerender(<OfferEditorForm {...props} errors={{ [path]: "Popraw to pole." }} />);
