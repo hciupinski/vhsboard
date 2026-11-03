@@ -1,4 +1,4 @@
-import { LOCAL_IMAGE_ASSETS } from "./local-assets.generated";
+import { LOCAL_IMAGE_ASSETS, type LocalImagePath } from "./local-assets.generated";
 
 export type ResponsiveImageAsset = {
   readonly src: string;
@@ -8,7 +8,7 @@ export type ResponsiveImageAsset = {
   readonly avifSrcSet: string;
 };
 
-export function getLocalImage(path: string): ResponsiveImageAsset {
+export function getLocalImage(path: LocalImagePath): ResponsiveImageAsset {
   const image = LOCAL_IMAGE_ASSETS[path];
   if (!image) throw new Error(`Brak lokalnego obrazu: ${path}. Uruchom images:generate.`);
   return image;

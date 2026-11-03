@@ -11,11 +11,13 @@ import { aboutUsFaqItems } from "@/lib/faq";
 import { FaqSection } from "@/components/public/FaqSection";
 import { HeroCarousel } from "@/components/public/HeroCarousel";
 
-const founderImages = [
-  { path: "about-us/mario-skate.jpg", label: "Mariusz podczas jazdy na deskorolce" },
-  { path: "about-us/mario-skim-2.jpg", label: "Mariusz podczas jazdy na skimboardzie" },
-  { path: "about-us/mario-snow.jpg", label: "Mariusz podczas skoku na snowboardzie" },
-].map(({ path, label }) => {
+const founderImages = (
+  [
+    { path: "about-us/mario-skate.jpg", label: "Mariusz podczas jazdy na deskorolce" },
+    { path: "about-us/mario-skim-2.jpg", label: "Mariusz podczas jazdy na skimboardzie" },
+    { path: "about-us/mario-snow.jpg", label: "Mariusz podczas skoku na snowboardzie" },
+  ] as const
+).map(({ path, label }) => {
   const responsive = getLocalImage(path);
   return { path, label, src: responsive.src, responsive };
 });

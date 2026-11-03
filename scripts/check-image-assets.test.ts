@@ -2,6 +2,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import sharp from "sharp";
+import ts from "typescript";
 import { afterEach, expect, it } from "vitest";
 import { generateImageAssets } from "./generate-image-assets";
 import { checkImageAssets } from "./check-image-assets";
@@ -59,3 +60,43 @@ it.each(["missing", "oversized", "dimensions", "stale-source", "stale-catalogue"
     await expect(checkImageAssets(root)).rejects.toThrow();
   },
 );
+
+it("generates a catalogue whose paths remain checked by TypeScript", async () => {
+  const root = await fixture();
+  const imageDirectory = join(root, "src/lib/images");
+  await writeFile(
+    join(imageDirectory, "responsive.ts"),
+    await readFile(join(process.cwd(), "src/lib/images/responsive.ts"), "utf8"),
+  );
+  const usage = join(imageDirectory, "usage.ts");
+  await writeFile(
+    usage,
+    `import { getLocalImage } from "./responsive";
+import { LOCAL_IMAGE_ASSETS } from "./local-assets.generated";
+getLocalImage("carousel/portrait.jpg");
+LOCAL_IMAGE_ASSETS["carousel/portrait.jpg"].width;
+// @ts-expect-error Deleted or renamed sources cannot be referenced.
+getLocalImage("carousel/deleted.jpg");
+// @ts-expect-error File extensions are case sensitive.
+getLocalImage("carousel/portrait.JPG");
+declare const unvalidatedPath: string;
+// @ts-expect-error Unvalidated strings cannot bypass the catalogue.
+getLocalImage(unvalidatedPath);
+// @ts-expect-error The catalogue must not have a string index signature.
+LOCAL_IMAGE_ASSETS["carousel/deleted.jpg"];
+`,
+  );
+  const program = ts.createProgram([usage], {
+    noEmit: true,
+    strict: true,
+    skipLibCheck: true,
+    types: [],
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+  });
+  const diagnostics = ts.getPreEmitDiagnostics(program);
+  expect(
+    diagnostics.map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")),
+  ).toEqual([]);
+});
