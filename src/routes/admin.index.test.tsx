@@ -6,7 +6,7 @@ import {
   createRouter,
   RouterProvider,
 } from "@tanstack/react-router";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { FunctionComponent, PropsWithChildren } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -21,6 +21,8 @@ const { mockedArchiveOffer, mockedListAdminOffers, mockedResolveAdminImageUrls }
     mockedResolveAdminImageUrls: vi.fn(),
   }),
 );
+
+vi.mock("@/lib/offers/home-offers", () => ({ getTodayInWarsaw: () => "2026-06-12" }));
 
 vi.mock("@/lib/offers/admin-repository", () => ({
   archiveOffer: mockedArchiveOffer,
@@ -207,6 +209,60 @@ describe("admin offer list route", () => {
       "href",
       `/wyjazdy/${offer.slug}`,
     );
+  });
+
+  it("orders cards and marks finished photos while preserving statuses and actions", async () => {
+    const finished = {
+      ...offer,
+      id: "finished",
+      title: "Zakończony wyjazd",
+      slug: "finished",
+      status: "published" as const,
+      endDate: "2026-06-11",
+    };
+    const draft = {
+      ...offer,
+      id: "draft",
+      title: "Szkic po terminie",
+      status: "draft" as const,
+      endDate: "2026-06-11",
+      heroImagePath: null,
+    };
+    const active = {
+      ...offer,
+      id: "active",
+      title: "Trwający wyjazd",
+      status: "published" as const,
+      endDate: "2026-06-12",
+    };
+    mockedListAdminOffers.mockResolvedValue([finished, draft, active]);
+    mockedResolveAdminImageUrls.mockResolvedValue(
+      new Map([[offer.heroImagePath, "https://signed.example/hero.jpg"]]),
+    );
+
+    await renderAdminList();
+    await screen.findByText(active.title);
+    const cards = screen.getAllByRole("article");
+    expect(cards.map((card) => within(card).getByRole("heading").textContent)).toEqual([
+      active.title,
+      draft.title,
+      finished.title,
+    ]);
+    expect(within(cards[0]!).getByText("Opublikowana")).toBeInTheDocument();
+    expect(within(cards[0]!).getByRole("img")).not.toHaveClass("grayscale");
+    expect(within(cards[1]!).getByText("Szkic")).toBeInTheDocument();
+    expect(within(cards[1]!).getByRole("img", { name: /brak zdjęcia/i })).toBeInTheDocument();
+    expect(within(cards[2]!).getByText("Zakończone")).toBeInTheDocument();
+    expect(
+      await within(cards[2]!).findByRole("img", { name: `Zdjęcie główne: ${finished.title}` }),
+    ).toHaveClass("grayscale");
+    expect(within(cards[2]!).getByRole("link", { name: /podgląd/i })).toHaveAttribute(
+      "href",
+      "/wyjazdy/finished",
+    );
+    expect(
+      within(cards[2]!).getByRole("button", { name: "Archiwizuj ofertę" }),
+    ).toBeInTheDocument();
   });
 
   it("shows a neutral error and retries loading the list", async () => {
