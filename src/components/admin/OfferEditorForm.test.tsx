@@ -189,6 +189,27 @@ describe("OfferEditorForm", () => {
     expect(screen.getByText("Galeria slot")).toBeInTheDocument();
   });
 
+  it("uses save-first fallbacks for null image managers", async () => {
+    const user = userEvent.setup();
+    render(
+      <OfferEditorForm
+        value={completeInput}
+        errors={{}}
+        disabled={false}
+        onChange={vi.fn()}
+        imageManager={null}
+        accommodationImageManager={null}
+        resortMapManager={null}
+      />,
+    );
+    await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    expect(
+      screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia zakwaterowania."),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Galeria" }));
+    expect(screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).toBeInTheDocument();
+  });
+
   it("preserves term and journey associations through reordering and deletion", async () => {
     const user = userEvent.setup();
     const fixture = sectionOffer("day_camp");
@@ -255,6 +276,9 @@ describe("OfferEditorForm", () => {
     expect(screen.getByRole("button", { name: "Usuń wariant 1 z turnusu 1" })).toBeDisabled();
     await user.click(screen.getByRole("button", { name: "Dodaj wariant ceny" }));
     expect(screen.getByRole("button", { name: "Usuń wariant 2 z turnusu 1" })).toBeEnabled();
+    expect("terms" in latest.content && latest.content.terms[0]?.priceOptions[1]?.price).toBe(0);
+    await user.click(screen.getByRole("button", { name: "Usuń wariant 2 z turnusu 1" }));
+    expect("terms" in latest.content && latest.content.terms[0]?.priceOptions).toHaveLength(1);
   });
 
   it("keeps accommodation copy after disabling and reopening", async () => {

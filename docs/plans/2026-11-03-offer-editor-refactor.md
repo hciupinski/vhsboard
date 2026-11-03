@@ -114,12 +114,12 @@ Create `src/components/admin/offer-editor/` (distinct from existing optional-con
 
 **Interfaces:** exercise only public OfferEditorForm and existing domain helpers. Test helpers may share fixtures locally; no application-only test exports.
 
-- [ ] Install existing lockfile dependencies in this worktree using `bun install --frozen-lockfile`; run baseline `bun run test` and record exact result. Investigate/report preexisting failures before attributing them to extraction.
-- [ ] Add characterization tests before refactor: manual-slug override and title follow; kind switching via actual Select; null group/date clearing and required number/variant zero semantics; incomplete date guard; stateful camp edits across story/program/price/parent; exact+dotted error precedence/ARIA and optional tab error map; all three supplied media slots and fallback cases.
-- [ ] Add camp terms normalized regression: reorder IDs, rename, update selected variant, add/delete variant limits, add second term limit/remove; verify journey association by UUID survives reorder and deleted journey is removed on normalized output. Use known valid UUIDs.
-- [ ] Add resort regressions for synchronized updates and independently customized legacy copy; optional accommodation disable/reopen preservation; parent optional meals/legacy transport absence. Preserve existing transport/card tests.
-- [ ] Run `bun run test -- src/components/admin/OfferEditorForm.test.tsx 'src/routes/admin.$slug.test.tsx' src/lib/offers/editor-schema.test.ts`; expect all pass against original code. Characterization tests should pass baseline: do not invent a RED requirement for unchanged behavior or alter production code to satisfy newly desired behavior. Test gaps that expose baseline defects are reported separately.
-- [ ] Commit characterization coverage and this plan, with no application changes.
+- [x] Install existing lockfile dependencies in this worktree using `bun install --frozen-lockfile`; run baseline `bun run test` and record exact result. Investigate/report preexisting failures before attributing them to extraction.
+- [x] Add characterization tests before refactor: manual-slug override and title follow; kind switching via actual Select; null group/date clearing and required number/variant zero semantics; incomplete date guard; stateful camp edits across story/program/price/parent; exact+dotted error precedence/ARIA and optional tab error map; all three supplied media slots and fallback cases.
+- [x] Add camp terms normalized regression: reorder IDs, rename, update selected variant, add/delete variant limits, add second term limit/remove; verify journey association by UUID survives reorder and deleted journey is removed on normalized output. Use known valid UUIDs.
+- [x] Add resort regressions for synchronized updates and independently customized legacy copy; optional accommodation disable/reopen preservation; parent optional meals/legacy transport absence. Preserve existing transport/card tests.
+- [x] Run `bun run test -- src/components/admin/OfferEditorForm.test.tsx 'src/routes/admin.$slug.test.tsx' src/lib/offers/editor-schema.test.ts`; expect all pass against original code. Characterization tests should pass baseline: do not invent a RED requirement for unchanged behavior or alter production code to satisfy newly desired behavior. Test gaps that expose baseline defects are reported separately.
+- [x] Commit characterization coverage and this plan, with no application changes.
 
 ## Task 2: Extract shared field presentation and existing concrete editors
 
@@ -127,9 +127,9 @@ Create `src/components/admin/offer-editor/` (distinct from existing optional-con
 
 **Interfaces:** exact contracts above; all editors emit new content/array and preserve unrelated fields. Shared field modules do not import coordinator or route.
 
-- [ ] Move Field/counter/helpers without rewriting markup or conversions, use extracted functions at original call sites.
+- [x] Move Field/counter/helpers without rewriting markup or conversions, use extracted functions at original call sites.
 - [ ] Move each existing helper editor one at a time, run targeted OfferEditorForm tests after each logical extraction. Expected: all characterization and existing assertions remain green.
-- [ ] Run typecheck and route/schema targeted suite; inspect diff for only moved code/imports/types. Commit this independently reviewable extraction.
+- [x] Run typecheck and route/schema targeted suite; inspect diff for only moved code/imports/types. Commit this independently reviewable extraction.
 
 ## Task 3: Extract visible sections and simplify composition
 
@@ -137,10 +137,10 @@ Create `src/components/admin/offer-editor/` (distinct from existing optional-con
 
 **Interfaces:** sections receive only relevant controlled values/callbacks as listed. Normalization remains at form boundary, rather than duplicated across children; Basics uses existing changeEditableOfferKind for kind switch.
 
-- [ ] Extract basics/subtitle and verify title/slug/kind/date/number tests; preserve trip-only nested field layout.
-- [ ] Extract story/program/price and connect immutable content callbacks to one normalized form update. Verify list/schedule/camp term/UUID tests and absence of callbacks caused merely by rendering or tab switching.
-- [ ] Extract parent/accommodation/media panels; extract optional adapter verbatim, keep existing OptionalSectionsEditor/SectionFields unchanged. Verify legacy synchronization, section retention, media slots and error markers.
-- [ ] Review all fieldsets/disabled attributes, IDs, error lookup call sites, TabContent values and classes against base. Run targeted suite + typecheck; commit extraction.
+- [x] Extract basics/subtitle and verify title/slug/kind/date/number tests; preserve trip-only nested field layout.
+- [x] Extract story/program/price and connect immutable content callbacks to one normalized form update. Verify list/schedule/camp term/UUID tests and absence of callbacks caused merely by rendering or tab switching.
+- [x] Extract parent/accommodation/media panels; extract optional adapter verbatim, keep existing OptionalSectionsEditor/SectionFields unchanged. Verify legacy synchronization, section retention, media slots and error markers.
+- [x] Review all fieldsets/disabled attributes, IDs, error lookup call sites, TabContent values and classes against base. Run targeted suite + typecheck; commit extraction.
 
 ## Task 4: Verify actual UI, review and deliver
 
@@ -181,3 +181,10 @@ Create `src/components/admin/offer-editor/` (distinct from existing optional-con
 
 - Extracted basics, story, program, price, accommodation, optional-section adapter and photos while retaining tab composition and content normalization at the form boundary. Shared subtitle takes separate exact display and descendant ARIA errors to preserve the original lookup behavior.
 - `bun run typecheck` and form tests (35/35) passed after extraction. Added a regression confirming render and tab changes never emit an update. Initial desktop/mobile screenshots of both kinds match visually; three pairs are pixel-identical and the camp mobile pair differs only in a small text anti-aliasing region.
+
+### Task 4 verification (2026-11-03)
+
+- `bun run typecheck` passed; `bun run test` 82 files / 605 tests passed; `bun run lint` passed with seven existing Fast Refresh warnings. Full `bun run build` prerendered eight pages and generated the sitemap; `bun run check:seo` passed. `images:check` not applicable: no local image assets or generated catalogue imports changed.
+- Local controlled-form harness before/after screenshots and QA report: `docs/tasks/offer-editor-refactor-evidence/` (Git-ignored, copy before removing worktree). The screenshots use synthetic data and include both kinds at 1440×900 and 390×844, plus representative program, price and resort panels. Browser tested keyboard reveal, errors, retained edits, slots and disabled behavior; it does not exercise real authentication or route mutations.
+- Baseline limitations retained: camp term text/date/price inputs remain enabled under `disabled` although their buttons are disabled; legacy venue textarea retains its existing ARIA behavior. Pending is represented by the disabled prop in the harness.
+- A null-slot fallback and variant add/delete/zero assertion were added after extraction; both pass. Independent coordinator review found no actionable code findings at implementation commit `1014420`; final evidence review remains pending.
