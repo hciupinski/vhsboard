@@ -304,6 +304,23 @@ describe("offer image repository upload", () => {
     },
   );
 
+  it("explains unreadable images without exposing codec details or writing to Storage", async () => {
+    optimizer.mockRejectedValueOnce(new Error("private codec details"));
+    await expect(
+      uploadOfferImage(
+        offerId,
+        new File(["broken"], "fala.jpg", { type: "image/jpeg" }),
+        validAlt,
+        0,
+      ),
+    ).rejects.toMatchObject({
+      name: "ImageRepositoryError",
+      message: expect.stringMatching(/przygotować zdjęcia.*inny plik JPG, PNG lub WebP/),
+    });
+    expect(mockedSupabase.storage.from).not.toHaveBeenCalled();
+    expect(mockedSupabase.from).not.toHaveBeenCalled();
+  });
+
   it("rejects an invalid file, offer id, or position before Storage", async () => {
     const invalidFile = new File(["gif-data"], "fala.gif", { type: "image/gif" });
     const validFile = new File(["jpeg-data"], "fala.jpeg", { type: "image/jpeg" });

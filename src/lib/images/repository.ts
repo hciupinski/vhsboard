@@ -118,7 +118,15 @@ export const uploadOfferImage = async (
   category: OfferImageCategory = "gallery",
 ): Promise<OfferImage> => {
   const normalizedAltText = validateUploadInput(offerId, file, altText, position);
-  const optimizedFile = await optimizeImageForUpload(file);
+  let optimizedFile: File;
+  try {
+    optimizedFile = await optimizeImageForUpload(file);
+  } catch (cause) {
+    throw new ImageRepositoryError(
+      "Nie udało się przygotować zdjęcia. Plik może być uszkodzony lub nie dać się zmniejszyć. Wybierz inny plik JPG, PNG lub WebP.",
+      { cause },
+    );
+  }
   const path = createImagePath(offerId, optimizedFile, crypto.randomUUID());
   const blob = new Blob([await optimizedFile.arrayBuffer()], { type: optimizedFile.type });
   const storage = supabase.storage.from(OFFER_IMAGES_BUCKET);
