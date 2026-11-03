@@ -44,7 +44,7 @@ export function FaqSection({
             "Zebraliśmy najważniejsze informacje, żeby łatwiej było wybrać właściwy termin i ruszyć w drogę."}
         </p>
         <Accordion type="single" collapsible className="mt-8 border-t border-border">
-          {items.map(({ question, answer }, index) => (
+          {items.map(({ question, answer, link }, index) => (
             <AccordionItem key={question} value={`faq-${index}`} className="border-border">
               <AccordionTrigger className="py-5 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:text-xl">
                 {question}
@@ -54,9 +54,29 @@ export function FaqSection({
                   .split(/\n\s*\n/)
                   .map((paragraph) => paragraph.trim())
                   .filter(Boolean)
-                  .map((paragraph, paragraphIndex) => (
-                    <p key={`${question}-${paragraphIndex}`}>{paragraph}</p>
-                  ))}
+                  .map((paragraph, paragraphIndex) => {
+                    const linkIndex = link ? paragraph.indexOf(link.text) : -1;
+                    return (
+                      <p key={`${question}-${paragraphIndex}`}>
+                        {link && linkIndex >= 0 ? (
+                          <>
+                            {paragraph.slice(0, linkIndex)}
+                            <a
+                              className="text-primary underline underline-offset-4 hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                              href={link.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {link.text}
+                            </a>
+                            {paragraph.slice(linkIndex + link.text.length)}
+                          </>
+                        ) : (
+                          paragraph
+                        )}
+                      </p>
+                    );
+                  })}
               </AccordionContent>
             </AccordionItem>
           ))}

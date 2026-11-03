@@ -1,10 +1,24 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { FaqSection } from "./FaqSection";
+import { tripFaqItems } from "@/lib/faq";
+
+afterEach(cleanup);
 
 describe("FaqSection", () => {
+  it("links the freestyle video in the client's training answer", async () => {
+    const user = userEvent.setup();
+    render(<FaqSection headingId="trip-faq" items={tripFaqItems} />);
+    await user.click(
+      screen.getByRole("button", { name: "Jak wyglądają szkolenia podczas wyjazdów?" }),
+    );
+    expect(screen.getByRole("link", { name: "freestylu" })).toHaveAttribute(
+      "href",
+      "https://www.youtube.com/watch?v=k4DNSx4JNlU",
+    );
+  });
   it("exposes a Polish FAQ heading and opens an answer on request", async () => {
     const user = userEvent.setup();
 

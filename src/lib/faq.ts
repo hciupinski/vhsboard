@@ -1,38 +1,60 @@
 export type FaqItem = {
   question: string;
   answer: string;
+  link?: { text: string; href: string };
 };
 
 export const tripFaqItems: readonly FaqItem[] = [
   {
     question: "Czy muszę mieć doświadczenie na desce?",
     answer:
-      "Każda oferta opisuje poziom, dla którego jest przygotowana. Jeśli zaczynasz, wybierz termin oznaczony jako odpowiedni dla początkujących; przed zapisem sprawdź opis wyjazdu lub napisz do VHSBOARD.",
+      "Nie. Na wyjazdy VHS możesz jechać zarówno wtedy, gdy dopiero zaczynasz swoją przygodę ze snowboardem, nartami czy surfingiem, jak i wtedy, gdy masz już doświadczenie i chcesz zrobić kolejny progres. Szkolenia dopasowujemy do poziomu zaawansowania, dzięki czemu każdy może rozwijać się we własnym tempie.",
   },
   {
-    question: "Co obejmuje cena wyjazdu?",
+    question: "Czy muszę samodzielnie organizować transport, nocleg i skipass?",
     answer:
-      "Zakres świadczeń jest podany przy każdym terminie. W szczegółach znajdziesz informacje o noclegach, zajęciach, transferach, sprzęcie i pozycjach opłacanych osobno.",
+      "Nie. Chcemy, żeby wyjazd z VHS oznaczał przede wszystkim komfort i czas na jazdę, dlatego kwestie organizacyjne bierzemy na siebie. Planujemy transport, noclegi, skipassy, szkolenia i pozostałe elementy wyjazdu. Ty pakujesz deskę lub narty i jedziesz – resztą zajmujemy się my.",
   },
   {
     question: "Jak wygląda dojazd na wyjazd?",
     answer:
-      "Sposób dojazdu zależy od kierunku. Informację o miejscu zbiórki, transferach i organizacji podróży publikujemy w opisie konkretnej oferty.",
+      "Forma transportu zależy od kierunku i charakteru wyjazdu. Organizujemy przejazdy naszym busem oraz pomagamy dobierać się we wspólne przejazdy. Zawsze możliwy jest również dojazd własny. Szczegółowe informacje dotyczące transportu, miejsca i godziny zbiórki przekazujemy uczestnikom przed wyjazdem.",
   },
   {
     question: "Czy muszę zabrać własny sprzęt?",
     answer:
-      "To zależy od programu i poziomu zaawansowania. Lista rzeczy do zabrania oraz dostępność sprzętu są zawsze opisane przy danym wyjeździe.",
+      "Nie. Jeśli nie masz własnego snowboardu, czy innego potrzebnego sprzętu, w zależności od wyjazdu pomożemy w jego wypożyczeniu. Posiadamy wypożyczalnie snowboardów, butów snowboardowych oraz kasków. Jeśli masz swój sprzęt, oczywiście możesz zabrać go ze sobą.",
   },
   {
     question: "Z kim będę mieszkać na miejscu?",
     answer:
-      "Informacje o rodzaju zakwaterowania i układzie pokoi podajemy w szczegółach oferty. Jedziesz samodzielnie? To normalne — wyjazdy są pomyślane tak, aby łatwo poznać ekipę.",
+      "Pokoje staramy się dobierać tak, aby uczestnicy czuli się jak najbardziej komfortowo. Jeśli jedziesz ze znajomymi, partnerem lub rodziną, możesz zgłosić nam, że chcecie mieszkać razem. Jeśli jedziesz sam, dobierzemy Ci współlokatorów spośród pozostałych uczestników, a wcześniej postaramy się skonsultować wybór.",
+  },
+  {
+    question: "Czy mogę pojechać na wyjazd bez własnej ekipy?",
+    answer:
+      "Jasne! Wiele osób zapisuje się na nasze wyjazdy samodzielnie. Stawiamy na kameralne grupy i dobrą atmosferę, dlatego szybko można poznać pozostałych uczestników. Niejedna ekipa, która dziś jeździ razem, poznała się właśnie podczas wyjazdu VHS.",
+  },
+  {
+    question: "Jak wyglądają szkolenia podczas wyjazdów?",
+    answer:
+      "Szkolenia dopasowujemy do poziomu uczestników – od nauki podstaw po doskonalenie techniki i bardziej zaawansowaną jazdę. Zależy nam na realnym progresie, ale bez niepotrzebnej presji. Specjalizujemy się przede wszystkim we freestylu więc nauka salt, rotacji czy innych sztuczek na snowparku sprawia nam najwięcej frajdy.",
+    link: { text: "freestylu", href: "https://www.youtube.com/watch?v=k4DNSx4JNlU" },
+  },
+  {
+    question: "Kto prowadzi szkolenia podczas wyjazdów VHS?",
+    answer:
+      "Szkolenia prowadzi doświadczona i wykwalifikowana kadra instruktorów. To osoby, które mają nie tylko odpowiednie kompetencje, ale przede wszystkim doświadczenie na desce i w pracy z uczestnikami na różnych poziomach zaawansowania. Dbamy o bezpieczeństwo, dobrą atmosferę i indywidualne podejście.",
+  },
+  {
+    question: "Czy VHS organizuje cały wyjazd?",
+    answer:
+      "Tak. Chcemy, żebyś mógł skupić się przede wszystkim na jeździe, odpoczynku i dobrze spędzonym czasie, dlatego kwestie organizacyjne bierzemy na siebie. W zależności od wyjazdu zajmujemy się transportem, noclegami, szkoleniami, skipassami i innymi elementami pobytu. Nie musisz samodzielnie składać całej podróży z kilku osobnych rezerwacji.",
   },
   {
     question: "Jak zapisać się na wyjazd?",
     answer:
-      "Wejdź w wybrany termin i użyj przycisku zapisów prowadzącego do TripAhead. Po drodze sprawdzisz aktualną cenę, dostępność oraz zasady rezerwacji.",
+      "Wybierz interesujący Cię wyjazd i przejdź do formularza zapisów dostępnego na stronie. Po zgłoszeniu otrzymasz informacje dotyczące rezerwacji, płatności i kolejnych kroków. Jeśli przed zapisem masz pytania, możesz również skontaktować się z nami bezpośrednio.",
   },
 ];
 
