@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/admin/form-controls";
+import { Textarea } from "@/components/admin/form-controls";
 import type { DayCampContent } from "@/lib/offers/types";
 import { EditorField as Field } from "./EditorField";
 import { errorFor } from "./editor-fields";

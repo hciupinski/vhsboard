@@ -132,7 +132,7 @@ export function OptionalSectionsEditor({
               <label className="block space-y-2">
                 <span className="text-sm font-medium">Transport → Rodzaj transportu</span>
                 <select
-                  className="h-11 w-full rounded-md border bg-background px-3"
+                  className="h-11 w-full rounded-md border bg-card px-3"
                   value={transport.type}
                   onChange={(e) =>
                     onChange({

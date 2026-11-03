@@ -1,7 +1,7 @@
 import type { EditableOfferInput } from "@/lib/offers/editor-schema";
 import { changeEditableOfferKind } from "@/lib/offers/editor-schema";
 import type { OfferKind, OfferActivity } from "@/lib/offers/types";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/admin/form-controls";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/admin/form-controls";
 import { EditorField as Field, SubtitleField } from "./EditorField";
 import {
   errorFor,
@@ -50,7 +50,11 @@ export function OfferBasicsSection({
             disabled={disabled}
             onValueChange={(next) => onChange(changeEditableOfferKind(value, next as OfferKind))}
           >
-            <SelectTrigger id="offer-kind" {...state("offerKind", "offer-kind")}>
+            <SelectTrigger
+              className="bg-card"
+              id="offer-kind"
+              {...state("offerKind", "offer-kind")}
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -106,7 +110,7 @@ export function OfferBasicsSection({
             disabled={disabled}
             onValueChange={(activity) => set("activity", activity as OfferActivity)}
           >
-            <SelectTrigger id="activity" {...state("activity")}>
+            <SelectTrigger className="bg-card" id="activity" {...state("activity")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

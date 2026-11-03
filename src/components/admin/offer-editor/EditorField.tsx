@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/admin/form-controls";
 import { Label } from "@/components/ui/label";
 
 type FieldProps = {

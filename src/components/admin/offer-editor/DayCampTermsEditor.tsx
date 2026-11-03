@@ -1,6 +1,6 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/admin/form-controls";
 import type { DayCampContent, DayCampTerm } from "@/lib/offers/types";
 import { EditorField as Field, CharacterCounter } from "./EditorField";
 import { errorFor, shouldUpdateDate } from "./editor-fields";

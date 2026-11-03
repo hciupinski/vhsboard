@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/admin/form-controls";
 import { OptionalSectionsEditor } from "../offer-sections/OptionalSectionsEditor";
 import { EditorField as Field } from "./EditorField";
 import { errorFor } from "./editor-fields";

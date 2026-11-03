@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/admin/form-controls";
+import { Textarea } from "@/components/admin/form-controls";
 import type { ExtraPrice } from "@/lib/offers/content-v2";
 type Card = { id: string; title: string; description: string; price: ExtraPrice };
 export function createSectionFields(errors: Record<string, string>, disabled: boolean) {
@@ -51,7 +51,7 @@ export function createSectionFields(errors: Record<string, string>, disabled: bo
       <label className="space-y-2">
         <span className="text-sm font-medium">Informacja cenowa</span>
         <select
-          className="h-11 w-full rounded-md border bg-background px-3"
+          className="h-11 w-full rounded-md border bg-card px-3"
           value={value.kind}
           onChange={(e) =>
             change({ ...value, kind: e.target.value as ExtraPrice["kind"], amount: 0 })
