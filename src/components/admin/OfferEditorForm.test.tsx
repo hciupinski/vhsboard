@@ -73,6 +73,334 @@ const dayCampInput: EditableOfferInput = {
 afterEach(cleanup);
 
 describe("OfferEditorForm", () => {
+  it("preserves a manually overridden slug when the title changes", () => {
+    function Editor() {
+      const [value, setValue] = useState({ ...completeInput, slug: "" });
+      return <OfferEditorForm value={value} errors={{}} disabled={false} onChange={setValue} />;
+    }
+    render(<Editor />);
+    fireEvent.change(screen.getByLabelText("Tytuł wyjazdu"), { target: { value: "Łódź i śnieg" } });
+    expect(screen.getByLabelText("Adres URL oferty")).toHaveValue("lodz-i-snieg");
+    fireEvent.change(screen.getByLabelText("Adres URL oferty"), {
+      target: { value: "wlasny-adres" },
+    });
+    fireEvent.change(screen.getByLabelText("Tytuł wyjazdu"), { target: { value: "Inny tytuł" } });
+    expect(screen.getByLabelText("Adres URL oferty")).toHaveValue("wlasny-adres");
+  });
+
+  it("retains camp changes across the story, programme, price and parent tabs", async () => {
+    const user = userEvent.setup();
+    function Editor() {
+      const [value, setValue] = useState(dayCampInput);
+      return <OfferEditorForm value={value} errors={{}} disabled={false} onChange={setValue} />;
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "O obozie" }));
+    fireEvent.change(screen.getByLabelText("Akapity opisu 1"), { target: { value: "Nowy opis" } });
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
+    fireEvent.change(screen.getByLabelText("Plan dnia 1 — godzina"), {
+      target: { value: "10:00" },
+    });
+    await user.click(screen.getByRole("tab", { name: "Cena" }));
+    fireEvent.change(screen.getByLabelText("Turnus 1, wariant 1 — cena"), {
+      target: { value: "" },
+    });
+    expect(screen.getByLabelText("Turnus 1, wariant 1 — cena")).toHaveValue(null);
+    await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
+    fireEvent.change(screen.getByLabelText("Wiek uczestników"), { target: { value: "10–15 lat" } });
+    await user.click(screen.getByRole("tab", { name: "O obozie" }));
+    expect(screen.getByLabelText("Akapity opisu 1")).toHaveValue("Nowy opis");
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
+    expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("10:00");
+    await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
+    expect(screen.getByLabelText("Wiek uczestników")).toHaveValue("10–15 lat");
+  });
+
+  it("uses the exact list error before a dotted descendant and marks the correct panel", async () => {
+    const user = userEvent.setup();
+    render(
+      <OfferEditorForm
+        value={completeInput}
+        disabled={false}
+        onChange={vi.fn()}
+        errors={{
+          "content.paragraphs": "Błąd całej listy",
+          "content.paragraphs.0": "Błąd pozycji",
+        }}
+      />,
+    );
+    expect(screen.getByRole("tab", { name: "O wyjeździe — zawiera błędy" })).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "O wyjeździe — zawiera błędy" }));
+    expect(screen.getByText("Błąd całej listy")).toBeInTheDocument();
+    expect(screen.queryByText("Błąd pozycji")).not.toBeInTheDocument();
+  });
+
+  it("preserves the different clearing semantics for trip dates and numbers", () => {
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+    fireEvent.change(screen.getByLabelText("Data rozpoczęcia"), { target: { value: "" } });
+    expect(onChange).toHaveBeenLastCalledWith({ ...completeInput, startDate: null });
+    fireEvent.change(screen.getByLabelText("Minimalna liczba uczestników"), {
+      target: { value: "" },
+    });
+    expect(onChange).toHaveBeenLastCalledWith({ ...completeInput, groupSizeMin: null });
+    fireEvent.change(screen.getByLabelText("Liczba dni"), { target: { value: "" } });
+    expect(onChange).toHaveBeenLastCalledWith({ ...completeInput, durationDays: 0 });
+    fireEvent.change(screen.getByLabelText("Cena od"), { target: { value: "" } });
+    expect(onChange).toHaveBeenLastCalledWith({ ...completeInput, priceFrom: 0 });
+  });
+
+  it("does not commit an incomplete native date input", () => {
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+    const input = screen.getByLabelText("Data rozpoczęcia") as HTMLInputElement;
+    Object.defineProperty(input, "validity", { configurable: true, value: { badInput: true } });
+    fireEvent.change(input, { target: { value: "" } });
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("renders each supplied media slot in its panel", async () => {
+    const user = userEvent.setup();
+    function Editor() {
+      const [value, setValue] = useState(completeInput);
+      return (
+        <OfferEditorForm
+          value={value}
+          errors={{}}
+          disabled={false}
+          onChange={setValue}
+          imageManager={<p>Galeria slot</p>}
+          accommodationImageManager={<p>Zakwaterowanie slot</p>}
+          resortMapManager={<p>Mapa slot</p>}
+        />
+      );
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    expect(screen.getByText("Zakwaterowanie slot")).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Resort" }));
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    expect(screen.getByText("Mapa slot")).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Galeria" }));
+    expect(screen.getByText("Galeria slot")).toBeInTheDocument();
+  });
+
+  it("uses save-first fallbacks for null image managers", async () => {
+    const user = userEvent.setup();
+    render(
+      <OfferEditorForm
+        value={completeInput}
+        errors={{}}
+        disabled={false}
+        onChange={vi.fn()}
+        imageManager={null}
+        accommodationImageManager={null}
+        resortMapManager={null}
+      />,
+    );
+    await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    expect(
+      screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia zakwaterowania."),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Galeria" }));
+    expect(screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).toBeInTheDocument();
+  });
+
+  it("preserves term and journey associations through reordering and deletion", async () => {
+    const user = userEvent.setup();
+    const fixture = sectionOffer("day_camp");
+    if (fixture.offerKind !== "day_camp") throw new Error("expected camp");
+    const first = fixture.content.terms[0]!;
+    const secondId = "90000000-0000-4000-8000-000000000012";
+    let latest: EditableOfferInput = {
+      ...dayCampInput,
+      content: {
+        ...fixture.content,
+        terms: [first, { ...first, id: secondId, label: "Drugi" }],
+        transport: {
+          ...fixture.content.transport!,
+          journeys: [
+            fixture.content.transport!.journeys[0]!,
+            { ...fixture.content.transport!.journeys[0]!, termId: secondId },
+          ],
+        },
+      },
+    };
+    function Editor() {
+      const [value, setValue] = useState(latest);
+      return (
+        <OfferEditorForm
+          value={value}
+          errors={{}}
+          disabled={false}
+          onChange={(next) => {
+            latest = next;
+            setValue(next);
+          }}
+        />
+      );
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "Cena" }));
+    await user.click(screen.getByRole("button", { name: "Przenieś turnus 2 wyżej" }));
+    expect("terms" in latest.content && latest.content.terms.map((term) => term.id)).toEqual([
+      secondId,
+      first.id,
+    ]);
+    fireEvent.change(screen.getAllByLabelText("Nazwa turnusu")[0]!, {
+      target: { value: "Nowa nazwa" },
+    });
+    fireEvent.change(screen.getByLabelText("Turnus 1, wariant 1 — cena"), {
+      target: { value: "3000" },
+    });
+    expect("terms" in latest.content && latest.content.terms[0]).toMatchObject({
+      id: secondId,
+      label: "Nowa nazwa",
+      priceOptions: [{ price: 3000 }],
+    });
+    expect(latest.content.transport?.journeys.map((journey) => journey.termId)).toEqual(
+      expect.arrayContaining([first.id, secondId]),
+    );
+    expect(screen.queryByRole("button", { name: "Dodaj turnus" })).not.toBeInTheDocument();
+    await user.click(screen.getAllByRole("button", { name: "Usuń turnus" })[0]!);
+    expect("terms" in latest.content && latest.content.terms.map((term) => term.id)).toEqual([
+      first.id,
+    ]);
+    expect(latest.content.transport?.journeys.map((journey) => journey.termId)).not.toContain(
+      secondId,
+    );
+    expect(screen.getByRole("button", { name: "Usuń wariant 1 z turnusu 1" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Dodaj wariant ceny" }));
+    expect(screen.getByRole("button", { name: "Usuń wariant 2 z turnusu 1" })).toBeEnabled();
+    expect("terms" in latest.content && latest.content.terms[0]?.priceOptions[1]?.price).toBe(0);
+    await user.click(screen.getByRole("button", { name: "Usuń wariant 2 z turnusu 1" }));
+    expect("terms" in latest.content && latest.content.terms[0]?.priceOptions).toHaveLength(1);
+  });
+
+  it("keeps accommodation copy after disabling and reopening", async () => {
+    const user = userEvent.setup();
+    function Editor() {
+      const [value, setValue] = useState(completeInput);
+      return <OfferEditorForm value={value} errors={{}} disabled={false} onChange={setValue} />;
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
+    fireEvent.change(screen.getByLabelText("Opis zakwaterowania"), { target: { value: "Taras" } });
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
+    expect(screen.getByLabelText("Opis zakwaterowania")).toHaveValue("Taras");
+  });
+
+  it("switches kind through the selector and preserves shared fields", async () => {
+    const user = userEvent.setup();
+    let latest = completeInput;
+    function Editor() {
+      const [value, setValue] = useState(completeInput);
+      return (
+        <OfferEditorForm
+          value={value}
+          errors={{}}
+          disabled={false}
+          onChange={(next) => {
+            latest = next;
+            setValue(next);
+          }}
+        />
+      );
+    }
+    render(<Editor />);
+    const trigger = screen.getByRole("combobox", { name: "Rodzaj oferty" });
+    Object.defineProperty(Element.prototype, "scrollIntoView", {
+      configurable: true,
+      value: () => {},
+    });
+    fireEvent.keyDown(trigger, { key: "ArrowDown" });
+    await user.click(screen.getByRole("option", { name: "Obozy" }));
+    expect(latest).toMatchObject({
+      offerKind: "day_camp",
+      title: completeInput.title,
+      slug: completeInput.slug,
+      activity: "wake",
+    });
+    expect(screen.getByLabelText("Tytuł obozów")).toHaveValue(completeInput.title);
+    expect(screen.getByRole("tab", { name: "Dla rodzica" })).toBeInTheDocument();
+    delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
+  });
+
+  it("syncs resort copy until the legacy venue is independently changed", async () => {
+    const user = userEvent.setup();
+    let latest = dayCampInput;
+    function Editor() {
+      const [value, setValue] = useState(dayCampInput);
+      return (
+        <OfferEditorForm
+          value={value}
+          errors={{}}
+          disabled={false}
+          onChange={(next) => {
+            latest = next;
+            setValue(next);
+          }}
+        />
+      );
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "Resort" }));
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    fireEvent.change(screen.getByLabelText("Resort → Opis miejsca"), {
+      target: { value: "Nowy opis resortu" },
+    });
+    expect(latest.content).toMatchObject({ venueDescription: "Nowy opis resortu" });
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    fireEvent.change(screen.getByLabelText("Resort → Opis miejsca zajęć"), {
+      target: { value: "Niezależny opis" },
+    });
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    fireEvent.change(screen.getByLabelText("Resort → Opis miejsca"), {
+      target: { value: "Inny resort" },
+    });
+    expect(latest.content).toMatchObject({
+      venueDescription: "Niezależny opis",
+      resort: { description: "Inny resort" },
+    });
+  });
+
+  it("omits absent legacy transport and displays empty optional meals", async () => {
+    const user = userEvent.setup();
+    const fixture = sectionOffer("day_camp");
+    if (fixture.offerKind !== "day_camp") throw new Error("expected camp");
+    render(
+      <OfferEditorForm
+        value={{ ...dayCampInput, content: fixture.content }}
+        errors={{}}
+        disabled={false}
+        onChange={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
+    expect(
+      screen.queryByLabelText("Transport — wcześniejszy opis dla rodzica"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Wyżywienie")).toHaveValue("");
+  });
+
+  it("does not emit updates merely by rendering or changing tabs", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+    for (const name of ["O obozie", "W programie", "Cena", "Dla rodzica", "Resort", "Galeria"]) {
+      await user.click(screen.getByRole("tab", { name }));
+    }
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it("retains transport text after disabling and reopening its optional section", async () => {
     const user = userEvent.setup();
     function Editor() {

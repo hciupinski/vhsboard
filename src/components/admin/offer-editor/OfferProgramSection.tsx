@@ -1,0 +1,57 @@
+import { ListField } from "@/components/admin/ListField";
+import { errorFor } from "./editor-fields";
+import { TripScheduleEditor } from "./TripScheduleEditor";
+import { DayCampProgramEditor } from "./DayCampProgramEditor";
+import type { DayCampContent, TripOfferContent, OfferKind } from "@/lib/offers/types";
+type Content = DayCampContent | TripOfferContent;
+type CommonProps = {
+  content: Content;
+  offerKind: OfferKind;
+  errors: Record<string, string>;
+  disabled: boolean;
+  onChange: (content: Content) => void;
+};
+export function OfferProgramSection({
+  content,
+  offerKind,
+  errors,
+  disabled,
+  onChange,
+}: CommonProps) {
+  const dayCamp = offerKind === "day_camp" ? (content as DayCampContent) : null;
+  const trip = offerKind === "trip" ? (content as TripOfferContent) : null;
+  return (
+    <>
+      <fieldset
+        disabled={disabled}
+        className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
+      >
+        <ListField
+          label={trip ? "W programie" : "Atrakcje"}
+          values={trip?.highlights ?? dayCamp?.highlights ?? []}
+          placeholder="Małe grupy i dużo aktywności"
+          error={errorFor(errors, "content.highlights")}
+          onChange={(next) => onChange({ ...content, highlights: next })}
+        />
+      </fieldset>
+      <h2 className="mt-6 font-display text-2xl">
+        W programie → {trip ? "Plan wyjazdu" : "Plan dnia"}
+      </h2>
+      {trip ? (
+        <TripScheduleEditor
+          content={trip}
+          errors={errors}
+          disabled={disabled}
+          onChange={onChange}
+        />
+      ) : dayCamp ? (
+        <DayCampProgramEditor
+          content={dayCamp}
+          errors={errors}
+          disabled={disabled}
+          onChange={onChange}
+        />
+      ) : null}
+    </>
+  );
+}
