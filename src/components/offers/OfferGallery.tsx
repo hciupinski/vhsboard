@@ -91,7 +91,7 @@ export function OfferGallery({
       <Dialog open={Boolean(selectedImage)} onOpenChange={(open) => !open && setSelectedId(null)}>
         {selectedImage ? (
           <DialogContent
-            className="flex h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-6xl flex-col gap-3 border-0 bg-transparent p-0 text-background shadow-none sm:rounded-none [&>button]:right-0 [&>button]:top-0 [&>button]:grid [&>button]:size-11 [&>button]:place-items-center [&>button]:rounded-full [&>button]:bg-black/70 [&>button]:text-background [&>button]:opacity-100 winter:[&>button:hover]:bg-interaction winter:[&>button:hover]:text-primary-foreground [&>button]:focus-visible:ring-background [&>button]:focus-visible:ring-offset-black"
+            className="flex h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-none flex-col gap-3 border-0 bg-transparent p-0 text-background shadow-none sm:rounded-none [&>button]:right-0 [&>button]:top-0 [&>button]:grid [&>button]:size-11 [&>button]:place-items-center [&>button]:rounded-full [&>button]:bg-black/70 [&>button]:text-background [&>button]:opacity-100 winter:[&>button:hover]:bg-interaction winter:[&>button:hover]:text-primary-foreground [&>button]:focus-visible:ring-background [&>button]:focus-visible:ring-offset-black"
             onCloseAutoFocus={(event) => {
               event.preventDefault();
               openingThumbnail.current?.focus({ preventScroll: true });
@@ -123,7 +123,7 @@ export function OfferGallery({
                 alt={selectedImage.alt}
                 width={1600}
                 height={1200}
-                className="h-auto max-h-full w-auto max-w-full border border-black object-contain"
+                className="h-full w-full object-contain"
               />
             </div>
             <div className="flex min-h-11 shrink-0 items-center justify-between gap-3">
