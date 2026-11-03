@@ -27,6 +27,8 @@ export function OfferPriceSection({ content, offerKind, errors, disabled, onChan
             <Check className="size-4 text-primary" /> Co jest w cenie
           </p>
           <ListField
+            reorderable
+            disabled={disabled}
             label="W cenie"
             values={content.included}
             placeholder="Opieka instruktorów"
@@ -39,6 +41,8 @@ export function OfferPriceSection({ content, offerKind, errors, disabled, onChan
             <X className="size-4 text-muted-foreground" /> Poza ceną
           </p>
           <ListField
+            reorderable
+            disabled={disabled}
             label="Poza ceną"
             values={content.excluded}
             placeholder="Dojazd na miejsce"

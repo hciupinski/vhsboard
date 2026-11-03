@@ -27,6 +27,8 @@ export function OfferProgramSection({
         className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
       >
         <ListField
+          reorderable
+          disabled={disabled}
           label={trip ? "W programie" : "Atrakcje"}
           values={trip?.highlights ?? dayCamp?.highlights ?? []}
           placeholder="Małe grupy i dużo aktywności"
