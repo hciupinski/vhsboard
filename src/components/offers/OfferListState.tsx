@@ -49,7 +49,7 @@ export function OfferListState({ offers, isPending, isError, onRetry }: OfferLis
   return (
     <div className="mt-10 grid gap-6 md:grid-cols-3">
       {offers.map((offer) => (
-        <OfferCard key={offer.id} offer={offer} />
+        <OfferCard key={offer.id} offer={offer} alwaysShowAction />
       ))}
     </div>
   );

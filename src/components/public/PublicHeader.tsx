@@ -22,7 +22,7 @@ const navigationItems = [
 ] as const;
 
 const navigationLinkClassName =
-  "rounded-sm text-sm font-bold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  "rounded-sm text-sm font-bold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:text-base";
 
 export function PublicHeader() {
   return (

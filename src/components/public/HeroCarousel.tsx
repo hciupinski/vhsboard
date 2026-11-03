@@ -11,6 +11,7 @@ import { ResponsiveImage } from "./ResponsiveImage";
 
 type HeroCarouselProps = {
   images: readonly PortalCarouselImage[];
+  intervalMs?: number;
 };
 
 const mobileImageClasses: Readonly<Record<string, string>> = {
@@ -18,7 +19,7 @@ const mobileImageClasses: Readonly<Record<string, string>> = {
   "carousel/4eventy_karuzela.png": "object-[68%_center] md:object-center",
 };
 
-const HeroCarousel = ({ images }: HeroCarouselProps) => {
+const HeroCarousel = ({ images, intervalMs = 7_000 }: HeroCarouselProps) => {
   const [api, setApi] = React.useState<CarouselApi>();
 
   React.useEffect(() => {
@@ -29,7 +30,7 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
       if (timer !== undefined) window.clearInterval(timer);
       timer = undefined;
       if (!motion.matches && document.visibilityState === "visible") {
-        timer = window.setInterval(() => api.scrollNext(), 7_000);
+        timer = window.setInterval(() => api.scrollNext(), intervalMs);
       }
     };
     motion.addEventListener("change", synchronize);
@@ -40,7 +41,7 @@ const HeroCarousel = ({ images }: HeroCarouselProps) => {
       motion.removeEventListener("change", synchronize);
       document.removeEventListener("visibilitychange", synchronize);
     };
-  }, [api, images.length]);
+  }, [api, images.length, intervalMs]);
 
   return (
     <Carousel

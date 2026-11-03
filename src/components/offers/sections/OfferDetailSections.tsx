@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { OfferGallery } from "@/components/offers/OfferGallery";
+import { OfferHighlights } from "./OfferHighlights";
 import { getOfferSections, type OfferSection } from "@/lib/offers/sections";
 import type { PublicOffer } from "@/lib/offers/types";
 import { sectionIsEnabled, type ExtraPrice } from "@/lib/offers/content-v2";
@@ -87,15 +88,7 @@ export function OfferDetailSections({
           : content.dayProgram.map((item) => ({ title: item.time, text: item.text }));
       body = (
         <>
-          {content.highlights.length ? (
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-              {content.highlights.map((highlight, i) => (
-                <li key={i} className="rounded-2xl border bg-card px-4 py-3 text-sm">
-                  {highlight}
-                </li>
-              ))}
-            </ul>
-          ) : null}
+          <OfferHighlights highlights={content.highlights} />
           {schedule.length ? (
             <section id={camp ? "plan-dnia" : "plan-wyjazdu"} tabIndex={-1} className="mt-8">
               <h3 className="text-2xl">{camp ? "Plan dnia" : "Plan wyjazdu"}</h3>

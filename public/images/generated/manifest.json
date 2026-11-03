@@ -973,57 +973,57 @@
         }
       ]
     },
-    "obozy/main-obozy-zima.jpg": {
-      "sourceHash": "b4574b07239ebf591c6158739988c068b595206f7d0fc63fe4601a25e3546d0e",
+    "obozy/main-obozy-zima.png": {
+      "sourceHash": "252a33b3e84df2b7e62a00bfa9ba50f4404efc8f6d6cae73fcb9eb86182c2f64",
       "asset": {
-        "src": "/images/generated/obozy-main-obozy-zima-1600-d684373965d3.webp",
+        "src": "/images/generated/obozy-main-obozy-zima-1600-276099194a85.webp",
         "width": 1600,
-        "height": 1067,
-        "webpSrcSet": "/images/generated/obozy-main-obozy-zima-480-9b8addcec78b.webp 480w, /images/generated/obozy-main-obozy-zima-960-8ccdee33dc89.webp 960w, /images/generated/obozy-main-obozy-zima-1600-d684373965d3.webp 1600w",
-        "avifSrcSet": "/images/generated/obozy-main-obozy-zima-480-11d14d89b97e.avif 480w, /images/generated/obozy-main-obozy-zima-960-e75fbbd3d9a2.avif 960w, /images/generated/obozy-main-obozy-zima-1600-940321405fde.avif 1600w"
+        "height": 600,
+        "webpSrcSet": "/images/generated/obozy-main-obozy-zima-480-3ac0fea9ba8f.webp 480w, /images/generated/obozy-main-obozy-zima-960-aeda4b9cbde5.webp 960w, /images/generated/obozy-main-obozy-zima-1600-276099194a85.webp 1600w",
+        "avifSrcSet": "/images/generated/obozy-main-obozy-zima-480-11b309e4bb7c.avif 480w, /images/generated/obozy-main-obozy-zima-960-370eadb09617.avif 960w, /images/generated/obozy-main-obozy-zima-1600-494423d33b20.avif 1600w"
       },
       "variants": [
         {
-          "path": "/images/generated/obozy-main-obozy-zima-480-9b8addcec78b.webp",
+          "path": "/images/generated/obozy-main-obozy-zima-480-3ac0fea9ba8f.webp",
           "width": 480,
-          "height": 320,
+          "height": 180,
           "format": "webp",
-          "bytes": 39436
+          "bytes": 14010
         },
         {
-          "path": "/images/generated/obozy-main-obozy-zima-480-11d14d89b97e.avif",
+          "path": "/images/generated/obozy-main-obozy-zima-480-11b309e4bb7c.avif",
           "width": 480,
-          "height": 320,
+          "height": 180,
           "format": "avif",
-          "bytes": 18444
+          "bytes": 7141
         },
         {
-          "path": "/images/generated/obozy-main-obozy-zima-960-8ccdee33dc89.webp",
+          "path": "/images/generated/obozy-main-obozy-zima-960-aeda4b9cbde5.webp",
           "width": 960,
-          "height": 640,
+          "height": 360,
           "format": "webp",
-          "bytes": 134392
+          "bytes": 37688
         },
         {
-          "path": "/images/generated/obozy-main-obozy-zima-960-e75fbbd3d9a2.avif",
+          "path": "/images/generated/obozy-main-obozy-zima-960-370eadb09617.avif",
           "width": 960,
-          "height": 640,
+          "height": 360,
           "format": "avif",
-          "bytes": 62701
+          "bytes": 18822
         },
         {
-          "path": "/images/generated/obozy-main-obozy-zima-1600-d684373965d3.webp",
+          "path": "/images/generated/obozy-main-obozy-zima-1600-276099194a85.webp",
           "width": 1600,
-          "height": 1067,
+          "height": 600,
           "format": "webp",
-          "bytes": 313852
+          "bytes": 76796
         },
         {
-          "path": "/images/generated/obozy-main-obozy-zima-1600-940321405fde.avif",
+          "path": "/images/generated/obozy-main-obozy-zima-1600-494423d33b20.avif",
           "width": 1600,
-          "height": 1067,
+          "height": 600,
           "format": "avif",
-          "bytes": 145357
+          "bytes": 37998
         }
       ]
     },

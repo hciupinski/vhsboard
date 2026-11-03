@@ -93,7 +93,7 @@ function AboutPage() {
               aria-label="Mariusz na deskorolce, skimboardzie i snowboardzie"
               className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-warm lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:self-center"
             >
-              <HeroCarousel images={founderImages} />
+              <HeroCarousel images={founderImages} intervalMs={3_500} />
             </figure>
             <div className="max-w-2xl lg:col-start-2 lg:row-start-2 lg:self-start">
               <p className="text-lg leading-relaxed text-foreground lg:mt-6">
@@ -116,7 +116,7 @@ function AboutPage() {
           className="mx-auto max-w-6xl px-5 py-12 sm:py-14"
           aria-labelledby="about-activities-heading"
         >
-          <div className="max-w-2xl">
+          <div className="max-w-2xl lg:max-w-none">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               VHS w ruchu
             </p>
@@ -126,7 +126,7 @@ function AboutPage() {
             >
               OD MIASTA PO GÓRY
             </h2>
-            <p className="mt-5 max-w-prose text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-5 max-w-prose text-lg leading-relaxed text-muted-foreground lg:max-w-none">
               Zmieniają się miejsca i warunki. Ta sama zostaje potrzeba ruchu, dobrego towarzystwa i
               kolejnego dnia na desce.
             </p>

@@ -124,7 +124,7 @@ function TripDetail() {
           </div>
         </section>
 
-        <TripSectionNavigation key={offer.slug} sections={sections} linkClassName="lg:text-lg" />
+        <TripSectionNavigation key={offer.slug} sections={sections} linkClassName="lg:text-base" />
 
         <OfferDetailSections
           offer={offer}
