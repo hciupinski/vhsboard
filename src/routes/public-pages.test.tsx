@@ -466,6 +466,9 @@ describe("static public pages", () => {
         expect.stringMatching(/^\/images\/generated\/obozy-main-obozy-zima-/),
       ),
     );
+    for (const source of hero.querySelectorAll("picture source")) {
+      expect(source.getAttribute("srcset")).toMatch(/^\/images\/generated\/obozy-main-obozy-zima-/);
+    }
 
     await act(async () => {
       mockedGetPublicPortalTheme.mockResolvedValue("original");

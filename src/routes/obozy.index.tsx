@@ -15,8 +15,7 @@ import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
 
 const summerHeroImage = getLocalImage("obozy/main-obozy-lato.jpg");
-const winterHeroImage = getLocalImage("obozy/main-obozy-zima.jpg");
-const winterWideHeroImage = getLocalImage("carousel/2karuzela_oboz1.png");
+const winterHeroImage = getLocalImage("obozy/main-obozy-zima.png");
 const summerCampImage = getLocalImage("obozy/obozy-lato-wakeboard.png");
 const winterCampImage = getLocalImage("obozy/obozy-zima.jpg");
 
@@ -53,9 +52,6 @@ function HalfDayCampsPage() {
           <ResponsiveImage
             sizes="100vw"
             image={isWinter ? winterHeroImage : summerHeroImage}
-            artDirection={
-              isWinter ? [{ media: "(min-width: 1024px)", image: winterWideHeroImage }] : []
-            }
             alt={
               isWinter
                 ? "Zimowy obóz snowboardowy VHSBOARD w górach"
@@ -72,8 +68,8 @@ function HalfDayCampsPage() {
               ZAJAWKOWE OBOZY
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/85">
-              Twoje dziecko nie usiedzi w miejscu? Mamy na to sposób! Oferujemy zero nudy, maksimum
-              ruchu i świetną atmosferę pod okiem instruktorów.
+              Twoje dziecko nie usiedzi w miejscu? Mamy na to sposób! Gwarantujemy zero nudy,
+              maksimum ruchu i świetną atmosferę pod okiem instruktorów.
             </p>
           </div>
         </section>
