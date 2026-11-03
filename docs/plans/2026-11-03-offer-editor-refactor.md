@@ -171,3 +171,8 @@ Create `src/components/admin/offer-editor/` (distinct from existing optional-con
 - Targeted form, admin route and editor schema: 3 files / 107 tests passed. `bun run typecheck` passed. Existing jsdom scrollTo warnings observed.
 - Before screenshots: controlled fixture harness outside the repository, real form and project Tailwind styles, 1440×900 and 390×844 for both kinds. Harness does not exercise auth, route persistence, or network mutations. Baseline terms inputs remain enabled while disabled; legacy venue lacks standard ARIA state.
 
+
+### Task 2 (2026-11-03)
+
+- Extracted existing Field, counter, helpers and four concrete editors. `bun run typecheck` and targeted form/route/schema tests (3 files / 107 tests) passed.
+- Ruling: moved the four independent editors as one mechanical step and ran the targeted suite after the combined extraction rather than after each editor; the diff remains reviewable and the entire characterization set passed. If a regression had arisen, isolation would have required inspecting the combined move.
