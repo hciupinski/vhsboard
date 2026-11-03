@@ -111,6 +111,7 @@ Po zmianie oryginałów w `src/assets` uruchom:
 ```bash
 bun run images:generate
 bun run images:check
+bun run typecheck
 bun run og:generate
 bun run build
 bun run check:seo
@@ -122,7 +123,12 @@ AVIF/WebP dla szerokości 480, 960 i 1600 px (bez powiększania i kadrowania,
 maksymalna wysokość 1920 px); budżety to 180 KiB dla najmniejszego i 450 KiB
 na każdy większy wariant. Checker wykrywa brak plików, rozbieżne hashe źródeł,
 rozmiary i nieaktualny katalog TypeScript. `images:check` jest obecnie kontrolą
-lokalną, nie osobnym krokiem CI.
+lokalną, nie osobnym krokiem CI. Katalog zachowuje konkretne klucze plików;
+`getLocalImage` przyjmuje tylko `LocalImagePath`. Po zmianie nazwy lub usunięciu
+zdjęcia regeneracja katalogu i `typecheck` wykryją pozostałe odwołania w kodzie.
+Sprawdzaj oba polecenia: `images:check` wykrywa nieaktualne wygenerowane pliki,
+a `typecheck` błędne ścieżki w aplikacji. W tablicach zdjęć zachowuj literały
+ścieżek, np. przez `as const`; nie omijaj sprawdzania rzutowaniem na `LocalImagePath`.
 
 `og:generate` zapisuje siedem JPEG-ów 1200×630 w `public/og`, do 300 KiB każdy.
 `check:seo` weryfikuje ich obecność, rozmiar i metadane. Obejrzyj wygenerowane
