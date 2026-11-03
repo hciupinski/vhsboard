@@ -1,41 +1,18 @@
-import { EditorField as Field } from "./offer-editor/EditorField";
-import {
-  errorFor,
-  nullableNumber,
-  shouldUpdateDate,
-  toOfferSlug,
-} from "./offer-editor/editor-fields";
-import { TripScheduleEditor } from "./offer-editor/TripScheduleEditor";
-import { DayCampProgramEditor } from "./offer-editor/DayCampProgramEditor";
-import { DayCampTermsEditor as TermsEditor } from "./offer-editor/DayCampTermsEditor";
+import { OfferPhotosSection } from "./offer-editor/OfferPhotosSection";
+import { OfferAccommodationSection } from "./offer-editor/OfferAccommodationSection";
+import { OfferOptionalSection } from "./offer-editor/OfferOptionalSection";
+import { OfferPriceSection } from "./offer-editor/OfferPriceSection";
+import { OfferProgramSection } from "./offer-editor/OfferProgramSection";
+import { OfferStorySection } from "./offer-editor/OfferStorySection";
+import { OfferBasicsSection } from "./offer-editor/OfferBasicsSection";
 import { DayCampParentInfoEditor } from "./offer-editor/DayCampParentInfoEditor";
-import { OptionalSectionsEditor } from "./offer-sections/OptionalSectionsEditor";
 import { getOfferEditorSections, type OfferSection } from "@/lib/offers/sections";
-import { normalizeOfferContentV2, sectionIsEnabled } from "@/lib/offers/content-v2";
+import { normalizeOfferContentV2 } from "@/lib/offers/content-v2";
 import type { ReactNode } from "react";
-import { Check, X } from "lucide-react";
 
-import { ListField } from "@/components/admin/ListField";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { changeEditableOfferKind, type EditableOfferInput } from "@/lib/offers/editor-schema";
-import type {
-  DayCampContent,
-  DayCampTerm,
-  OfferActivity,
-  OfferKind,
-  TripOfferContent,
-} from "@/lib/offers/types";
+import type { EditableOfferInput } from "@/lib/offers/editor-schema";
+import type { DayCampContent, OfferContent, TripOfferContent } from "@/lib/offers/types";
 
 type EditorTab = "basics" | OfferSection["editorTab"];
 
@@ -62,25 +39,10 @@ export function OfferEditorForm({
   const trip = offerKind === "trip" ? (value.content as TripOfferContent) : null;
   const set = <K extends keyof EditableOfferInput>(key: K, nextValue: EditableOfferInput[K]) =>
     onChange({ ...value, [key]: nextValue });
-  const state = (path: string, id = path.replaceAll(".", "-")) => {
-    const error = errorFor(errors, path);
-    return {
-      "aria-describedby": error ? `${id}-error` : undefined,
-      "aria-invalid": error ? true : undefined,
-    };
-  };
   const setDayCamp = (content: DayCampContent) =>
     onChange({ ...value, content: normalizeOfferContentV2(content, offerKind) });
-  const setTrip = (content: TripOfferContent) =>
+  const setContent = (content: OfferContent) =>
     onChange({ ...value, content: normalizeOfferContentV2(content, offerKind) });
-  const setTerms = (terms: DayCampTerm[]) => dayCamp && setDayCamp({ ...dayCamp, terms });
-  const listChange = (
-    field: "paragraphs" | "highlights" | "included" | "excluded",
-    next: string[],
-  ) =>
-    dayCamp
-      ? setDayCamp({ ...dayCamp, [field]: next })
-      : trip && setTrip({ ...trip, [field]: next });
   const tabHasError = (prefix: string) =>
     Object.keys(errors).some((path) => path === prefix || path.startsWith(`${prefix}.`));
 
@@ -121,25 +83,6 @@ export function OfferEditorForm({
     accommodation: ["content.accommodation"],
     photos: ["heroImagePath"],
   };
-  const subtitleField = (
-    <Field
-      id="subtitle"
-      label="Zdanie wprowadzające"
-      hint="Pod tytułem oferty"
-      characterCount={{ value: value.subtitle, max: 280 }}
-      error={errors["subtitle"]}
-    >
-      <Textarea
-        id="subtitle"
-        value={value.subtitle}
-        maxLength={280}
-        className="min-h-20"
-        disabled={disabled}
-        {...state("subtitle")}
-        onChange={(event) => set("subtitle", event.target.value)}
-      />
-    </Field>
-  );
 
   return (
     <Tabs defaultValue="basics" className="min-w-0">
@@ -180,164 +123,19 @@ export function OfferEditorForm({
       </TabsList>
 
       <TabsContent value="basics" className="mt-6">
-        <fieldset
-          disabled={disabled}
-          className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field id="offer-kind" label="Rodzaj oferty" error={errors["offerKind"]}>
-              <Select
-                value={offerKind}
-                disabled={disabled}
-                onValueChange={(next) =>
-                  onChange(changeEditableOfferKind(value, next as OfferKind))
-                }
-              >
-                <SelectTrigger id="offer-kind" {...state("offerKind", "offer-kind")}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="trip">Wyjazd</SelectItem>
-                  <SelectItem value="day_camp">Obozy</SelectItem>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field
-              id="title"
-              label={dayCamp ? "Tytuł obozów" : "Tytuł wyjazdu"}
-              characterCount={{ value: value.title, max: 120 }}
-              error={errors["title"]}
-            >
-              <Input
-                id="title"
-                value={value.title}
-                maxLength={120}
-                disabled={disabled}
-                {...state("title")}
-                onChange={(event) => {
-                  const title = event.target.value;
-                  const followsTitle = value.slug === "" || value.slug === toOfferSlug(value.title);
-                  onChange({
-                    ...value,
-                    title,
-                    slug: followsTitle ? toOfferSlug(title) : value.slug,
-                  });
-                }}
-              />
-            </Field>
-            <Field
-              id="slug"
-              label="Adres URL oferty"
-              hint="Tworzy się z tytułu; możesz go zmienić"
-              error={errors["slug"]}
-            >
-              <Input
-                id="slug"
-                value={value.slug}
-                disabled={disabled}
-                {...state("slug")}
-                onChange={(event) => set("slug", event.target.value)}
-              />
-            </Field>
-            <Field
-              id="activity"
-              label={dayCamp ? "Aktywność" : "Rodzaj wyjazdu"}
-              error={errors["activity"]}
-            >
-              <Select
-                value={value.activity}
-                disabled={disabled}
-                onValueChange={(activity) => set("activity", activity as OfferActivity)}
-              >
-                <SelectTrigger id="activity" {...state("activity")}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {dayCamp ? (
-                    <>
-                      <SelectItem value="wake">Wakeboard</SelectItem>
-                      <SelectItem value="snow">Snowboard</SelectItem>
-                    </>
-                  ) : (
-                    <>
-                      <SelectItem value="surf">Surf</SelectItem>
-                      <SelectItem value="snow">Snowboard</SelectItem>
-                      <SelectItem value="combo">Surf i snowboard</SelectItem>
-                    </>
-                  )}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field
-              id="location"
-              label="Miejsce"
-              characterCount={{ value: value.location, max: 120 }}
-              error={errors["location"]}
-            >
-              <Input
-                id="location"
-                value={value.location}
-                maxLength={120}
-                disabled={disabled}
-                {...state("location")}
-                onChange={(event) => set("location", event.target.value)}
-              />
-            </Field>
-          </div>
-          {trip ? subtitleField : null}
-          <Field
-            id="short-description"
-            label="Krótki opis"
-            hint="Widoczny na liście ofert"
-            characterCount={{ value: value.shortDescription, max: 500 }}
-            error={errors["shortDescription"]}
-          >
-            <Textarea
-              id="short-description"
-              value={value.shortDescription}
-              maxLength={500}
-              className="min-h-24"
-              disabled={disabled}
-              {...state("shortDescription", "short-description")}
-              onChange={(event) => set("shortDescription", event.target.value)}
-            />
-          </Field>
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-1">
-              <Label htmlFor="show-last-places-badge">Pokaż tag: Ostatnie miejsca</Label>
-              <p className="text-sm text-muted-foreground">
-                Tag pojawi się tylko na kafelkach aktywnych ofert.
-              </p>
-            </div>
-            <Switch
-              id="show-last-places-badge"
-              checked={value.showLastPlacesBadge}
-              disabled={disabled}
-              onCheckedChange={(checked) => set("showLastPlacesBadge", checked)}
-            />
-          </div>
-          {trip ? (
-            <TripBasics value={value} errors={errors} disabled={disabled} set={set} state={state} />
-          ) : null}
-        </fieldset>
+        <OfferBasicsSection value={value} errors={errors} disabled={disabled} onChange={onChange} />
       </TabsContent>
 
       <TabsContent value="story" className="mt-6">
-        <fieldset
+        <OfferStorySection
+          paragraphs={value.content.paragraphs}
+          subtitle={value.subtitle}
+          isDayCamp={!!dayCamp}
+          errors={errors}
           disabled={disabled}
-          className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
-        >
-          {dayCamp ? subtitleField : null}
-          <ListField
-            label="Akapity opisu"
-            hint="Jedno pole na akapit"
-            multiline
-            values={value.content.paragraphs}
-            placeholder="Opowiedz o tej ofercie…"
-            error={errorFor(errors, "content.paragraphs")}
-            onChange={(next) => listChange("paragraphs", next)}
-          />
-        </fieldset>
+          onParagraphsChange={(next) => setContent({ ...value.content, paragraphs: next })}
+          onSubtitleChange={(next) => set("subtitle", next)}
+        />
       </TabsContent>
       {dayCamp ? (
         <TabsContent value="parent" className="mt-6">
@@ -352,367 +150,55 @@ export function OfferEditorForm({
 
       {trip || dayCamp ? (
         <TabsContent value="highlights" className="mt-6">
-          <fieldset
+          <OfferProgramSection
+            content={value.content}
+            offerKind={offerKind}
+            errors={errors}
             disabled={disabled}
-            className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
-          >
-            <ListField
-              label={trip ? "W programie" : "Atrakcje"}
-              values={trip?.highlights ?? dayCamp?.highlights ?? []}
-              placeholder="Małe grupy i dużo aktywności"
-              error={errorFor(errors, "content.highlights")}
-              onChange={(next) => listChange("highlights", next)}
-            />
-          </fieldset>
-          <h2 className="mt-6 font-display text-2xl">
-            W programie → {trip ? "Plan wyjazdu" : "Plan dnia"}
-          </h2>
-          {trip ? (
-            <TripScheduleEditor
-              content={trip}
-              errors={errors}
-              disabled={disabled}
-              onChange={setTrip}
-            />
-          ) : dayCamp ? (
-            <DayCampProgramEditor
-              content={dayCamp}
-              errors={errors}
-              disabled={disabled}
-              onChange={setDayCamp}
-            />
-          ) : null}
+            onChange={setContent}
+          />
         </TabsContent>
       ) : null}
 
       <TabsContent value="inout" className="mt-6">
-        <fieldset
+        <OfferPriceSection
+          content={value.content}
+          offerKind={offerKind}
+          errors={errors}
           disabled={disabled}
-          className="grid gap-6 rounded-2xl border border-border/70 bg-background p-6 md:grid-cols-2"
-        >
-          <div className="rounded-xl bg-secondary/40 p-4">
-            <p className="mb-3 flex items-center gap-2 font-display text-lg tracking-wide">
-              <Check className="size-4 text-primary" /> Co jest w cenie
-            </p>
-            <ListField
-              label="W cenie"
-              values={value.content.included}
-              placeholder="Opieka instruktorów"
-              error={errorFor(errors, "content.included")}
-              onChange={(next) => listChange("included", next)}
-            />
-          </div>
-          <div className="rounded-xl bg-muted p-4">
-            <p className="mb-3 flex items-center gap-2 font-display text-lg tracking-wide">
-              <X className="size-4 text-muted-foreground" /> Poza ceną
-            </p>
-            <ListField
-              label="Poza ceną"
-              values={value.content.excluded}
-              placeholder="Dojazd na miejsce"
-              error={errorFor(errors, "content.excluded")}
-              onChange={(next) => listChange("excluded", next)}
-            />
-          </div>
-        </fieldset>
-        {dayCamp ? (
-          <TermsEditor content={dayCamp} errors={errors} disabled={disabled} onChange={setTerms} />
-        ) : null}
+          onChange={setContent}
+        />
       </TabsContent>
       {(["resort", "training", "transport", "insurance"] as const).map((key) => (
         <TabsContent key={key} value={key} className="mt-6">
-          {key === "resort" &&
-          dayCamp &&
-          (!dayCamp.resort ||
-            !dayCamp.resort.enabled ||
-            (dayCamp.venueDescription &&
-              dayCamp.venueDescription !== dayCamp.resort.description.slice(0, 500))) ? (
-            <div className="mb-6 rounded-2xl border border-border bg-background p-6">
-              <Field
-                id="venue-description"
-                label="Resort → Opis miejsca zajęć"
-                characterCount={{ value: dayCamp.venueDescription, max: 500 }}
-                error={errorFor(errors, "content.venueDescription")}
-              >
-                <Textarea
-                  id="venue-description"
-                  value={dayCamp.venueDescription}
-                  maxLength={500}
-                  disabled={disabled}
-                  className="min-h-24"
-                  onChange={(event) =>
-                    setDayCamp({ ...dayCamp, venueDescription: event.target.value })
-                  }
-                />
-              </Field>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {dayCamp.resort?.enabled
-                  ? "Starszy opis miejsca zajęć jest zachowany w sekcji Resort."
-                  : "Włącz resort poniżej, aby dodać nazwę i mapę miejsca."}
-              </p>
-            </div>
-          ) : null}
-          <OptionalSectionsEditor
+          <OfferOptionalSection
             sectionKey={key}
             content={value.content}
+            offerKind={offerKind}
+            location={value.location}
             errors={errors}
             disabled={disabled}
-            onChange={(content) => {
-              if (!dayCamp) return setTrip(content as TripOfferContent);
-              const next = content as DayCampContent;
-              if (key === "resort" && next.resort) {
-                if (!dayCamp.resort && next.resort.enabled) {
-                  next.resort = {
-                    ...next.resort,
-                    name: value.location,
-                    description: dayCamp.venueDescription,
-                  };
-                }
-                if (
-                  next.resort.description !== dayCamp.resort?.description &&
-                  (!dayCamp.venueDescription ||
-                    !dayCamp.resort ||
-                    dayCamp.venueDescription === dayCamp.resort.description.slice(0, 500))
-                ) {
-                  next.venueDescription = next.resort.description.slice(0, 500);
-                }
-              }
-              setDayCamp(next);
-            }}
+            onChange={setContent}
             mapManager={resortMapManager}
           />
         </TabsContent>
       ))}
       <TabsContent value="accommodation" className="mt-6 space-y-4">
-        <AccommodationEditor
-          content={dayCamp ?? trip!}
+        <OfferAccommodationSection
+          content={value.content}
           errors={errors}
           disabled={disabled}
-          onChange={(content) =>
-            dayCamp ? setDayCamp(content as DayCampContent) : setTrip(content as TripOfferContent)
-          }
+          onChange={setContent}
+          imageManager={accommodationImageManager}
         />
-        {accommodationImageManager ?? (
-          <section className="rounded-2xl border border-border/70 bg-background p-6">
-            <p className="text-sm text-muted-foreground">
-              Najpierw zapisz szkic, aby dodać zdjęcia zakwaterowania.
-            </p>
-          </section>
-        )}
       </TabsContent>
       <TabsContent value="photos" className="mt-6 space-y-4">
-        {trip ? (
-          <p className="text-sm text-muted-foreground">
-            Tutaj zarządzasz galerią i zdjęciem głównym oferty.
-          </p>
-        ) : null}
-        {errors["heroImagePath"] ? (
-          <p className="text-sm font-medium text-destructive" role="alert">
-            {errors["heroImagePath"]}
-          </p>
-        ) : null}
-        {imageManager ?? (
-          <section className="rounded-2xl border border-border/70 bg-background p-6">
-            <p className="text-sm text-muted-foreground">
-              Najpierw zapisz szkic, aby dodać zdjęcia.
-            </p>
-          </section>
-        )}
+        <OfferPhotosSection
+          isTrip={!!trip}
+          heroError={errors["heroImagePath"]}
+          imageManager={imageManager}
+        />
       </TabsContent>
     </Tabs>
-  );
-}
-
-function AccommodationEditor({
-  content,
-  errors,
-  disabled,
-  onChange,
-}: {
-  content: TripOfferContent | DayCampContent;
-  errors: Record<string, string>;
-  disabled: boolean;
-  onChange: (content: TripOfferContent | DayCampContent) => void;
-}) {
-  const enabled = sectionIsEnabled(content.accommodation);
-  const description = content.accommodation?.description ?? "";
-  const error = errorFor(errors, "content.accommodation.description");
-
-  return (
-    <fieldset
-      disabled={disabled}
-      className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
-    >
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="font-display text-xl tracking-wide">Zakwaterowanie</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Opcjonalna sekcja z opisem miejsca noclegu i osobną galerią zdjęć.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Label htmlFor="accommodation-enabled">Włącz sekcję</Label>
-          <Switch
-            id="accommodation-enabled"
-            checked={enabled}
-            disabled={disabled}
-            onCheckedChange={(checked) =>
-              onChange({
-                ...content,
-                accommodation: { ...content.accommodation, description, enabled: checked },
-              })
-            }
-          />
-        </div>
-      </div>
-      {enabled ? (
-        <Field
-          id="accommodation-description"
-          label="Opis zakwaterowania"
-          characterCount={{ value: description, max: 1000 }}
-          error={error}
-        >
-          <Textarea
-            id="accommodation-description"
-            value={description}
-            maxLength={1000}
-            className="min-h-32"
-            {...(error
-              ? { "aria-invalid": true, "aria-describedby": "accommodation-description-error" }
-              : {})}
-            onChange={(event) =>
-              onChange({
-                ...content,
-                accommodation: { ...content.accommodation, description: event.target.value },
-              })
-            }
-          />
-        </Field>
-      ) : (
-        <p className="text-sm text-muted-foreground">
-          Sekcja jest wyłączona i nie będzie widoczna na stronie oferty.
-        </p>
-      )}
-    </fieldset>
-  );
-}
-
-function TripBasics({
-  value,
-  errors,
-  disabled,
-  set,
-  state,
-}: {
-  value: EditableOfferInput;
-  errors: Record<string, string>;
-  disabled: boolean;
-  set: <K extends keyof EditableOfferInput>(key: K, value: EditableOfferInput[K]) => void;
-  state: (path: string, id?: string) => Record<string, boolean | string | undefined>;
-}) {
-  return (
-    <div className="grid gap-4 border-t border-border pt-6 sm:grid-cols-2">
-      <Field id="start-date" label="Data rozpoczęcia" error={errors["startDate"]}>
-        <Input
-          id="start-date"
-          type="date"
-          value={value.startDate ?? ""}
-          disabled={disabled}
-          {...state("startDate", "start-date")}
-          onChange={(event) => {
-            if (shouldUpdateDate(event)) set("startDate", event.target.value || null);
-          }}
-        />
-      </Field>
-      <Field id="end-date" label="Data zakończenia" error={errors["endDate"]}>
-        <Input
-          id="end-date"
-          type="date"
-          value={value.endDate ?? ""}
-          disabled={disabled}
-          {...state("endDate", "end-date")}
-          onChange={(event) => {
-            if (shouldUpdateDate(event)) set("endDate", event.target.value || null);
-          }}
-        />
-      </Field>
-      <Field id="duration-days" label="Liczba dni" error={errors["durationDays"]}>
-        <Input
-          id="duration-days"
-          type="number"
-          min={1}
-          max={60}
-          value={value.durationDays}
-          disabled={disabled}
-          {...state("durationDays", "duration-days")}
-          onChange={(event) => set("durationDays", Number(event.target.value))}
-        />
-      </Field>
-      <Field id="price-from" label="Cena od" error={errors["priceFrom"]}>
-        <div className="flex gap-2">
-          <Input
-            id="price-from"
-            type="number"
-            min={0}
-            value={value.priceFrom}
-            disabled={disabled}
-            {...state("priceFrom", "price-from")}
-            onChange={(event) => set("priceFrom", Number(event.target.value))}
-          />
-          <Input
-            aria-label="Waluta"
-            value={value.currency}
-            readOnly
-            disabled={disabled}
-            className="w-20"
-          />
-        </div>
-      </Field>
-      <Field
-        id="group-size-min"
-        label="Minimalna liczba uczestników"
-        error={errors["groupSizeMin"]}
-      >
-        <Input
-          id="group-size-min"
-          type="number"
-          min={1}
-          max={99}
-          value={value.groupSizeMin ?? ""}
-          disabled={disabled}
-          {...state("groupSizeMin", "group-size-min")}
-          onChange={(event) => set("groupSizeMin", nullableNumber(event.target.value))}
-        />
-      </Field>
-      <Field
-        id="group-size-max"
-        label="Maksymalna liczba uczestników"
-        error={errors["groupSizeMax"]}
-      >
-        <Input
-          id="group-size-max"
-          type="number"
-          min={1}
-          max={99}
-          value={value.groupSizeMax ?? ""}
-          disabled={disabled}
-          {...state("groupSizeMax", "group-size-max")}
-          onChange={(event) => set("groupSizeMax", nullableNumber(event.target.value))}
-        />
-      </Field>
-      <div className="sm:col-span-2">
-        <Field id="booking-url" label="Adres zapisów" error={errors["bookingUrl"]}>
-          <Input
-            id="booking-url"
-            type="url"
-            value={value.bookingUrl}
-            placeholder="https://zapisy.example/oferta"
-            disabled={disabled}
-            {...state("bookingUrl", "booking-url")}
-            onChange={(event) => set("bookingUrl", event.target.value)}
-          />
-        </Field>
-      </div>
-    </div>
   );
 }

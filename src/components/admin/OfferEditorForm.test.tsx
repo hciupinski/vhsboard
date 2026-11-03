@@ -365,6 +365,18 @@ describe("OfferEditorForm", () => {
     expect(screen.getByLabelText("Wyżywienie")).toHaveValue("");
   });
 
+  it("does not emit updates merely by rendering or changing tabs", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+    for (const name of ["O obozie", "W programie", "Cena", "Dla rodzica", "Resort", "Galeria"]) {
+      await user.click(screen.getByRole("tab", { name }));
+    }
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it("retains transport text after disabling and reopening its optional section", async () => {
     const user = userEvent.setup();
     function Editor() {

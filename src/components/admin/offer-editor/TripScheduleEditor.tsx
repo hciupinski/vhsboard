@@ -5,17 +5,14 @@ import { Textarea } from "@/components/ui/textarea";
 import type { TripOfferContent } from "@/lib/offers/types";
 import { EditorField as Field } from "./EditorField";
 
+import type { ContentEditorProps } from "./editor-fields";
+
 export function TripScheduleEditor({
   content,
   errors,
   disabled,
   onChange,
-}: {
-  content: TripOfferContent;
-  errors: Record<string, string>;
-  disabled: boolean;
-  onChange: (content: TripOfferContent) => void;
-}) {
+}: ContentEditorProps<TripOfferContent>) {
   return (
     <fieldset
       disabled={disabled}

@@ -176,3 +176,8 @@ Create `src/components/admin/offer-editor/` (distinct from existing optional-con
 
 - Extracted existing Field, counter, helpers and four concrete editors. `bun run typecheck` and targeted form/route/schema tests (3 files / 107 tests) passed.
 - Ruling: moved the four independent editors as one mechanical step and ran the targeted suite after the combined extraction rather than after each editor; the diff remains reviewable and the entire characterization set passed. If a regression had arisen, isolation would have required inspecting the combined move.
+
+### Task 3 (2026-11-03)
+
+- Extracted basics, story, program, price, accommodation, optional-section adapter and photos while retaining tab composition and content normalization at the form boundary. Shared subtitle takes separate exact display and descendant ARIA errors to preserve the original lookup behavior.
+- `bun run typecheck` and form tests (35/35) passed after extraction. Added a regression confirming render and tab changes never emit an update. Initial desktop/mobile screenshots of both kinds match visually; three pairs are pixel-identical and the camp mobile pair differs only in a small text anti-aliasing region.

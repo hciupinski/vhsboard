@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 type FieldProps = {
@@ -34,5 +35,40 @@ export function EditorField({ id, label, hint, characterCount, error, children }
         </p>
       ) : null}
     </div>
+  );
+}
+
+export function SubtitleField({
+  value,
+  error,
+  ariaError,
+  disabled,
+  onChange,
+}: {
+  value: string;
+  error?: string | undefined;
+  ariaError?: string | undefined;
+  disabled: boolean;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <EditorField
+      id="subtitle"
+      label="Zdanie wprowadzające"
+      hint="Pod tytułem oferty"
+      characterCount={{ value, max: 280 }}
+      error={error}
+    >
+      <Textarea
+        id="subtitle"
+        value={value}
+        maxLength={280}
+        className="min-h-20"
+        disabled={disabled}
+        aria-describedby={ariaError ? "subtitle-error" : undefined}
+        aria-invalid={ariaError ? true : undefined}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </EditorField>
   );
 }

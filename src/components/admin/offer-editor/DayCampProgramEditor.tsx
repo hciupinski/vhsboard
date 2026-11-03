@@ -5,17 +5,14 @@ import type { DayCampContent } from "@/lib/offers/types";
 import { CharacterCounter } from "./EditorField";
 import { errorFor } from "./editor-fields";
 
+import type { ContentEditorProps } from "./editor-fields";
+
 export function DayCampProgramEditor({
   content,
   errors,
   disabled,
   onChange,
-}: {
-  content: DayCampContent;
-  errors: Record<string, string>;
-  disabled: boolean;
-  onChange: (content: DayCampContent) => void;
-}) {
+}: ContentEditorProps<DayCampContent>) {
   return (
     <fieldset
       disabled={disabled}
