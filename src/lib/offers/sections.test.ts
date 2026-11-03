@@ -9,6 +9,7 @@ describe("offer sections and term transport", () => {
       kind === "trip" ? "O wyjeździe" : "O obozie",
       "W programie",
       "Cena",
+      ...(kind === "day_camp" ? ["Dla rodzica"] : []),
       "Zakwaterowanie",
       "Resort",
       "Szkolenia",

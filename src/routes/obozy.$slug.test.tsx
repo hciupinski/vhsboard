@@ -183,6 +183,8 @@ describe("day-camp detail route", () => {
       "O obozie",
       "W programie",
       "Cena",
+      "Dla rodzica",
+      "Resort",
       "Galeria",
     ]);
     for (const link of links) {

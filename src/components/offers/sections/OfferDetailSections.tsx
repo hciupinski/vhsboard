@@ -1,8 +1,10 @@
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
+import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OfferGallery } from "@/components/offers/OfferGallery";
 import { OfferHighlights } from "./OfferHighlights";
 import { OfferStoryImages } from "./OfferStoryImages";
+import { FloatingBookingCta } from "../FloatingBookingCta";
 import { getOfferSections, type OfferSection } from "@/lib/offers/sections";
 import type { PublicOffer } from "@/lib/offers/types";
 import { sectionIsEnabled, type ExtraPrice } from "@/lib/offers/content-v2";
@@ -38,6 +40,7 @@ export function OfferDetailSections({
   const { content } = offer;
   const sections = getOfferSections(offer);
   const camp = offer.offerKind === "day_camp" ? offer.content : null;
+  const bookingCardRef = useRef<HTMLElement>(null);
   const render = (section: OfferSection) => {
     const { id, label, editorTab } = section;
     if (editorTab === "photos")
@@ -46,42 +49,31 @@ export function OfferDetailSections({
     if (editorTab === "story")
       body = (
         <>
-          <OfferStoryImages images={offer.storyImages ?? []} />
           {content.paragraphs.map((paragraph, i) => (
             <Copy key={i}>{paragraph}</Copy>
           ))}
-          {camp ? (
-            <>
-              <div className="mt-8 rounded-2xl border bg-card p-5">
-                <h3 className="text-2xl">Miejsce zajęć</h3>
-                <Copy>{camp.venueDescription}</Copy>
-              </div>
-              <section id="dla-rodzica" tabIndex={-1} className="mt-8">
-                <h3 className="text-2xl">Dla rodzica</h3>
-                <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-                  {Object.entries({
-                    "Wiek uczestników": camp.parentInfo.ageRange,
-                    Opieka: camp.parentInfo.supervision,
-                    Bezpieczeństwo: camp.parentInfo.safety,
-                    Wyżywienie: camp.parentInfo.meals,
-                    ...(!sectionIsEnabled(content.transport)
-                      ? { Transport: camp.parentInfo.transport }
-                      : {}),
-                  })
-                    .filter(([, value]) => value)
-                    .map(([title, value]) => (
-                      <div key={title} className="rounded-2xl border bg-card p-4">
-                        <dt className="font-medium">{title}</dt>
-                        <dd className="mt-2 whitespace-pre-line text-sm text-muted-foreground">
-                          {value}
-                        </dd>
-                      </div>
-                    ))}
-                </dl>
-              </section>
-            </>
-          ) : null}
         </>
+      );
+    if (editorTab === "parent" && camp)
+      body = (
+        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+          {Object.entries({
+            "Wiek uczestników": camp.parentInfo.ageRange,
+            Opieka: camp.parentInfo.supervision,
+            Bezpieczeństwo: camp.parentInfo.safety,
+            Wyżywienie: camp.parentInfo.meals,
+            ...(!sectionIsEnabled(content.transport)
+              ? { Transport: camp.parentInfo.transport }
+              : {}),
+          })
+            .filter(([, value]) => value)
+            .map(([title, value]) => (
+              <div key={title} className="rounded-2xl border bg-card p-4">
+                <dt className="font-medium">{title}</dt>
+                <dd className="mt-2 whitespace-pre-line text-sm text-muted-foreground">{value}</dd>
+              </div>
+            ))}
+        </dl>
       );
     if (editorTab === "highlights") {
       const schedule =
@@ -112,15 +104,24 @@ export function OfferDetailSections({
         <>
           <div className="mt-4 grid gap-6 sm:grid-cols-2">
             {[
-              ["W cenie", content.included],
-              ["Poza ceną", content.excluded],
-            ].map(([title, items]) => (
-              <div key={title as string}>
-                <h3 className="text-2xl">{title as string}</h3>
+              { title: "W cenie", items: content.included, included: true },
+              { title: "Poza ceną", items: content.excluded, included: false },
+            ].map(({ title, items, included }) => (
+              <div key={title}>
+                <h3 className="text-2xl">{title}</h3>
                 <ul className="mt-3 space-y-3">
-                  {(items as string[]).map((item, i) => (
+                  {items.map((item, i) => (
                     <li key={i} className="flex gap-3 text-sm text-muted-foreground">
-                      <span aria-hidden className="mt-1.5 size-2 shrink-0 rounded-full bg-accent" />
+                      <span
+                        aria-hidden="true"
+                        className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ${
+                          included
+                            ? "bg-primary text-primary-foreground"
+                            : "border border-muted-foreground/60 text-muted-foreground"
+                        }`}
+                      >
+                        {included ? <Check className="size-3" /> : <X className="size-3" />}
+                      </span>
                       {item}
                     </li>
                   ))}
@@ -176,6 +177,14 @@ export function OfferDetailSections({
         <>
           <h3 className="mt-4 text-2xl">{content.resort.name}</h3>
           <Copy>{content.resort.description}</Copy>
+          {camp &&
+          camp.venueDescription &&
+          camp.venueDescription !== content.resort.description.slice(0, 500) ? (
+            <>
+              <h3 className="mt-6 text-2xl">Miejsce zajęć</h3>
+              <Copy>{camp.venueDescription}</Copy>
+            </>
+          ) : null}
           {offer.resortMap ? <OfferGallery images={[offer.resortMap]} contain /> : null}
           {content.resort.mapUrl ? (
             <a
@@ -189,6 +198,8 @@ export function OfferDetailSections({
           ) : null}
         </>
       );
+    if (editorTab === "resort" && camp && !content.resort)
+      body = <Copy>{camp.venueDescription}</Copy>;
     if (editorTab === "training" && content.training)
       body = (
         <>
@@ -332,20 +343,43 @@ export function OfferDetailSections({
         </>
       );
     }
+    if (editorTab === "story") {
+      return (
+        <section
+          key={id}
+          id={id}
+          tabIndex={-1}
+          aria-label={label}
+          className="grid min-w-0 gap-6 break-words lg:col-span-2 lg:grid-cols-2 lg:gap-12"
+        >
+          <div className="min-w-0">
+            <h2 className="text-3xl sm:text-4xl">{label}</h2>
+            {body}
+          </div>
+          <OfferStoryImages images={offer.storyImages ?? []} />
+        </section>
+      );
+    }
     return (
       <Block key={id} id={id} title={label}>
         {body}
       </Block>
     );
   };
-  const primary = new Set(["story", "highlights", "inout"]);
+  const primary = new Set(["story", "highlights", "inout", "parent"]);
   return (
     <>
       <div className="mx-auto grid max-w-6xl gap-12 px-5 py-12 sm:py-14 lg:grid-cols-[1.6fr_1fr]">
+        {sections.filter((section) => section.editorTab === "story").map(render)}
         <div className="min-w-0 space-y-12">
-          {sections.filter((section) => primary.has(section.editorTab)).map(render)}
+          {sections
+            .filter((section) => primary.has(section.editorTab) && section.editorTab !== "story")
+            .map(render)}
         </div>
-        <aside className="lg:sticky lg:top-[calc(var(--trip-header-height,61px)+var(--trip-nav-height,0px)+24px)] lg:self-start">
+        <aside
+          ref={bookingCardRef}
+          className="lg:sticky lg:top-[calc(var(--trip-header-height,61px)+var(--trip-nav-height,0px)+24px)] lg:self-start"
+        >
           {sidebar}
         </aside>
       </div>
@@ -360,6 +394,12 @@ export function OfferDetailSections({
             </div>
           ),
         )}
+      <FloatingBookingCta
+        cardRef={bookingCardRef}
+        href={camp?.terms.length ? "#turnusy" : offer.bookingUrl}
+        label={camp?.terms.length ? "Wybierz turnus" : "Przejdź do zapisów"}
+        showOnMobile={!!camp}
+      />
     </>
   );
 }

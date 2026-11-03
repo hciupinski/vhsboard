@@ -494,6 +494,17 @@
 }
 
 /* Hash links on trip pages keep section headings clear of both sticky bars. */
+@keyframes booking-cta-pulse {
+  0%,
+  88%,
+  100% {
+    scale: 1;
+  }
+  94% {
+    scale: 1.04;
+  }
+}
+
 [data-trip-detail] main section[id] {
   scroll-margin-top: calc(var(--trip-header-height, 61px) + var(--trip-nav-height, 61px) + 16px);
 }
