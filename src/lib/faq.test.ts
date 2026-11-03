@@ -3,13 +3,17 @@ import { describe, expect, it } from "vitest";
 import { campFaqItems, tripFaqItems } from "./faq";
 
 describe("public FAQ content", () => {
-  it("keeps six trip questions about joining and organisation", () => {
+  it("uses all ten trip questions supplied by the client", () => {
     expect(tripFaqItems.map(({ question }) => question)).toEqual([
       "Czy muszę mieć doświadczenie na desce?",
-      "Co obejmuje cena wyjazdu?",
+      "Czy muszę samodzielnie organizować transport, nocleg i skipass?",
       "Jak wygląda dojazd na wyjazd?",
       "Czy muszę zabrać własny sprzęt?",
       "Z kim będę mieszkać na miejscu?",
+      "Czy mogę pojechać na wyjazd bez własnej ekipy?",
+      "Jak wyglądają szkolenia podczas wyjazdów?",
+      "Kto prowadzi szkolenia podczas wyjazdów VHS?",
+      "Czy VHS organizuje cały wyjazd?",
       "Jak zapisać się na wyjazd?",
     ]);
   });
