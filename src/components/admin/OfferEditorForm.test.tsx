@@ -73,6 +73,60 @@ const dayCampInput: EditableOfferInput = {
 afterEach(cleanup);
 
 describe("OfferEditorForm", () => {
+  it.each(["trip", "day_camp"] as const)(
+    "preserves reordered lists in the %s offer data",
+    async (kind) => {
+      const user = userEvent.setup();
+      const input = kind === "trip" ? completeInput : dayCampInput;
+      const initial = {
+        ...input,
+        content: {
+          ...input.content,
+          highlights: ["Pierwsza", "Druga"],
+          included: ["Nocleg", "Szkolenie"],
+          excluded: ["Dojazd", "Sprzęt"],
+        },
+      };
+      const onChange = vi.fn();
+      function Editor() {
+        const [value, setValue] = useState<EditableOfferInput>(initial);
+        return (
+          <OfferEditorForm
+            value={value}
+            errors={{}}
+            disabled={false}
+            onChange={(next) => {
+              setValue(next);
+              onChange(next);
+            }}
+          />
+        );
+      }
+      render(<Editor />);
+      await user.click(screen.getByRole("tab", { name: "W programie" }));
+      const label = kind === "trip" ? "W programie" : "Atrakcje";
+      await user.click(screen.getByRole("button", { name: `Przesuń pozycję „${label}” 1 w dół` }));
+      expect(onChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          content: expect.objectContaining({ highlights: ["Druga", "Pierwsza"] }),
+        }),
+      );
+      await user.click(screen.getByRole("tab", { name: "Cena" }));
+      await user.click(screen.getByRole("button", { name: "Przesuń pozycję „W cenie” 1 w dół" }));
+      await user.click(screen.getByRole("button", { name: "Przesuń pozycję „Poza ceną” 1 w dół" }));
+      expect(onChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          content: expect.objectContaining({
+            highlights: ["Druga", "Pierwsza"],
+            included: ["Szkolenie", "Nocleg"],
+            excluded: ["Sprzęt", "Dojazd"],
+          }),
+        }),
+      );
+      await user.click(screen.getByRole("tab", { name: "W programie" }));
+      expect(screen.getByLabelText(`${label} 1`)).toHaveValue("Druga");
+    },
+  );
   it("preserves a manually overridden slug when the title changes", () => {
     function Editor() {
       const [value, setValue] = useState({ ...completeInput, slug: "" });
