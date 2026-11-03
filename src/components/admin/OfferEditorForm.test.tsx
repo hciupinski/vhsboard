@@ -526,9 +526,7 @@ describe("OfferEditorForm", () => {
       <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={onChange} />,
     );
     await user.click(screen.getByRole("tab", { name: "Resort" }));
-    expect(screen.getByLabelText("Resort → Opis miejsca zajęć")).toHaveValue(
-      venueDescription,
-    );
+    expect(screen.getByLabelText("Resort → Opis miejsca zajęć")).toHaveValue(venueDescription);
     await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
     expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
