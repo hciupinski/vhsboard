@@ -10,7 +10,13 @@ const activityLabels: Record<TripOffer["activity"], string> = {
   combo: "Surf + snowboard",
 };
 
-export function OfferCard({ offer }: { offer: TripOffer }) {
+export function OfferCard({
+  offer,
+  alwaysShowAction = false,
+}: {
+  offer: TripOffer;
+  alwaysShowAction?: boolean;
+}) {
   const { isFinished, showLastPlacesBadge } = getOfferCardStatus(offer);
   const content = (
     <article
@@ -62,7 +68,7 @@ export function OfferCard({ offer }: { offer: TripOffer }) {
           {!isFinished && (
             <span
               aria-hidden="true"
-              className="mt-5 flex w-full items-center justify-center rounded-full bg-primary winter:group-hover:bg-interaction px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm offer-card-action transition-[opacity,transform] duration-160 ease-out motion-reduce:transition-none"
+              className={`mt-5 flex w-full items-center justify-center rounded-full bg-primary winter:group-hover:bg-interaction px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-[opacity,transform] duration-160 ease-out motion-reduce:transition-none${alwaysShowAction ? "" : " offer-card-action"}`}
             >
               Sprawdź szczegóły
             </span>
