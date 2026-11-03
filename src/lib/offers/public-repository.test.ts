@@ -87,6 +87,25 @@ afterEach(() => {
 });
 
 describe("public offer repository", () => {
+  it("loads the gallery when the story-image migration has not been applied", async () => {
+    const offerQuery = createQuery({ data: detailRow, error: null });
+    const missingColumn = Object.assign(
+      new Error("column offer_images.show_in_story does not exist"),
+      { code: "42703" },
+    );
+    const newQuery = createQuery({ data: null, error: missingColumn });
+    const legacyQuery = createQuery({ data: [imageRow], error: null });
+    mockedSupabase.from
+      .mockReturnValueOnce(offerQuery)
+      .mockReturnValueOnce(newQuery)
+      .mockReturnValueOnce(legacyQuery);
+    stubSignedUrls();
+    const offer = await getPublishedOfferBySlug("atlantic-surf-week");
+    expect(offer?.images).toMatchObject([{ path: imageRow.storage_path }]);
+    expect(legacyQuery.select).toHaveBeenCalledWith(
+      "id,offer_id,storage_path,alt_text,category,position",
+    );
+  });
   it("returns only published slugs and timestamps for static SEO generation", async () => {
     const query = createQuery({
       data: [

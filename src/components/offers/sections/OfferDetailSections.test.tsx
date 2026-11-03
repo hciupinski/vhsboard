@@ -7,6 +7,32 @@ import { getOfferSections } from "@/lib/offers/sections";
 afterEach(cleanup);
 describe("complete shared offer details", () => {
   it.each(["trip", "day_camp"] as const)(
+    "shows selected %s photos before the story without removing the gallery",
+    (kind) => {
+      const offer = sectionOffer(kind);
+      const photo = {
+        id: "photo",
+        path: "photo",
+        alt: "Deska na śniegu",
+        position: 0,
+        category: "gallery" as const,
+        signedUrl: "https://example.test/photo.webp",
+      };
+      offer.storyImages = [photo];
+      offer.images = [photo];
+      const { container } = render(<OfferDetailSections offer={offer} sidebar={null} />);
+      const images = screen.getAllByRole("img", { name: photo.alt });
+      expect(images).toHaveLength(2);
+      expect(
+        images[0]!.compareDocumentPosition(screen.getByText("Wspólny wyjazd na deskę w górach.")) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+      expect(container.querySelectorAll('img[src="https://example.test/photo.webp"]')).toHaveLength(
+        2,
+      );
+    },
+  );
+  it.each(["trip", "day_camp"] as const)(
     "renders %s in the canonical menu and H2 order",
     (kind) => {
       const offer = sectionOffer(kind);

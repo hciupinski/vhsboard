@@ -13,6 +13,7 @@ const {
   mockedReorderOfferImages,
   mockedRetryOfferImageObjectCleanup,
   mockedSetOfferHeroImage,
+  mockedSetOfferImageInStory,
   mockedUploadOfferImage,
 } = vi.hoisted(() => ({
   mockedDeleteOfferImage: vi.fn(),
@@ -20,6 +21,7 @@ const {
   mockedReorderOfferImages: vi.fn(),
   mockedRetryOfferImageObjectCleanup: vi.fn(),
   mockedSetOfferHeroImage: vi.fn(),
+  mockedSetOfferImageInStory: vi.fn(),
   mockedUploadOfferImage: vi.fn(),
 }));
 
@@ -32,6 +34,7 @@ vi.mock("@/lib/images/repository", async (importOriginal) => {
     reorderOfferImages: mockedReorderOfferImages,
     retryOfferImageObjectCleanup: mockedRetryOfferImageObjectCleanup,
     setOfferHeroImage: mockedSetOfferHeroImage,
+    setOfferImageInStory: mockedSetOfferImageInStory,
     uploadOfferImage: mockedUploadOfferImage,
   };
 });
@@ -97,6 +100,7 @@ beforeEach(() => {
   mockedReorderOfferImages.mockResolvedValue(undefined);
   mockedRetryOfferImageObjectCleanup.mockResolvedValue(undefined);
   mockedSetOfferHeroImage.mockResolvedValue(undefined);
+  mockedSetOfferImageInStory.mockResolvedValue(undefined);
   mockedUploadOfferImage.mockResolvedValue(imageOne);
 });
 
@@ -106,6 +110,40 @@ afterEach(() => {
 });
 
 describe("OfferImageManager", () => {
+  it("allows selecting a gallery image for the description", async () => {
+    mockedListOfferImages
+      .mockResolvedValueOnce([imageOne])
+      .mockResolvedValue([{ ...imageOne, showInStory: true }]);
+    const user = userEvent.setup();
+    renderManager();
+    await user.click(
+      await screen.findByRole("button", { name: `Zdjęcie przy opisie: ${imageOne.alt}` }),
+    );
+    expect(mockedSetOfferImageInStory).toHaveBeenCalledWith(offerId, imageOne.id, true);
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: `Zdjęcie przy opisie: ${imageOne.alt}` }),
+      ).toHaveAttribute("aria-pressed", "true"),
+    );
+  });
+
+  it("prevents selecting a fourth image while allowing deselection", async () => {
+    mockedListOfferImages.mockResolvedValue([
+      ...[imageOne, imageTwo, imageThree].map((image) => ({ ...image, showInStory: true })),
+      {
+        ...imageThree,
+        id: "e0f8e810-1df3-42d9-90df-2a1a69ad9a2c",
+        alt: "Czwarte zdjęcie w galerii",
+      },
+    ]);
+    renderManager();
+    expect(
+      await screen.findByRole("button", { name: "Zdjęcie przy opisie: Czwarte zdjęcie w galerii" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: `Zdjęcie przy opisie: ${imageOne.alt}` }),
+    ).toBeEnabled();
+  });
   it("does not start upload without a valid alternative text and announces it", async () => {
     const user = userEvent.setup();
     renderManager();

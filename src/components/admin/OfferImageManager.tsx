@@ -4,11 +4,14 @@ import { ArrowDown, ArrowUp, ImagePlus, Star, Trash2 } from "lucide-react";
 import {
   deleteOfferImage,
   ImageCleanupPendingError,
+  ImageRepositoryError,
   listOfferImages,
   reorderOfferImages,
   retryOfferImageObjectCleanup,
   setOfferHeroImage,
+  setOfferImageInStory,
   uploadOfferImage,
+  updateOfferImageAlt,
 } from "@/lib/images/repository";
 import { validateImageFile } from "@/lib/images/validation";
 import type { OfferImage, OfferImageCategory } from "@/lib/offers/types";
@@ -71,6 +74,9 @@ export function OfferImageManager({
   const [isLoading, setIsLoading] = useState(true);
   const [isGalleryReady, setIsGalleryReady] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSelectingStory, setIsSelectingStory] = useState(false);
+  const [editingAltId, setEditingAltId] = useState<string | null>(null);
+  const [editedAlt, setEditedAlt] = useState("");
   const [pendingCleanupPath, setPendingCleanupPath] = useState<string | null>(null);
   const [isRetryingCleanup, setIsRetryingCleanup] = useState(false);
 
@@ -185,6 +191,44 @@ export function OfferImageManager({
       onImagesChanged,
     ]);
     if (!synchronized) setError(imageSyncWarning);
+  };
+
+  const handleToggleStory = async (image: OfferImage) => {
+    setError(null);
+    setIsSelectingStory(true);
+    try {
+      await setOfferImageInStory(offerId, image.id, !image.showInStory);
+      await refreshImages();
+      await onImagesChanged();
+    } catch (caught) {
+      setError(
+        caught instanceof ImageRepositoryError && caught.message.includes("migracji")
+          ? caught.message
+          : "Nie udało się zmienić wyboru zdjęcia. Można wybrać maksymalnie trzy.",
+      );
+      await synchronizeImageState([refreshImages, onImagesChanged]);
+    } finally {
+      setIsSelectingStory(false);
+    }
+  };
+
+  const handleSaveAlt = async (image: OfferImage) => {
+    if (!isValidAltText(editedAlt)) {
+      setError("Opis alternatywny musi mieć od 5 do 180 znaków.");
+      return;
+    }
+    setError(null);
+    setIsSelectingStory(true);
+    try {
+      await updateOfferImageAlt(offerId, image.id, editedAlt);
+      setEditingAltId(null);
+      await refreshImages();
+      await onImagesChanged();
+    } catch {
+      setError("Nie udało się zmienić opisu zdjęcia. Spróbuj ponownie.");
+    } finally {
+      setIsSelectingStory(false);
+    }
   };
 
   const handleMove = async (imageId: string, direction: -1 | 1) => {
@@ -353,6 +397,12 @@ export function OfferImageManager({
               ? "Galeria zakwaterowania"
               : "Galeria"}
         </h2>
+        {category === "gallery" ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            Wybierz maksymalnie trzy zdjęcia do sekcji „O wyjeździe” lub „O obozie”. Kolejność zdjęć
+            przy opisie odpowiada kolejności w galerii; pierwsze będzie największe.
+          </p>
+        ) : null}
         {isLoading ? <p className="mt-3 text-sm text-muted-foreground">Ładowanie zdjęć…</p> : null}
         {!isLoading && images.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">Galeria jest jeszcze pusta.</p>
@@ -390,7 +440,67 @@ export function OfferImageManager({
                     ) : null}
                   </div>
                 </div>
+                {category === "gallery" && editingAltId === image.id ? (
+                  <div className="mt-4 space-y-2">
+                    <Label htmlFor={`edit-alt-${image.id}`}>Opis alternatywny</Label>
+                    <Input
+                      id={`edit-alt-${image.id}`}
+                      value={editedAlt}
+                      maxLength={180}
+                      onChange={(event) => setEditedAlt(event.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={disabled || isSelectingStory}
+                      onClick={() => void handleSaveAlt(image)}
+                    >
+                      Zapisz opis
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setEditingAltId(null)}
+                    >
+                      Anuluj
+                    </Button>
+                  </div>
+                ) : null}
                 <div className="mt-4 flex flex-wrap gap-2">
+                  {category === "gallery" ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      aria-label={`Edytuj opis: ${image.alt}`}
+                      disabled={disabled || isSelectingStory}
+                      onClick={() => {
+                        setEditingAltId(image.id);
+                        setEditedAlt(image.alt);
+                      }}
+                    >
+                      Edytuj opis
+                    </Button>
+                  ) : null}
+                  {category === "gallery" ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      aria-pressed={!!image.showInStory}
+                      aria-label={`Zdjęcie przy opisie: ${image.alt}`}
+                      disabled={
+                        disabled ||
+                        isSelectingStory ||
+                        (!image.showInStory &&
+                          images.filter((item) => item.showInStory).length >= 3)
+                      }
+                      onClick={() => void handleToggleStory(image)}
+                    >
+                      {image.showInStory ? "Usuń z opisu" : "Pokaż przy opisie"}
+                    </Button>
+                  ) : null}
                   {category === "gallery" ? (
                     <Button
                       type="button"
