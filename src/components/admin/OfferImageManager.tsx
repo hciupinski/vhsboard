@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowUp, ImagePlus, Star, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Star, Trash2 } from "lucide-react";
 
 import {
   deleteOfferImage,
@@ -13,7 +13,7 @@ import {
   uploadOfferImage,
   updateOfferImageAlt,
 } from "@/lib/images/repository";
-import { validateImageFile } from "@/lib/images/validation";
+import { ImageUploadForm } from "./ImageUploadForm";
 import type { OfferImage, OfferImageCategory } from "@/lib/offers/types";
 import {
   AlertDialog,
@@ -65,15 +65,11 @@ export function OfferImageManager({
   onHeroChanged,
   onImagesChanged,
 }: OfferImageManagerProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const imageRequestVersion = useRef(0);
-  const [altText, setAltText] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [images, setImages] = useState<OfferImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isGalleryReady, setIsGalleryReady] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [isSelectingStory, setIsSelectingStory] = useState(false);
   const [editingAltId, setEditingAltId] = useState<string | null>(null);
   const [editedAlt, setEditedAlt] = useState("");
@@ -123,24 +119,8 @@ export function OfferImageManager({
     };
   }, [offerId, category]);
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setError("Wybierz plik obrazu.");
-      return;
-    }
-
-    const fileValidation = validateImageFile(selectedFile);
-    if (!fileValidation.ok) {
-      setError(fileValidation.error.message);
-      return;
-    }
-    if (!isValidAltText(altText)) {
-      setError("Opis alternatywny musi mieć od 5 do 180 znaków.");
-      return;
-    }
-
+  const handleUpload = async (selectedFile: File, altText: string): Promise<boolean> => {
     setError(null);
-    setIsUploading(true);
     const nextPosition =
       images.reduce((maximum, image) => Math.max(maximum, image.position), -1) + 1;
     let uploadedImage: OfferImage;
@@ -156,12 +136,11 @@ export function OfferImageManager({
       if (category === "resort_map" || caught instanceof ImageCleanupPendingError)
         await synchronizeImageState([refreshImages, onImagesChanged]);
       setError(
-        caught instanceof ImageCleanupPendingError
+        caught instanceof ImageRepositoryError
           ? caught.message
           : "Nie udało się dodać zdjęcia. Spróbuj ponownie.",
       );
-      setIsUploading(false);
-      return;
+      return false;
     }
 
     setImages((current) =>
@@ -169,12 +148,9 @@ export function OfferImageManager({
         (first, second) => first.position - second.position,
       ),
     );
-    setSelectedFile(null);
-    setAltText("");
-    if (fileInputRef.current) fileInputRef.current.value = "";
     const synchronized = await synchronizeImageState([refreshImages, onImagesChanged]);
     if (!synchronized) setError(imageSyncWarning);
-    setIsUploading(false);
+    return true;
   };
 
   const handleSetHero = async (image: OfferImage) => {
@@ -316,61 +292,12 @@ export function OfferImageManager({
             : "Zdjęcia oferty"
       }
     >
-      <div className="space-y-4 rounded-xl bg-secondary/40 p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-background text-primary">
-            <ImagePlus className="size-5" aria-hidden="true" />
-          </div>
-          <div>
-            <h2 className="font-display text-xl tracking-wide">Dodaj zdjęcie</h2>
-            <p className="text-sm text-muted-foreground">
-              Plik JPG, PNG lub WebP, maksymalnie 8 MiB.
-            </p>
-          </div>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor={`image-file-${category}`}>Wybierz plik obrazu</Label>
-            <Input
-              ref={fileInputRef}
-              id={`image-file-${category}`}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              disabled={disabled || isUploading || !isGalleryReady}
-              onChange={(event) => {
-                setSelectedFile(event.target.files?.[0] ?? null);
-                setError(null);
-              }}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`image-alt-${category}`}>Opis alternatywny (wymagany)</Label>
-            <p id={`image-alt-hint-${category}`} className="text-sm text-muted-foreground">
-              Opisz krótko, co przedstawia zdjęcie; od 5 do 180 znaków.
-            </p>
-            <Input
-              id={`image-alt-${category}`}
-              value={altText}
-              aria-describedby={`image-alt-hint-${category}`}
-              required
-              minLength={5}
-              maxLength={180}
-              disabled={disabled || isUploading || !isGalleryReady}
-              onChange={(event) => {
-                setAltText(event.target.value);
-                setError(null);
-              }}
-            />
-          </div>
-        </div>
-        <Button
-          type="button"
-          disabled={disabled || isUploading || !isGalleryReady}
-          onClick={() => void handleUpload()}
-        >
-          {isUploading ? "Dodawanie zdjęcia…" : "Dodaj zdjęcie"}
-        </Button>
-      </div>
+      <ImageUploadForm
+        key={`${offerId}-${category}`}
+        disabled={disabled || !isGalleryReady}
+        onUpload={handleUpload}
+        onChange={() => setError(null)}
+      />
 
       {error ? (
         <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">

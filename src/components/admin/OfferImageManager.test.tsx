@@ -2,7 +2,7 @@ import { cleanup, render, screen, waitFor, within } from "@testing-library/react
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ImageCleanupPendingError } from "@/lib/images/repository";
+import { ImageCleanupPendingError, ImageRepositoryError } from "@/lib/images/repository";
 import type { OfferImage } from "@/lib/offers/types";
 
 import { OfferImageManager } from "./OfferImageManager";
@@ -110,6 +110,131 @@ afterEach(() => {
 });
 
 describe("OfferImageManager", () => {
+  it("preserves a safe upload error and selected inputs so the user can retry", async () => {
+    mockedUploadOfferImage.mockRejectedValueOnce(
+      new ImageRepositoryError(
+        "Nie udało się przygotować zdjęcia. Wybierz inny plik JPG, PNG lub WebP.",
+      ),
+    );
+    const user = userEvent.setup();
+    renderManager();
+    const file = screen.getByLabelText("Wybierz plik obrazu");
+    const alt = screen.getByLabelText("Opis alternatywny (wymagany)");
+    await waitFor(() => expect(file).toBeEnabled());
+    await user.upload(file, jpegFile);
+    await user.type(alt, imageOne.alt);
+    await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Wybierz inny plik JPG, PNG lub WebP",
+    );
+    expect(alt).toHaveValue(imageOne.alt);
+    expect((file as HTMLInputElement).files?.[0]).toBe(jpegFile);
+    await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+    await waitFor(() => expect(alt).toHaveValue(""));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("disables both fields and prevents duplicate submissions while upload is pending", async () => {
+    const pending = createDeferred<OfferImage>();
+    mockedUploadOfferImage.mockReturnValueOnce(pending.promise);
+    const user = userEvent.setup();
+    renderManager();
+    const file = screen.getByLabelText("Wybierz plik obrazu");
+    const alt = screen.getByLabelText("Opis alternatywny (wymagany)");
+    await waitFor(() => expect(file).toBeEnabled());
+    await user.upload(file, jpegFile);
+    await user.type(alt, imageOne.alt);
+    await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+    expect(file).toBeDisabled();
+    expect(alt).toBeDisabled();
+    const button = screen.getByRole("button", { name: "Dodawanie zdjęcia…" });
+    expect(button).toBeDisabled();
+    await user.click(button);
+    expect(mockedUploadOfferImage).toHaveBeenCalledOnce();
+    pending.resolve(imageOne);
+    await waitFor(() => expect(alt).toBeEnabled());
+    expect(alt).toHaveValue("");
+  });
+
+  it.each(["gallery", "accommodation", "resort_map"] as const)(
+    "announces an oversized file immediately in the %s uploader and keeps the error while editing alt",
+    async (category) => {
+      const user = userEvent.setup();
+      renderManager(null, category);
+      const input = screen.getByLabelText("Wybierz plik obrazu");
+      await waitFor(() => expect(input).toBeEnabled());
+      await user.upload(
+        input,
+        new File([new Uint8Array(8 * 1024 * 1024 + 1)], "duze.jpg", { type: "image/jpeg" }),
+      );
+      expect(screen.getByRole("alert")).toHaveTextContent(/za duży.*8 MiB/);
+      expect(input).toHaveAttribute("aria-invalid", "true");
+      expect(input).toHaveAccessibleDescription(/za duży.*8 MiB/);
+      await user.type(screen.getByLabelText("Opis alternatywny (wymagany)"), imageOne.alt);
+      expect(screen.getByRole("alert")).toHaveTextContent("8 MiB");
+      await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+      expect(input).toHaveFocus();
+      expect(mockedUploadOfferImage).not.toHaveBeenCalled();
+      await user.upload(input, jpegFile);
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+      await waitFor(() =>
+        expect(screen.getByLabelText("Opis alternatywny (wymagany)")).toHaveValue(""),
+      );
+      expect((input as HTMLInputElement).files).toHaveLength(0);
+      expect(mockedUploadOfferImage).toHaveBeenCalledOnce();
+      expect(mockedUploadOfferImage.mock.calls[0]).toEqual(
+        category === "gallery"
+          ? [offerId, jpegFile, imageOne.alt, 0]
+          : [offerId, jpegFile, imageOne.alt, 0, category],
+      );
+    },
+  );
+
+  it.each([
+    ["animacja.gif", "image/gif", /format.*JPG.*PNG.*WebP/i],
+    ["zdjecie.heic", "image/jpeg", /rozszerzenie.*JPG.*PNG.*WebP/i],
+    ["zdjecie.png", "image/jpeg", /nie pasuje.*JPEG/i],
+  ])("explains the reason for rejecting %s before upload", async (name, type, message) => {
+    const user = userEvent.setup({ applyAccept: false });
+    renderManager();
+    const input = screen.getByLabelText("Wybierz plik obrazu");
+    await waitFor(() => expect(input).toBeEnabled());
+    await user.upload(input, new File(["image"], name as string, { type: type as string }));
+    expect(screen.getByRole("alert")).toHaveTextContent(message);
+    expect(mockedUploadOfferImage).not.toHaveBeenCalled();
+  });
+
+  it("associates missing-file and alt errors with their fields and corrects them independently", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    const file = screen.getByLabelText("Wybierz plik obrazu");
+    const alt = screen.getByLabelText("Opis alternatywny (wymagany)");
+    await waitFor(() => expect(file).toBeEnabled());
+    await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
+    expect(file).toHaveAccessibleDescription(/Wybierz plik obrazu/);
+    expect(alt).toHaveAccessibleDescription(/od 5 do 180 znaków/);
+    expect(alt).toHaveAttribute("aria-invalid", "true");
+    await user.upload(file, jpegFile);
+    expect(file).toHaveAttribute("aria-invalid", "false");
+    expect(alt).toHaveAttribute("aria-invalid", "true");
+    await user.type(alt, "   a   ");
+    expect(alt).toHaveAttribute("aria-invalid", "true");
+    await user.clear(alt);
+    await user.type(alt, imageOne.alt);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("keeps labels unique when multiple uploaders of the same category are mounted", async () => {
+    renderManager();
+    renderManager();
+    const files = screen.getAllByLabelText("Wybierz plik obrazu");
+    const alts = screen.getAllByLabelText("Opis alternatywny (wymagany)");
+    expect(files).toHaveLength(2);
+    expect(alts).toHaveLength(2);
+    expect(new Set([...files, ...alts].map((input) => input.id)).size).toBe(4);
+  });
+
   it("allows selecting a gallery image for the description", async () => {
     mockedListOfferImages
       .mockResolvedValueOnce([imageOne])

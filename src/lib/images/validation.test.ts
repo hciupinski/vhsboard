@@ -8,6 +8,28 @@ import {
 } from "./validation";
 
 describe("validateImageFile", () => {
+  it("rejects an empty image with an actionable reason", () => {
+    expect(validateImageFile(new File([], "puste.jpg", { type: "image/jpeg" }))).toMatchObject({
+      ok: false,
+      error: { code: "pusty", message: expect.stringMatching(/pusty.*inny plik/i) },
+    });
+  });
+
+  it("distinguishes an unsupported extension from a supported extension that mismatches MIME", () => {
+    const unsupported = validateImageFile(new File(["x"], "obraz.heic", { type: "image/jpeg" }));
+    const mismatch = validateImageFile(new File(["x"], "obraz.png", { type: "image/jpeg" }));
+    expect(unsupported).toMatchObject({
+      ok: false,
+      error: {
+        code: "rozszerzenie",
+        message: expect.stringMatching(/nieobsługiwane rozszerzenie.*JPG.*PNG.*WebP/i),
+      },
+    });
+    expect(mismatch).toMatchObject({
+      ok: false,
+      error: { code: "rozszerzenie", message: expect.stringMatching(/nie pasuje.*JPEG/i) },
+    });
+  });
   it.each([
     ["image/jpeg", "surfer.jpeg"],
     ["image/jpeg", "surfer.jpg"],
