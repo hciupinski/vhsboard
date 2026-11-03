@@ -6,6 +6,7 @@ import { supabase } from "../supabase";
 import { optimizeImageForUpload } from "./optimization";
 import { createImagePath } from "./path";
 import { validateImageFile } from "./validation";
+import { isMissingStoryImageColumn, readOfferImageRows } from "../offers/image-rows";
 
 const OFFER_IMAGES_BUCKET = "offer-images";
 const MIN_ALT_TEXT_LENGTH = 5;
@@ -52,6 +53,7 @@ const toOfferImage = (value: unknown, signedUrl: string | null = null): OfferIma
     alt: row.alt_text,
     position: row.position,
     category: row.category,
+    ...(row.show_in_story ? { showInStory: true } : {}),
     signedUrl,
   };
 };
@@ -71,11 +73,7 @@ const ensureRows = (data: unknown, message: string): unknown[] => {
 
 const getImageRows = async (offerId: string): Promise<OfferImageRow[]> => {
   ensureUuid(offerId, "Nieprawidłowy identyfikator oferty.");
-  const { data, error } = await supabase
-    .from("offer_images")
-    .select("id,offer_id,storage_path,alt_text,category,position")
-    .eq("offer_id", offerId)
-    .order("position", { ascending: true });
+  const { data, error } = await readOfferImageRows(offerId);
 
   if (error) {
     throw new ImageRepositoryError("Nie udało się pobrać obrazów oferty.", { cause: error });
@@ -221,6 +219,56 @@ export const listOfferImages = async (offerId: string): Promise<OfferImage[]> =>
   const rows = await getImageRows(offerId);
   const signedUrls = await resolveAdminImageUrls(rows.map((row) => row.storage_path));
   return rows.map((row) => toOfferImage(row, signedUrls.get(row.storage_path) ?? null));
+};
+
+export const setOfferImageInStory = async (
+  offerId: string,
+  imageId: string,
+  selected: boolean,
+): Promise<void> => {
+  ensureUuid(offerId, "Nieprawidłowy identyfikator oferty.");
+  ensureUuid(imageId, "Nieprawidłowy identyfikator obrazu.");
+  const { data, error } = await supabase
+    .from("offer_images")
+    .update({ show_in_story: selected })
+    .eq("id", imageId)
+    .eq("offer_id", offerId)
+    .eq("category", "gallery")
+    .select("id")
+    .maybeSingle();
+  if (error || !data) {
+    if (isMissingStoryImageColumn(error)) {
+      throw new ImageRepositoryError(
+        "Wybór zdjęć przy opisie wymaga zastosowania migracji bazy danych.",
+        { cause: error },
+      );
+    }
+    throw new ImageRepositoryError("Nie udało się zmienić wyboru zdjęcia.", { cause: error });
+  }
+};
+
+export const updateOfferImageAlt = async (
+  offerId: string,
+  imageId: string,
+  altText: string,
+): Promise<void> => {
+  ensureUuid(offerId, "Nieprawidłowy identyfikator oferty.");
+  ensureUuid(imageId, "Nieprawidłowy identyfikator obrazu.");
+  const alt = altText.trim();
+  if (alt.length < MIN_ALT_TEXT_LENGTH || alt.length > MAX_ALT_TEXT_LENGTH) {
+    throw new ImageRepositoryError("Opis alternatywny musi mieć od 5 do 180 znaków.");
+  }
+  const { data, error } = await supabase
+    .from("offer_images")
+    .update({ alt_text: alt })
+    .eq("id", imageId)
+    .eq("offer_id", offerId)
+    .eq("category", "gallery")
+    .select("id")
+    .maybeSingle();
+  if (error || !data) {
+    throw new ImageRepositoryError("Nie udało się zmienić opisu zdjęcia.", { cause: error });
+  }
 };
 
 const getImageById = async (imageId: string): Promise<OfferImageRow> => {

@@ -50,6 +50,12 @@ const completeImageRows = [
 ];
 
 describe("offer row mappers", () => {
+  it("selects story images from the gallery without removing them", () => {
+    const image = { ...completeImageRows[0]!, category: "gallery", show_in_story: true };
+    const offer = mapOfferDetailRow(completeOfferRow, [image], new Map());
+    expect(offer.images).toHaveLength(1);
+    expect(offer.storyImages).toMatchObject([{ id: image.id }]);
+  });
   it("maps resort maps separately and safely omits their missing signed URL", () => {
     const image = { ...completeImageRows[0]!, category: "resort_map" };
     const mapped = mapOfferDetailRow(completeOfferRow, [image], new Map());

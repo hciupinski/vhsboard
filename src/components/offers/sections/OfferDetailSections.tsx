@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { OfferGallery } from "@/components/offers/OfferGallery";
 import { OfferHighlights } from "./OfferHighlights";
+import { OfferStoryImages } from "./OfferStoryImages";
 import { getOfferSections, type OfferSection } from "@/lib/offers/sections";
 import type { PublicOffer } from "@/lib/offers/types";
 import { sectionIsEnabled, type ExtraPrice } from "@/lib/offers/content-v2";
@@ -45,6 +46,7 @@ export function OfferDetailSections({
     if (editorTab === "story")
       body = (
         <>
+          <OfferStoryImages images={offer.storyImages ?? []} />
           {content.paragraphs.map((paragraph, i) => (
             <Copy key={i}>{paragraph}</Copy>
           ))}

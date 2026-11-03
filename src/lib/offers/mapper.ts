@@ -85,6 +85,7 @@ const toOfferImages = (images: OfferImageRow[], signedUrls: Map<string, string>)
     alt: image.alt_text,
     position: image.position,
     category: image.category,
+    ...(image.show_in_story ? { showInStory: true } : {}),
     signedUrl: toSignedUrlOrNull(image.storage_path, signedUrls),
   }));
 
@@ -115,6 +116,9 @@ const mapOffer = (
     showLastPlacesBadge: row.show_last_places_badge,
     heroImageUrl: toSignedUrlOrNull(row.hero_image, signedUrls),
     images: images.filter((image) => image.category === "gallery"),
+    ...(images.some((image) => image.showInStory)
+      ? { storyImages: images.filter((image) => image.category === "gallery" && image.showInStory) }
+      : {}),
     accommodationImages: images.filter((image) => image.category === "accommodation"),
     ...(images.some((image) => image.category === "resort_map")
       ? { resortMap: images.find((image) => image.category === "resort_map") ?? null }

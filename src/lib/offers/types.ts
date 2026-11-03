@@ -20,6 +20,7 @@ export type OfferImage = {
   alt: string;
   position: number;
   category: OfferImageCategory;
+  showInStory?: boolean;
   signedUrl: string | null;
 };
 
@@ -84,6 +85,7 @@ type PublicOfferBase = {
   showLastPlacesBadge: boolean;
   heroImageUrl: string | null;
   images: OfferImage[];
+  storyImages?: OfferImage[];
   accommodationImages: OfferImage[];
   resortMap?: OfferImage | null;
 };

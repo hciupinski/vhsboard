@@ -149,6 +149,7 @@ export const offerImageRowSchema = z.object({
   storage_path: z.string().trim().min(1),
   alt_text: z.string().trim().min(5).max(180),
   category: z.enum(["gallery", "accommodation", "resort_map"]).default("gallery"),
+  show_in_story: z.boolean().default(false),
   position: z.number().int().nonnegative(),
 });
 

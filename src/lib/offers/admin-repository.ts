@@ -9,11 +9,11 @@ import {
 } from "./editor-schema";
 import { OfferRepositoryError } from "./public-repository";
 import type { OfferKind, OfferStatus, PublicOffer } from "./types";
+import { readOfferImageRows } from "./image-rows";
 
 const ADMIN_COLUMNS =
   "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,show_last_places_badge,hero_image,status";
 const ADMIN_LIST_COLUMNS = `${ADMIN_COLUMNS},updated_at`;
-const IMAGE_COLUMNS = "id,offer_id,storage_path,alt_text,category,position";
 const OFFER_IMAGES_BUCKET = "offer-images";
 const SIGNED_URL_TTL_SECONDS = 3600;
 const PUBLISH_READINESS_MESSAGE = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
@@ -205,11 +205,9 @@ export const getAdminPreviewOfferBySlug = async (
       return null;
     }
 
-    const { data: imageData, error: imageError } = await supabase
-      .from("offer_images")
-      .select(IMAGE_COLUMNS)
-      .eq("offer_id", getStringField(offerData, "id") ?? "")
-      .order("position", { ascending: true });
+    const { data: imageData, error: imageError } = await readOfferImageRows(
+      getStringField(offerData, "id") ?? "",
+    );
 
     if (imageError) {
       throw new OfferRepositoryError("Nie udało się pobrać obrazów oferty.", { cause: imageError });
