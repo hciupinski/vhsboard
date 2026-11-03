@@ -7,6 +7,8 @@ import { AdminGuard, AdminSignOutButton } from "@/components/admin/AdminGuard";
 import { DeleteOfferDialog } from "@/components/admin/DeleteOfferDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { isAdminOfferFinished, sortAdminOffers } from "@/lib/offers/admin-list";
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import type { OfferActivity, OfferKind, OfferStatus } from "@/lib/offers/types";
 
 export const Route = createFileRoute("/admin/")({
@@ -85,6 +87,8 @@ function AdminListContent() {
     queryKey: ["admin-offers"],
     queryFn: listAdminOffers,
   });
+  const today = getTodayInWarsaw();
+  const sortedOffers = useMemo(() => sortAdminOffers(offers, today), [offers, today]);
   const heroImagePaths = useMemo(
     () => offers.flatMap(({ heroImagePath }) => (heroImagePath ? [heroImagePath] : [])),
     [offers],
@@ -184,7 +188,7 @@ function AdminListContent() {
               </Button>
             </div>
           ) : null}
-          {offers.map((o) => (
+          {sortedOffers.map((o) => (
             <article
               key={o.id}
               className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-background p-4 sm:flex-row sm:items-center"
@@ -194,7 +198,7 @@ function AdminListContent() {
                   <img
                     src={signedImageUrls.get(o.heroImagePath)}
                     alt={`Zdjęcie główne: ${o.title}`}
-                    className="h-full w-full object-cover"
+                    className={`h-full w-full object-cover${isAdminOfferFinished(o, today) ? " grayscale" : ""}`}
                   />
                 ) : (
                   <div
@@ -211,8 +215,16 @@ function AdminListContent() {
                   <h2 className="font-display text-xl tracking-wide">
                     {o.title || "Oferta bez tytułu"}
                   </h2>
-                  <Badge variant={o.status === "published" ? "default" : "secondary"}>
-                    {statusLabels[o.status]}
+                  <Badge
+                    variant={
+                      o.status === "published" && !isAdminOfferFinished(o, today)
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
+                    {o.status === "published" && isAdminOfferFinished(o, today)
+                      ? "Zakończone"
+                      : statusLabels[o.status]}
                   </Badge>
                   <Badge variant="outline">
                     {o.offerKind ? offerKindLabels[o.offerKind] : "Brak rodzaju"}
