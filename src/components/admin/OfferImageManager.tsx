@@ -27,7 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/admin/form-controls";
 import { Label } from "@/components/ui/label";
 
 type OfferImageManagerProps = {

@@ -2,7 +2,7 @@ import { useId, useRef, useState } from "react";
 import { ImagePlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/admin/form-controls";
 import { Label } from "@/components/ui/label";
 import { ACCEPTED_IMAGE_MIME_TYPES, validateImageFile } from "@/lib/images/validation";
 

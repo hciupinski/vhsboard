@@ -3,7 +3,7 @@ import type { DayCampContent, TripOfferContent } from "@/lib/offers/types";
 import { sectionIsEnabled } from "@/lib/offers/content-v2";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/admin/form-controls";
 import { EditorField as Field } from "./EditorField";
 import { errorFor } from "./editor-fields";
 type Content = DayCampContent | TripOfferContent;

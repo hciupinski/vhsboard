@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/admin/form-controls";
+import { Textarea } from "@/components/admin/form-controls";
 import type { TripOfferContent } from "@/lib/offers/types";
 import { EditorField as Field } from "./EditorField";
 

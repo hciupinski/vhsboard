@@ -1,6 +1,6 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/admin/form-controls";
 import type { DayCampContent } from "@/lib/offers/types";
 import { CharacterCounter } from "./EditorField";
 import { errorFor } from "./editor-fields";
