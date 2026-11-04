@@ -127,6 +127,73 @@ describe("OfferEditorForm", () => {
       expect(screen.getByLabelText(`${label} 1`)).toHaveValue("Druga");
     },
   );
+  it.each(["trip", "day_camp"] as const)(
+    "keeps selected icons with %s attractions when reordered or removed",
+    async (kind) => {
+      const user = userEvent.setup();
+      const input = kind === "trip" ? completeInput : dayCampInput;
+      const initial = {
+        ...input,
+        content: { ...input.content, highlights: ["Posiłek", "Zachód"] },
+      };
+      const onChange = vi.fn();
+      function Editor() {
+        const [value, setValue] = useState<EditableOfferInput>(initial);
+        return (
+          <OfferEditorForm
+            value={value}
+            errors={{}}
+            disabled={false}
+            onChange={(next) => {
+              setValue(next);
+              onChange(next);
+            }}
+          />
+        );
+      }
+      render(<Editor />);
+      await user.click(screen.getByRole("tab", { name: "W programie" }));
+      const label = kind === "trip" ? "W programie" : "Atrakcje";
+      Object.defineProperty(Element.prototype, "scrollIntoView", {
+        configurable: true,
+        value: () => {},
+      });
+      fireEvent.keyDown(screen.getByRole("combobox", { name: `Ikona: ${label} 1` }), {
+        key: "ArrowDown",
+      });
+      expect(
+        screen.getByRole("option", { name: "Posiłek" }).querySelector(".lucide-utensils"),
+      ).toBeInTheDocument();
+      await user.click(screen.getByRole("option", { name: "Posiłek" }));
+      fireEvent.keyDown(screen.getByRole("combobox", { name: `Ikona: ${label} 2` }), {
+        key: "ArrowDown",
+      });
+      await user.click(screen.getByRole("option", { name: "Słońce" }));
+      await user.click(screen.getByRole("button", { name: `Przesuń pozycję „${label}” 1 w dół` }));
+      expect(screen.getByRole("combobox", { name: `Ikona: ${label} 1` })).toHaveTextContent(
+        "Słońce",
+      );
+      expect(screen.getByRole("combobox", { name: `Ikona: ${label} 2` })).toHaveTextContent(
+        "Posiłek",
+      );
+      expect(
+        screen
+          .getByRole("combobox", { name: `Ikona: ${label} 2` })
+          .querySelector(".lucide-utensils"),
+      ).toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: `Usuń pozycję „${label}” 1` }));
+      delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
+      expect(onChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          content: expect.objectContaining({
+            highlights: ["Posiłek"],
+            highlightIcons: ["utensils"],
+          }),
+        }),
+      );
+    },
+  );
+
   it("preserves a manually overridden slug when the title changes", () => {
     function Editor() {
       const [value, setValue] = useState({ ...completeInput, slug: "" });
