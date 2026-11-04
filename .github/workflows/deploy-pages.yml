@@ -1,33 +1,47 @@
-name: Deploy production
+name: Deploy Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, develop]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
-  group: production-deploy
+  group: ${{ github.ref == 'refs/heads/main' && 'production-deploy' || format('pages-deploy-{0}', github.ref) }}
   cancel-in-progress: false
 
 jobs:
+  resolve-target:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.target.outputs.environment }}
+      branch: ${{ steps.target.outputs.branch }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - id: target
+        run: bun scripts/check-deployment-config.ts resolve
+
   verify:
-    if: github.ref == 'refs/heads/main'
+    needs: resolve-target
     runs-on: ubuntu-latest
     env:
-      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
-      VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
-      VITE_SEO_INDEXING: ${{ vars.VITE_SEO_INDEXING }}
-      VITE_CONTACT_EMAIL: ${{ vars.VITE_CONTACT_EMAIL }}
-      VITE_CONTACT_PHONE: ${{ vars.VITE_CONTACT_PHONE }}
-      VITE_BUSINESS_NAME: ${{ vars.VITE_BUSINESS_NAME }}
-      VITE_BUSINESS_STREET: ${{ vars.VITE_BUSINESS_STREET }}
-      VITE_BUSINESS_POSTAL_CODE: ${{ vars.VITE_BUSINESS_POSTAL_CODE }}
-      VITE_BUSINESS_CITY: ${{ vars.VITE_BUSINESS_CITY }}
-      VITE_BUSINESS_NIP: ${{ vars.VITE_BUSINESS_NIP }}
-      VITE_BUSINESS_REGON: ${{ vars.VITE_BUSINESS_REGON }}
-      VITE_BUSINESS_BANK_ACCOUNT: ${{ vars.VITE_BUSINESS_BANK_ACCOUNT }}
+      VITE_SUPABASE_URL: "https://project.supabase.co"
+      VITE_SUPABASE_ANON_KEY: "test-anon-key"
+      VITE_SITE_URL: "https://vhsboard.pages.dev"
+      VITE_SEO_INDEXING: "false"
+      VITE_CONTACT_EMAIL: "kontakt@example.test"
+      VITE_CONTACT_PHONE: "+48123456789"
+      VITE_BUSINESS_NAME: "Testowa firma"
+      VITE_BUSINESS_STREET: "ul. Przykładowa 1"
+      VITE_BUSINESS_POSTAL_CODE: "00-001"
+      VITE_BUSINESS_CITY: "Warszawa"
+      VITE_BUSINESS_NIP: "1234567890"
+      VITE_BUSINESS_REGON: "123456789"
+      VITE_BUSINESS_BANK_ACCOUNT: "12345678901234567890123456"
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
@@ -35,31 +49,12 @@ jobs:
       - run: bun run typecheck
       - run: bun run test
       - run: bun run lint
+      - run: bun run build:ci
 
   deploy-supabase:
-    if: github.ref == 'refs/heads/main'
-    needs: verify
+    needs: [resolve-target, verify]
     runs-on: ubuntu-latest
-    environment: production
-    env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: supabase/setup-cli@3c2f5e2ae34c34e428e8e206e2c4d21fa2d20fbf # v2.1.1
-        with:
-          version: "3.0.0"
-      - run: supabase --version
-      - run: supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
-      - run: supabase db push --remote --dry-run
-      - run: supabase db push --remote --yes
-
-  deploy-cloudflare:
-    if: github.ref == 'refs/heads/main'
-    needs: deploy-supabase
-    runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ needs.resolve-target.outputs.environment }}
     env:
       VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
       VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
@@ -74,54 +69,106 @@ jobs:
       VITE_BUSINESS_NIP: ${{ vars.VITE_BUSINESS_NIP }}
       VITE_BUSINESS_REGON: ${{ vars.VITE_BUSINESS_REGON }}
       VITE_BUSINESS_BANK_ACCOUNT: ${{ vars.VITE_BUSINESS_BANK_ACCOUNT }}
+      CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+      SUPABASE_PRODUCTION_PROJECT_REF: ${{ vars.SUPABASE_PRODUCTION_PROJECT_REF }}
+      SUPABASE_DEVELOPMENT_PROJECT_REF: ${{ vars.SUPABASE_DEVELOPMENT_PROJECT_REF }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - name: Require current branch head
+        run: |
+          current_sha=$(git ls-remote --exit-code origin "$GITHUB_REF" | cut -f1)
+          if [ "$current_sha" != "$GITHUB_SHA" ]; then
+            echo "This commit is no longer the branch head; deploy the latest commit instead."
+            exit 1
+          fi
+      - name: Validate environment before migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun scripts/check-deployment-config.ts
+      - uses: supabase/setup-cli@3c2f5e2ae34c34e428e8e206e2c4d21fa2d20fbf # v2.1.1
+        with:
+          version: "3.0.0"
+      - name: Apply forward migrations to the selected Supabase
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          supabase --version
+          supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
+          supabase db push --remote --dry-run
+          supabase db push --remote --yes
+
+  deploy-cloudflare:
+    needs: [resolve-target, deploy-supabase]
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.resolve-target.outputs.environment }}
+      url: ${{ steps.pages_deploy.outputs.deployment-url }}
+    permissions:
+      contents: read
+      deployments: write
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+      VITE_SEO_INDEXING: ${{ vars.VITE_SEO_INDEXING }}
+      VITE_CONTACT_EMAIL: ${{ vars.VITE_CONTACT_EMAIL }}
+      VITE_CONTACT_PHONE: ${{ vars.VITE_CONTACT_PHONE }}
+      VITE_BUSINESS_NAME: ${{ vars.VITE_BUSINESS_NAME }}
+      VITE_BUSINESS_STREET: ${{ vars.VITE_BUSINESS_STREET }}
+      VITE_BUSINESS_POSTAL_CODE: ${{ vars.VITE_BUSINESS_POSTAL_CODE }}
+      VITE_BUSINESS_CITY: ${{ vars.VITE_BUSINESS_CITY }}
+      VITE_BUSINESS_NIP: ${{ vars.VITE_BUSINESS_NIP }}
+      VITE_BUSINESS_REGON: ${{ vars.VITE_BUSINESS_REGON }}
+      VITE_BUSINESS_BANK_ACCOUNT: ${{ vars.VITE_BUSINESS_BANK_ACCOUNT }}
+      CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+      SUPABASE_PRODUCTION_PROJECT_REF: ${{ vars.SUPABASE_PRODUCTION_PROJECT_REF }}
+      SUPABASE_DEVELOPMENT_PROJECT_REF: ${{ vars.SUPABASE_DEVELOPMENT_PROJECT_REF }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - name: Validate build environment
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun scripts/check-deployment-config.ts
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run check:seo
       - run: test -s .output/public/index.html
+      - run: bun scripts/pages-deployment.ts stamp
+      - name: Require current branch head before upload
+        run: |
+          current_sha=$(git ls-remote --exit-code origin "$GITHUB_REF" | cut -f1)
+          if [ "$current_sha" != "$GITHUB_SHA" ]; then
+            echo "This commit is no longer the branch head; deploy the latest commit instead."
+            exit 1
+          fi
+      - name: Require Pages production branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bun scripts/pages-deployment.ts project
       - id: pages_deploy
         uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          command: pages deploy .output/public --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=main
+          command: pages deploy .output/public --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch=${{ needs.resolve-target.outputs.branch }} --commit-hash=${{ github.sha }}
           packageManager: bun
-      - name: Check deployed Pages URL
+      - name: Verify deployed commit and stable URL
         env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           DEPLOYMENT_URL: ${{ steps.pages_deploy.outputs.deployment-url }}
-        run: |
-          node <<'NODE'
-          const deploymentUrl = process.env.DEPLOYMENT_URL ?? "";
-          let parsed;
-
-          try {
-            parsed = new URL(deploymentUrl);
-          } catch {
-            console.error("Invalid deployment URL: expected an HTTPS Cloudflare Pages root URL.");
-            process.exit(1);
-          }
-
-          const isExactRoot =
-            deploymentUrl === `https://${parsed.hostname}` ||
-            deploymentUrl === `https://${parsed.hostname}/`;
-          const isPagesRoot =
-            isExactRoot &&
-            parsed.protocol === "https:" &&
-            parsed.hostname.endsWith(".pages.dev") &&
-            parsed.hostname !== "pages.dev" &&
-            parsed.username === "" &&
-            parsed.password === "" &&
-            parsed.port === "" &&
-            parsed.pathname === "/" &&
-            parsed.search === "" &&
-            parsed.hash === "";
-
-          if (!isPagesRoot) {
-            console.error("Invalid deployment URL: expected an HTTPS *.pages.dev root URL without credentials, port, query, or fragment.");
-            process.exit(1);
-          }
-          NODE
-          curl --fail --show-error --silent --location "$DEPLOYMENT_URL"
+        run: bun scripts/pages-deployment.ts verify

@@ -175,15 +175,15 @@ odczyt, brak zapisu dla anon i zwykłego konta, admin-only UPDATE, ograniczenie
 wartości oraz ochronę singletona. Test kończy się ROLLBACK i nie zapisuje
 trwale wybranego motywu.
 
-## Production CLI target
+## Hosted CLI targets
 
-The production workflow pins Supabase CLI to `3.0.0` and logs its version.
+The deployment workflow pins Supabase CLI to `3.0.0` and logs its version.
 CLI v3 defaults database commands to the local stack even after `supabase link`.
 Both migration steps explicitly select the linked production project:
 `supabase db push --remote --dry-run`, then `supabase db push --remote --yes`.
 The second command supplies the hosted-change confirmation required in CI.
-The `production` environment, main-only guard and database-before-frontend job
-dependency remain in place. Review CLI release notes before changing the pin.
+The allowlisted branch-to-Environment mapping, expected project ref checks and
+database-before-frontend job dependency protect both environments. Review CLI release notes before changing the pin.
 After merging a workflow fix, use the deployment run for the new main commit;
 rerunning an older failed run still uses that commit's older workflow.
 
@@ -276,3 +276,26 @@ przez pocztę. Implementacja nie zmienia szablonów maili ani reguł antyspamowy
 Opis API: [resetPasswordForEmail](https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail),
 [updateUser](https://supabase.com/docs/reference/javascript/auth-updateuser),
 [Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls).
+
+## Oddzielne środowisko development
+
+Produkcja zachowuje projekt `jiqgcbqsbmzokcmtjtsw`. Testowy projekt
+`hrtxiivubihmxsjuxzer` ma własne Auth, dane, prywatne buckety i polityki.
+GitHub Environment `development` otrzymuje tylko właściwe dla niego URL,
+publiczny anon key oraz deployment secrets. Oczekiwane refs obu projektów
+są osobnymi repository variables; pipeline porównuje z nimi URL i project ID
+przed migracją. Nie kopiujemy automatycznie treści produkcji.
+
+Użytkownik potwierdził utworzenie projektu dev i konfigurację Auth 2026-11-04;
+nie zastępuje to testu logowania i resetu na rzeczywiście wdrożonym aliasie.
+Dev Site URL: `https://develop.vhsboard.pages.dev`, Redirect URL:
+`https://develop.vhsboard.pages.dev/admin/reset-password`. Lokalne callbacki
+localhost/127.0.0.1:3000 można dodać do dev. Publiczna rejestracja wyłączona.
+Nie wysyłaj całego lokalnego `config.toml` do hostowanego projektu.
+
+Pierwszy deploy develop stosuje wszystkie istniejące migracje. Dopiero po nim
+utwórz użytkownika Auth w projekcie dev i nadaj mu rolę admin SQL-em z początku
+tego runbooka. Hasło użytkownik wpisuje w zalogowanej przeglądarce; nie w czacie.
+Oferty TEST, zdjęcia i PDF-y twórz tylko w dev. Zmiana motywu dev nie powinna
+zmienić produkcji. Powtórz testy RLS lokalnie/disposable; nigdy nie wykonuj
+`db reset` lub fixture tests przeciw produkcji.

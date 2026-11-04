@@ -2,8 +2,9 @@
 
 ## Konfiguracja
 
-SEO jest budowane razem z jedynym artefaktem Cloudflare Pages. Nie ma osobnego
-środowiska staging.
+SEO jest budowane osobno dla każdego środowiska Pages. GitHub Environment
+`production` dotyczy main, a `development` dotyczy develop; oba używają jednego
+projektu Pages i oddzielnych buildów.
 
 - `VITE_SITE_URL` musi być dokładnym originem HTTPS, bez ścieżki, query,
   fragmentu, portu i danych logowania.
@@ -12,8 +13,11 @@ SEO jest budowane razem z jedynym artefaktem Cloudflare Pages. Nie ma osobnego
   `VITE_SEO_INDEXING=false`. Roboty mogą pobrać stronę, ale HTML zawsze
   zawiera `noindex, nofollow`.
 
+Dla dev zawsze ustaw `VITE_SITE_URL=https://develop.vhsboard.pages.dev` oraz
+`VITE_SEO_INDEXING=false`. Sprawdź meta robots i nagłówek preview X-Robots-Tag.
+
 Te wartości, podobnie jak publiczne `VITE_SUPABASE_URL` i
-`VITE_SUPABASE_ANON_KEY`, konfiguruj jako GitHub Actions variables. Anon key
+`VITE_SUPABASE_ANON_KEY`, konfiguruj jako GitHub Environment variables właściwego środowiska. Anon key
 jest konfiguracją klienta, nie sekretem uprzywilejowanym; nie dodawaj nigdy
 service-role key.
 
@@ -52,13 +56,14 @@ konfiguracji deployu, więc muszą odpowiadać zatwierdzonym danym firmy.
 ## Przyszłe przełączenie domeny
 
 Po osobnym zatwierdzeniu migracji domeny oraz skonfigurowaniu i zweryfikowaniu DNS dla `vhsboard.pl` zmień w tym samym
-workflow, bez tworzenia nowego środowiska:
+środowisku GitHub `production`:
 
 ```text
 VITE_SITE_URL=https://vhsboard.pl
 VITE_SEO_INDEXING=true
 ```
 
+Nie zmieniaj przy tym konfiguracji development. Zaktualizuj też URL Auth produkcji.
 Wykonaj nowy build i deploy, następnie sprawdź canonicale, sitemapę i
 `index, follow` na wdrożonej domenie przed zgłoszeniem jej do indeksowania.
 
