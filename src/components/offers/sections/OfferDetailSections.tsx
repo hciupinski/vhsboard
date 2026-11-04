@@ -169,7 +169,7 @@ export function OfferDetailSections({
       body = (
         <>
           <Copy>{content.accommodation.description}</Copy>
-          <OfferGallery images={offer.accommodationImages} />
+          <OfferGallery images={offer.accommodationImages} swipeOnMobile />
         </>
       );
     if (editorTab === "resort" && content.resort)
@@ -184,6 +184,9 @@ export function OfferDetailSections({
               <h3 className="mt-6 text-2xl">Miejsce zajęć</h3>
               <Copy>{camp.venueDescription}</Copy>
             </>
+          ) : null}
+          {offer.resortImages?.length ? (
+            <OfferGallery images={offer.resortImages} swipeOnMobile />
           ) : null}
           {offer.resortMap ? <OfferGallery images={[offer.resortMap]} contain /> : null}
           {content.resort.mapUrl ? (

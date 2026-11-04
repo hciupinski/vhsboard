@@ -705,7 +705,7 @@ describe("OfferEditorForm", () => {
     render(<OfferEditorForm value={completeInput} errors={{}} disabled onChange={vi.fn()} />);
 
     expect(screen.getByLabelText("Tytuł wyjazdu")).toBeDisabled();
-    expect(screen.getByLabelText("Zdanie wprowadzające")).toBeDisabled();
+    expect(screen.getByLabelText("Zdanie pod tytułem")).toBeDisabled();
     expect(screen.getByLabelText("Adres zapisów")).toBeDisabled();
     expect(screen.getByLabelText("Rodzaj wyjazdu")).toBeDisabled();
 
@@ -793,18 +793,18 @@ describe("OfferEditorForm", () => {
       );
     }
     render(<Editor />);
-    fireEvent.change(screen.getByLabelText("Zdanie wprowadzające"), {
+    fireEvent.change(screen.getByLabelText("Zdanie pod tytułem"), {
       target: { value: "Nowe wprowadzenie." },
     });
     await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
-    expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Zdanie pod tytułem")).not.toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Akapity opisu 1"), { target: { value: "Nowy opis." } });
     await user.click(screen.getByRole("tab", { name: "W programie" }));
     fireEvent.change(screen.getByLabelText("W programie 1"), {
       target: { value: "Surf o świcie" },
     });
     await user.click(screen.getByRole("tab", { name: "Dane oferty" }));
-    expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue("Nowe wprowadzenie.");
+    expect(screen.getByLabelText("Zdanie pod tytułem")).toHaveValue("Nowe wprowadzenie.");
     expect(onChange).toHaveBeenLastCalledWith({
       ...completeInput,
       subtitle: "Nowe wprowadzenie.",
@@ -891,9 +891,9 @@ describe("OfferEditorForm", () => {
       "Ubezpieczenie",
       "Galeria",
     ]);
-    expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Zdanie pod tytułem")).toHaveValue(dayCampInput.subtitle);
     await user.click(screen.getByRole("tab", { name: "O obozie" }));
-    expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue(dayCampInput.subtitle);
+    expect(screen.queryByLabelText("Zdanie pod tytułem")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Atrakcje 1")).not.toBeInTheDocument();
     await user.click(screen.getByRole("tab", { name: "W programie" }));
     expect(screen.getByLabelText("Atrakcje 1")).toHaveValue("Małe grupy");
@@ -929,7 +929,7 @@ describe("OfferEditorForm", () => {
     const { rerender } = render(<OfferEditorForm {...props} errors={{}} />);
     for (const [path, tab] of [
       ["content.terms.0.bookingUrl", "Cena"],
-      ["subtitle", "O obozie"],
+      ["subtitle", "Dane oferty"],
       ["content.highlights.0", "W programie"],
       ["content.venueDescription", "Resort"],
       ["content.dayProgram.0.time", "W programie"],
