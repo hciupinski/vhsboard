@@ -50,24 +50,24 @@ function HalfDayCampsPage() {
       <main className="flex-1">
         <section className="relative isolate overflow-hidden lg:flex lg:min-h-[36.5rem] lg:items-center">
           <ResponsiveImage
-            sizes="100vw"
+            sizes={isWinter ? "(max-width: 767px) 1600px, 100vw" : "100vw"}
             image={isWinter ? winterHeroImage : summerHeroImage}
             alt={
               isWinter
                 ? "Zimowy obóz snowboardowy VHSBOARD w górach"
                 : "Letni obóz sportowy VHSBOARD nad wodą"
             }
-            className="absolute inset-0 -z-20 size-full object-cover"
+            className={`absolute inset-0 -z-20 size-full object-cover ${isWinter ? "object-[70%_center] md:object-center" : "object-center"}`}
           />
-          <div className="absolute inset-0 -z-10 bg-foreground/65" />
+          <div className="absolute inset-0 -z-10 bg-foreground/20" />
           <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:py-36">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
               Dla dzieci
             </p>
-            <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] text-background sm:text-7xl">
+            <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">
               ZAJAWKOWE OBOZY
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/85">
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/85 text-shadow-md text-shadow-foreground/50">
               Twoje dziecko nie usiedzi w miejscu? Mamy na to sposób! Gwarantujemy zero nudy,
               maksimum ruchu i świetną atmosferę pod okiem instruktorów.
             </p>

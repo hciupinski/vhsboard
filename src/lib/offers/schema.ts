@@ -14,6 +14,7 @@ const bookingUrlSchema = z
 export const offerContentSchema = z.object({
   paragraphs: z.array(requiredTextSchema),
   highlights: z.array(requiredTextSchema),
+  highlightIcons: z.array(z.string().max(40)).optional(),
   included: z.array(requiredTextSchema),
   excluded: z.array(requiredTextSchema),
   schedule: z.array(
@@ -28,6 +29,7 @@ export const offerContentSchema = z.object({
 export const dayCampContentSchema = z.object({
   paragraphs: z.array(requiredTextSchema).min(1),
   highlights: z.array(requiredTextSchema).min(1),
+  highlightIcons: z.array(z.string().max(40)).optional(),
   included: z.array(requiredTextSchema).min(1),
   excluded: z.array(requiredTextSchema).min(1),
   dayProgram: z

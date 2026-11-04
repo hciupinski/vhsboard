@@ -1,3 +1,9 @@
+import { arrayMove } from "@dnd-kit/sortable";
+import {
+  DEFAULT_HIGHLIGHT_ICON,
+  HIGHLIGHT_ICONS,
+  getHighlightIcon,
+} from "@/lib/offers/highlight-icons";
 import { ListField } from "@/components/admin/ListField";
 import { errorFor } from "./editor-fields";
 import { TripScheduleEditor } from "./TripScheduleEditor";
@@ -20,6 +26,10 @@ export function OfferProgramSection({
 }: CommonProps) {
   const dayCamp = offerKind === "day_camp" ? (content as DayCampContent) : null;
   const trip = offerKind === "trip" ? (content as TripOfferContent) : null;
+  const label = trip ? "W programie" : "Atrakcje";
+  const icons = content.highlights.map(
+    (_, index) => getHighlightIcon(content.highlightIcons?.[index]).value,
+  );
   return (
     <>
       <fieldset
@@ -29,11 +39,42 @@ export function OfferProgramSection({
         <ListField
           reorderable
           disabled={disabled}
-          label={trip ? "W programie" : "Atrakcje"}
+          label={label}
           values={trip?.highlights ?? dayCamp?.highlights ?? []}
           placeholder="Małe grupy i dużo aktywności"
           error={errorFor(errors, "content.highlights")}
-          onChange={(next) => onChange({ ...content, highlights: next })}
+          renderExtra={(index) => (
+            <select
+              aria-label={`Ikona: ${label} ${index + 1}`}
+              className="h-10 min-w-32 rounded-md border border-input bg-card px-2 text-sm"
+              disabled={disabled}
+              value={icons[index] ?? DEFAULT_HIGHLIGHT_ICON}
+              onChange={(event) =>
+                onChange({
+                  ...content,
+                  highlightIcons: icons.map((icon, i) => (i === index ? event.target.value : icon)),
+                })
+              }
+            >
+              {HIGHLIGHT_ICONS.map((icon) => (
+                <option key={icon.value} value={icon.value}>
+                  {icon.label}
+                </option>
+              ))}
+            </select>
+          )}
+          onChange={(next, change) => {
+            if (!content.highlightIcons) {
+              onChange({ ...content, highlights: next });
+              return;
+            }
+            let nextIcons = icons;
+            if (change.type === "move") nextIcons = arrayMove(icons, change.from, change.to);
+            if (change.type === "remove")
+              nextIcons = icons.filter((_, index) => index !== change.index);
+            if (change.type === "add") nextIcons = [...icons, DEFAULT_HIGHLIGHT_ICON];
+            onChange({ ...content, highlights: next, highlightIcons: nextIcons });
+          }}
         />
       </fieldset>
       <h2 className="mt-6 font-display text-2xl">

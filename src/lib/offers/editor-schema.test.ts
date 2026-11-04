@@ -269,6 +269,19 @@ describe("editor offer input schema", () => {
     expect(result.content.highlights).toEqual(["Poranna sesja"]);
   });
 
+  it("preserves icon choices when empty attractions are removed", () => {
+    const parsed = editorOfferInputSchema.parse({
+      ...completeInput,
+      content: {
+        ...completeInput.content,
+        highlights: ["  Fale ", " ", "Kolacja"],
+        highlightIcons: ["waves", "sun", "utensils"],
+      },
+    });
+    expect(parsed.content.highlights).toEqual(["Fale", "Kolacja"]);
+    expect(parsed.content).toMatchObject({ highlightIcons: ["waves", "utensils"] });
+  });
+
   it("normalizes text without changing the caller input", () => {
     const input = mergeInput({
       title: "  Atlantycki tydzień surfingu  ",

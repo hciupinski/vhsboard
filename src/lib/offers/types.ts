@@ -27,6 +27,7 @@ export type OfferImage = {
 export type TripOfferContent = ContentSections & {
   paragraphs: string[];
   highlights: string[];
+  highlightIcons?: string[] | undefined;
   included: string[];
   excluded: string[];
   schedule: Array<{ day: string; text: string }>;
@@ -50,6 +51,7 @@ export type DayCampTerm = {
 export type DayCampContent = ContentSections & {
   paragraphs: string[];
   highlights: string[];
+  highlightIcons?: string[] | undefined;
   included: string[];
   excluded: string[];
   dayProgram: Array<{ time: string; text: string }>;

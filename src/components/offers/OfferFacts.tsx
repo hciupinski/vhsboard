@@ -39,7 +39,11 @@ export function OfferFacts({
         </div>
       </dl>
       {showBookingCta && isBookingUrlValid ? (
-        <Button asChild size="lg" className="mt-6 w-full rounded-full">
+        <Button
+          asChild
+          size="lg"
+          className="mt-6 w-full rounded-full lg:h-14 lg:text-base lg:uppercase"
+        >
           <a href={offer.bookingUrl} target="_blank" rel="noopener noreferrer">
             Przejdź do zapisów
           </a>

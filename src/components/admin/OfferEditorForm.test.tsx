@@ -127,6 +127,50 @@ describe("OfferEditorForm", () => {
       expect(screen.getByLabelText(`${label} 1`)).toHaveValue("Druga");
     },
   );
+  it.each(["trip", "day_camp"] as const)(
+    "keeps selected icons with %s attractions when reordered or removed",
+    async (kind) => {
+      const user = userEvent.setup();
+      const input = kind === "trip" ? completeInput : dayCampInput;
+      const initial = {
+        ...input,
+        content: { ...input.content, highlights: ["Posiłek", "Zachód"] },
+      };
+      const onChange = vi.fn();
+      function Editor() {
+        const [value, setValue] = useState<EditableOfferInput>(initial);
+        return (
+          <OfferEditorForm
+            value={value}
+            errors={{}}
+            disabled={false}
+            onChange={(next) => {
+              setValue(next);
+              onChange(next);
+            }}
+          />
+        );
+      }
+      render(<Editor />);
+      await user.click(screen.getByRole("tab", { name: "W programie" }));
+      const label = kind === "trip" ? "W programie" : "Atrakcje";
+      await user.selectOptions(screen.getByLabelText(`Ikona: ${label} 1`), "utensils");
+      await user.selectOptions(screen.getByLabelText(`Ikona: ${label} 2`), "sun");
+      await user.click(screen.getByRole("button", { name: `Przesuń pozycję „${label}” 1 w dół` }));
+      expect(screen.getByLabelText(`Ikona: ${label} 1`)).toHaveValue("sun");
+      expect(screen.getByLabelText(`Ikona: ${label} 2`)).toHaveValue("utensils");
+      await user.click(screen.getByRole("button", { name: `Usuń pozycję „${label}” 1` }));
+      expect(onChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          content: expect.objectContaining({
+            highlights: ["Posiłek"],
+            highlightIcons: ["utensils"],
+          }),
+        }),
+      );
+    },
+  );
+
   it("preserves a manually overridden slug when the title changes", () => {
     function Editor() {
       const [value, setValue] = useState({ ...completeInput, slug: "" });

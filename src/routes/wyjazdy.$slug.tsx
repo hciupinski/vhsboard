@@ -107,7 +107,7 @@ function TripDetail() {
             {offer.shortDescription ? (
               <p className="mt-3 max-w-xl text-background/85">{offer.shortDescription}</p>
             ) : null}
-            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-background/90">
+            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-background/90">
               <span className="flex items-center gap-2">
                 <MapPin className="size-4" />
                 {offer.location}
@@ -129,7 +129,7 @@ function TripDetail() {
         <OfferDetailSections
           offer={offer}
           sidebar={
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-warm lg:p-8">
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Twój wyjazd</p>
               <OfferFacts offer={offer} />
             </div>

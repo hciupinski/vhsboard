@@ -50,6 +50,15 @@ const completeImageRows = [
 ];
 
 describe("offer row mappers", () => {
+  it("preserves saved attraction icons for a published offer", () => {
+    const row = {
+      ...completeOfferRow,
+      description: { ...completeOfferRow.description, highlightIcons: ["utensils"] },
+    };
+    expect(mapOfferDetailRow(row, [], new Map()).content).toMatchObject({
+      highlightIcons: ["utensils"],
+    });
+  });
   it("selects story images from the gallery without removing them", () => {
     const image = { ...completeImageRows[0]!, category: "gallery", show_in_story: true };
     const offer = mapOfferDetailRow(completeOfferRow, [image], new Map());
