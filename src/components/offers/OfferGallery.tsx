@@ -13,12 +13,14 @@ export function OfferGallery({
   description,
   id,
   contain = false,
+  swipeOnMobile = false,
 }: {
   images: OfferImage[];
   title?: string;
   description?: string;
   id?: string;
   contain?: boolean;
+  swipeOnMobile?: boolean;
 }) {
   const visibleImages = images.filter((image) => image.signedUrl !== null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -50,14 +52,22 @@ export function OfferGallery({
       ) : null}
       {description ? <p className="mt-4 max-w-3xl text-muted-foreground">{description}</p> : null}
       <div
-        className={contain ? "mt-6 grid gap-4" : "mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"}
+        className={
+          contain
+            ? "mt-6 grid gap-4"
+            : swipeOnMobile && visibleImages.length > 1
+              ? "mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4"
+              : "mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        }
+        tabIndex={swipeOnMobile && visibleImages.length > 1 ? 0 : undefined}
+        aria-label={swipeOnMobile && visibleImages.length > 1 ? "Przewiń zdjęcia" : undefined}
       >
         {visibleImages.map((image) => (
           <Button
             key={image.id}
             type="button"
             variant="ghost"
-            className="group relative block h-auto w-full overflow-hidden rounded-2xl p-0 focus-visible:ring-offset-2"
+            className={`group relative block h-auto w-full overflow-hidden rounded-2xl p-0 focus-visible:ring-offset-2 ${swipeOnMobile && visibleImages.length > 1 && !contain ? "max-md:w-[85%] max-md:shrink-0 max-md:snap-start" : ""}`}
             aria-label={`Powiększ zdjęcie: ${image.alt}`}
             onClick={(event) => {
               openingThumbnail.current = event.currentTarget;

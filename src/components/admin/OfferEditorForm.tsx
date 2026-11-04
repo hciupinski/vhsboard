@@ -24,6 +24,7 @@ type Props = {
   imageManager?: ReactNode | undefined;
   accommodationImageManager?: ReactNode | undefined;
   resortMapManager?: ReactNode | undefined;
+  resortImageManager?: ReactNode | undefined;
 };
 export function OfferEditorForm({
   value,
@@ -33,6 +34,7 @@ export function OfferEditorForm({
   imageManager,
   accommodationImageManager,
   resortMapManager,
+  resortImageManager,
 }: Props) {
   const offerKind = value.offerKind ?? "trip";
   const dayCamp = offerKind === "day_camp" ? (value.content as DayCampContent) : null;
@@ -58,10 +60,10 @@ export function OfferEditorForm({
       "slug",
       "location",
       "shortDescription",
+      "subtitle",
       ...(dayCamp
         ? []
         : [
-            "subtitle",
             "startDate",
             "endDate",
             "durationDays",
@@ -72,7 +74,7 @@ export function OfferEditorForm({
             "bookingUrl",
           ]),
     ],
-    story: ["content.paragraphs", ...(dayCamp ? ["subtitle"] : [])],
+    story: ["content.paragraphs"],
     highlights: ["content.highlights", dayCamp ? "content.dayProgram" : "content.schedule"],
     inout: ["content.included", "content.excluded", "content.terms"],
     parent: ["content.parentInfo"],
@@ -129,12 +131,9 @@ export function OfferEditorForm({
       <TabsContent value="story" className="mt-6">
         <OfferStorySection
           paragraphs={value.content.paragraphs}
-          subtitle={value.subtitle}
-          isDayCamp={!!dayCamp}
           errors={errors}
           disabled={disabled}
           onParagraphsChange={(next) => setContent({ ...value.content, paragraphs: next })}
-          onSubtitleChange={(next) => set("subtitle", next)}
         />
       </TabsContent>
       {dayCamp ? (
@@ -180,6 +179,7 @@ export function OfferEditorForm({
             disabled={disabled}
             onChange={setContent}
             mapManager={resortMapManager}
+            resortImageManager={resortImageManager}
           />
         </TabsContent>
       ))}

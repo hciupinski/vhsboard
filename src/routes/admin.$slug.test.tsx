@@ -196,7 +196,7 @@ const fillEditor = async (value: EditableOfferInput) => {
   setValue("Krótki opis", value.shortDescription);
   setValue("Adres zapisów", value.bookingUrl);
 
-  setValue("Zdanie wprowadzające", value.subtitle);
+  setValue("Zdanie pod tytułem", value.subtitle);
   await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
   setValue("Akapity opisu 1", required(value.content.paragraphs[0]));
   await user.click(screen.getByRole("tab", { name: "W programie" }));

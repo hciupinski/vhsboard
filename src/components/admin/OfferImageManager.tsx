@@ -285,11 +285,13 @@ export function OfferImageManager({
     <section
       className="space-y-6 rounded-2xl border border-border/70 bg-background p-6"
       aria-label={
-        category === "resort_map"
-          ? "Mapa resortu"
-          : category === "accommodation"
-            ? "Zdjęcia zakwaterowania"
-            : "Zdjęcia oferty"
+        category === "resort_gallery"
+          ? "Zdjęcia resortu"
+          : category === "resort_map"
+            ? "Mapa resortu"
+            : category === "accommodation"
+              ? "Zdjęcia zakwaterowania"
+              : "Zdjęcia oferty"
       }
     >
       <ImageUploadForm
@@ -318,11 +320,13 @@ export function OfferImageManager({
 
       <div>
         <h2 className="font-display text-xl tracking-wide">
-          {category === "resort_map"
-            ? "Mapa tras resortu"
-            : category === "accommodation"
-              ? "Galeria zakwaterowania"
-              : "Galeria"}
+          {category === "resort_gallery"
+            ? "Galeria resortu"
+            : category === "resort_map"
+              ? "Mapa tras resortu"
+              : category === "accommodation"
+                ? "Galeria zakwaterowania"
+                : "Galeria"}
         </h2>
         {category === "gallery" ? (
           <p className="mt-3 text-sm text-muted-foreground">
@@ -337,11 +341,13 @@ export function OfferImageManager({
         <ul
           className="mt-4 grid gap-4 sm:grid-cols-2"
           aria-label={
-            category === "resort_map"
-              ? "Mapa resortu"
-              : category === "accommodation"
-                ? "Galeria zdjęć zakwaterowania"
-                : "Galeria zdjęć oferty"
+            category === "resort_gallery"
+              ? "Galeria zdjęć resortu"
+              : category === "resort_map"
+                ? "Mapa resortu"
+                : category === "accommodation"
+                  ? "Galeria zdjęć zakwaterowania"
+                  : "Galeria zdjęć oferty"
           }
         >
           {images.map((image, index) => {

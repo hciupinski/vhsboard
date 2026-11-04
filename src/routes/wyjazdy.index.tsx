@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { OfferListState } from "@/components/offers/OfferListState";
+import { RentalSection } from "@/components/public/RentalSection";
 import { FaqSection } from "@/components/public/FaqSection";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -54,6 +55,7 @@ function TripsPage() {
             onRetry={() => void refetch()}
           />
         </section>
+        <RentalSection />
         <FaqSection
           headingId="trip-faq-heading"
           descriptionClassName="lg:max-w-none"
