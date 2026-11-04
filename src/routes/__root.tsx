@@ -9,6 +9,9 @@ import {
 } from "@tanstack/react-router";
 import { type ReactNode } from "react";
 
+import { DevelopmentBanner } from "@/components/environment/DevelopmentBanner";
+import { isDevelopmentSite } from "@/lib/env";
+
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
 import { PortalThemeProvider } from "@/components/public/PortalThemeProvider";
 import { getRobotsContent } from "@/lib/seo";
@@ -99,7 +102,8 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body data-development-site={isDevelopmentSite() ? "true" : undefined}>
+        <DevelopmentBanner />
         {children}
         <Scripts />
       </body>

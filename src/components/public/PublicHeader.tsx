@@ -28,7 +28,7 @@ export function PublicHeader() {
   return (
     <header
       data-public-header
-      className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur"
+      className="sticky top-[var(--development-banner-height,0px)] z-50 border-b border-border/60 bg-background/85 backdrop-blur"
     >
       <nav
         aria-label="Nawigacja główna"

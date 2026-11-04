@@ -11,6 +11,12 @@
 @custom-variant dark (&:is(.dark *));
 @custom-variant winter (&:where([data-portal-theme="winter"], [data-portal-theme="winter"] *));
 
+/* The develop label has its own row and never covers sticky navigation. */
+body[data-development-site="true"] {
+  --development-banner-height: 1.5rem;
+  padding-top: var(--development-banner-height);
+}
+
 .contact-disciplines {
   position: relative;
   left: 50%;
@@ -506,7 +512,10 @@
 }
 
 [data-trip-detail] main section[id] {
-  scroll-margin-top: calc(var(--trip-header-height, 61px) + var(--trip-nav-height, 61px) + 16px);
+  scroll-margin-top: calc(
+    var(--trip-header-height, 61px) + var(--trip-nav-height, 61px) +
+      var(--development-banner-height, 0px) + 16px
+  );
 }
 
 @media (prefers-reduced-motion: no-preference) {

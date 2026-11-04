@@ -90,3 +90,6 @@ export const getSeoConfigFrom = (environment: PublicEnvironment): SeoConfig => {
 };
 
 export const getSeoConfig = (): SeoConfig => getSeoConfigFrom(import.meta.env);
+
+export const isDevelopmentSite = (): boolean =>
+  import.meta.env["VITE_SITE_URL"] === "https://develop.vhsboard.pages.dev";

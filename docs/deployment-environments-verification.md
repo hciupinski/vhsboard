@@ -38,7 +38,8 @@ nowego pipeline i brak potwierdzenia działania hostowanego dev.
 
 ## Pozostaje przed deklaracją wdrożenia
 
-- Uzupełnienie nazw i wartości sekretów dev oraz publicznego anon key.
+- Nazwy pięciu sekretów dev oraz publicznego anon key w Variables zostały
+  potwierdzone po konfiguracji użytkownika; poprawność wartości zweryfikuje pipeline.
 - Przegląd PR i uruchomienie bootstrapu main, potem develop.
 - Live kontrola Pages production_branch=main i obu deploymentów przez pipeline.
 - Migracje testowego Supabase oraz utworzenie administratora po migracjach.
@@ -49,3 +50,31 @@ nowego pipeline i brak potwierdzenia działania hostowanego dev.
 
 Nie zmieniono DNS, nie przypisano domeny i nie wykonano migracji hostowanej bazy.
 VHS-051 oraz akceptacja klientki pozostają bez zmian.
+
+## Znacznik środowiska develop
+
+Dodano stałą etykietę „WERSJA DEWELOPERSKA” w lewym górnym rogu strony publicznej
+oraz CMS. Warunek korzysta z VITE_SITE_URL równego dokładnie
+https://develop.vhsboard.pages.dev, także w produkcyjnym trybie buildu Vite.
+Nie wymaga kolejnej zmiennej w GitHub. Zarezerwowane 24 px uwzględniają nagłówki,
+nawigacja sekcji oferty i przesunięcie kotwic. Etykieta nie przechwytuje kliknięć.
+
+- Test komponentu: RED → GREEN, 4 przypadki (develop, root Pages, domena, localhost).
+- Końcowy zestaw: 743 testy / 87 plików PASS; typecheck PASS; lint 0 błędów
+  i 7 wcześniejszych ostrzeżeń.
+- Pełny build i check:seo PASS osobno dla root Pages oraz develop.
+  Sprawdzono obecność etykiety i atrybutu body w trzech wygenerowanych plikach
+  dev (index oraz publiczny i administracyjny shell), a ich brak w produkcji.
+- Lokalny test przeglądarkowy: http://127.0.0.1:4188, statyczny build develop,
+  trasy /, /admin/login i /wyjazdy/qa-development-label. API Supabase zastąpione
+  lokalnymi fiksturami; bez operacji na hostowanej bazie.
+- Viewporty 1440×900, 390×844 i 320×844: 9 przypadków PASS. Sprawdzono pozycję
+  etykiety, brak poziomego overflow, nagłówek po przewinięciu, nawigację oferty
+  i otwieranie/zamykanie menu mobilnego. Siedem screenshotów wykonano dla
+  szerokości 1440 i 390 px; screenshot menu po zakończeniu animacji.
+- Niezależny przegląd zmiany: bez istotnych uwag.
+- [Trwałe screenshoty lokalnej weryfikacji w folderze projektu Drive](https://drive.google.com/drive/folders/1R0HJq9b3RyMQvWZd7b7KDYHmFJQTvQof).
+  Metadane folderu i wszystkich siedmiu plików odczytano po zapisie.
+
+Ta weryfikacja dotyczy zmiany znacznika w PR #63, przed wdrożeniem. Testowanie
+hostowanego develop oraz obu baz pozostaje do wykonania po aktywacji pipeline.

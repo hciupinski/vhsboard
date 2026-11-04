@@ -144,7 +144,7 @@ export function TripSectionNavigation({
     <nav
       ref={navigationRef}
       aria-label={ariaLabel}
-      className="sticky top-[var(--trip-header-height,61px)] z-40 border-b border-border bg-background/95 backdrop-blur"
+      className="sticky top-[calc(var(--trip-header-height,61px)+var(--development-banner-height,0px))] z-40 border-b border-border bg-background/95 backdrop-blur"
     >
       <div
         ref={scrollerRef}

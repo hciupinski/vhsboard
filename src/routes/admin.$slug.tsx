@@ -361,7 +361,7 @@ function OfferEditorContent() {
 
   return (
     <div className="min-h-screen bg-muted/40 pb-24">
-      <header className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur">
+      <header className="sticky top-[var(--development-banner-height,0px)] z-50 border-b border-border/60 bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-5 py-3">
           <div className="flex items-center gap-3">
             <Button asChild size="sm" variant="ghost" className="rounded-full">
