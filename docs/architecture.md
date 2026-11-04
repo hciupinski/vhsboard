@@ -108,11 +108,22 @@ budget checks are described in the [deployment runbook](deployment-runbook.md).
 
 ## Maintenance
 
-Pull requests run the **Verify** workflow (`test`, `lint`, `typecheck`, `build`).
-The PR build skips prerendering and sitemap generation. A `main` deploy runs
-verification, forward Supabase migrations, then the full build, SEO check, and
-Pages upload. Branch protection and account configuration must be checked in
-GitHub; repository files alone do not prove they are enabled.
+Pull requests targeting `main` or `develop` run **Verify** (`test`, `lint`,
+`typecheck`, `build`) using synthetic public configuration, without deployment
+secrets. PR builds skip prerendering and sitemap generation. **Deploy Pages**
+maps only `refs/heads/main` to GitHub Environment `production` and
+`refs/heads/develop` to `development`. Each deploy verifies configuration and
+branch head, applies forward migrations to its own Supabase, builds the static
+artifact, checks SEO and uploads it to the same Pages project `vhsboard`.
+
+Pages production branch must remain `main`, verified through API before every
+upload. The main site uses `https://vhsboard.pages.dev` until a separate domain
+cutover; develop uses `https://develop.vhsboard.pages.dev` and always noindex.
+The production Supabase is retained; development uses an independent project,
+Auth users and Storage. CMS content does not move with Git merges. Deployment
+metadata and a public `_deployment.json` marker verify the exact SHA served by
+both the deployment URL and stable origin. Account-level settings, secrets and
+branch protections require live verification; repository files do not prove them.
 
 Keep this architecture small. No separate backend, queues, asset platform, or
 booking feature is needed for the current product. See the

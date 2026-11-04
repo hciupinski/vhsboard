@@ -1,108 +1,131 @@
 # Runbook wdrożenia
 
-## Zakres
+## Środowiska
 
-GitHub Actions wdraża wyłącznie gałąź `main` na bezpłatny adres Cloudflare
-Pages `*.pages.dev`. Wdrożenie nie zmienia istniejącej witryny WordPress pod
-`vhsboard.pl`; nie konfiguruj w tym procesie własnej domeny ani integracji Git
-w Cloudflare.
+Jeden projekt Cloudflare Pages Direct Upload `vhsboard` obsługuje produkcję
+z `main` (`https://vhsboard.pages.dev`, docelowo `https://vhsboard.pl`) i preview
+z `develop` (`https://develop.vhsboard.pages.dev`). Budowanie i migracje prowadzi
+GitHub Actions, bez integracji Git Cloudflare i bez serwera aplikacyjnego.
+Ta konfiguracja nie przepina domeny ani istniejącego WordPressa.
 
-## Jednorazowe przygotowanie kont
+| Ustawienie                                | production                                 | development                                |
+| ----------------------------------------- | ------------------------------------------ | ------------------------------------------ |
+| Dozwolony ref                             | `refs/heads/main`                          | `refs/heads/develop`                       |
+| Supabase project ref                      | `jiqgcbqsbmzokcmtjtsw`                     | `hrtxiivubihmxsjuxzer`                     |
+| `VITE_SUPABASE_URL`                       | `https://jiqgcbqsbmzokcmtjtsw.supabase.co` | `https://hrtxiivubihmxsjuxzer.supabase.co` |
+| `VITE_SITE_URL` przed migracją domeny     | `https://vhsboard.pages.dev`               | `https://develop.vhsboard.pages.dev`       |
+| `VITE_SEO_INDEXING` przed migracją domeny | `false`                                    | `false`                                    |
 
-1. W Cloudflare utwórz projekt **Pages Direct Upload**. Projekt nie może mieć
-   integracji z Git ani przypisanej własnej domeny. Jego nazwę ustaw później w
-   zmiennej `CLOUDFLARE_PAGES_PROJECT`.
-2. W GitHub utwórz lub skonfiguruj środowisko `production`. W regułach ochrony
-   wdrożenia zezwól wyłącznie na gałąź `main`; nie zezwalaj na wdrożenia z
-   innych gałęzi ani tagów. Wszystkie sekrety wdrożeniowe przechowuj tylko w
-   tym środowisku, a nie jako sekrety repozytorium lub organizacji.
-3. W GitHub (na poziomie repozytorium lub organizacji) dodaj następujące
-   publiczne zmienne Actions. Są one przekazywane do kompilacji frontendu, więc
-   nie wolno wpisywać w nich sekretów:
+## Jednorazowe przygotowanie
 
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_SITE_URL`
-   - `VITE_SEO_INDEXING` (`false` na obecnym adresie Pages)
-   - `VITE_CONTACT_EMAIL`
-   - `VITE_CONTACT_PHONE`
-   - `VITE_BUSINESS_NAME`
-   - `VITE_BUSINESS_STREET`
-   - `VITE_BUSINESS_POSTAL_CODE`
-   - `VITE_BUSINESS_CITY`
-   - `VITE_BUSINESS_NIP`
-   - `VITE_BUSINESS_REGON`
-   - `VITE_BUSINESS_BANK_ACCOUNT`
-   - `CLOUDFLARE_PAGES_PROJECT`
+1. Potwierdź w API Pages: projekt `vhsboard`, subdomena `vhsboard.pages.dev`,
+   `production_branch=main`. Direct Upload może wymagać API do zmiany tej gałęzi.
+   Nie ustawiaj develop jako production branch i nie dodawaj teraz domeny.
+2. GitHub Environments: `production` dopuszcza tylko branch `main`,
+   `development` tylko `develop`; bez reguł tagów. Zachowaj istniejące reguły ochrony.
+3. W każdym Environment ustaw publiczne variables: `CLOUDFLARE_PAGES_PROJECT=vhsboard`,
+   `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SITE_URL`,
+   `VITE_SEO_INDEXING`. Nie ustawiaj ich na poziomie całego workflow: muszą być
+   odczytane dopiero przez job związany z właściwym Environment.
+4. Dane firmy `VITE_CONTACT_*` i `VITE_BUSINESS_*` z `.env.example` mogą pozostać
+   wspólne jako repository variables. W Environment można je nadpisać, np. na
+   testowe dane kontaktowe; pamiętaj, że wszystkie `VITE_*` są publiczne.
+5. Repozytoryjne variables `SUPABASE_PRODUCTION_PROJECT_REF` i
+   `SUPABASE_DEVELOPMENT_PROJECT_REF` przechowują powyższe dwa różne refs jako
+   oczekiwane cele walidacji. Nie są sekretami.
+6. Każdy Environment zawiera secrets: `SUPABASE_ACCESS_TOKEN`,
+   `SUPABASE_DB_PASSWORD`, `SUPABASE_PROJECT_ID`, `CLOUDFLARE_API_TOKEN`,
+   `CLOUDFLARE_ACCOUNT_ID`. Użytkownik wpisuje prywatne wartości bezpośrednio
+   w GitHub. `SUPABASE_PROJECT_ID` musi zgadzać się z oczekiwanym refem.
+   `GITHUB_TOKEN` jest automatyczny. Nigdy nie dodawaj `service_role`.
+7. Projekt Supabase dev odtwarza schemat, RLS i prywatne buckety z migracji;
+   nie kopiujemy automatycznie ofert, Auth ani obiektów Storage z produkcji.
+   Skonfiguruj Auth i testowe konto według [runbooka Supabase](supabase-runbook.md).
 
-4. W środowisku GitHub `production` dodaj wyłącznie poniższe sekrety. Ich
-   wartości wprowadzaj w ustawieniach GitHub — nigdy w repozytorium, logach
-   ani zgłoszeniach:
+Tokeny mogą mieć szersze uprawnienia niż jedno środowisko. Samo rozdzielenie
+GitHub Environments nie ogranicza tokenu Pages do preview ani tokenu Supabase
+do jednego projektu. Ten układ izoluje dane i normalne wdrożenia; nie jest
+izolacją produkcji od złośliwego workflow dysponującego szerokim tokenem.
 
-   - `SUPABASE_ACCESS_TOKEN`
-   - `SUPABASE_DB_PASSWORD`
-   - `SUPABASE_PROJECT_ID`
-   - `CLOUDFLARE_API_TOKEN`
-   - `CLOUDFLARE_ACCOUNT_ID`
+## Pipeline i kontrole
 
-   `GITHUB_TOKEN` jest dostarczany automatycznie przez GitHub Actions i nie
-   wymaga ręcznego dodawania.
+PR do `main` albo `develop` uruchamia **Verify**: jobs `test`, `lint`,
+`typecheck`, `build`. Weryfikacja używa syntetycznej konfiguracji publicznej,
+bez Environment i deployment secrets. `build:ci` pomija prerender i sitemapę.
 
-## Pierwsze wdrożenie
+Push do main/develop lub ręczny **Deploy Pages** z jednego z tych branchy:
 
-1. Po skonfigurowaniu zmiennych i sekretów zmerguj małą, sprawdzoną zmianę do
-   `main`.
-2. W zakładce Actions otwórz uruchomienie **Deploy production** dla merge
-   commitu. Zweryfikuj kolejność zakończonych zadań:
-   `verify` (typecheck, testy i lint), potem `deploy-supabase`, a na końcu
-   `deploy-cloudflare` (pełny build, kontrola SEO i upload do Pages).
-3. W podsumowaniu zadania wdrożenia otwórz adres Pages `*.pages.dev` zwrócony
-   przez krok `pages_deploy`. Potwierdź, że korzysta z HTTPS, ładuje stronę
-   główną oraz zawiera właśnie zmergowaną zmianę.
-4. Osobno otwórz `https://vhsboard.pl` i potwierdź, że nadal obsługuje ją
-   WordPress. Nie dodawaj tej domeny do projektu Pages i nie zmieniaj jej DNS.
-5. Dopiero po pomyślnym pierwszym wdrożeniu ustaw dla gałęzi `main` jako
-   wymagane kontrole ochrony gałęzi:
+1. `resolve-target` wybiera Environment wyłącznie z pełnego Git refa; inne
+   branche i tagi nie uruchamiają uprzywilejowanych jobs.
+2. `verify` wykonuje typecheck, test, lint i build:ci bez danych produkcyjnych.
+3. `deploy-supabase` sprawdza head brancha i komplet konfiguracji; URL i project ID
+   muszą wskazywać oczekiwany Supabase. CLI `3.0.0` wykonuje jawne link,
+   `db push --remote --dry-run`, potem `db push --remote --yes`.
+4. `deploy-cloudflare` ponownie waliduje konfigurację, wykonuje pełny build i SEO,
+   zapisuje publiczny `_deployment.json` z SHA/branchem/Environment i sprawdza head
+   oraz rzeczywisty `production_branch=main` przez Pages API przed uploadem.
+5. Wrangler publikuje wyłącznie `.output/public`, z jawnym branchem i SHA.
+   Kontrola po deployu porównuje środowisko/branch/SHA/status w API oraz wersję
+   serwowaną z konkretnego deployment URL i stałego adresu. Maksymalnie sześć prób,
+   z timeoutami HTTP i przerwami po 5 s. Summary podaje zweryfikowane URL i SHA.
 
-   - workflow **Verify**, job `test`
-   - workflow **Verify**, job `lint`
-   - workflow **Verify**, job `typecheck`
-   - workflow **Verify**, job `build`
+Błąd migracji blokuje frontend. W nowym workflow nieaktualny commit jest odrzucany
+przed migracją oraz uploadem; wdrażaj najnowszy head, zamiast uruchamiać stary run. Osobne grupy
+concurrency chronią każde środowisko przed nakładającymi się migracjami;
+`cancel-in-progress=false` nie przerywa trwającej migracji. GitHub może zastąpić
+oczekujący run nowszym, więc nie każdy commit musi zostać osobno opublikowany.
 
-   Wybierz rzeczywiste kontrole widoczne po uruchomieniu PR w ustawieniach
-   GitHub. Powyższe to nazwy workflow i jobs z repozytorium, a nie potwierdzenie,
-   że ochrona gałęzi jest już skonfigurowana.
+## Pierwszy start i codzienna praca
 
-## Bezpieczna diagnostyka
+Przed aktywacją poczekaj na zakończenie wszystkich istniejących deployów produkcji.
+Dla main zachowujemy dotychczasową grupę concurrency `production-deploy`, aby
+stary run nie nałożył się na bootstrap. Nie ponawiaj runów sprzed bootstrapu:
+GitHub używa w nich starego workflow z pierwotnego SHA, bez nowych zabezpieczeń.
+Zamiast tego uruchom aktualny workflow z bieżącego main.
 
-- Jeśli `verify` nie przejdzie, popraw zmianę w pull requeście i poczekaj na
-  cztery kontrole workflow **Verify**; nie omijaj ochrony gałęzi.
-- Jeśli nie powiedzie się `deploy-supabase`, przejrzyj log kroku migracji i
-  sprawdź nazwy oraz uprawnienia sekretów środowiska `production`. Nie uruchamiaj
-  ręcznego rollbacku, seedów ani napraw migracji z tego workflow.
-- Jeśli nie powiedzie się `deploy-cloudflare` albo kontrola adresu, sprawdź
-  nazwę projektu Direct Upload i uprawnienia tokenu Cloudflare. Publikowany jest
-  tylko katalog `.output/public`; nie zmieniaj tego na bundle serwera.
-- Nie wyświetlaj wartości sekretów ani pełnego środowiska w logach. Do zgłoszeń
-  dołączaj identyfikator uruchomienia, nazwę nieudanego kroku i zredagowany
-  komunikat błędu.
+Przed mergem nowego pipeline przygotuj obydwa Environments i wymagane nazwy
+sekretów/variables. Pierwszy bootstrap trafia do main przy zachowaniu obecnej
+produkcji i jej Supabase. Po zielonym deployu utwórz develop od świeżego main
+albo przenieś bootstrap PR-em na istniejący develop; nigdy nie resetuj cudzej pracy.
+Push develop stosuje migracje nowego Supabase i publikuje pierwszy preview.
+Po migracjach utwórz osobnego administratora dev.
 
-## Rutynowe użycie
+Później: feature → PR do develop → testy na stałym aliasie → PR develop do main
+→ produkcja. Hotfix main przenieś również do develop przez PR. Wymagaj czterech
+rzeczywistych kontroli Verify na obu branchach; nie omijaj istniejących reguł.
+Merge przenosi kod i migracje, ale nie oferty, konta ani pliki CMS.
 
-Pull requesty do `main` uruchamiają nieuprzywilejowany workflow **Verify**:
-testy, lintowanie, typecheck i kompilację aplikacji bez prerenderingu. Ten build celowo
-nie odpyta produkcyjnego Supabase ani nie tworzy sitemapy. Merge do `main`
-ponownie wykonuje typecheck, testy i lintowanie, następnie wdraża migracje Supabase, a
-dopiero potem wykonuje pełny prerender, kontrolę SEO i wdrożenie statycznego
-frontendu do Pages. Ręczne
-uruchomienie workflow z innej gałęzi nie wykonuje zadań produkcyjnych.
+Usuń stare repository-level kopie konfiguracji Supabase/SEO dopiero po zielonych
+wdrożeniach i sprawdzeniu Verify do obu branchy. Wspólne dane firmy mogą pozostać.
 
-## Zmiany treści a deploy
+## Diagnostyka i dowody
 
-CMS zapisuje oferty, metadane galerii, dokumenty PDF i wybór karuzeli w Supabase.
-Nowo otwarta strona pobiera aktualną zawartość bez przebudowy Pages. CMS nie
-zmienia kodu, stałych opisów stron, danych firmy z `VITE_*` ani katalogu zdjęć.
-Takie zmiany wymagają zwykłego PR i deployu z `main`.
+- Przy błędzie konfiguracji sprawdź nazwy i Environment; nie wypisuj wartości
+  sekretów, pełnego środowiska ani odpowiedzi API do logów.
+- Przy błędzie migracji sprawdź project ref i konkretny krok; nie uruchamiaj resetu,
+  seedów QA ani automatycznych down migrations na produkcji.
+- Przy błędzie Pages sprawdź cel projektu, uprawnienia tokenu, production branch,
+  SHA oraz wersję pod stałym aliasem; sam HTTP 200 nie potwierdza nowego kodu.
+- Publiczny preview ma noindex, ale domyślnie nie jest prywatny. Access można
+  włączyć osobno; wtedy kontrola publicznych URL wymaga odpowiedniego dostępu.
+- Sprawdź publiczne trasy, refresh szczegółów ofert i admina, logowanie/reset,
+  odczyt draftów i izolację zapisów dev od produkcji. Screenshoty 1440×900 i
+  390×844, URL, SHA i run CI zapisuj w raporcie i folderze projektu Drive.
+- Nie zgłaszaj wdrożenia na podstawie merge lub samego lokalnego buildu.
+
+## Przyszłe przepięcie domeny
+
+Osobny etap po uzyskaniu dostępów hosting/domena z VHS-051: audyt URL WordPress
+oraz przekierowań 301, zachowanie DNS poczty, dodanie Pages Custom domain i TLS,
+aktualizacja Auth produkcji, `VITE_SITE_URL=https://vhsboard.pl`, dopiero przy
+uruchomieniu indeksowania `VITE_SEO_INDEXING=true`, nowy build/deploy i kontrola SEO.
+Redirect dokładnie z `vhsboard.pages.dev` nie może objąć aliasu develop.
+
+## Zmiany treści
+
+CMS zapisuje oferty, galerie, PDF-y, karuzelę i motyw w Supabase wybranego
+środowiska. Nie przebudowuje Pages. Kod, katalog lokalnych fotografii, fonty,
+OG oraz publiczne dane firmy z `VITE_*` wymagają nowego buildu/deployu.
 
 ## Zdjęcia, fonty i podglądy udostępniania
 
