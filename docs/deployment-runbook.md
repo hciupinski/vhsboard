@@ -37,6 +37,11 @@ Ta konfiguracja nie przepina domeny ani istniejącego WordPressa.
    `SUPABASE_DB_PASSWORD`, `SUPABASE_PROJECT_ID`, `CLOUDFLARE_API_TOKEN`,
    `CLOUDFLARE_ACCOUNT_ID`. Użytkownik wpisuje prywatne wartości bezpośrednio
    w GitHub. `SUPABASE_PROJECT_ID` musi zgadzać się z oczekiwanym refem.
+   `SUPABASE_ACCESS_TOKEN` jest osobistym tokenem PAT `sbp_…`, nie publicznym
+   kluczem projektu. Przy tokenie ograniczonym do projektu CI potrzebuje uprawnień
+   Read: Project Settings, API Keys, API Key Secrets oraz Connection Pooling.
+   Ostatnie pozwala CLI pobrać adres poolera IPv4 dla runnera GitHub bez IPv6.
+   Szczegóły: [uprawnienia PAT](https://supabase.com/docs/guides/platform/personal-access-tokens).
    `GITHUB_TOKEN` jest automatyczny. Nigdy nie dodawaj `service_role`.
 7. Projekt Supabase dev odtwarza schemat, RLS i prywatne buckety z migracji;
    nie kopiujemy automatycznie ofert, Auth ani obiektów Storage z produkcji.

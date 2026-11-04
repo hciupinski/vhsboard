@@ -1,90 +1,138 @@
-# Weryfikacja przygotowania dwóch środowisk
+# Weryfikacja dwóch środowisk
 
-Data: 2026-11-04. Status: przygotowanie repozytorium i kont; brak wdrożenia
-nowego pipeline i brak potwierdzenia działania hostowanego dev.
+Data: 2026-11-04. Produkcja i develop są wdrożone i sprawdzone na żywo.
+Użytkownik scalił PR #63. Wdrożony commit obu środowisk:
+`0fd842d47a3f628dc23ef9f191503a5171716972`.
 
-## Ustawienia kont odczytane lub zapisane
+## Wdrożenia i konfiguracja
 
-- Istniejące GitHub Environment production: tylko branch main; nazwy pięciu
-  deployment secrets obecne. Wartości sekretów nie były odczytywane.
-- Utworzono Environment development: custom branch policy tylko develop,
-  bez tagów. Odczyt API potwierdził regułę i cztery publiczne variables:
-  projekt Pages vhsboard, URL Supabase hrtxiivubihmxsjuxzer, site URL aliasu
-  develop oraz indexing=false.
-- Repozytoryjne oczekiwane refs: production jiqgcbqsbmzokcmtjtsw,
-  development hrtxiivubihmxsjuxzer; sprawdzone jako różne.
-- Dodano SUPABASE_PROJECT_ID development ze znanego publicznego refa.
-  Brakującą flagę VITE_SEO_INDEXING production uzupełniono jako false.
-- Użytkownik potwierdził utworzenie Supabase dev i konfigurację jego Auth.
-  Nie wykonano jeszcze testu działania tego Auth przez aplikację.
-- Szeroki odczyt wartości produkcyjnych zmiennych odrzucił automatyczny przegląd.
-  Bezpieczny odczyt nazw oraz konkretnego, publicznego VITE_SUPABASE_URL został
-  dopuszczony; nie odczytywano klucza anon ani wartości prywatnych sekretów.
+| Środowisko  | Stały adres                        | Branch  | Supabase ref         | Wynik                                                                                                 |
+| ----------- | ---------------------------------- | ------- | -------------------- | ----------------------------------------------------------------------------------------------------- |
+| production  | https://vhsboard.pages.dev         | main    | jiqgcbqsbmzokcmtjtsw | [run 41813440072](https://github.com/hciupinski/vhsboard/actions/runs/41813440072) SUCCESS            |
+| development | https://develop.vhsboard.pages.dev | develop | hrtxiivubihmxsjuxzer | [run 41813868394, attempt 4](https://github.com/hciupinski/vhsboard/actions/runs/41813868394) SUCCESS |
 
-## Kontrole lokalne
+Oba pipeline potwierdziły konfigurację i head brancha, migracje przed frontendem,
+Pages production_branch=main oraz branch/środowisko/SHA przez API Pages i marker
+`/_deployment.json` pod konkretnym deploymentem i stałym aliasem. Develop utworzono
+z aktualnego main, bez force push. Po testach CMS marker produkcji pozostał bez zmian.
 
-- Bazowy main aa742ec: 615 testów PASS z syntetyczną konfiguracją publiczną.
-- Nowe kontrole: 99 testów konfiguracji + 25 testów Pages; RED → GREEN.
-- Pełen zestaw po synchronizacji main 8a3aa36: 739 testów / 86 plików PASS.
-- Typecheck PASS, lint 0 błędów / 7 wcześniejszych ostrzeżeń.
-- Actionlint v1.7.12: oba workflows PASS.
-- build:ci PASS; pełny build dev (8 prerenderowanych celów) i check:seo PASS.
-- images:check PASS. Lokalny build domeny produkcyjnej z indexing=true i SEO PASS;
-  następnie odtworzono dev/noindex i sprawdzono znacznik wersji.
-- Niezależny przegląd: poprawiono zgodność grupy concurrency main ze starym
-  pipeline i opisano zakaz ponawiania starych runów.
-- Buildy używały syntetycznego klucza i danych firmy, nie rzeczywistych kont
-  Supabase. Wyniki potwierdzają build/SEO, nie połączenie hostowanego CMS.
+GitHub Environments mają reguły main/develop bez tagów oraz po pięć nazw sekretów.
+Wartości prywatnych sekretów nie odczytywano. Publiczne variables Supabase,
+site URL, SEO i projekt Pages działają osobno w obu Environments. Oczekiwane refs
+są różne. Użytkownik potwierdził konfigurację Auth dev i utworzenie osobnego admina.
 
-## Pozostaje przed deklaracją wdrożenia
+Początkowe próby dev zatrzymały się przed migracjami: niepoprawny format PAT,
+następnie brak konfiguracji poolera IPv4, później odrzucenie tokenu usuniętego
+podczas wydłużania ważności. Po zapisaniu nowego PAT z czterema uprawnieniami
+Read (Project Settings, API Keys, API Key Secrets, Connection Pooling) attempt 4
+przeszedł bez zmiany workflow. Connection Pooling Read pozwala CLI pobrać pooler;
+przy jego braku linkowanie może zignorować błąd pobrania i zgłosić później IPv6.
 
-- Nazwy pięciu sekretów dev oraz publicznego anon key w Variables zostały
-  potwierdzone po konfiguracji użytkownika; poprawność wartości zweryfikuje pipeline.
-- Przegląd PR i uruchomienie bootstrapu main, potem develop.
-- Live kontrola Pages production_branch=main i obu deploymentów przez pipeline.
-- Migracje testowego Supabase oraz utworzenie administratora po migracjach.
-- Testy przeglądarkowe publicznych tras, refresh, CMS, RLS, resetu hasła i izolacji.
-- Rzeczywiste screenshoty 1440×900 i 390×844 w folderze Drive z URL/SHA/run ID.
-- Kontrole lokalnego pgTAP/disposable DB, jeśli uruchomienie stosu jest dostępne.
-- Ochrona branchy i usunięcie starych kopii konfiguracji dopiero po zielonym bootstrapie.
+## Kontrole aplikacji na żywo
 
-Nie zmieniono DNS, nie przypisano domeny i nie wykonano migracji hostowanej bazy.
-VHS-051 oraz akceptacja klientki pozostają bez zmian.
+- Oba środowiska: strona główna na 1440×900 i 390×844, HTTP 200, brak błędów
+  HTTP żądań strony głównej. Hosty Supabase zgodne z tabelą; żółta etykieta
+  „WERSJA DEWELOPERSKA” tylko na develop, również na ekranie logowania CMS.
+- Baseline i produkcja po wdrożeniu: zimowy motyw i opublikowany obóz
+  /obozy/oboz-freestyle-2027 zachowane. Dev początkowo miał pustą bazę i motyw original.
+- Na obu adresach przeszły: sześć stron marketingowych, /admin/login,
+  /admin/reset-password, bezpośrednie wejście i refresh szczegółów/CMS oraz
+  /trips/test-deployment-not-existing → HTTP 301 do /wyjazdy/….
+- Istniejący obóz działa na produkcji, a jego brak na dev pokazuje 404 aplikacji.
+  Brakujący wyjazd także pokazuje 404. Statyczny shell sam zwraca HTTP 200.
+- Noindex w HTML obu środowisk i obu shellach; canonical/sitemap wskazują
+  właściwy origin. Preview dodatkowo zwraca X-Robots-Tag: noindex.
+  Produkcyjne noindex jest zamierzone przed osobnym przepięciem domeny.
 
-## Znacznik środowiska develop
+## Testy zalogowanego CMS i izolacji
 
-Dodano stałą etykietę „WERSJA DEWELOPERSKA” w lewym górnym rogu strony publicznej
-oraz CMS. Warunek korzysta z VITE_SITE_URL równego dokładnie
-https://develop.vhsboard.pages.dev, także w produkcyjnym trybie buildu Vite.
-Nie wymaga kolejnej zmiennej w GitHub. Zarezerwowane 24 px uwzględniają nagłówki,
-nawigacja sekcji oferty i przesunięcie kotwic. Etykieta nie przechwytuje kliknięć.
+Użytkownik zalogował się samodzielnie w udostępnionej przeglądarce; hasła i sesji
+nie kopiowano do skryptów ani raportu. Wszystkie zapisy poniżej wykonano wyłącznie
+w projekcie dev, przez frontend i jego RLS.
 
-- Test komponentu: RED → GREEN, 4 przypadki (develop, root Pages, domena, localhost).
-- Końcowy zestaw: 743 testy / 87 plików PASS; typecheck PASS; lint 0 błędów
-  i 7 wcześniejszych ostrzeżeń.
-- Pełny build i check:seo PASS osobno dla root Pages oraz develop.
-  Sprawdzono obecność etykiety i atrybutu body w trzech wygenerowanych plikach
-  dev (index oraz publiczny i administracyjny shell), a ich brak w produkcji.
-- Lokalny test przeglądarkowy: http://127.0.0.1:4188, statyczny build develop,
-  trasy /, /admin/login i /wyjazdy/qa-development-label. API Supabase zastąpione
-  lokalnymi fiksturami; bez operacji na hostowanej bazie.
-- Viewporty 1440×900, 390×844 i 320×844: 9 przypadków PASS. Sprawdzono pozycję
-  etykiety, brak poziomego overflow, nagłówek po przewinięciu, nawigację oferty
-  i otwieranie/zamykanie menu mobilnego. Siedem screenshotów wykonano dla
-  szerokości 1440 i 390 px; screenshot menu po zakończeniu animacji.
-- Niezależny przegląd zmiany: bez istotnych uwag.
-- [Trwałe screenshoty lokalnej weryfikacji w folderze projektu Drive](https://drive.google.com/drive/folders/1R0HJq9b3RyMQvWZd7b7KDYHmFJQTvQof).
-  Metadane folderu i wszystkich siedmiu plików odczytano po zapisie.
+1. Utworzono i zapisano szkic „TEST — weryfikacja środowiska develop”, slug
+   `test-srodowiska-develop-20261104`. Anonimowy odczyt jego sluga oraz wszystkich
+   draftów przez publiczny klucz dev zwrócił zero wierszy.
+2. Przesłano istniejące zdjęcie z repozytorium, dodano opis alternatywny i ustawiono
+   je jako obraz główny. Galeria i publiczny obraz korzystały z prywatnego Storage.
+3. Opublikowano TEST; publiczny detal działał także po refresh. Identyczny adres
+   na produkcji pokazał 404. Nie uruchamiano zewnętrznej rezerwacji TripAhead.
+4. Cofnięto publikację; TEST pozostaje szkicem. Ponowny anonimowy odczyt zwrócił
+   zero wierszy. Zdjęcie pozostaje przy szkicu, do dalszych prób użytkownika.
+5. Przesłano poprawny, oznaczony PDF „TEST — plik środowiska develop”. Zapisany
+   dokument pojawił się w CMS z linkiem do Storage dev. Testowy PDF pozostawiono
+   na dev; nie jest rzeczywistym dokumentem dla klientów. Podpisanych URL nie
+   umieszczono w dokumentacji.
+6. Zapisano motyw winter przez CMS; publiczny portal dev zastosował go. Następnie
+   przywrócono original i potwierdzono ten stan niezalogowanym odczytem API.
 
-Ta weryfikacja dotyczy zmiany znacznika w PR #63, przed wdrożeniem. Testowanie
-hostowanego develop oraz obu baz pozostaje do wykonania po aktywacji pipeline.
+Do osobnej ręcznej próby pozostaje pełny reset hasła przez prywatną skrzynkę
+użytkownika i ustawienie nowego hasła. Trasa formularza jest sprawdzona,
+ale nie deklarujemy wykonania mailowego flow. Negatywne uprawnienia zwykłego
+użytkownika sprawdzono lokalnym pgTAP; nie tworzono dodatkowego konta na hostowanym dev.
 
-### Korekta koloru znacznika
+## Kontrole lokalne i zabezpieczenia pipeline
 
-Na prośbę użytkownika tło zmieniono na jaskrawy żółty z ciemnym tekstem.
-Dedykowane tokeny OKLCH zachowują ten wygląd także przy zmianie motywu portalu.
-Po zmianie: 743 testy PASS, typecheck PASS, lint 0 błędów / 7 istniejących
-ostrzeżeń, build produkcji oraz develop PASS, ponowna lokalna weryfikacja
-9 przypadków przeglądarkowych PASS (te same trasy i viewporty co powyżej).
-Aktualny wygląd: [desktop](https://drive.google.com/file/d/1QlZdHoyZnq6i1u81YjPfi7X3CjUcD_HF/view)
-i [telefon](https://drive.google.com/file/d/1ZE_N1XD77ORV2ixqu5994gNyriScqpy2/view).
+- 743 testy / 87 plików PASS, w tym 99 konfiguracji i 25 Pages. Typecheck PASS,
+  lint 0 błędów / 7 istniejących ostrzeżeń; actionlint 1.7.12 PASS.
+- build:ci, pełne buildy production/develop, SEO i images:check PASS.
+  Lokalny build przyszłej domeny z indexing=true także przeszedł SEO.
+  Buildy lokalne używały syntetycznej konfiguracji publicznej.
+- Etykieta develop: RED → GREEN, 4 testy komponentu. Brak etykiety i odstępu
+  potwierdzono w produkcyjnym HTML i shellach, obecność w dev. Lokalnie 9 przypadków
+  przeglądarkowych PASS na 1440×900, 390×844 i 320×844; menu, sticky i anchor offsets.
+  Niezależny przegląd zmiany bez istotnych uwag.
+- Zachowano historyczną blokadę production-deploy dla main; develop ma osobną.
+  Historycznych workflow sprzed bootstrapu nie ponawiano.
+- [Dispatch spoza allowlisty 41814764928](https://github.com/hciupinski/vhsboard/actions/runs/41814764928):
+  wszystkie cztery jobs SKIPPED, bez migracji i uploadu.
+- Rzeczywisty skrypt kontroli head z workflow uruchomiono przeciw develop:
+  stare SHA c8bf88d odrzucone (exit 1), aktualne 0fd842d przyjęte (exit 0),
+  bez wykonywania migracji ani modyfikowania refs.
+- Ochrona main/develop zapisana i odczytana z API: PR, strict checks
+  build/lint/test/typecheck z GitHub Actions app 15368, także dla administratorów,
+  zakaz force push/usuwania, wymagane rozwiązanie dyskusji. Brak wymogu drugiego
+  recenzenta w jednoosobowym repozytorium.
+- Po zielonych deploymentach usunięto pięć starych repository Variables:
+  CLOUDFLARE_PAGES_PROJECT, VITE_SEO_INDEXING, VITE_SITE_URL,
+  VITE_SUPABASE_ANON_KEY, VITE_SUPABASE_URL. Pełny odczyt z per_page=100 potwierdził
+  11 pozostałych nazw: dwa oczekiwane refs i dziewięć wspólnych danych firmy/kontaktu.
+  Repository secrets: 0. Właściwe ustawienia pozostają w Environments.
+- Verify po cleanup jest sprawdzany przez PR z tym raportem do obu baz;
+  bieżący wynik należy odczytać z checks odpowiednich PR.
+
+## Lokalny pgTAP
+
+Zachowano istniejący lokalny stos użytkownika. Osobny projekt
+vhsboard-deploy-qa-20261104 w /private/tmp, na portach 580xx, otrzymał kopię
+migracji i testów wdrażanego kodu. Po dodaniu gateway wymaganego przez healthcheck
+start/reset tej tymczasowej bazy zakończyły się poprawnie.
+
+- db lint --local --fail-on error PASS; jedno wcześniejsze ostrzeżenie
+  public.vhs_content_base: IMMUTABLE vs STABLE.
+- pgTAP: 4 pliki, 56 testów PASS z bezwzględnej ścieżki do odizolowanej kopii.
+- Tymczasowy stos zatrzymano. Istniejące kontenery użytkownika nadal działały.
+  Nie resetowano żadnej hostowanej bazy ani istniejącego lokalnego projektu.
+
+## Trwałe dowody
+
+[Folder wdrożenia w projekcie Drive](https://drive.google.com/drive/folders/1f3WgM_bjpTa6zJb7I2DFkcriIiWHEYOV)
+zawiera 11 screenshotów. Metadane plików odczytano po uploadzie.
+Strona główna i ekran logowania: viewporty 1440×900 i 390×844; test zalogowany:
+przeglądarka udostępniona obok czatu. Wersja aplikacji: 0fd842d, data powyżej.
+
+- Produkcja: [desktop](https://drive.google.com/file/d/1s0F3Cb5adhtzPseTPMctGzOIcxP0uc-X/view),
+  [telefon](https://drive.google.com/file/d/1Vn3guMIT4hBH5aDqww4dXjEN7BVTtbuX/view).
+- Dev: [desktop](https://drive.google.com/file/d/1zz2LSWhhP_gAYzkpXfCxQMrY-l0mvMOg/view),
+  [telefon](https://drive.google.com/file/d/1ZkmCR916kg1AsIW_TVu7N3LRVI6Cf4_r/view).
+- CMS dev: [desktop](https://drive.google.com/file/d/1r6msP9Jv0m_pSYuvRZMlcJpbaTd98ys4/view),
+  [telefon](https://drive.google.com/file/d/1XPkOkkrvHQS1smoYwKugsv9ZbURNZZ1t/view).
+- [Publikacja TEST w CMS](https://drive.google.com/file/d/1i6CX8Q53NnFN3jdm5le_MYWB85Pr6f1D/view),
+  [publiczny TEST na dev](https://drive.google.com/file/d/1RhDqmO4Pc2JJo1HLjNqqQAYIxVkyxDKS/view),
+  [brak TEST na produkcji](https://drive.google.com/file/d/1KIx_s0HA_cnuad2SUbkQFywPb2NDBiEY/view).
+- [Upload PDF](https://drive.google.com/file/d/1hLRLVBAAdvGcwnv8Y-zZtFgqc4vvflke/view),
+  [zimowy motyw testowy dev](https://drive.google.com/file/d/1iXlfuU_QjoMRL7SdhpH6i_XolKsuBhRa/view).
+
+[Wcześniejsze screenshoty lokalne etykiety](https://drive.google.com/drive/folders/1R0HJq9b3RyMQvWZd7b7KDYHmFJQTvQof)
+są dowodem sprzed wdrożenia. Nie zastępują powyższych kontroli na żywo.
+Nie zmieniano DNS ani domeny WordPress. VHS-051 i akceptacja klientki pozostają osobnym etapem.
