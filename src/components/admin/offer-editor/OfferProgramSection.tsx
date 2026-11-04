@@ -1,10 +1,7 @@
 import { arrayMove } from "@dnd-kit/sortable";
-import {
-  DEFAULT_HIGHLIGHT_ICON,
-  HIGHLIGHT_ICONS,
-  getHighlightIcon,
-} from "@/lib/offers/highlight-icons";
+import { DEFAULT_HIGHLIGHT_ICON, getHighlightIcon } from "@/lib/offers/highlight-icons";
 import { ListField } from "@/components/admin/ListField";
+import { HighlightIconPicker } from "./HighlightIconPicker";
 import { errorFor } from "./editor-fields";
 import { TripScheduleEditor } from "./TripScheduleEditor";
 import { DayCampProgramEditor } from "./DayCampProgramEditor";
@@ -44,24 +41,17 @@ export function OfferProgramSection({
           placeholder="Małe grupy i dużo aktywności"
           error={errorFor(errors, "content.highlights")}
           renderExtra={(index) => (
-            <select
-              aria-label={`Ikona: ${label} ${index + 1}`}
-              className="h-10 min-w-32 rounded-md border border-input bg-card px-2 text-sm"
+            <HighlightIconPicker
+              label={`Ikona: ${label} ${index + 1}`}
               disabled={disabled}
               value={icons[index] ?? DEFAULT_HIGHLIGHT_ICON}
-              onChange={(event) =>
+              onChange={(value) =>
                 onChange({
                   ...content,
-                  highlightIcons: icons.map((icon, i) => (i === index ? event.target.value : icon)),
+                  highlightIcons: icons.map((icon, i) => (i === index ? value : icon)),
                 })
               }
-            >
-              {HIGHLIGHT_ICONS.map((icon) => (
-                <option key={icon.value} value={icon.value}>
-                  {icon.label}
-                </option>
-              ))}
-            </select>
+            />
           )}
           onChange={(next, change) => {
             if (!content.highlightIcons) {

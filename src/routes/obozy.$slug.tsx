@@ -110,7 +110,7 @@ function DayCampDetail() {
         <OfferDetailSections
           offer={offer}
           sidebar={
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-warm lg:p-8">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-warm">
               <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">
                 Twój obóz
               </p>

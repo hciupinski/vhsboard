@@ -154,12 +154,35 @@ describe("OfferEditorForm", () => {
       render(<Editor />);
       await user.click(screen.getByRole("tab", { name: "W programie" }));
       const label = kind === "trip" ? "W programie" : "Atrakcje";
-      await user.selectOptions(screen.getByLabelText(`Ikona: ${label} 1`), "utensils");
-      await user.selectOptions(screen.getByLabelText(`Ikona: ${label} 2`), "sun");
+      Object.defineProperty(Element.prototype, "scrollIntoView", {
+        configurable: true,
+        value: () => {},
+      });
+      fireEvent.keyDown(screen.getByRole("combobox", { name: `Ikona: ${label} 1` }), {
+        key: "ArrowDown",
+      });
+      expect(
+        screen.getByRole("option", { name: "Posiłek" }).querySelector(".lucide-utensils"),
+      ).toBeInTheDocument();
+      await user.click(screen.getByRole("option", { name: "Posiłek" }));
+      fireEvent.keyDown(screen.getByRole("combobox", { name: `Ikona: ${label} 2` }), {
+        key: "ArrowDown",
+      });
+      await user.click(screen.getByRole("option", { name: "Słońce" }));
       await user.click(screen.getByRole("button", { name: `Przesuń pozycję „${label}” 1 w dół` }));
-      expect(screen.getByLabelText(`Ikona: ${label} 1`)).toHaveValue("sun");
-      expect(screen.getByLabelText(`Ikona: ${label} 2`)).toHaveValue("utensils");
+      expect(screen.getByRole("combobox", { name: `Ikona: ${label} 1` })).toHaveTextContent(
+        "Słońce",
+      );
+      expect(screen.getByRole("combobox", { name: `Ikona: ${label} 2` })).toHaveTextContent(
+        "Posiłek",
+      );
+      expect(
+        screen
+          .getByRole("combobox", { name: `Ikona: ${label} 2` })
+          .querySelector(".lucide-utensils"),
+      ).toBeInTheDocument();
       await user.click(screen.getByRole("button", { name: `Usuń pozycję „${label}” 1` }));
+      delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
       expect(onChange).toHaveBeenLastCalledWith(
         expect.objectContaining({
           content: expect.objectContaining({
