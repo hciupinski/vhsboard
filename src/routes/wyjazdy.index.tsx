@@ -41,7 +41,7 @@ function TripsPage() {
           <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">
             WYJAZDY, DO KTÓRYCH CHCE SIĘ WRACAĆ
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
+          <p className="mt-5 max-w-2xl lg:max-w-none text-lg text-muted-foreground">
             Kameralne grupy, dobra ekipa i dużo czasu na desce. Organizujemy wyjazdy snowboardowe i
             surfingowe z myślą o progresie, wspólnych zajawkach i relacjach, które zostają na
             dłużej.
@@ -56,6 +56,7 @@ function TripsPage() {
         </section>
         <FaqSection
           headingId="trip-faq-heading"
+          descriptionClassName="lg:max-w-none"
           items={tripFaqItems}
           description="Zebraliśmy najważniejsze informacje dotyczące wyjazdów na snowboard, narty czy surfing. Masz dodatkowe wątpliwości? Zawsze możesz skontaktować się z nami mailowo lub telefonicznie."
         />
@@ -73,7 +74,7 @@ function TripsPage() {
             >
               ZOBACZ NASZE WYJAZDY
             </h2>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-5 max-w-2xl lg:max-w-none text-lg leading-relaxed text-muted-foreground">
               Poznaj atmosferę wyjazdów VHSBOARD — od pierwszego zjazdu po wspólny czas poza
               stokiem.
             </p>
