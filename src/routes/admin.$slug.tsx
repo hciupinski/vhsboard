@@ -429,6 +429,21 @@ function OfferEditorContent() {
               />
             ) : undefined
           }
+          resortImageManager={
+            persistedOffer ? (
+              <OfferImageManager
+                offerId={persistedOffer.id}
+                heroImagePath={null}
+                category="resort_gallery"
+                disabled={isSubmitting || currentStatus === "archived"}
+                onImagesChanged={invalidateImageDependentCaches}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Najpierw zapisz szkic, aby dodać zdjęcia resortu.
+              </p>
+            )
+          }
           resortMapManager={
             persistedOffer ? (
               <OfferImageManager
