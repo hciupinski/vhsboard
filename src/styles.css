@@ -547,3 +547,44 @@ body[data-development-site="true"] {
     scroll-behavior: smooth;
   }
 }
+
+@keyframes events-logo-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(3deg);
+  }
+}
+@keyframes events-board-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes events-snow-float {
+  0%,
+  100% {
+    transform: translateY(-3px);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(7px);
+    opacity: 0.9;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .events-coming-soon-logo {
+    animation: events-logo-float 3s ease-in-out infinite;
+  }
+  .events-coming-soon-board {
+    animation: events-board-float 3s ease-in-out infinite;
+  }
+  .events-coming-soon-snow {
+    animation: events-snow-float 3s ease-in-out infinite;
+  }
+}

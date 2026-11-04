@@ -347,70 +347,28 @@ describe("static public pages", () => {
     );
   });
 
-  it("presents the mobile skimboard track format and directs enquiries to contact", async () => {
+  it("shows an accessible coming-soon message while preserving the event content behind it", async () => {
     await renderRoute("/eventy", EventsRoute);
 
     expect(
-      screen.getByRole("heading", {
-        level: 1,
-        name: "TOR SKIMBOARDOWY – PRZYCIĄGA LUDZI, WCIĄGA DO ZABAWY.",
-      }),
+      screen.getByRole("heading", { level: 1, name: /szykujemy coś dobrego/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Strefa Skate").tagName).toBe("P");
-    const skateHeading = screen.getByRole("heading", {
-      level: 2,
-      name: "MIEJSKIE SPORTY, KTÓRE ŁĄCZĄ",
-    });
-    expect(screen.getAllByText("Strefa Skate")).toHaveLength(1);
+    expect(screen.getByRole("navigation", { name: "Nawigacja główna" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /zobacz wyjazdy/i })).toHaveAttribute(
+      "href",
+      "/wyjazdy",
+    );
+    expect(screen.getByRole("link", { name: /zapytaj o event/i })).toHaveAttribute(
+      "href",
+      "/kontakt",
+    );
+    const background = screen.getByText(/tor skimboardowy – przyciąga ludzi/i).closest("[inert]");
+    expect(background).toHaveAttribute("aria-hidden", "true");
+    expect(background).toHaveTextContent("MIEJSKIE SPORTY, KTÓRE ŁĄCZĄ");
+    expect(background).toHaveTextContent("Zobacz nas w akcji");
     expect(
-      screen.getByRole("heading", { name: /strefa letnia w centrum handlowym/i }),
-    ).toBeInTheDocument();
-    const useCases = screen.getByRole("list", { name: "Zastosowania toru skimboardowego" });
-    expect(
-      within(useCases)
-        .getAllByRole("listitem")
-        .map((item) => item.querySelector("p")?.textContent),
-    ).toEqual([
-      "Integracje i pikniki firmowe",
-      "obchody miast, gmin",
-      "imprezy plenerowe, festiwale, juwenalia",
-      "pikniki rodzinne, festyny",
-      "obozy dla dzieci i młodzieży",
-      "eventy w galeriach handlowych",
-      "wydarzenia sportowe, targi",
-    ]);
-    expect(
-      screen.queryByRole("heading", { name: /czym jest skimboarding/i }),
+      screen.queryByRole("heading", { name: /tor skimboardowy – przyciąga ludzi/i }),
     ).not.toBeInTheDocument();
-    const trackHeading = screen.getByRole("heading", { name: /tor skrojony pod twój event/i });
-    const galleryHeading = screen.getByRole("heading", { name: /zobacz nas w akcji/i });
-    expect(
-      trackHeading.compareDocumentPosition(skateHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(
-      skateHeading.compareDocumentPosition(galleryHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(screen.getByText(/15 m, 20 m, 22 m, 30 m/i)).toBeInTheDocument();
-
-    const gallery = screen.getByRole("heading", { name: /zobacz nas w akcji/i }).closest("section");
-    if (!gallery) {
-      throw new Error("Nie znaleziono sekcji galerii Eventów");
-    }
-    expect(
-      within(gallery).getByRole("img", {
-        name: "Uczestnik korzystający z mobilnego toru skimboardowego podczas eventu",
-      }),
-    ).toBeInTheDocument();
-    expect(
-      within(gallery).getByRole("img", {
-        name: "Dziecko uczące się skimboardingu pod opieką instruktora",
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /zobacz nas w akcji/i })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: /plan dnia/i })).not.toBeInTheDocument();
-    for (const eventLink of screen.getAllByRole("link", { name: /zapytaj o event/i })) {
-      expect(eventLink).toHaveAttribute("href", "/kontakt");
-    }
   });
 
   it("presents active camps with current seasonal copy", async () => {
