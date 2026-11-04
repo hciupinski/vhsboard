@@ -78,6 +78,8 @@ body[data-development-site="true"] {
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-development-banner: oklch(0.94 0.22 110);
+  --color-development-banner-foreground: oklch(0.2 0.03 60);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);

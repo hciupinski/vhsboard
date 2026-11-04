@@ -78,3 +78,13 @@ nawigacja sekcji oferty i przesunięcie kotwic. Etykieta nie przechwytuje klikni
 
 Ta weryfikacja dotyczy zmiany znacznika w PR #63, przed wdrożeniem. Testowanie
 hostowanego develop oraz obu baz pozostaje do wykonania po aktywacji pipeline.
+
+### Korekta koloru znacznika
+
+Na prośbę użytkownika tło zmieniono na jaskrawy żółty z ciemnym tekstem.
+Dedykowane tokeny OKLCH zachowują ten wygląd także przy zmianie motywu portalu.
+Po zmianie: 743 testy PASS, typecheck PASS, lint 0 błędów / 7 istniejących
+ostrzeżeń, build produkcji oraz develop PASS, ponowna lokalna weryfikacja
+9 przypadków przeglądarkowych PASS (te same trasy i viewporty co powyżej).
+Aktualny wygląd: [desktop](https://drive.google.com/file/d/1QlZdHoyZnq6i1u81YjPfi7X3CjUcD_HF/view)
+i [telefon](https://drive.google.com/file/d/1ZE_N1XD77ORV2ixqu5994gNyriScqpy2/view).
