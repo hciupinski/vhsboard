@@ -412,6 +412,15 @@ body[data-development-site="true"] {
     .topic-selector__item--mobile-stack {
       padding: 1rem 1.25rem;
     }
+    .topic-selector__item--mobile-stack:not(:first-child) {
+      margin-block-start: -0.875rem;
+    }
+    .topic-selector__item--mobile-stack:nth-child(2) {
+      clip-path: polygon(0 0.875rem, 100% 0, 100% 100%, 0 100%);
+    }
+    .topic-selector__item--mobile-stack:nth-child(3) {
+      clip-path: polygon(0 0, 100% 0.875rem, 100% 100%, 0 100%);
+    }
     .topic-selector__item--mobile-stack:not(:first-child)::after {
       content: "";
       position: absolute;
