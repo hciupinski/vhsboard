@@ -78,7 +78,7 @@ describe("HeroCarousel", () => {
     expect(screen.getByTestId("hero-carousel")).not.toHaveAttribute("tabindex");
   });
 
-  it("advances every seven seconds and clears autoplay on unmount", () => {
+  it("advances every 5.5 seconds and clears autoplay on unmount", () => {
     vi.useFakeTimers();
     stubReducedMotion(false);
     const setInterval = vi.spyOn(globalThis, "setInterval");
@@ -86,15 +86,28 @@ describe("HeroCarousel", () => {
 
     const { unmount } = render(<HeroCarousel images={images} />);
 
-    expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 7_000);
+    expect(setInterval).toHaveBeenCalledWith(expect.any(Function), 5_500);
     expect(embla.api.scrollNext).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(7_000);
+    vi.advanceTimersByTime(5_500);
     expect(embla.api.scrollNext).toHaveBeenCalledTimes(1);
 
     unmount();
     expect(clearInterval).toHaveBeenCalledTimes(1);
-    vi.advanceTimersByTime(7_000);
+    vi.advanceTimersByTime(5_500);
     expect(embla.api.scrollNext).toHaveBeenCalledTimes(1);
+  });
+
+  it("positions the snowboarder in the mobile frame and preserves desktop centering", () => {
+    stubReducedMotion(false);
+    render(
+      <HeroCarousel
+        images={[{ path: "carousel/1karuzela_snb.png", src: "/snow.png", label: "Snow" }]}
+      />,
+    );
+    expect(screen.getByTestId("hero-carousel-slide")).toHaveClass(
+      "object-[62%_center]",
+      "md:object-center",
+    );
   });
 
   it("does not schedule autoplay for reduced-motion users", () => {
@@ -110,16 +123,16 @@ describe("HeroCarousel", () => {
     vi.useFakeTimers();
     const media = stubReducedMotion(false);
     render(<HeroCarousel images={images} />);
-    vi.advanceTimersByTime(7000);
+    vi.advanceTimersByTime(5500);
     expect(embla.api.scrollNext).toHaveBeenCalledTimes(1);
     media.matches = true;
     media.dispatchEvent(new Event("change"));
-    vi.advanceTimersByTime(14000);
+    vi.advanceTimersByTime(11000);
     expect(embla.api.scrollNext).toHaveBeenCalledTimes(1);
     media.matches = false;
     media.dispatchEvent(new Event("change"));
     media.dispatchEvent(new Event("change"));
-    vi.advanceTimersByTime(14000);
+    vi.advanceTimersByTime(11000);
     expect(embla.api.scrollNext).toHaveBeenCalledTimes(3);
     expect(vi.getTimerCount()).toBe(1);
   });
@@ -129,7 +142,7 @@ describe("HeroCarousel", () => {
     render(<HeroCarousel images={images} />);
     media.matches = false;
     media.dispatchEvent(new Event("change"));
-    vi.advanceTimersByTime(7000);
+    vi.advanceTimersByTime(5500);
     expect(embla.api.scrollNext).toHaveBeenCalledOnce();
   });
   it("pauses in hidden documents and removes listeners on unmount", () => {
@@ -139,15 +152,15 @@ describe("HeroCarousel", () => {
     vi.spyOn(document, "visibilityState", "get").mockImplementation(() => visibility);
     const removeListener = vi.spyOn(document, "removeEventListener");
     const { unmount } = render(<HeroCarousel images={images} />);
-    vi.advanceTimersByTime(7000);
+    vi.advanceTimersByTime(5500);
     expect(embla.api.scrollNext).not.toHaveBeenCalled();
     visibility = "visible";
     document.dispatchEvent(new Event("visibilitychange"));
-    vi.advanceTimersByTime(7000);
+    vi.advanceTimersByTime(5500);
     expect(embla.api.scrollNext).toHaveBeenCalledOnce();
     visibility = "hidden";
     document.dispatchEvent(new Event("visibilitychange"));
-    vi.advanceTimersByTime(14000);
+    vi.advanceTimersByTime(11000);
     expect(embla.api.scrollNext).toHaveBeenCalledOnce();
     visibility = "visible";
     document.dispatchEvent(new Event("visibilitychange"));
@@ -157,7 +170,7 @@ describe("HeroCarousel", () => {
     expect(removeListener).toHaveBeenCalledWith("visibilitychange", expect.any(Function));
     media.dispatchEvent(new Event("change"));
     document.dispatchEvent(new Event("visibilitychange"));
-    vi.advanceTimersByTime(7000);
+    vi.advanceTimersByTime(5500);
     expect(embla.api.scrollNext).toHaveBeenCalledOnce();
   });
 

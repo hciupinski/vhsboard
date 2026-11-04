@@ -15,11 +15,12 @@ type HeroCarouselProps = {
 };
 
 const mobileImageClasses: Readonly<Record<string, string>> = {
+  "carousel/1karuzela_snb.png": "object-[62%_center] md:object-center",
   "carousel/3karuzela_surf.png": "object-[75%_center] md:object-center",
   "carousel/4eventy_karuzela.png": "object-[68%_center] md:object-center",
 };
 
-const HeroCarousel = ({ images, intervalMs = 7_000 }: HeroCarouselProps) => {
+const HeroCarousel = ({ images, intervalMs = 5_500 }: HeroCarouselProps) => {
   const [api, setApi] = React.useState<CarouselApi>();
 
   React.useEffect(() => {
