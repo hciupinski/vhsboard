@@ -67,7 +67,7 @@ export function FloatingBookingCta({
       <Button
         asChild
         size="lg"
-        className="rounded-full shadow-warm motion-safe:animate-[booking-cta-pulse_5s_ease-in-out_infinite]"
+        className="rounded-full shadow-warm lg:h-14 lg:px-10 lg:text-base lg:uppercase motion-safe:animate-[booking-cta-pulse_5s_ease-in-out_infinite]"
       >
         <a href={href} {...(!isAnchor ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
           {label} <ArrowUpRight aria-hidden="true" className="size-4" />

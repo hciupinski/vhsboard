@@ -54,8 +54,8 @@ export function SubtitleField({
   return (
     <EditorField
       id="subtitle"
-      label="Zdanie wprowadzające"
-      hint="Pod tytułem oferty"
+      label="Zdanie pod tytułem"
+      hint="Hero oferty"
       characterCount={{ value, max: 280 }}
       error={error}
     >

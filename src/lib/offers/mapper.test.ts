@@ -50,11 +50,27 @@ const completeImageRows = [
 ];
 
 describe("offer row mappers", () => {
+  it("preserves saved attraction icons for a published offer", () => {
+    const row = {
+      ...completeOfferRow,
+      description: { ...completeOfferRow.description, highlightIcons: ["utensils"] },
+    };
+    expect(mapOfferDetailRow(row, [], new Map()).content).toMatchObject({
+      highlightIcons: ["utensils"],
+    });
+  });
   it("selects story images from the gallery without removing them", () => {
     const image = { ...completeImageRows[0]!, category: "gallery", show_in_story: true };
     const offer = mapOfferDetailRow(completeOfferRow, [image], new Map());
     expect(offer.images).toHaveLength(1);
     expect(offer.storyImages).toMatchObject([{ id: image.id }]);
+  });
+  it("maps resort gallery photos separately from the map and other galleries", () => {
+    const image = { ...completeImageRows[0]!, category: "resort_gallery" };
+    const mapped = mapOfferDetailRow(completeOfferRow, [image], new Map());
+    expect(mapped.resortImages).toMatchObject([{ id: image.id, category: "resort_gallery" }]);
+    expect(mapped.images).toEqual([]);
+    expect(mapped.accommodationImages).toEqual([]);
   });
   it("maps resort maps separately and safely omits their missing signed URL", () => {
     const image = { ...completeImageRows[0]!, category: "resort_map" };

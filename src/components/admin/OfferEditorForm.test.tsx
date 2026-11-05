@@ -127,6 +127,73 @@ describe("OfferEditorForm", () => {
       expect(screen.getByLabelText(`${label} 1`)).toHaveValue("Druga");
     },
   );
+  it.each(["trip", "day_camp"] as const)(
+    "keeps selected icons with %s attractions when reordered or removed",
+    async (kind) => {
+      const user = userEvent.setup();
+      const input = kind === "trip" ? completeInput : dayCampInput;
+      const initial = {
+        ...input,
+        content: { ...input.content, highlights: ["Posiłek", "Zachód"] },
+      };
+      const onChange = vi.fn();
+      function Editor() {
+        const [value, setValue] = useState<EditableOfferInput>(initial);
+        return (
+          <OfferEditorForm
+            value={value}
+            errors={{}}
+            disabled={false}
+            onChange={(next) => {
+              setValue(next);
+              onChange(next);
+            }}
+          />
+        );
+      }
+      render(<Editor />);
+      await user.click(screen.getByRole("tab", { name: "W programie" }));
+      const label = kind === "trip" ? "W programie" : "Atrakcje";
+      Object.defineProperty(Element.prototype, "scrollIntoView", {
+        configurable: true,
+        value: () => {},
+      });
+      fireEvent.keyDown(screen.getByRole("combobox", { name: `Ikona: ${label} 1` }), {
+        key: "ArrowDown",
+      });
+      expect(
+        screen.getByRole("option", { name: "Posiłek" }).querySelector(".lucide-utensils"),
+      ).toBeInTheDocument();
+      await user.click(screen.getByRole("option", { name: "Posiłek" }));
+      fireEvent.keyDown(screen.getByRole("combobox", { name: `Ikona: ${label} 2` }), {
+        key: "ArrowDown",
+      });
+      await user.click(screen.getByRole("option", { name: "Słońce" }));
+      await user.click(screen.getByRole("button", { name: `Przesuń pozycję „${label}” 1 w dół` }));
+      expect(screen.getByRole("combobox", { name: `Ikona: ${label} 1` })).toHaveTextContent(
+        "Słońce",
+      );
+      expect(screen.getByRole("combobox", { name: `Ikona: ${label} 2` })).toHaveTextContent(
+        "Posiłek",
+      );
+      expect(
+        screen
+          .getByRole("combobox", { name: `Ikona: ${label} 2` })
+          .querySelector(".lucide-utensils"),
+      ).toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: `Usuń pozycję „${label}” 1` }));
+      delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
+      expect(onChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          content: expect.objectContaining({
+            highlights: ["Posiłek"],
+            highlightIcons: ["utensils"],
+          }),
+        }),
+      );
+    },
+  );
+
   it("preserves a manually overridden slug when the title changes", () => {
     function Editor() {
       const [value, setValue] = useState({ ...completeInput, slug: "" });
@@ -705,7 +772,7 @@ describe("OfferEditorForm", () => {
     render(<OfferEditorForm value={completeInput} errors={{}} disabled onChange={vi.fn()} />);
 
     expect(screen.getByLabelText("Tytuł wyjazdu")).toBeDisabled();
-    expect(screen.getByLabelText("Zdanie wprowadzające")).toBeDisabled();
+    expect(screen.getByLabelText("Zdanie pod tytułem")).toBeDisabled();
     expect(screen.getByLabelText("Adres zapisów")).toBeDisabled();
     expect(screen.getByLabelText("Rodzaj wyjazdu")).toBeDisabled();
 
@@ -793,18 +860,18 @@ describe("OfferEditorForm", () => {
       );
     }
     render(<Editor />);
-    fireEvent.change(screen.getByLabelText("Zdanie wprowadzające"), {
+    fireEvent.change(screen.getByLabelText("Zdanie pod tytułem"), {
       target: { value: "Nowe wprowadzenie." },
     });
     await user.click(screen.getByRole("tab", { name: "O wyjeździe" }));
-    expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Zdanie pod tytułem")).not.toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Akapity opisu 1"), { target: { value: "Nowy opis." } });
     await user.click(screen.getByRole("tab", { name: "W programie" }));
     fireEvent.change(screen.getByLabelText("W programie 1"), {
       target: { value: "Surf o świcie" },
     });
     await user.click(screen.getByRole("tab", { name: "Dane oferty" }));
-    expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue("Nowe wprowadzenie.");
+    expect(screen.getByLabelText("Zdanie pod tytułem")).toHaveValue("Nowe wprowadzenie.");
     expect(onChange).toHaveBeenLastCalledWith({
       ...completeInput,
       subtitle: "Nowe wprowadzenie.",
@@ -891,9 +958,9 @@ describe("OfferEditorForm", () => {
       "Ubezpieczenie",
       "Galeria",
     ]);
-    expect(screen.queryByLabelText("Zdanie wprowadzające")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Zdanie pod tytułem")).toHaveValue(dayCampInput.subtitle);
     await user.click(screen.getByRole("tab", { name: "O obozie" }));
-    expect(screen.getByLabelText("Zdanie wprowadzające")).toHaveValue(dayCampInput.subtitle);
+    expect(screen.queryByLabelText("Zdanie pod tytułem")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Atrakcje 1")).not.toBeInTheDocument();
     await user.click(screen.getByRole("tab", { name: "W programie" }));
     expect(screen.getByLabelText("Atrakcje 1")).toHaveValue("Małe grupy");
@@ -929,7 +996,7 @@ describe("OfferEditorForm", () => {
     const { rerender } = render(<OfferEditorForm {...props} errors={{}} />);
     for (const [path, tab] of [
       ["content.terms.0.bookingUrl", "Cena"],
-      ["subtitle", "O obozie"],
+      ["subtitle", "Dane oferty"],
       ["content.highlights.0", "W programie"],
       ["content.venueDescription", "Resort"],
       ["content.dayProgram.0.time", "W programie"],

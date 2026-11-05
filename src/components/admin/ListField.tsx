@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, GripVertical, Plus, Trash2 } from "lucide-react";
 import {
   DndContext,
@@ -22,6 +22,12 @@ import { Input } from "@/components/admin/form-controls";
 import { Textarea } from "@/components/admin/form-controls";
 import { Label } from "@/components/ui/label";
 
+type ListChange =
+  | { type: "edit"; index: number }
+  | { type: "remove"; index: number }
+  | { type: "move"; from: number; to: number }
+  | { type: "add" };
+
 type Props = {
   label: string;
   hint?: string | undefined;
@@ -31,7 +37,8 @@ type Props = {
   error?: string | undefined;
   reorderable?: boolean;
   disabled?: boolean;
-  onChange: (values: string[]) => void;
+  onChange: (values: string[], change: ListChange) => void;
+  renderExtra?: ((index: number) => ReactNode) | undefined;
 };
 
 type RowProps = {
@@ -47,6 +54,7 @@ type RowProps = {
   onEdit: (value: string) => void;
   onRemove: () => void;
   onMove: (target: number) => void;
+  extra?: ReactNode;
 };
 
 function ListRow({
@@ -62,6 +70,7 @@ function ListRow({
   onEdit,
   onRemove,
   onMove,
+  extra,
 }: RowProps) {
   const sortable = useSortable({ id, disabled: disabled || !reorderable });
   const inputId = `${id}-input`;
@@ -72,7 +81,7 @@ function ListRow({
         transform: CSS.Transform.toString(sortable.transform),
         transition: sortable.transition,
       }}
-      className={`flex items-start gap-2 ${sortable.isDragging ? "relative z-10 opacity-70" : ""}`}
+      className={`flex flex-wrap sm:flex-nowrap items-start gap-2 ${sortable.isDragging ? "relative z-10 opacity-70" : ""}`}
     >
       {reorderable ? (
         <Button
@@ -99,7 +108,7 @@ function ListRow({
           value={value}
           placeholder={placeholder}
           onChange={(e) => onEdit(e.target.value)}
-          className="min-h-24"
+          className="min-h-24 min-w-0 flex-1"
         />
       ) : (
         <Input
@@ -108,8 +117,10 @@ function ListRow({
           value={value}
           placeholder={placeholder}
           onChange={(e) => onEdit(e.target.value)}
+          className={extra ? "min-w-0 flex-[1_1_calc(100%-3rem)] sm:flex-1" : "min-w-0 flex-1"}
         />
       )}
+      {extra}
       <div className="flex shrink-0 items-center">
         {reorderable ? (
           <>
@@ -161,6 +172,7 @@ export function ListField({
   reorderable = false,
   disabled = false,
   onChange,
+  renderExtra,
 }: Props) {
   const listId = useId();
   const [announcement, setAnnouncement] = useState("");
@@ -171,7 +183,7 @@ export function ListField({
   );
   const move = (from: number, to: number) => {
     if (disabled || to < 0 || to >= values.length || from === to) return;
-    onChange(arrayMove(values, from, to));
+    onChange(arrayMove(values, from, to), { type: "move", from, to });
     setAnnouncement(`Pozycja „${label}” przeniesiona z miejsca ${from + 1} na ${to + 1}.`);
   };
   const handleDragEnd = ({ active, over, activatorEvent }: DragEndEvent) => {
@@ -234,8 +246,19 @@ export function ListField({
                 placeholder={placeholder}
                 reorderable={reorderable}
                 disabled={disabled}
-                onEdit={(next) => onChange(values.map((item, i) => (i === index ? next : item)))}
-                onRemove={() => onChange(values.filter((_, i) => i !== index))}
+                onEdit={(next) =>
+                  onChange(
+                    values.map((item, i) => (i === index ? next : item)),
+                    { type: "edit", index },
+                  )
+                }
+                onRemove={() =>
+                  onChange(
+                    values.filter((_, i) => i !== index),
+                    { type: "remove", index },
+                  )
+                }
+                extra={renderExtra?.(index)}
                 onMove={(target) => {
                   move(index, target);
                   requestAnimationFrame(() =>
@@ -253,7 +276,7 @@ export function ListField({
         size="sm"
         className="rounded-full"
         disabled={disabled}
-        onClick={() => onChange([...values, ""])}
+        onClick={() => onChange([...values, ""], { type: "add" })}
       >
         <Plus className="mr-1 size-4" /> Dodaj pozycję
       </Button>

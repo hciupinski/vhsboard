@@ -145,19 +145,17 @@ export function OfferBasicsSection({
           />
         </Field>
       </div>
-      {trip ? (
-        <SubtitleField
-          value={value.subtitle}
-          error={errors["subtitle"]}
-          ariaError={errorFor(errors, "subtitle")}
-          disabled={disabled}
-          onChange={(next) => set("subtitle", next)}
-        />
-      ) : null}
+      <SubtitleField
+        value={value.subtitle}
+        error={errors["subtitle"]}
+        ariaError={errorFor(errors, "subtitle")}
+        disabled={disabled}
+        onChange={(next) => set("subtitle", next)}
+      />
       <Field
         id="short-description"
         label="Krótki opis"
-        hint="Widoczny na liście ofert"
+        hint={dayCamp ? "Hero i kafelek obozu" : "Hero oferty"}
         characterCount={{ value: value.shortDescription, max: 500 }}
         error={errors["shortDescription"]}
       >

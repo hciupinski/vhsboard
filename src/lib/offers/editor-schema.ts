@@ -159,6 +159,13 @@ const normalizeEditorOfferInput = (input: unknown): unknown => {
             : content["accommodation"],
           paragraphs: normalizeList(content["paragraphs"]),
           highlights: normalizeList(content["highlights"]),
+          highlightIcons:
+            Array.isArray(content["highlightIcons"]) && Array.isArray(content["highlights"])
+              ? content["highlightIcons"].filter((_, index) => {
+                  const highlight = (content["highlights"] as unknown[])[index];
+                  return typeof highlight !== "string" || highlight.trim() !== "";
+                })
+              : content["highlightIcons"],
           included: normalizeList(content["included"]),
           excluded: normalizeList(content["excluded"]),
           schedule: schedule?.map((item) =>
@@ -195,6 +202,7 @@ const tripEditorOfferInputSchema = z
         {
           paragraphs: nonEmptyList,
           highlights: nonEmptyList,
+          highlightIcons: z.array(z.string().max(40)).optional(),
           included: nonEmptyList,
           excluded: nonEmptyList,
           schedule: scheduleSchema,
@@ -300,6 +308,7 @@ const dayCampTermSchema = z
 const dayCampContentSchema = z.object({
   paragraphs: nonEmptyList,
   highlights: nonEmptyList,
+  highlightIcons: z.array(z.string().max(40)).optional(),
   included: nonEmptyList,
   excluded: nonEmptyList,
   dayProgram: z

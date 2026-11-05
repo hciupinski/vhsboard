@@ -24,6 +24,7 @@ type Props = {
   disabled: boolean;
   onChange: (content: OfferContent) => void;
   mapManager?: ReactNode;
+  resortImageManager?: ReactNode;
 };
 export function OptionalSectionsEditor({
   sectionKey,
@@ -32,6 +33,7 @@ export function OptionalSectionsEditor({
   disabled,
   onChange,
   mapManager,
+  resortImageManager,
 }: Props) {
   const value = content[sectionKey];
   const enabled = sectionIsEnabled(value);
@@ -91,6 +93,7 @@ export function OptionalSectionsEditor({
                 2048,
                 "url",
               )}
+              {resortImageManager}
               {mapManager}
             </>
           ) : null}

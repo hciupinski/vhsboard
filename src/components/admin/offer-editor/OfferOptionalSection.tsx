@@ -21,10 +21,12 @@ export function OfferOptionalSection({
   disabled,
   onChange,
   mapManager,
+  resortImageManager,
 }: CommonProps & {
   sectionKey: "resort" | "training" | "transport" | "insurance";
   location: string;
   mapManager?: ReactNode | undefined;
+  resortImageManager?: ReactNode | undefined;
 }) {
   const dayCamp = offerKind === "day_camp" ? (content as DayCampContent) : null;
   return (
@@ -86,6 +88,7 @@ export function OfferOptionalSection({
           onChange(next);
         }}
         mapManager={mapManager}
+        resortImageManager={resortImageManager}
       />
     </>
   );

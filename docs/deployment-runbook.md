@@ -90,8 +90,10 @@ albo przenieś bootstrap PR-em na istniejący develop; nigdy nie resetuj cudzej 
 Push develop stosuje migracje nowego Supabase i publikuje pierwszy preview.
 Po migracjach utwórz osobnego administratora dev.
 
-Później: feature → PR do develop → testy na stałym aliasie → PR develop do main
-→ produkcja. Hotfix main przenieś również do develop przez PR. Wymagaj czterech
+Później: feature → PR do develop → testy na stałym aliasie → gałąź wydania od świeżego develop → PR do main → produkcja. Przygotowanie
+wydania opisuje [skill VHSBOARD release](../.agents/skills/vhsboard-release/SKILL.md).
+Hotfix i commit notatek wydania z main przenieś również do develop przez PR
+przed kolejnym wydaniem. Wymagaj czterech
 rzeczywistych kontroli Verify na obu branchach; nie omijaj istniejących reguł.
 Merge przenosi kod i migracje, ale nie oferty, konta ani pliki CMS.
 
