@@ -4,6 +4,34 @@ Read this file before changing the application. The detailed references are:
 
 - [Design system](docs/design-system.md)
 - [Architecture](docs/architecture.md)
+- [Deployment and releases](docs/deployment-runbook.md)
+- [Supabase operations](docs/supabase-runbook.md)
+- [SEO operations](docs/seo-runbook.md)
+
+## Documentation and agent working materials
+
+- Keep `docs/` limited to the current architecture, design system, reusable
+  operational runbooks, and release notes in `docs/releases/YYYY-MM-DD.N.md`.
+  Release notes describe a specific release; do not use them to archive task work.
+- Present task scopes, plans, specifications, and approval requests in the chat.
+  If a working file is needed, use an operating-system temporary directory outside
+  the repository. Do not write or commit agent plans, specs, session reports,
+  execution logs, task checklists, evidence collections, or local backups anywhere
+  in the repository, including Git-ignored directories.
+- These repository rules override default artifact locations and commit steps
+  in Superpowers and other skills. Do not work around an ignored directory by
+  choosing another repository path. `.gitignore` is a fallback, not permission
+  to create working materials locally.
+- Before finishing a change, check whether it establishes lasting architecture,
+  security, design, operational, or workflow knowledge. Verify it against the
+  implementation and update the relevant existing document with only the missing
+  information. Replace outdated guidance and avoid duplicate sources of truth.
+- Document the current supported behavior, its important constraints, and reusable
+  procedures. Exclude abandoned alternatives, unimplemented proposals, task
+  chronology, one-off test counts, local QA URLs, screenshots, and Drive links.
+  Put task-specific results in the chat, PR, or the client tracker as applicable.
+- Create a new permanent document only for a distinct, reusable subject that
+  does not fit an existing document; link it from this guide or the README.
 
 ## Product scope
 
@@ -80,8 +108,8 @@ photographs, fonts, and OG images require a Git build/deploy.
   is the source of truth for client feedback. Read its current state before
   selecting tasks and identify each task by its stable `VHS-###` ID, not a saved
   row number.
-- Before implementing a batch, prepare its scope and plan for the user's
-  approval. Keep tasks requiring client decisions or missing materials separate.
+- Before implementing a batch, present its scope and plan in the chat for the
+  user's approval. Keep tasks requiring client decisions or missing materials separate.
 - For every completed task, verify the actual behavior and capture a real
   screenshot as evidence. Embed the screenshot in the matching task's
   `Po / dowód` cell and fill in `Co poprawiono` and `Weryfikacja / wersja`,

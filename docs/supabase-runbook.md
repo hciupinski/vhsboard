@@ -143,6 +143,41 @@ administratora oraz logi i polityki Storage. Przy błędzie publikacji sprawdź
 hero, alt, wymagane dane i zewnętrzny link zapisów. Nie rozwiązuj błędu przez
 upublicznienie bucketu lub użycie service-role key w przeglądarce.
 
+## Zdjęcia przy opisie i galeria resortu
+
+Migracja `20261103120000_add_offer_story_images.sql` dodaje
+`offer_images.show_in_story`. Wybierz w głównej galerii maksymalnie trzy
+zdjęcia do pokazania przy opisie; nie wysyłaj ich ponownie. Flaga jest dozwolona
+tylko dla kategorii `gallery`, a trigger pod blokadą oferty pilnuje limitu.
+Kolejność wynika z kolejności galerii. Starsza baza bez tej kolumny nadal pozwala
+odczytać zdjęcia, lecz zmiana wyboru wymaga migracji. Uruchom
+`supabase/tests/offer_story_images.sql` tylko na lokalnej lub jednorazowej bazie.
+
+Migracja `20261104170000_add_resort_gallery_and_rental_pdf.sql` dodaje kategorię
+`resort_gallery` i rozszerza RPC kolejności obrazów. Zdjęcia resortu mają własną
+kolejność i nie zastępują `resort_map`, hero ani galerii zakwaterowania.
+Po zmianach sprawdź osobno te galerie i mapę, także w ofercie z wyłączoną sekcją.
+
+## PDF wypożyczalni
+
+Ta sama migracja tworzy singleton `portal_rental_document` (`id = 1`), osobny
+od listy dokumentów kontaktowych. CMS → Portal pozwala przesłać, zastąpić lub
+usunąć aktualny PDF wypożyczalni. Plik korzysta z prywatnego bucketu
+`contact-documents`, limitu 10 MiB, walidacji PDF i unikalnej ścieżki
+`documents/<uuid>.pdf`. Publiczny odczyt Storage dopuszcza aktualnie wskazany
+plik; zmiana wskaźnika wymaga administratora.
+
+Przy zastępowaniu frontend najpierw wysyła nowy plik, potem RPC
+`replace_portal_rental_document` pod blokadą wiersza zamienia ścieżkę i zwraca
+poprzednią do sprzątania. Usunięcie ustawia ścieżkę na `null`. Brak dokumentu
+lub błąd pierwszego odczytu pozostawia sekcję wypożyczalni bez publicznego CTA.
+Błąd odświeżenia nie usuwa dokumentu już dostępnego w cache. Podpisany URL jest
+ważny godzinę. Otwarta strona odpytuje co 30 minut, a powrót do karty odświeża
+dane, gdy Query uznaje je za nieświeże. Błędy sprzątania są logowane jako
+`rental_document_cleanup_failed`; przed ręcznym usunięciem pliku sprawdź
+odwołania zarówno w singletonie, jak i w `contact_documents`. Nie usuwaj
+aktywnego dokumentu w celu ponowienia uploadu.
+
 ## Karuzela strony głównej
 
 `public.portal_carousel_images` przechowuje wybór i kolejność zdjęć z katalogu
@@ -151,6 +186,15 @@ repozytorium. Administrator zapisuje pełną listę przez
 zmienić. CMS wybiera istniejące ścieżki — nie wysyła nowych plików karuzeli.
 Dodanie nowego zdjęcia do katalogu wymaga wygenerowania wariantów i deployu;
 zmiana wyboru istniejących zdjęć wymaga tylko zapisu w CMS.
+
+Ścieżki karuzeli są identyfikatorami zapisanymi w bazie. Po zmianie nazw zdjęć
+sprawdź `src/lib/portal-carousel/catalogue.ts` i wszystkie odwołania aplikacji
+oraz generatora OG. Odczyt mapuje znane stare ścieżki na aktualne, pomija
+nieznane wpisy i usuwa powtórzenia z zachowaniem pierwszego wystąpienia.
+Pusty wybór publiczny korzysta z zestawu domyślnego. Zapis dopuszcza wyłącznie
+unikalne ścieżki z bieżącego katalogu; aliasy służą zgodności odczytu, nie nowym
+zapisom. Po wymianie fotografii wykonaj regenerację i kontrole obrazów opisane
+w [runbooku wdrożenia](deployment-runbook.md#zdjęcia-fonty-i-podglądy-udostępniania).
 
 ## Globalny motyw portalu
 
@@ -286,8 +330,8 @@ publiczny anon key oraz deployment secrets. Oczekiwane refs obu projektów
 są osobnymi repository variables; pipeline porównuje z nimi URL i project ID
 przed migracją. Nie kopiujemy automatycznie treści produkcji.
 
-Użytkownik potwierdził utworzenie projektu dev i konfigurację Auth 2026-11-04;
-nie zastępuje to testu logowania i resetu na rzeczywiście wdrożonym aliasie.
+Sama konfiguracja projektu i Auth nie zastępuje testu logowania oraz resetu
+na rzeczywiście wdrożonym aliasie.
 Dev Site URL: `https://develop.vhsboard.pages.dev`, Redirect URL:
 `https://develop.vhsboard.pages.dev/admin/reset-password`. Lokalne callbacki
 localhost/127.0.0.1:3000 można dodać do dev. Publiczna rejestracja wyłączona.
