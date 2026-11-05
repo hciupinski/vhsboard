@@ -69,6 +69,8 @@ Push do main/develop lub ręczny **Deploy Pages** z jednego z tych branchy:
    serwowaną z konkretnego deployment URL i stałego adresu. Maksymalnie sześć prób,
    z timeoutami HTTP i przerwami po 5 s. Summary podaje zweryfikowane URL i SHA.
 
+Po udanej weryfikacji produkcji osobny job publikuje GitHub Release i tag `vYYYY-MM-DD.N` dla dokładnie wdrożonego SHA, jeśli ten commit dodał jedną notatkę wydania. Zwykły push main bez nowej notatki pomija publikację. Ponowienie nieudanego joba publikacji wznawia częściową publikację; ponowienie całego workflow wymaga aktualnego head main (kontrola deployu). Konflikt tagu lub treści zatrzymuje job bez nadpisywania. Publikacja nie zmienia oznaczenia „Latest”; wcześniejsze wydania nie są uzupełniane automatycznie.
+
 Błąd migracji blokuje frontend. W nowym workflow nieaktualny commit jest odrzucany
 przed migracją oraz uploadem; wdrażaj najnowszy head, zamiast uruchamiać stary run. Osobne grupy
 concurrency chronią każde środowisko przed nakładającymi się migracjami;
@@ -100,6 +102,37 @@ Merge przenosi kod i migracje, ale nie oferty, konta ani pliki CMS.
 Usuń stare repository-level kopie konfiguracji Supabase/SEO dopiero po zielonych
 wdrożeniach i sprawdzeniu Verify do obu branchy. Wspólne dane firmy mogą pozostać.
 
+## Przygotowanie i publikacja wydania
+
+Gałąź `releases/YYYY-MM-DD.N` powstaje z zapisanego, świeżego SHA develop;
+data używa `Europe/Warsaw`, a numer nie może kolidować z istniejącą gałęzią,
+notatką, tagiem lub wydaniem. PR kieruje do `main`. Przed przygotowaniem
+potwierdź, że develop zawiera wszystkie commity main, narzędzia wydania
+(`cliff.toml`, przypięty git-cliff i `release:notes`) oraz rzeczywistą zmianę.
+Nie kopiuj narzędzi z innego checkoutu ani nie dodawaj po cichu merge'a main.
+
+`bun run release:notes --tag "$release_id" "$main_sha..$develop_sha"` generuje
+notatki z jawnego zakresu snapshotów. Opcja `--tag` nadaje nagłówek i nie tworzy
+taga Git. Przejrzyj wynik względem commitów, diffu i migracji, także gdy commity
+nie używają Conventional Commits. Zapisz notatki i pełne źródłowe SHA main oraz
+develop w `docs/releases/YYYY-MM-DD.N.md`. Nie dodawaj do nich planów ani
+raportów sesji. Commit notatek wymaga późniejszego PR synchronizującego main
+do develop przed następnym wydaniem. Kontrole i bezpieczne wznowienie istniejącego
+PR opisuje [skill wydania](../.agents/skills/vhsboard-release/SKILL.md).
+
+Po zweryfikowanym deployu main job `publish-release` uruchamia
+`scripts/publish-github-release.ts`. Dokładnie jedna nowa notatka wydania w diffie
+wdrożonego commita względem pierwszego rodzica wyznacza GitHub Release i tag
+`vYYYY-MM-DD.N`, wskazujący wdrożony SHA main. Brak nowej notatki pomija
+publikację, a wiele notatek lub niepoprawna nazwa zatrzymuje ją. Wznowienie
+sprawdza zgodność istniejącego taga i treści wydania; nie nadpisuje konfliktów.
+Develop i wcześniejsze wydania nie są automatycznie publikowane ani uzupełniane.
+
+Przy awarii publikacji sprawdź osobno wynik deployu, tag i GitHub Release:
+nieudany job publikacji nie oznacza cofnięcia wdrożenia. Nie twórz ręcznie taga
+na SHA gałęzi wydania i nie omijaj kontroli konfliktu. Przygotowanie PR nie jest
+zgodą na merge lub deploy; nie uruchamiaj ich bez polecenia użytkownika.
+
 ## Diagnostyka i dowody
 
 - Przy błędzie konfiguracji sprawdź nazwy i Environment; nie wypisuj wartości
@@ -111,8 +144,9 @@ wdrożeniach i sprawdzeniu Verify do obu branchy. Wspólne dane firmy mogą pozo
 - Publiczny preview ma noindex, ale domyślnie nie jest prywatny. Access można
   włączyć osobno; wtedy kontrola publicznych URL wymaga odpowiedniego dostępu.
 - Sprawdź publiczne trasy, refresh szczegółów ofert i admina, logowanie/reset,
-  odczyt draftów i izolację zapisów dev od produkcji. Screenshoty 1440×900 i
-  390×844, URL, SHA i run CI zapisuj w raporcie i folderze projektu Drive.
+  odczyt draftów i izolację zapisów dev od produkcji. Wyniki, URL, SHA, run CI
+  i screenshoty 1440×900 oraz 390×844 przedstaw w czacie lub PR, a dla zgłoszeń
+  klientki w trackerze. Nie twórz raportu sesji ani kolekcji dowodów w `docs/`.
 - Nie zgłaszaj wdrożenia na podstawie merge lub samego lokalnego buildu.
 
 ## Przyszłe przepięcie domeny

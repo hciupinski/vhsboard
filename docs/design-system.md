@@ -93,6 +93,11 @@ their semantic colors. Hover never becomes a requirement for touch use.
 - Keep destructive actions visually distinct and accessible; an icon alone is
   insufficient without an accessible name or a confirming interaction when the
   action becomes persistent.
+- Reuse `ImageUploadForm` for file and alternative-text inputs. Keep labels,
+  controls and wrapping hints aligned across desktop columns, and stack them on
+  narrow screens. Associate field errors with their input, focus the first
+  invalid field on submission, and prevent duplicate uploads while pending.
+  Reset fields only after persistence succeeds so failed uploads can be retried.
 
 ## Components and interaction
 
@@ -108,6 +113,13 @@ their semantic colors. Hover never becomes a requirement for touch use.
   per decision point.
 - Preserve sticky headers only where they improve navigation. They must keep a
   readable background and a clear bottom boundary while scrolling.
+- Reuse the shared `FaqSection`: questions/answers are 16 px on mobile and
+  20/18 px from the 1024 px breakpoint. Keep its existing accordion behavior.
+- Use `OfferGallery` for offer and accommodation photos. Its Radix lightbox
+  contains the full image without cropping, supports looping previous/next
+  controls and arrow keys, announces the current photo, and returns focus to
+  the opening thumbnail on close. Controls have at least 44 × 44 px targets;
+  missing signed URLs do not produce empty thumbnails.
 
 ## Content voice
 
@@ -122,6 +134,8 @@ than a sales catalogue.
   generic phrases such as “an unforgettable adventure”.
 - Do not promise booking, live availability, or payment handling on VHSBOARD.
   The booking action directs visitors to the configured external registration system.
+- Use „obozy” in visitor-facing copy. Keep the technical `day_camp` identifier
+  and existing routes; wording changes do not require renaming the data model.
 
 ## Responsive and accessibility requirements
 
@@ -164,6 +178,10 @@ The public header has a consistent 73 px height; desktop navigation starts at
 1024 px (`lg`), with the mobile menu below it. Keep the matching section anchor
 offset so headings remain visible below the sticky navigation. Escape closes
 the mobile menu and returns focus to its trigger.
+
+On the development site, retain the fixed yellow `WERSJA DEWELOPERSKA` label
+with dark text in both portal themes and the CMS. Its 24 px reserved height is
+additional to header and anchor offsets; the label must not intercept clicks.
 
 Buttons transition for 160 ms and press to scale .98 only without reduced
 motion. Cards and gallery tiles animate opacity/transform for 160 ms. Keyboard

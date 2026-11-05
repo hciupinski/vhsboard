@@ -38,6 +38,7 @@ social previews, and build-time company configuration require a new Git deploy.
 | `/trips/:slug`                                             | Legacy 301 redirect to `/wyjazdy/:slug`.             |
 | `/admin`                                                   | Authorized offer list.                               |
 | `/admin/login`                                             | Administrator sign-in.                               |
+| `/admin/reset-password`                                    | Supabase password recovery.                          |
 | `/admin/new`, `/admin/:slug`                               | Create or edit an offer by slug.                     |
 | `/admin/dokumenty`, `/admin/portal`                        | Contact PDF and carousel management.                 |
 
@@ -59,6 +60,11 @@ Only the six marketing pages enter the sitemap. See the [SEO runbook](seo-runboo
   Gallery reordering uses the transactional `reorder_offer_images` RPC.
 - `contact_documents` stores public PDF metadata. `portal_carousel_images`
   stores selected local asset paths and order; it does not upload carousel files.
+- `portal_rental_document` is a separate singleton holding the optional rental
+  PDF path. CMS → Portal replaces it through `replace_portal_rental_document`;
+  its file shares the private `contact-documents` bucket and one-hour signed
+  URL rules. The public rental section shows its CTA only when a document is
+  available. This does not add a rental reservation flow.
 - `portal_settings` is a singleton (`id = 1`) storing the global
   `original | winter` theme. Public visitors can read it; only CMS administrators
   can update its `theme` column. Client roles cannot insert, delete or move it.
@@ -71,6 +77,56 @@ Implementation modules live under `src/lib/offers`, `src/lib/images`,
 `src/lib/documents`, `src/lib/portal-carousel`, and `src/lib/auth`. Schema changes
 live in `supabase/migrations`; security tests live in `supabase/tests`.
 The [Supabase runbook](supabase-runbook.md) describes local database checks and roles.
+
+### Application boundaries
+
+`src/lib/supabase.ts` owns the shared SDK client. Offer repositories own SQL
+queries and safe error translation; Zod schemas and mappers validate database
+rows before exposing domain objects. Public list queries select summary fields
+without JSONB content or gallery rows. Lists and details both filter by published
+status and offer kind; details additionally load content and ordered images.
+Shared Query options keep route loaders and components
+on the same cache keys and refetch on mount to obtain fresh browser-signed URLs.
+Never substitute an administrator or preview query for a public query.
+
+`editor-schema.ts` defines the editable input and draft/publication validation.
+`src/routes/admin.$slug.tsx` owns editor state, validation feedback, unsaved
+changes, mutations and cache refresh. `OfferEditorForm` is a controlled
+composition of focused components in `src/components/admin/offer-editor`;
+sections emit immutable updates and do not save, authenticate or create their
+own copy of whole-offer state. Image managers are supplied separately for an
+already saved offer and retain responsibility for their upload operations.
+Keep v2 normalization and legacy compatibility at the shared form/data boundaries.
+
+### Dates, lists and marketing badges
+
+Date-based presentation uses `getTodayInWarsaw` in `Europe/Warsaw`. An offer is
+finished only when a non-null `endDate` is before today; an offer ending today
+or without an end date is not finished. This does not change its database status.
+Public finished cards show a greyscale image and `Zakończone`, without a detail
+link or CTA. `show_last_places_badge` is a manually managed marketing flag,
+not availability; finished cards suppress it. Existing detail URLs remain valid
+for published offers.
+
+The homepage selects dated trips and camps starting today or later, ordered by
+start date and Polish title. Events remain a contact service, not dated offers.
+Related trips exclude the current offer and show at most three upcoming trips.
+The administrator list independently sorts unfinished offers first, then finished
+ones; within each group it orders by start date (missing dates last), Polish
+title and ID. Finished admin cards retain editing actions, and only published
+ones replace their publication label with `Zakończone`. Camp summary dates span
+the first through last term, including gaps between terms.
+
+## Cookie preferences
+
+`src/lib/cookie-consent.ts` owns the first-party `vhsboard_cookie_consent` cookie:
+URI-encoded JSON with boolean `analytics` and `marketing`, a 180-day lifetime,
+`Path=/` and `SameSite=Lax`. Both optional categories default to false. Missing
+or invalid preferences show the banner after the provider mounts; browser APIs
+are guarded for prerendering. The public footer reopens the Radix preferences
+dialog. A failed persistence attempt leaves the UI open rather than claiming
+the choice was saved. The banner itself adds no analytics or marketing tags;
+any future optional integration must enforce its category's consent explicitly.
 
 ## Global appearance
 
@@ -125,6 +181,11 @@ metadata and a public `_deployment.json` marker verify the exact SHA served by
 both the deployment URL and stable origin. Account-level settings, secrets and
 branch protections require live verification; repository files do not prove them.
 
+`DevelopmentBanner` marks both public and CMS screens only when build-time
+`VITE_SITE_URL` equals `https://develop.vhsboard.pages.dev`, independently of
+Vite development mode. The root body attribute reserves space for the banner;
+sticky headers and section anchors include `--development-banner-height`.
+
 Keep this architecture small. No separate backend, queues, asset platform, or
 booking feature is needed for the current product. See the
 [deployment runbook](deployment-runbook.md) for logs and operational checks.
@@ -140,6 +201,17 @@ public menu order and visibility: About → Program → Price → Accommodation 
 Resort → Training → Transport → Insurance → Gallery. Program retains the existing
 schedule, Price includes camp terms, and camp parent information belongs to About.
 Existing nested hash anchors continue working.
+
+Gallery categories remain separate: `gallery` supplies hero candidates and the
+main gallery, `accommodation` supplies accommodation photos, `resort_gallery`
+supplies resort photos, and `resort_map` supplies the single trail map. Each
+gallery has independent ordering; accommodation and resort photos use the shared
+gallery's horizontal mobile layout. Story photos are selected from the main
+gallery with `show_in_story`, not uploaded to a separate category. The database
+limits selection to three per offer under an offer-row lock; their gallery order
+determines display order. Before the story-image migration, reads retry without
+the missing column, while attempts to change selection explain that migration
+is required. Do not silently treat other database errors as an old schema.
 
 Accommodation, Resort, Training, Transport and Insurance are optional. Switching
 one off preserves its content and images, hides its public section and skips its
