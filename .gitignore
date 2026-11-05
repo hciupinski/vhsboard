@@ -23,8 +23,15 @@ coverage/
 supabase/.branches/
 supabase/.temp/
 
+# Defensive exclusions for agent artifacts; AGENTS.md requires working files
+# outside the repository, even when these paths would be ignored.
 */superpowers/
-docs/tasks/
+/.superpowers/
+/docs/plans/
+/docs/specs/
+/docs/tasks/
+/docs/local-backup*/
+/docs/*-verification.md
 
 # Wrangler / Cloudflare
 .wrangler/

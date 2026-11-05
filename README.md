@@ -45,11 +45,12 @@ bun run format
 
 ## Wdrożenia
 
-Tylko gałąź `main` może wdrażać witrynę na bezpłatny adres Cloudflare Pages
-`*.pages.dev` — po pushu lub merge'u do `main`, a także przez ręczne
-uruchomienie workflow rozpoczęte z `main`. Domena `vhsboard.pl` pozostaje poza
-zakresem tego wdrożenia i nadal obsługuje ją WordPress. Ręczną konfigurację oraz
-sprawdzenia pierwszego merge'a opisuje
+Gałąź `main` wdraża produkcję na `https://vhsboard.pages.dev`, a `develop`
+wersję testową na `https://develop.vhsboard.pages.dev`. Każde środowisko używa
+własnego projektu Supabase. Workflow uruchamia push, merge lub ręczne
+wywołanie z właściwej gałęzi. Domena `vhsboard.pl` pozostaje poza zakresem
+tego wdrożenia i nadal obsługuje ją WordPress. Konfigurację, procedurę wydań
+oraz sprawdzenia wdrożenia opisuje
 [runbook wdrożenia](docs/deployment-runbook.md).
 
 Do uruchomienia strony publicznej wymagane są również publiczne zmienne
@@ -83,3 +84,12 @@ Publikacja i edycja ofert, PDF-ów oraz wybór zdjęć karuzeli w CMS nie wymaga
 rebuilda. Zmiany kodu, zdjęć repozytorium, fontów i grafik OG wymagają deployu.
 Aktualne trasy i granice aplikacji opisuje [architektura](docs/architecture.md),
 a reguły mediów i interakcji — [system designu](docs/design-system.md).
+
+## Dokumentacja
+
+`docs/` zawiera aktualny opis rozwiązania, design system, runbooki i notatki
+wydań w `docs/releases/YYYY-MM-DD.N.md`. Plany i specyfikacje zadań przedstawiaj
+w czacie, a wyniki pracy w czacie, PR lub właściwym trackerze. Pliki robocze powstają
+w katalogu tymczasowym poza repozytorium. Trwałe ustalenia dopisuj do właściwego
+istniejącego dokumentu po sprawdzeniu ich zgodności z kodem. Szczegółowe zasady
+dokumentowania pracy zawiera [przewodnik agentów](AGENTS.md#documentation-and-agent-working-materials).
