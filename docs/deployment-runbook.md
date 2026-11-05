@@ -69,7 +69,7 @@ Push do main/develop lub ręczny **Deploy Pages** z jednego z tych branchy:
    serwowaną z konkretnego deployment URL i stałego adresu. Maksymalnie sześć prób,
    z timeoutami HTTP i przerwami po 5 s. Summary podaje zweryfikowane URL i SHA.
 
-Po udanej weryfikacji produkcji osobny job publikuje GitHub Release i tag `vYYYY-MM-DD.N` dla dokładnie wdrożonego SHA, jeśli ten commit dodał jedną notatkę wydania. Zwykły push main bez nowej notatki pomija publikację. Ponowienie nieudanego joba publikacji wznawia częściową publikację; ponowienie całego workflow wymaga aktualnego head main (kontrola deployu). konflikt tagu lub treści zatrzymuje job bez nadpisywania. Publikacja nie zmienia oznaczenia „Latest”; wcześniejsze wydania nie są uzupełniane automatycznie.
+Po udanej weryfikacji produkcji osobny job publikuje GitHub Release i tag `vYYYY-MM-DD.N` dla dokładnie wdrożonego SHA, jeśli ten commit dodał jedną notatkę wydania. Zwykły push main bez nowej notatki pomija publikację. Ponowienie nieudanego joba publikacji wznawia częściową publikację; ponowienie całego workflow wymaga aktualnego head main (kontrola deployu). Konflikt tagu lub treści zatrzymuje job bez nadpisywania. Publikacja nie zmienia oznaczenia „Latest”; wcześniejsze wydania nie są uzupełniane automatycznie.
 
 Błąd migracji blokuje frontend. W nowym workflow nieaktualny commit jest odrzucany
 przed migracją oraz uploadem; wdrażaj najnowszy head, zamiast uruchamiać stary run. Osobne grupy

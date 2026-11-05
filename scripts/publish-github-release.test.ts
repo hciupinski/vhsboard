@@ -23,6 +23,14 @@ describe("release publication", () => {
       ref: "refs/tags/v2026-11-05.1",
       sha: "a".repeat(40),
     });
+    expect(request).toHaveBeenNthCalledWith(4, "POST", "/releases", {
+      tag_name: "v2026-11-05.1",
+      name: "2026-11-05.1",
+      body: "notes\n",
+      draft: false,
+      prerelease: false,
+      make_latest: "false",
+    });
   });
   it("resumes after tag creation and accepts only a matching published release", async () => {
     const sha = "a".repeat(40);
@@ -100,4 +108,24 @@ it("does not repair a missing tag when a release already exists", async () => {
     .mockResolvedValueOnce({ tag_name: "v2026-11-05.1" });
   await expect(publishRelease(request, "2026-11-05.1", "a".repeat(40), "notes")).rejects.toThrow();
   expect(request).toHaveBeenCalledTimes(2);
+});
+
+it("resumes from an existing annotated tag without recreating it", async () => {
+  const sha = "a".repeat(40);
+  const request = vi
+    .fn()
+    .mockResolvedValueOnce({ object: { type: "tag", sha: "b".repeat(40) } })
+    .mockResolvedValueOnce({ object: { type: "commit", sha } })
+    .mockResolvedValueOnce(null)
+    .mockResolvedValueOnce({ html_url: "https://github.com/o/r/releases/tag/v2026-11-05.1" });
+  await publishRelease(request, "2026-11-05.1", sha, "notes");
+  expect(request).toHaveBeenCalledTimes(4);
+  expect(request).toHaveBeenNthCalledWith(4, "POST", "/releases", {
+    tag_name: "v2026-11-05.1",
+    name: "2026-11-05.1",
+    body: "notes",
+    draft: false,
+    prerelease: false,
+    make_latest: "false",
+  });
 });
