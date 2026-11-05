@@ -1,0 +1,24 @@
+---
+name: vhsboard-release
+description: Use when preparing a VHSBOARD release branch and pull request from develop to main.
+---
+
+# Przygotowanie wydania VHSBOARD
+
+Przygotuj przeglądalny PR wydania. Samo przygotowanie wydania wymaga polecenia użytkownika; nie wykonuj go w ramach tworzenia lub testowania tego skilla. Merge do main uruchamia produkcyjne migracje Supabase i deploy Cloudflare. Nie merguj, nie twórz tagu ani GitHub Release i nie uruchamiaj deployu. Nie kopiuj danych CMS.
+
+1. Sprawdź `AGENTS.md`, [runbook](../../../docs/deployment-runbook.md), status repozytorium, worktree i dostępność `git`, `bun`, `gh`. Nie naruszaj istniejących zmian; użyj osobnego worktree. Pobierz świeże refy bez kasowania lokalnej pracy: `git fetch origin main develop '+refs/heads/releases/*:refs/remotes/origin/releases/*'` (z `--prune` tylko przy bezpiecznym, ograniczonym refspecu). Zapisz pełne SHA `origin/main` i `origin/develop`. Sprawdź `git rev-list --left-right --count MAIN...DEVELOP`, log obu stron i różnicę. Jeśli main ma unikalne commity, wstrzymaj wydanie: przeanalizuj je, a niezbędny backport wykonaj przez osobny, przejrzysty PR do develop po odpowiednim poleceniu. Po jego merge pobierz refy i zacznij ponownie. To dotyczy także commitów notatek poprzedniego wydania; nie scalaj main po cichu w gałąź wydania. Jeśli brak zmian develop względem main albo drzewa snapshotów są identyczne, zakończ bez PR.
+2. Przyjmij datę z polecenia lub bieżącą w `Europe/Warsaw`, format `YYYY-MM-DD`; wybierz numer `N` większy o jeden od największego istniejącego sufiksu dla tej daty (albo 1, gdy brak wydań) w nazwie `releases/YYYY-MM-DD.N`. Sprawdź lokalne i świeże zdalne gałęzie oraz istniejące pliki `docs/releases/YYYY-MM-DD.N.md` na obu snapshotach; nie nadpisuj ich. Przed wyborem sprawdź też otwarte PR-y wydania: powtórne wywołanie dla tej samej pary snapshotów powinno odzyskać istniejący PR dopiero po udowodnieniu zgodności jego gałęzi, historii i notatek, zamiast tworzyć duplikat. W razie wątpliwości zatrzymaj się. Utwórz osobny worktree i nową gałąź dokładnie z zapisanego SHA develop, nie z bieżącej gałęzi.
+3. Sprawdź, czy snapshot develop zawiera `cliff.toml`, przypięty git-cliff i skrypt `release:notes`. Jeśli nie, zatrzymaj się: narzędzia muszą najpierw trafić na develop przez osobny, przeglądany PR; nie kopiuj ich po cichu z lokalnego checkoutu. Zainstaluj zależności z lockfile (`bun install --frozen-lockfile`). Wygeneruj notatki z jawnego przedziału snapshotów, bez wymagania tagów ani Conventional Commits:
+
+   ```sh
+   mkdir -p docs/releases
+   bun run release:notes --tag "$release_id" "$main_sha..$develop_sha" > "docs/releases/$release_id.md"
+   ```
+
+   `release_id` to `YYYY-MM-DD.N`, a pełna nazwa gałęzi to `releases/$release_id`; `--tag` nadaje wyłącznie nagłówek, nie tworzy tagu Git. Przejrzyj wynik względem `git log` i `git diff --stat`, PR-ów oraz migracji; uzupełnij go czytelnym opisem i usuń mylący szum tylko po sprawdzeniu. Nie pomijaj zmian z niekonwencjonalnymi komunikatami. W samym pliku notatek zapisz pełne SHA snapshotów main i develop, aby umożliwić sprawdzenie wznowienia po pushu. Zacommituj tylko notatki wydania; zapisz finalny SHA gałęzi. Osobne pliki są trwałym zapisem, ale powodują dodatkowy commit na main wymagający późniejszej synchronizacji do develop.
+
+4. W worktree uruchom `bun run typecheck`, `bun run test`, `bun run lint`, `bun run build` i `bun run check:seo`; w razie zmian obrazów także `bun run images:check`. Pełny build wymaga poprawnej publicznej konfiguracji; nie wyświetlaj sekretów i uczciwie zgłoś brakujące kontrole. Sprawdź wpływ migracji oraz zgodność ze starszym frontendem; nie uruchamiaj ich na produkcji. Zapisz wyniki, środowisko i ograniczenia.
+5. Przed push ponownie pobierz i porównaj SHA main/develop oraz sprawdź kolizję nazwy na origin. Jeśli którykolwiek się zmienił, zatrzymaj się i oceń zakres, numer, notatki oraz kontrole od nowa. Push tylko nowej gałęzi bez `--force`. Ponownie zweryfikuj refy i utwórz PR z jawnymi `--base main --head releases/YYYY-MM-DD.N`. W treści zamieść notatki, oba snapshoty i finalny SHA, podsumowanie commitów/diffu, wyniki kontroli, wpływ migracji oraz ograniczenia. Zweryfikuj cztery rzeczywiste kontrole Verify: test, lint, typecheck, build; zgłoś niepowodzenia lub oczekiwanie, nie omijaj ochrony.
+
+W razie przerwania sprawdź zdalny ref i PR. Wznów tylko jeśli można dowieść tego samego źródłowego i docelowego snapshotu, zgodności notatek, historii i istniejącego PR; w przeciwnym razie zatrzymaj się i wyjaśnij rozbieżność. Nigdy nie nadpisuj istniejącej gałęzi. Po późniejszym merge konieczny jest przejrzysty PR main → develop przed następnym wydaniem; nie twórz go automatycznie bez odpowiedniego polecenia. Nie przedstawiaj PR ani lokalnego buildu jako wdrożenia.
