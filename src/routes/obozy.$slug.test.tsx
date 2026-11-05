@@ -152,7 +152,7 @@ describe("day-camp detail route", () => {
       "href",
       "https://zapisy.example.test/wakeboardowe-lato",
     );
-    expect(screen.getByRole("link", { name: "Wybierz turnus" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Przejdź do zapisów" })).toHaveAttribute(
       "href",
       "#turnusy",
     );

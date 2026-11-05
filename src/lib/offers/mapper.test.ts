@@ -50,6 +50,12 @@ const completeImageRows = [
 ];
 
 describe("offer row mappers", () => {
+  it("rejects discontinued combined offers in public lists and details", () => {
+    const row = { ...completeOfferRow, activity: "combo" };
+    expect(() => mapOfferListRow(row, new Map())).toThrow();
+    expect(() => mapOfferDetailRow(row, [], new Map())).toThrow();
+  });
+
   it("preserves saved attraction icons for a published offer", () => {
     const row = {
       ...completeOfferRow,

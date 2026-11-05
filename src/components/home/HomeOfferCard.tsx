@@ -7,7 +7,6 @@ import type { PublicOffer } from "@/lib/offers/types";
 const activityLabels: Record<PublicOffer["activity"], string> = {
   surf: "Surf",
   snow: "Snowboard",
-  combo: "Surf + snowboard",
   wake: "Wakeboard",
 };
 

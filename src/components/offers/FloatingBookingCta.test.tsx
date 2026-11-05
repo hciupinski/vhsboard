@@ -144,7 +144,7 @@ describe("FloatingBookingCta", () => {
     const ref = createRef<HTMLElement>();
     Object.assign(ref, { current: document.createElement("aside") });
     render(
-      <FloatingBookingCta cardRef={ref} href="#turnusy" label="Wybierz turnus" showOnMobile />,
+      <FloatingBookingCta cardRef={ref} href="#turnusy" label="Przejdź do zapisów" showOnMobile />,
     );
     act(() =>
       notify(
@@ -157,7 +157,7 @@ describe("FloatingBookingCta", () => {
         {} as IntersectionObserver,
       ),
     );
-    expect(screen.getByRole("link", { name: "Wybierz turnus" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Przejdź do zapisów" })).toHaveAttribute(
       "href",
       "#turnusy",
     );
@@ -167,17 +167,17 @@ describe("FloatingBookingCta", () => {
     await act(async () => {
       document.body.append(dialog);
     });
-    expect(screen.queryByRole("link", { name: "Wybierz turnus" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Przejdź do zapisów" })).toBeNull();
     await act(async () => {
       dialog.remove();
     });
-    expect(screen.getByRole("link", { name: "Wybierz turnus" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Przejdź do zapisów" })).toBeVisible();
     const banner = document.createElement("div");
     banner.id = "cookie-consent-heading";
     await act(async () => {
       document.body.append(banner);
     });
-    expect(screen.queryByRole("link", { name: "Wybierz turnus" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Przejdź do zapisów" })).toBeNull();
     await act(async () => {
       banner.remove();
     });

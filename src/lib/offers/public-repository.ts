@@ -102,7 +102,8 @@ export const listPublishedOffers = async (kind: OfferKind = "trip"): Promise<Pub
       .from("offers")
       .select(LIST_COLUMNS)
       .eq("status", PUBLISHED_STATUS)
-      .eq("offer_kind", kind);
+      .eq("offer_kind", kind)
+      .in("activity", kind === "trip" ? ["surf", "snow"] : ["wake", "snow"]);
 
     if (error) {
       throw new OfferRepositoryError("Nie udało się pobrać opublikowanych ofert.", {
@@ -124,7 +125,8 @@ export const listPublishedOfferSeoRecords = async (): Promise<PublishedOfferSeoR
     const { data, error } = await supabase
       .from("offers")
       .select(SEO_COLUMNS)
-      .eq("status", PUBLISHED_STATUS);
+      .eq("status", PUBLISHED_STATUS)
+      .in("activity", ["surf", "snow", "wake"]);
 
     if (error) {
       throw new OfferRepositoryError("Nie udało się pobrać danych SEO ofert.", { cause: error });
@@ -150,6 +152,7 @@ export const getPublishedOfferBySlug = async (
       .eq("slug", slug)
       .eq("status", PUBLISHED_STATUS)
       .eq("offer_kind", kind)
+      .in("activity", kind === "trip" ? ["surf", "snow"] : ["wake", "snow"])
       .maybeSingle();
 
     if (offerError) {

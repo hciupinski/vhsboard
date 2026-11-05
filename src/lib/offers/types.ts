@@ -3,7 +3,7 @@ export type OfferStatus = "draft" | "published" | "archived";
 
 export type OfferKind = "trip" | "day_camp";
 
-export type TripActivity = "surf" | "snow" | "combo";
+export type TripActivity = "surf" | "snow";
 export type DayCampActivity = "wake" | "snow";
 export type OfferActivity = TripActivity | DayCampActivity;
 

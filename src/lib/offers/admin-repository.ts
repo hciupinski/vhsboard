@@ -4,6 +4,7 @@ import { z } from "zod";
 import { mapAdminPreviewOfferDetailRow } from "./mapper";
 import {
   editorOfferInputSchema,
+  storedEditorOfferInputSchema,
   type EditableOffer,
   type EditableOfferInput,
 } from "./editor-schema";
@@ -84,10 +85,13 @@ const isHttpsUrl = (value: string): boolean => {
 };
 
 const toEditableOfferInput = (row: Record<string, unknown>): EditableOfferInput =>
-  editorOfferInputSchema.parse({
+  storedEditorOfferInputSchema.parse({
     offerKind: row["offer_kind"],
     slug: row["slug"],
-    activity: row["activity"],
+    activity:
+      row["offer_kind"] !== "day_camp" && row["activity"] !== "surf" && row["activity"] !== "snow"
+        ? ""
+        : row["activity"],
     title: row["title"],
     subtitle: row["subtitle"],
     shortDescription: row["short_description"],
@@ -286,6 +290,7 @@ export const canPublishOffer = async (id: string): Promise<boolean> => {
     }
 
     const editable = toEditableOfferInput(offerData);
+    if (!editorOfferInputSchema.safeParse(editable).success) return false;
     if (getSectionIssues(editable.content, editable.offerKind ?? "trip").length) return false;
     const { heroImagePath } = editable;
     if (heroImagePath === null) {

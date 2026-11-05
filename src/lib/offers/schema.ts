@@ -79,7 +79,7 @@ const offerBaseRowSchema = z.object({
   id: z.string().uuid(),
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   offer_kind: z.enum(["trip", "day_camp"]).default("trip"),
-  activity: z.enum(["surf", "snow", "combo", "wake"]),
+  activity: z.enum(["surf", "snow", "wake"]),
   title: requiredTextSchema.max(120),
   subtitle: requiredTextSchema.max(280),
   short_description: requiredTextSchema.max(500),
@@ -106,7 +106,7 @@ const validateOfferDetailRow = (
   offer: Omit<z.infer<typeof offerDetailRowShape>, "status">,
   ctx: z.RefinementCtx,
 ) => {
-  const isTrip = offer.offer_kind === "trip" && ["surf", "snow", "combo"].includes(offer.activity);
+  const isTrip = offer.offer_kind === "trip" && ["surf", "snow"].includes(offer.activity);
   const isDayCamp = offer.offer_kind === "day_camp" && ["wake", "snow"].includes(offer.activity);
   const contentMatches =
     offer.offer_kind === "trip"

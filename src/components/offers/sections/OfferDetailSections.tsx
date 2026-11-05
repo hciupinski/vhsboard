@@ -400,7 +400,7 @@ export function OfferDetailSections({
       <FloatingBookingCta
         cardRef={bookingCardRef}
         href={camp?.terms.length ? "#turnusy" : offer.bookingUrl}
-        label={camp?.terms.length ? "Wybierz turnus" : "Przejdź do zapisów"}
+        label="Przejdź do zapisów"
         showOnMobile={!!camp}
       />
     </>

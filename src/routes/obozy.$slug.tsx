@@ -117,7 +117,7 @@ function DayCampDetail() {
               <OfferFacts offer={offer} showBookingCta={!hasTerms} />
               {hasTerms ? (
                 <Button asChild variant="secondary" size="lg" className="mt-6 w-full rounded-full">
-                  <a href="#turnusy">Wybierz turnus</a>
+                  <a href="#turnusy">Przejdź do zapisów</a>
                 </Button>
               ) : null}
             </div>
