@@ -1,0 +1,16 @@
+[changelog]
+header = ""
+body = """
+# Wydanie {{ version | default(value="Unreleased") }}
+{% for commit in commits %}
+- {{ commit.message | split(pat="\n") | first }} ({{ commit.id | truncate(length=7, end="") }})
+{% endfor %}
+"""
+trim = true
+
+[git]
+conventional_commits = false
+filter_unconventional = false
+filter_commits = false
+ignore_tags = ".*"
+sort_commits = "oldest"

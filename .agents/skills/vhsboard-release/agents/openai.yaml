@@ -1,0 +1,4 @@
+interface:
+  display_name: "VHSBOARD release"
+  short_description: "Prepare a reviewable VHSBOARD release PR"
+  default_prompt: "$vhsboard-release Przygotuj wydanie VHSBOARD z develop do main."
