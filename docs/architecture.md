@@ -116,8 +116,9 @@ ongoing cards remain linked and show `W trakcie` instead of `Ostatnie miejsca`.
 
 Camp summaries include only projected dates for up to two terms, without loading
 the full description. The card is ongoing when any term is ongoing; between
-terms it is upcoming if a later term exists. The next future term determines
-its ordering. Each term's registration closes on its start date, while links to
+terms it is upcoming if a later term exists. Ongoing camps are ordered by the
+start of their earliest ongoing term; otherwise the next future term determines
+upcoming order. Each term's registration closes on its start date, while links to
 the terms remain available if another term is still upcoming. Trip registration
 controls close on the start date. Disabled controls are native buttons; detail
 URLs remain available for published offers. The administrator list independently
