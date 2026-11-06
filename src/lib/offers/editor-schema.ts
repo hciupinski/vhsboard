@@ -13,7 +13,7 @@ import type {
 export type EditableOfferInput = {
   offerKind?: OfferKind;
   slug: string;
-  activity: OfferActivity;
+  activity: OfferActivity | "";
   title: string;
   subtitle: string;
   shortDescription: string;
@@ -192,7 +192,7 @@ const tripEditorOfferInputSchema = z
           /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
           "Adres URL oferty może zawierać małe litery, cyfry i łączniki.",
         ),
-      activity: z.enum(["surf", "snow", "combo"], {
+      activity: z.enum(["surf", "snow", ""], {
         errorMap: () => ({ message: "Wybierz rodzaj wyjazdu." }),
       }),
       title: trimmedText("Tytuł", 3, 120),
@@ -393,7 +393,7 @@ const schemaForOfferKind = (value: unknown) =>
     ? dayCampEditorOfferInputSchema
     : tripEditorOfferInputSchema;
 
-export const editorOfferInputSchema = z.preprocess(
+export const storedEditorOfferInputSchema = z.preprocess(
   normalizeEditorOfferInput,
   z
     .unknown()
@@ -410,6 +410,11 @@ export const editorOfferInputSchema = z.preprocess(
       }
     })
     .transform((value) => schemaForOfferKind(value).parse(value)),
+);
+
+export const editorOfferInputSchema = storedEditorOfferInputSchema.refine(
+  (offer) => offer.activity !== "",
+  { path: ["activity"], message: "Wybierz rodzaj wyjazdu." },
 );
 
 export function getEditorFieldErrors(

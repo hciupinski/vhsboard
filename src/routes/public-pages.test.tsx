@@ -191,6 +191,27 @@ beforeEach(() => {
 });
 
 describe("static public pages", () => {
+  it("limits the homepage offer section to three cards", async () => {
+    const offers = Array.from({ length: 10 }, (_, i) => ({
+      ...homeTrip,
+      id: `trip-${i}`,
+      slug: `trip-${i}`,
+      title: `TEST wyjazd ${i}`,
+      startDate: "2099-01-01",
+      endDate: "2099-01-07",
+    }));
+    mockedListPublishedOffers.mockImplementation((kind: "trip" | "day_camp") =>
+      Promise.resolve(kind === "trip" ? offers : []),
+    );
+    await renderRoute("/", HomeRoute);
+    const heading = await screen.findByRole("heading", { name: "ROZKŁAD JAZDY" });
+    const section = heading.closest("section")!;
+    await waitFor(() =>
+      expect(
+        within(section).getAllByRole("heading", { level: 3, name: /TEST wyjazd/ }),
+      ).toHaveLength(3),
+    );
+  });
   it("keeps the static fallback carousel when configuration cannot be read", async () => {
     mockedListPublicPortalCarouselImages.mockRejectedValue(new Error("offline"));
 
@@ -369,6 +390,44 @@ describe("static public pages", () => {
     expect(
       screen.queryByRole("heading", { name: /tor skimboardowy – przyciąga ludzi/i }),
     ).not.toBeInTheDocument();
+  });
+
+  it("lists upcoming camps without old archived camps", async () => {
+    const offers = [
+      {
+        ...homeCamp,
+        id: "old",
+        title: "Starszy obóz",
+        startDate: "2000-01-01",
+        endDate: "2000-01-07",
+      },
+      {
+        ...homeCamp,
+        id: "later",
+        title: "Późniejszy obóz",
+        startDate: "2099-08-01",
+        endDate: "2099-08-07",
+      },
+      {
+        ...homeCamp,
+        id: "recent",
+        title: "Ostatnio zakończony obóz",
+        startDate: "2001-01-01",
+        endDate: "2001-01-07",
+      },
+      { ...homeCamp, id: "near", title: "Najbliższy obóz", startDate: "2099-07-01" },
+    ];
+    mockedListPublishedOffers.mockResolvedValue(offers);
+    await renderRoute("/obozy", HalfDayCampsRoute);
+    const section = screen.getByRole("region", { name: "NAJBLIŻSZE TERMINY" });
+    await waitFor(() =>
+      expect(within(section).getAllByRole("heading", { level: 3 })).toHaveLength(2),
+    );
+    expect(
+      within(section)
+        .getAllByRole("heading", { level: 3 })
+        .map((h) => h.textContent),
+    ).toEqual(["Najbliższy obóz", "Późniejszy obóz"]);
   });
 
   it("presents active camps with current seasonal copy", async () => {

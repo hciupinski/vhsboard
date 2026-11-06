@@ -1,3 +1,5 @@
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
+import { hasFutureBooking } from "@/lib/offers/offer-timing";
 import { OfferDetailSections } from "@/components/offers/sections/OfferDetailSections";
 import { getOfferSections } from "@/lib/offers/sections";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -20,7 +22,6 @@ import { createPageMetadata } from "@/lib/seo";
 const activityLabels: Record<TripOffer["activity"], string> = {
   surf: "Surf",
   snow: "Snowboard",
-  combo: "Surf + snowboard",
 };
 
 export const Route = createFileRoute("/wyjazdy/$slug")({
@@ -138,7 +139,10 @@ function TripDetail() {
         <RelatedTripsSection currentOfferId={offer.id} />
       </main>
       <PublicFooter />
-      <MobileTripBookingCta bookingUrl={offer.bookingUrl} />
+      <MobileTripBookingCta
+        bookingUrl={offer.bookingUrl}
+        disabled={!hasFutureBooking(offer, getTodayInWarsaw())}
+      />
     </div>
   );
 }

@@ -31,8 +31,8 @@ const offer: DayCampOffer = {
     terms: [
       {
         label: "Turnus 1",
-        startDate: "2026-07-06",
-        endDate: "2026-07-10",
+        startDate: "2099-07-06",
+        endDate: "2099-07-10",
         bookingUrl: "https://zapisy.example.test/wake",
         priceOptions: [{ label: "Podstawowy", price: 1200 }],
       },
@@ -73,6 +73,7 @@ afterEach(cleanup);
 describe("DayCampCard", () => {
   it("makes the entire day-camp card one link to its public detail", async () => {
     await renderCard(offer);
+    expect(screen.getByText("Sprawdź szczegóły")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /wakeboardowe obozy/i })).toHaveAttribute(
       "href",
       "/obozy/wake-lato-2026",
@@ -99,6 +100,7 @@ describe("DayCampCard", () => {
       ...offer,
       startDate: "2000-07-06",
       endDate: "2000-07-10",
+      campTermDates: [{ startDate: "2000-07-06", endDate: "2000-07-10" }],
       heroImageUrl: "https://signed.example/wake.jpg",
       showLastPlacesBadge: true,
     });
@@ -107,6 +109,6 @@ describe("DayCampCard", () => {
     expect(container.querySelector("img")).toHaveClass("grayscale");
     expect(screen.queryByText("Ostatnie miejsca")).not.toBeInTheDocument();
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
-    expect(screen.queryByText("Szczegóły")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sprawdź szczegóły")).not.toBeInTheDocument();
   });
 });

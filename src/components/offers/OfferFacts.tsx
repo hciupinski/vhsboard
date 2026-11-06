@@ -1,5 +1,7 @@
 import { isValidBookingUrl } from "@/lib/offers/booking-url";
-import { Button } from "@/components/ui/button";
+import { BookingButton } from "./BookingButton";
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
+import { hasFutureBooking } from "@/lib/offers/offer-timing";
 import { formatGroupSize, formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
 import type { PublicOffer } from "@/lib/offers/types";
 
@@ -39,11 +41,13 @@ export function OfferFacts({
         </div>
       </dl>
       {showBookingCta && isBookingUrlValid ? (
-        <Button asChild size="lg" className="mt-6 w-full rounded-full">
-          <a href={offer.bookingUrl} target="_blank" rel="noopener noreferrer">
-            Przejdź do zapisów
-          </a>
-        </Button>
+        <BookingButton
+          href={offer.bookingUrl}
+          disabled={!hasFutureBooking(offer, getTodayInWarsaw())}
+          className="mt-6 w-full rounded-full"
+        >
+          Przejdź do zapisów
+        </BookingButton>
       ) : null}
     </div>
   );

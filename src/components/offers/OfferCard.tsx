@@ -2,22 +2,22 @@ import { Link } from "@tanstack/react-router";
 
 import { getOfferCardStatus } from "@/lib/offers/card-status";
 import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
-import type { TripOffer } from "@/lib/offers/types";
+import type { PublicOffer } from "@/lib/offers/types";
 
-const activityLabels: Record<TripOffer["activity"], string> = {
+const activityLabels: Record<PublicOffer["activity"], string> = {
   surf: "Surf",
   snow: "Snowboard",
-  combo: "Surf + snowboard",
+  wake: "Wakeboard",
 };
 
 export function OfferCard({
   offer,
   alwaysShowAction = false,
 }: {
-  offer: TripOffer;
+  offer: PublicOffer;
   alwaysShowAction?: boolean;
 }) {
-  const { isFinished, showLastPlacesBadge } = getOfferCardStatus(offer);
+  const { isFinished, isOngoing, showLastPlacesBadge } = getOfferCardStatus(offer);
   const content = (
     <article
       className={`relative isolate flex min-h-[26rem] min-w-0 flex-col overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-160 ease-out motion-reduce:transition-none${isFinished ? "" : " hover-lift"}`}
@@ -48,6 +48,11 @@ export function OfferCard({
           {showLastPlacesBadge && (
             <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
               Ostatnie miejsca
+            </span>
+          )}
+          {isOngoing && (
+            <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
+              W trakcie
             </span>
           )}
           {isFinished && (
@@ -82,9 +87,9 @@ export function OfferCard({
 
   return (
     <Link
-      to="/wyjazdy/$slug"
+      to={offer.offerKind === "day_camp" ? "/obozy/$slug" : "/wyjazdy/$slug"}
       params={{ slug: offer.slug }}
-      aria-label={`Sprawdź szczegóły wyjazdu: ${offer.title}${showLastPlacesBadge ? ". Ostatnie miejsca" : ""}`}
+      aria-label={`Sprawdź szczegóły ${offer.offerKind === "day_camp" ? "obozu" : "wyjazdu"}: ${offer.title}${isOngoing ? ". W trakcie" : showLastPlacesBadge ? ". Ostatnie miejsca" : ""}`}
       className="group block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       {content}

@@ -139,7 +139,7 @@ const mapOffer = (
     };
   }
 
-  if (row.activity !== "surf" && row.activity !== "snow" && row.activity !== "combo")
+  if (row.activity !== "surf" && row.activity !== "snow")
     throw new Error("Aktywność nie pasuje do wyjazdu.");
   return {
     ...base,
@@ -152,12 +152,34 @@ const mapOffer = (
 export const mapOfferListRow = (row: unknown, signedUrls: Map<string, string>): PublicOffer => {
   const parsedRow = offerListRowSchema.parse(row);
 
-  return mapOffer(
+  const offer = mapOffer(
     parsedRow,
     parsedRow.offer_kind === "day_camp" ? emptyDayCampContent : emptyContent,
     [],
     signedUrls,
   );
+  if (offer.offerKind === "day_camp") {
+    const dates = [
+      [parsedRow.term0start, parsedRow.term0end],
+      [parsedRow.term1start, parsedRow.term1end],
+    ];
+    if (parsedRow.term0start !== undefined) {
+      if (
+        !parsedRow.term0start ||
+        !parsedRow.term0end ||
+        dates.some(
+          ([startDate, endDate]) =>
+            Boolean(startDate) !== Boolean(endDate) ||
+            (!!startDate && !!endDate && startDate > endDate),
+        )
+      )
+        throw new Error("Nieprawidłowe daty turnusów.");
+      offer.campTermDates = dates.flatMap(([startDate, endDate]) =>
+        startDate && endDate ? [{ startDate, endDate }] : [],
+      );
+    }
+  }
+  return offer;
 };
 
 export const mapOfferDetailRow = (

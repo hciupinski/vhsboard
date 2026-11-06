@@ -10,7 +10,9 @@ import { TripSectionNavigation } from "@/components/offers/TripSectionNavigation
 import { DeferredYouTubeEmbed } from "@/components/public/DeferredYouTubeEmbed";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
-import { Button } from "@/components/ui/button";
+import { BookingButton } from "@/components/offers/BookingButton";
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
+import { hasFutureBooking } from "@/lib/offers/offer-timing";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
 import { offerDetailQueryOptions } from "@/lib/offers/query-options";
@@ -116,9 +118,13 @@ function DayCampDetail() {
               </p>
               <OfferFacts offer={offer} showBookingCta={!hasTerms} />
               {hasTerms ? (
-                <Button asChild variant="secondary" size="lg" className="mt-6 w-full rounded-full">
-                  <a href="#turnusy">Wybierz turnus</a>
-                </Button>
+                <BookingButton
+                  href="#turnusy"
+                  disabled={!hasFutureBooking(offer, getTodayInWarsaw())}
+                  className="mt-6 w-full rounded-full"
+                >
+                  Przejdź do zapisów
+                </BookingButton>
               ) : null}
             </div>
           }

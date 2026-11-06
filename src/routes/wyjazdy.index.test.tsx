@@ -48,8 +48,8 @@ const publishedOffers: PublicOffer[] = [
     shortDescription: "Kameralny wyjazd surfingowy.",
     content: { paragraphs: [], highlights: [], included: [], excluded: [], schedule: [] },
     location: "Ericeira",
-    startDate: "2026-06-12",
-    endDate: "2026-06-18",
+    startDate: "2099-06-12",
+    endDate: "2099-06-18",
     durationDays: 7,
     groupSizeMin: 8,
     groupSizeMax: 12,
@@ -133,6 +133,21 @@ afterEach(() => {
 });
 
 describe("trips list route", () => {
+  it("renders all ten upcoming trips", async () => {
+    const base = publishedOffers[0]!;
+    mockedListPublishedOffers.mockResolvedValue(
+      Array.from({ length: 10 }, (_, i) => ({
+        ...base,
+        id: `trip-${i}`,
+        slug: `trip-${i}`,
+        title: `TEST wyjazd ${i}`,
+      })),
+    );
+    await renderTripsPage();
+    expect(await screen.findAllByRole("heading", { level: 3, name: /TEST wyjazd/ })).toHaveLength(
+      10,
+    );
+  });
   it("does not fetch offers while prerendering the marketing page", () => {
     expect(TripsRoute.options.loader).toBeUndefined();
   });

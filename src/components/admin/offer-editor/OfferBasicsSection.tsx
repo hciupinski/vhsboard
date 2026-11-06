@@ -111,7 +111,7 @@ export function OfferBasicsSection({
             onValueChange={(activity) => set("activity", activity as OfferActivity)}
           >
             <SelectTrigger className="bg-card" id="activity" {...state("activity")}>
-              <SelectValue />
+              <SelectValue placeholder="Wybierz rodzaj wyjazdu" />
             </SelectTrigger>
             <SelectContent>
               {dayCamp ? (
@@ -123,7 +123,6 @@ export function OfferBasicsSection({
                 <>
                   <SelectItem value="surf">Surf</SelectItem>
                   <SelectItem value="snow">Snowboard</SelectItem>
-                  <SelectItem value="combo">Surf i snowboard</SelectItem>
                 </>
               )}
             </SelectContent>
@@ -155,7 +154,7 @@ export function OfferBasicsSection({
       <Field
         id="short-description"
         label="Krótki opis"
-        hint={dayCamp ? "Hero i kafelek obozu" : "Hero oferty"}
+        hint="Hero oferty"
         characterCount={{ value: value.shortDescription, max: 500 }}
         error={errors["shortDescription"]}
       >

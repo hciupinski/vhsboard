@@ -110,6 +110,12 @@ const fieldErrorsFor = (input: unknown) => {
 };
 
 describe("editor offer input schema", () => {
+  it("rejects the discontinued combined surf and snowboard activity", () => {
+    expect(editorOfferInputSchema.safeParse({ ...completeInput, activity: "combo" }).success).toBe(
+      false,
+    );
+  });
+
   it("keeps the opt-in badge flag for trips and day camps", () => {
     expect(
       editorOfferInputSchema.parse({ ...completeInput, showLastPlacesBadge: true }),

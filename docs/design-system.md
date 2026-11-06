@@ -77,8 +77,16 @@ their semantic colors. Hover never becomes a requirement for touch use.
 - Use broad sections, clear content order, and substantial whitespace. The
   homepage moves from story, to offers, to a high-contrast contact conversion
   block.
-- Offer cards are image-first, with an activity label, place, short story,
-  duration/group detail, price, and a single clear next action.
+- Trip and camp listings share `OfferCard`: a full-card photograph with a
+  bottom gradient, activity/status labels, dates, title, starting price, and
+  “Sprawdź szczegóły”. Camp listing actions stay visible without hovering.
+  Finished offers use grayscale photographs and have no detail link or CTA.
+  The homepage and category listings show upcoming offers first, then cards
+  marked `W trakcie`, followed by offers finished within one rolling calendar
+  month. The homepage shows at most three cards; category listings show all
+  eligible offers. Undated category offers follow dated unfinished ones; the
+  homepage omits offers without a start date. Camp status follows individual
+  terms. Started terms have disabled registration controls.
 - Detail pages pair a generous hero with concise trip facts, then organise
   longer content into readable sections: story, highlights, schedule, what is
   included, gallery, and related trips.

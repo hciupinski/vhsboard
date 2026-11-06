@@ -151,6 +151,34 @@ afterEach(() => {
 });
 
 describe("administrator offer repository", () => {
+  it("keeps legacy offers readable until an administrator explicitly chooses an activity", async () => {
+    const legacyRow = { ...draftRow, activity: "combo" };
+    mockedSupabase.from.mockReturnValue(
+      createQuery({ data: [draftRow, legacyRow, archivedRow], error: null }),
+    );
+    await expect(listAdminOffers()).resolves.toMatchObject([
+      { activity: "surf" },
+      { activity: "" },
+      { status: "archived" },
+    ]);
+    mockedSupabase.from.mockReturnValue(createQuery({ data: legacyRow, error: null }));
+    await expect(getAdminOffer(legacyRow.slug)).resolves.toMatchObject({ activity: "" });
+  });
+
+  it("requires a supported activity before saving a legacy offer", async () => {
+    await expect(
+      updateOffer(offerId, { ...completeInput, activity: "" } as EditableOfferInput),
+    ).rejects.toBeInstanceOf(Error);
+    expect(mockedSupabase.from).not.toHaveBeenCalled();
+  });
+
+  it("does not publish a legacy offer before its activity is reselected", async () => {
+    mockedSupabase.from
+      .mockReturnValueOnce(createQuery({ data: { ...draftRow, activity: "combo" }, error: null }))
+      .mockReturnValueOnce(createQuery({ data: { alt_text: "Surfer na fali" }, error: null }));
+    await expect(canPublishOffer(offerId)).resolves.toBe(false);
+  });
+
   it("lists offers of every status", async () => {
     const query = createQuery({
       data: [draftRow, publishedRow, archivedRow],

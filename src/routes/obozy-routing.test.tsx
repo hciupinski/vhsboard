@@ -23,8 +23,8 @@ const dayCamp: DayCampOffer = {
   subtitle: "Pięć dni ruchu na wodzie.",
   shortDescription: "Wakeboard i dobra ekipa.",
   location: "Central Wake Park, Głowno",
-  startDate: "2026-06-29",
-  endDate: "2026-07-03",
+  startDate: "2099-06-29",
+  endDate: "2099-07-03",
   durationDays: 5,
   groupSizeMin: null,
   groupSizeMax: null,
@@ -45,8 +45,8 @@ const dayCamp: DayCampOffer = {
     terms: [
       {
         label: "Turnus 1",
-        startDate: "2026-06-29",
-        endDate: "2026-07-03",
+        startDate: "2099-06-29",
+        endDate: "2099-07-03",
         bookingUrl: "https://zapisy.example/wakeboard-2026",
         priceOptions: [{ label: "Obozy", price: 1450 }],
       },
@@ -79,7 +79,7 @@ describe("day-camp route nesting", () => {
 
     expect(await screen.findByRole("heading", { name: "Wakeboardowe obozy" })).toBeInTheDocument();
     expect(screen.getByText("Twój obóz")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Wybierz turnus" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Przejdź do zapisów" })).toHaveAttribute(
       "href",
       "#turnusy",
     );

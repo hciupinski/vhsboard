@@ -3,7 +3,7 @@ export type OfferStatus = "draft" | "published" | "archived";
 
 export type OfferKind = "trip" | "day_camp";
 
-export type TripActivity = "surf" | "snow" | "combo";
+export type TripActivity = "surf" | "snow";
 export type DayCampActivity = "wake" | "snow";
 export type OfferActivity = TripActivity | DayCampActivity;
 
@@ -101,6 +101,7 @@ export type TripOffer = PublicOfferBase & {
 
 export type DayCampOffer = PublicOfferBase & {
   offerKind: "day_camp";
+  campTermDates?: Array<{ startDate: string; endDate: string }>;
   activity: DayCampActivity;
   content: DayCampContent;
 };

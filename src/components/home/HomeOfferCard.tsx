@@ -7,13 +7,12 @@ import type { PublicOffer } from "@/lib/offers/types";
 const activityLabels: Record<PublicOffer["activity"], string> = {
   surf: "Surf",
   snow: "Snowboard",
-  combo: "Surf + snowboard",
   wake: "Wakeboard",
 };
 
 export function HomeOfferCard({ offer }: { offer: PublicOffer }) {
-  const { isFinished, showLastPlacesBadge } = getOfferCardStatus(offer);
-  const linkLabel = `${offer.title}${showLastPlacesBadge ? ". Ostatnie miejsca" : ""}`;
+  const { isFinished, isOngoing, showLastPlacesBadge } = getOfferCardStatus(offer);
+  const linkLabel = `${offer.title}${isOngoing ? ". W trakcie" : showLastPlacesBadge ? ". Ostatnie miejsca" : ""}`;
   const content = (
     <article
       className={`relative isolate flex h-full min-h-[26rem] min-w-0 flex-col overflow-hidden rounded-3xl bg-foreground shadow-warm transition-transform duration-160 ease-out motion-reduce:transition-none${isFinished ? "" : " hover-lift"}`}
@@ -44,6 +43,11 @@ export function HomeOfferCard({ offer }: { offer: PublicOffer }) {
           {showLastPlacesBadge && (
             <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
               Ostatnie miejsca
+            </span>
+          )}
+          {isOngoing && (
+            <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
+              W trakcie
             </span>
           )}
           {isFinished && (
