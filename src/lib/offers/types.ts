@@ -101,6 +101,7 @@ export type TripOffer = PublicOfferBase & {
 
 export type DayCampOffer = PublicOfferBase & {
   offerKind: "day_camp";
+  campTermDates?: Array<{ startDate: string; endDate: string }>;
   activity: DayCampActivity;
   content: DayCampContent;
 };

@@ -191,6 +191,27 @@ beforeEach(() => {
 });
 
 describe("static public pages", () => {
+  it("limits the homepage offer section to three cards", async () => {
+    const offers = Array.from({ length: 10 }, (_, i) => ({
+      ...homeTrip,
+      id: `trip-${i}`,
+      slug: `trip-${i}`,
+      title: `TEST wyjazd ${i}`,
+      startDate: "2099-01-01",
+      endDate: "2099-01-07",
+    }));
+    mockedListPublishedOffers.mockImplementation((kind: "trip" | "day_camp") =>
+      Promise.resolve(kind === "trip" ? offers : []),
+    );
+    await renderRoute("/", HomeRoute);
+    const heading = await screen.findByRole("heading", { name: "ROZKŁAD JAZDY" });
+    const section = heading.closest("section")!;
+    await waitFor(() =>
+      expect(
+        within(section).getAllByRole("heading", { level: 3, name: /TEST wyjazd/ }),
+      ).toHaveLength(3),
+    );
+  });
   it("keeps the static fallback carousel when configuration cannot be read", async () => {
     mockedListPublicPortalCarouselImages.mockRejectedValue(new Error("offline"));
 
@@ -371,7 +392,7 @@ describe("static public pages", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("lists the nearest active camp before finished camps and limits the fillers", async () => {
+  it("lists upcoming camps without old archived camps", async () => {
     const offers = [
       {
         ...homeCamp,
@@ -400,13 +421,13 @@ describe("static public pages", () => {
     await renderRoute("/obozy", HalfDayCampsRoute);
     const section = screen.getByRole("region", { name: "NAJBLIŻSZE TERMINY" });
     await waitFor(() =>
-      expect(within(section).getAllByRole("heading", { level: 3 })).toHaveLength(3),
+      expect(within(section).getAllByRole("heading", { level: 3 })).toHaveLength(2),
     );
     expect(
       within(section)
         .getAllByRole("heading", { level: 3 })
         .map((h) => h.textContent),
-    ).toEqual(["Najbliższy obóz", "Późniejszy obóz", "Ostatnio zakończony obóz"]);
+    ).toEqual(["Najbliższy obóz", "Późniejszy obóz"]);
   });
 
   it("presents active camps with current seasonal copy", async () => {

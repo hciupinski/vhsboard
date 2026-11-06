@@ -31,8 +31,8 @@ const offer: DayCampOffer = {
     terms: [
       {
         label: "Turnus 1",
-        startDate: "2026-07-06",
-        endDate: "2026-07-10",
+        startDate: "2099-07-06",
+        endDate: "2099-07-10",
         bookingUrl: "https://zapisy.example.test/wake",
         priceOptions: [{ label: "Podstawowy", price: 1200 }],
       },
@@ -100,6 +100,7 @@ describe("DayCampCard", () => {
       ...offer,
       startDate: "2000-07-06",
       endDate: "2000-07-10",
+      campTermDates: [{ startDate: "2000-07-06", endDate: "2000-07-10" }],
       heroImageUrl: "https://signed.example/wake.jpg",
       showLastPlacesBadge: true,
     });

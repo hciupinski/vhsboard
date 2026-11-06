@@ -1,3 +1,5 @@
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
+import { hasFutureBooking } from "@/lib/offers/offer-timing";
 import { canonicalUrl } from "@/lib/seo";
 import { getPublicSiteConfig } from "@/lib/site-config";
 import type { PublicOffer } from "@/lib/offers/types";
@@ -69,7 +71,14 @@ export function PublicJsonLd({ path, label, includeSite = false, offer }: Public
 
   if (offer) {
     const hasValidOffer =
-      offer.priceFrom > 0 && offer.currency === "PLN" && isHttpsUrl(offer.bookingUrl);
+      offer.priceFrom > 0 &&
+      offer.currency === "PLN" &&
+      isHttpsUrl(offer.bookingUrl) &&
+      hasFutureBooking(offer, getTodayInWarsaw()) &&
+      (offer.offerKind !== "day_camp" ||
+        offer.content.terms.some(
+          (term) => term.bookingUrl === offer.bookingUrl && term.startDate > getTodayInWarsaw(),
+        ));
     schemas.push({
       "@context": "https://schema.org",
       "@type": "TouristTrip",

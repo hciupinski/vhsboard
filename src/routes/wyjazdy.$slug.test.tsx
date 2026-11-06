@@ -139,6 +139,12 @@ afterEach(() => {
 });
 
 describe("trip section navigation integration", () => {
+  it("disables registration controls after the trip begins", async () => {
+    await renderDetail({ ...detailOffer, startDate: "2000-01-01", endDate: "2099-01-01" });
+    expect(await screen.findByRole("button", { name: "Zapisz się" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Przejdź do zapisów" })).toBeDisabled();
+    expect(screen.queryByRole("link", { name: /zapis/i })).not.toBeInTheDocument();
+  });
   it("links to the rendered trip sections in reading order", async () => {
     await renderDetail(detailOffer);
     expect(await screen.findByRole("link", { name: "Zapisz się" })).toHaveAttribute(

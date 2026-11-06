@@ -1,6 +1,8 @@
+import { BookingButton } from "@/components/offers/BookingButton";
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
+import { hasFutureBooking } from "@/lib/offers/offer-timing";
 import { useRef, type ReactNode } from "react";
 import { Check, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { OfferGallery } from "@/components/offers/OfferGallery";
 import { OfferHighlights } from "./OfferHighlights";
 import { OfferStoryImages } from "./OfferStoryImages";
@@ -153,11 +155,14 @@ export function OfferDetailSections({
                         </p>
                       </div>
                     ))}
-                    <Button asChild className="mt-5 w-full rounded-full">
-                      <a href={term.bookingUrl} target="_blank" rel="noopener noreferrer">
-                        Zapisz się
-                      </a>
-                    </Button>
+                    <BookingButton
+                      href={term.bookingUrl}
+                      disabled={term.startDate <= getTodayInWarsaw()}
+                      size="default"
+                      className="mt-5 w-full rounded-full"
+                    >
+                      Zapisz się
+                    </BookingButton>
                   </article>
                 ))}
               </div>
@@ -402,6 +407,7 @@ export function OfferDetailSections({
         href={camp?.terms.length ? "#turnusy" : offer.bookingUrl}
         label="Przejdź do zapisów"
         showOnMobile={!!camp}
+        disabled={!hasFutureBooking(offer, getTodayInWarsaw())}
       />
     </>
   );

@@ -39,7 +39,7 @@ const camp = (id: string, startDate: string | null, endDate: string | null): Day
 
 describe("selectCampListingOffers", () => {
   it.each([0, 1, 2, 3, 4])(
-    "sorts %i active camps and fills only the shortage to three",
+    "sorts %i active camps and retains every recently finished camp",
     (count) => {
       const active = Array.from({ length: count }, (_, i) =>
         camp(`active-${i + 1}`, `2026-11-${11 + i}`, `2026-11-${17 + i}`),
@@ -52,7 +52,7 @@ describe("selectCampListingOffers", () => {
 
       expect(selectCampListingOffers(offers, today).map(({ id }) => id)).toEqual([
         ...active.map(({ id }) => id),
-        ...["ended-4", "ended-3", "ended-2"].slice(0, Math.max(0, 3 - count)),
+        ...["ended-4", "ended-3", "ended-2", "ended-1"],
       ]);
       expect(offers.map(({ id }) => id)).toEqual(originalIds);
     },
@@ -67,10 +67,11 @@ describe("selectCampListingOffers", () => {
       camp("ended", "2026-10-01", "2026-11-05"),
     ];
     expect(selectCampListingOffers(offers, today).map(({ id }) => id)).toEqual([
+      "future",
       "ongoing",
       "today",
-      "future",
       "undated",
+      "ended",
     ]);
   });
 

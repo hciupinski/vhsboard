@@ -20,8 +20,8 @@ describe("RentalSection", () => {
   it("shows rental and service information without a button if no file exists", async () => {
     getRentalDocument.mockResolvedValue(null);
     renderSection();
-    expect(screen.getByRole("heading", { name: "SPRZĘT GOTOWY NA WYJAZD" })).toBeVisible();
-    expect(screen.queryByRole("link", { name: "Zapoznaj się z ofertą" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "WYPOŻYCZALNIA SNOWBOARDÓW" })).toBeVisible();
+    expect(screen.queryByRole("link", { name: "Zobacz ofertę i cennik" })).not.toBeInTheDocument();
   });
   it("opens the available offer in a new tab", async () => {
     getRentalDocument.mockResolvedValue({
@@ -29,8 +29,9 @@ describe("RentalSection", () => {
       signedUrl: "https://example.test/oferta.pdf",
     });
     renderSection();
-    const link = await screen.findByRole("link", { name: "Zapoznaj się z ofertą" });
+    const link = await screen.findByRole("link", { name: "Zobacz ofertę i cennik" });
     expect(link).toHaveAttribute("href", "https://example.test/oferta.pdf");
     expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 });

@@ -1,3 +1,4 @@
+import { selectListingOffers } from "./offer-timing";
 import type { PublicOffer } from "./types";
 
 export const getTodayInWarsaw = (now = new Date()): string => {
@@ -19,10 +20,4 @@ export const getTodayInWarsaw = (now = new Date()): string => {
 };
 
 export const selectUpcomingHomeOffers = (offers: PublicOffer[], today: string): PublicOffer[] =>
-  offers
-    .filter((offer) => offer.startDate !== null && offer.startDate >= today)
-    .sort(
-      (first, second) =>
-        first.startDate!.localeCompare(second.startDate!) ||
-        first.title.localeCompare(second.title, "pl"),
-    );
+  selectListingOffers(offers, today, true).slice(0, 3);

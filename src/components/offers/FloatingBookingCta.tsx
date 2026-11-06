@@ -1,6 +1,6 @@
 import { useEffect, useState, type RefObject } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BookingButton } from "./BookingButton";
 import { isValidBookingUrl } from "@/lib/offers/booking-url";
 
 export function FloatingBookingCta({
@@ -8,11 +8,13 @@ export function FloatingBookingCta({
   href,
   label,
   showOnMobile = false,
+  disabled = false,
 }: {
   cardRef: RefObject<HTMLElement | null>;
   href: string;
   label: string;
   showOnMobile?: boolean;
+  disabled?: boolean;
 }) {
   const [pastCard, setPastCard] = useState(false);
   const [overlayOpen, setOverlayOpen] = useState(false);
@@ -64,15 +66,13 @@ export function FloatingBookingCta({
       aria-label="Szybki dostęp do zapisów"
       className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-1/2 z-30 -translate-x-1/2 ${showOnMobile ? "" : "hidden lg:block"}`}
     >
-      <Button
-        asChild
-        size="lg"
-        className="rounded-full shadow-warm lg:h-14 lg:px-10 lg:text-base lg:uppercase motion-safe:animate-[booking-cta-pulse_5s_ease-in-out_infinite]"
+      <BookingButton
+        href={href}
+        disabled={disabled}
+        className={`rounded-full shadow-warm lg:h-14 lg:px-10 lg:text-base lg:uppercase ${disabled ? "" : "motion-safe:animate-[booking-cta-pulse_5s_ease-in-out_infinite]"}`}
       >
-        <a href={href} {...(!isAnchor ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
-          {label} <ArrowUpRight aria-hidden="true" className="size-4" />
-        </a>
-      </Button>
+        {label} <ArrowUpRight aria-hidden="true" className="size-4" />
+      </BookingButton>
     </aside>
   );
 }

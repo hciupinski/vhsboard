@@ -1,3 +1,5 @@
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
+import { selectListingOffers } from "@/lib/offers/offer-timing";
 import { OfferCard } from "@/components/offers/OfferCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -48,7 +50,7 @@ export function OfferListState({ offers, isPending, isError, onRetry }: OfferLis
 
   return (
     <div className="mt-10 grid gap-6 md:grid-cols-3">
-      {offers.map((offer) => (
+      {selectListingOffers(offers, getTodayInWarsaw()).map((offer) => (
         <OfferCard key={offer.id} offer={offer} alwaysShowAction />
       ))}
     </div>

@@ -1,4 +1,3 @@
-import { selectUpcomingHomeOffers } from "./home-offers";
 import type { PublicOffer, TripOffer } from "./types";
 
 export const selectRelatedTrips = (
@@ -6,7 +5,11 @@ export const selectRelatedTrips = (
   currentOfferId: string,
   today: string,
 ): TripOffer[] =>
-  selectUpcomingHomeOffers(offers, today)
+  offers
+    .filter((offer) => offer.startDate !== null && offer.startDate >= today)
+    .sort(
+      (a, b) => a.startDate!.localeCompare(b.startDate!) || a.title.localeCompare(b.title, "pl"),
+    )
     .filter(
       (offer): offer is TripOffer => offer.offerKind === "trip" && offer.id !== currentOfferId,
     )
