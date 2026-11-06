@@ -191,11 +191,13 @@ export const LOCAL_IMAGE_ASSETS = {
       "/images/generated/obozy-obozy-zima-480-e9cec0f3033b.avif 480w, /images/generated/obozy-obozy-zima-960-faee215db3cb.avif 960w, /images/generated/obozy-obozy-zima-1280-8890fbe14a8a.avif 1280w",
   },
   "rental/snowboard.png": {
-    src: "/images/generated/rental-snowboard-453-0148f4cb4cfa.webp",
-    width: 453,
-    height: 340,
-    webpSrcSet: "/images/generated/rental-snowboard-453-0148f4cb4cfa.webp 453w",
-    avifSrcSet: "/images/generated/rental-snowboard-453-722c178dc1b1.avif 453w",
+    src: "/images/generated/rental-snowboard-583-a0c63357671e.webp",
+    width: 583,
+    height: 454,
+    webpSrcSet:
+      "/images/generated/rental-snowboard-480-2c7640e70ded.webp 480w, /images/generated/rental-snowboard-583-a0c63357671e.webp 583w",
+    avifSrcSet:
+      "/images/generated/rental-snowboard-480-7ff5e22e25ca.avif 480w, /images/generated/rental-snowboard-583-179455ab4c78.avif 583w",
   },
   "skim-laczy.jpg": {
     src: "/images/generated/skim-laczy-888-3f14063ceff1.webp",

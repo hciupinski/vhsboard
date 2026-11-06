@@ -28,7 +28,7 @@ export function RentalSection() {
             image={rentalImage}
             alt="Snowboardzista jadący w głębokim śniegu"
             loading="lazy"
-            className="aspect-[4/3] w-full rounded-3xl object-cover shadow-warm"
+            className="h-auto w-full rounded-3xl shadow-warm"
           />
         </figure>
         <div className="max-w-xl">

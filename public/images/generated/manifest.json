@@ -1136,28 +1136,42 @@
       ]
     },
     "rental/snowboard.png": {
-      "sourceHash": "5cb95536caa378ccefc93b39aaa36e82a1f6905ab719a89d56b12be1383f980f",
+      "sourceHash": "dcf2b1358ebf0c9c1e4a4be210962c23d49a95fb43d0991aada9c9f4aba650ff",
       "asset": {
-        "src": "/images/generated/rental-snowboard-453-0148f4cb4cfa.webp",
-        "width": 453,
-        "height": 340,
-        "webpSrcSet": "/images/generated/rental-snowboard-453-0148f4cb4cfa.webp 453w",
-        "avifSrcSet": "/images/generated/rental-snowboard-453-722c178dc1b1.avif 453w"
+        "src": "/images/generated/rental-snowboard-583-a0c63357671e.webp",
+        "width": 583,
+        "height": 454,
+        "webpSrcSet": "/images/generated/rental-snowboard-480-2c7640e70ded.webp 480w, /images/generated/rental-snowboard-583-a0c63357671e.webp 583w",
+        "avifSrcSet": "/images/generated/rental-snowboard-480-7ff5e22e25ca.avif 480w, /images/generated/rental-snowboard-583-179455ab4c78.avif 583w"
       },
       "variants": [
         {
-          "path": "/images/generated/rental-snowboard-453-0148f4cb4cfa.webp",
-          "width": 453,
-          "height": 340,
+          "path": "/images/generated/rental-snowboard-480-2c7640e70ded.webp",
+          "width": 480,
+          "height": 374,
           "format": "webp",
-          "bytes": 13526
+          "bytes": 15114
         },
         {
-          "path": "/images/generated/rental-snowboard-453-722c178dc1b1.avif",
-          "width": 453,
-          "height": 340,
+          "path": "/images/generated/rental-snowboard-480-7ff5e22e25ca.avif",
+          "width": 480,
+          "height": 374,
           "format": "avif",
-          "bytes": 7256
+          "bytes": 7990
+        },
+        {
+          "path": "/images/generated/rental-snowboard-583-a0c63357671e.webp",
+          "width": 583,
+          "height": 454,
+          "format": "webp",
+          "bytes": 20326
+        },
+        {
+          "path": "/images/generated/rental-snowboard-583-179455ab4c78.avif",
+          "width": 583,
+          "height": 454,
+          "format": "avif",
+          "bytes": 10852
         }
       ]
     },
