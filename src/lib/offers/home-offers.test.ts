@@ -63,7 +63,19 @@ const camp = (title: string, startDate: string): DayCampOffer => ({
 });
 
 describe("selectUpcomingHomeOffers", () => {
-  it("keeps dated upcoming offers in date and Polish title order without dropping later offers", () => {
+  it("fills remaining home slots only with recently finished offers", () => {
+    const upcoming = { ...trip("Nowy", "2026-12-01"), endDate: "2026-12-05" };
+    const recent = { ...trip("Niedawny", "2026-09-01"), endDate: "2026-10-06" };
+    const old = { ...trip("Archiwum", "2026-09-01"), endDate: "2026-10-05" };
+    expect(
+      selectUpcomingHomeOffers([old, recent, upcoming], "2026-11-06").map((o) => o.title),
+    ).toEqual(["Nowy", "Niedawny"]);
+  });
+  it("caps the home list at three even when ten future offers exist", () => {
+    const offers = Array.from({ length: 10 }, (_, i) => trip(`Wyjazd ${i}`, "2026-12-01"));
+    expect(selectUpcomingHomeOffers(offers, "2026-11-06")).toHaveLength(3);
+  });
+  it("selects the three nearest upcoming offers in date and Polish title order", () => {
     const offers = [
       trip("Później", "2026-10-01"),
       trip("Zeta", "2026-09-28"),
@@ -78,9 +90,6 @@ describe("selectUpcomingHomeOffers", () => {
       "Alfa",
       "Zeta",
       "Obóz wake",
-      "Później",
-      "Miniony",
-      "Dzisiaj",
     ]);
     expect(offers.map((offer) => offer.title)).toEqual([
       "Później",

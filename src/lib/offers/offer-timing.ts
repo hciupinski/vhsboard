@@ -1,5 +1,12 @@
 import type { PublicOffer } from "./types";
 
+export function oneMonthBefore(today: string): string {
+  const [year, month, day] = today.split("-").map(Number) as [number, number, number];
+  const lastDay = new Date(Date.UTC(year, month - 1, 0)).getUTCDate();
+  const date = new Date(Date.UTC(year, month - 2, Math.min(day, lastDay)));
+  return date.toISOString().slice(0, 10);
+}
+
 export type DateStatus = "future" | "ongoing" | "finished" | "unknown";
 export function getDateStatus(start: string | null, end: string | null, today: string): DateStatus {
   if (end && end < today) return "finished";
@@ -57,11 +64,12 @@ export function selectListingOffers<T extends PublicOffer>(
       a.offer.title.localeCompare(b.offer.title, "pl") ||
       a.offer.id.localeCompare(b.offer.id),
   );
-  const active = items.filter((i) => i.status !== "finished");
-  return [
-    ...active,
-    ...items.filter((i) => i.status === "finished").slice(0, Math.max(0, 3 - active.length)),
-  ].map((i) => i.offer);
+  const cutoff = oneMonthBefore(today);
+  return items
+    .filter(
+      (item) => item.status !== "finished" || (item.sortDate !== null && item.sortDate >= cutoff),
+    )
+    .map((item) => item.offer);
 }
 export function hasFutureBooking(offer: PublicOffer, today: string): boolean {
   if (offer.offerKind === "day_camp" && offer.content.terms.length)

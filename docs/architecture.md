@@ -107,10 +107,13 @@ Keep v2 normalization and legacy compatibility at the shared form/data boundarie
 
 Date-based presentation uses `getTodayInWarsaw` in `Europe/Warsaw`. A dated
 term is upcoming before its start date, ongoing from its start through its end
-(inclusive), and finished afterwards. The homepage, trip and camp lists show
-all upcoming offers, then ongoing offers, and add the most recently finished
-offers only until three cards are present. The homepage omits offers without a
-start date; category lists keep undated offers after dated unfinished ones.
+(inclusive), and finished afterwards. Lists order upcoming offers first, then
+ongoing offers, then recently finished offers. Finished offers appear only if
+they ended within one rolling calendar month, including the boundary date:
+for example, on 6 November the boundary is 6 October. When the preceding month
+is shorter, the boundary uses its last day. The homepage shows
+at most three cards and omits offers without a start date. Category lists show
+all eligible offers and keep undated offers after dated unfinished ones.
 Ties use Polish title and ID. Finished cards are grey and do not link to details;
 ongoing cards remain linked and show `W trakcie` instead of `Ostatnie miejsca`.
 

@@ -20,4 +20,4 @@ export const getTodayInWarsaw = (now = new Date()): string => {
 };
 
 export const selectUpcomingHomeOffers = (offers: PublicOffer[], today: string): PublicOffer[] =>
-  selectListingOffers(offers, today, true);
+  selectListingOffers(offers, today, true).slice(0, 3);
