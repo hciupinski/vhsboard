@@ -1136,56 +1136,28 @@
       ]
     },
     "rental/snowboard.png": {
-      "sourceHash": "79378dfb35dc07e7d0fc2d0f74e4da3deaace0fde2923353b6a4a8acc4893c0a",
+      "sourceHash": "5cb95536caa378ccefc93b39aaa36e82a1f6905ab719a89d56b12be1383f980f",
       "asset": {
-        "src": "/images/generated/rental-snowboard-1414-e776cd78f5c7.webp",
-        "width": 1414,
+        "src": "/images/generated/rental-snowboard-453-0148f4cb4cfa.webp",
+        "width": 453,
         "height": 340,
-        "webpSrcSet": "/images/generated/rental-snowboard-480-bcc828ef0b11.webp 480w, /images/generated/rental-snowboard-960-2357ebdb304f.webp 960w, /images/generated/rental-snowboard-1414-e776cd78f5c7.webp 1414w",
-        "avifSrcSet": "/images/generated/rental-snowboard-480-e86e7cb12105.avif 480w, /images/generated/rental-snowboard-960-764085435a5e.avif 960w, /images/generated/rental-snowboard-1414-1e48a41d0cf9.avif 1414w"
+        "webpSrcSet": "/images/generated/rental-snowboard-453-0148f4cb4cfa.webp 453w",
+        "avifSrcSet": "/images/generated/rental-snowboard-453-722c178dc1b1.avif 453w"
       },
       "variants": [
         {
-          "path": "/images/generated/rental-snowboard-480-bcc828ef0b11.webp",
-          "width": 480,
-          "height": 115,
-          "format": "webp",
-          "bytes": 7514
-        },
-        {
-          "path": "/images/generated/rental-snowboard-480-e86e7cb12105.avif",
-          "width": 480,
-          "height": 115,
-          "format": "avif",
-          "bytes": 3937
-        },
-        {
-          "path": "/images/generated/rental-snowboard-960-2357ebdb304f.webp",
-          "width": 960,
-          "height": 231,
-          "format": "webp",
-          "bytes": 20582
-        },
-        {
-          "path": "/images/generated/rental-snowboard-960-764085435a5e.avif",
-          "width": 960,
-          "height": 231,
-          "format": "avif",
-          "bytes": 10247
-        },
-        {
-          "path": "/images/generated/rental-snowboard-1414-e776cd78f5c7.webp",
-          "width": 1414,
+          "path": "/images/generated/rental-snowboard-453-0148f4cb4cfa.webp",
+          "width": 453,
           "height": 340,
           "format": "webp",
-          "bytes": 34982
+          "bytes": 13526
         },
         {
-          "path": "/images/generated/rental-snowboard-1414-1e48a41d0cf9.avif",
-          "width": 1414,
+          "path": "/images/generated/rental-snowboard-453-722c178dc1b1.avif",
+          "width": 453,
           "height": 340,
           "format": "avif",
-          "bytes": 18579
+          "bytes": 7256
         }
       ]
     },
