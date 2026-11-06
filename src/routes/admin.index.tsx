@@ -40,7 +40,6 @@ function AdminList() {
 const activityLabels: Record<OfferActivity, string> = {
   surf: "Surf",
   snow: "Snowboard",
-  combo: "Surf + snowboard",
   wake: "Wakeboard",
 };
 

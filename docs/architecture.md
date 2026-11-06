@@ -55,6 +55,11 @@ Only the six marketing pages enter the sitemap. See the [SEO runbook](seo-runboo
   dates, prices, an external booking URL, image references, and
   `draft` / `published` / `archived` status. Public repository queries explicitly
   filter published content; database RLS also enforces that boundary.
+  Supported activities are `surf` and `snow` for trips, and `wake` and `snow`
+  for camps. The legacy database enum value `combo` is not supported by the
+  editor or public offer schemas. Public queries filter supported activities.
+  The CMS reads a legacy trip with an unsupported activity as an unselected
+  activity, requiring an explicit supported choice before saving or publishing.
 - `offer_images` stores object paths, Polish alternative text, and gallery order.
   Publishing requires a hero record belonging to the offer with a valid alt.
   Gallery reordering uses the transactional `reorder_offer_images` RPC.

@@ -9,6 +9,8 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicJsonLd } from "@/components/seo/PublicJsonLd";
 import { campFaqItems } from "@/lib/faq";
+import { selectCampListingOffers } from "@/lib/offers/camp-list";
+import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { publishedOffersQueryOptions } from "@/lib/offers/query-options";
 import { publicPortalThemeOptions } from "@/lib/portal-theme/query-options";
 import { SOCIAL_IMAGES } from "@/lib/social-images";
@@ -43,6 +45,7 @@ function HalfDayCampsPage() {
     isError,
     refetch,
   } = useQuery(publishedOffersQueryOptions("day_camp"));
+  const visibleOffers = selectCampListingOffers(offers, getTodayInWarsaw());
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
@@ -135,18 +138,16 @@ function HalfDayCampsPage() {
                 Nie udało się pobrać obozów. Spróbuj ponownie.
               </button>
             ) : null}
-            {!isPending && !isError && offers.length === 0 ? (
+            {!isPending && !isError && visibleOffers.length === 0 ? (
               <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
                 Nie mamy teraz otwartych obozów. Wróć do nas za chwilę.
               </p>
             ) : null}
-            {!isPending && !isError && offers.length > 0 ? (
+            {!isPending && !isError && visibleOffers.length > 0 ? (
               <div className="mt-10 grid gap-6 md:grid-cols-3">
-                {offers.map((offer) =>
-                  offer.offerKind === "day_camp" ? (
-                    <DayCampCard key={offer.id} offer={offer} />
-                  ) : null,
-                )}
+                {visibleOffers.map((offer) => (
+                  <DayCampCard key={offer.id} offer={offer} />
+                ))}
               </div>
             ) : null}
           </div>

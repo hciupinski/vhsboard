@@ -139,7 +139,7 @@ const mapOffer = (
     };
   }
 
-  if (row.activity !== "surf" && row.activity !== "snow" && row.activity !== "combo")
+  if (row.activity !== "surf" && row.activity !== "snow")
     throw new Error("Aktywność nie pasuje do wyjazdu.");
   return {
     ...base,

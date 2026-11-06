@@ -73,6 +73,7 @@ afterEach(cleanup);
 describe("DayCampCard", () => {
   it("makes the entire day-camp card one link to its public detail", async () => {
     await renderCard(offer);
+    expect(screen.getByText("Sprawdź szczegóły")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /wakeboardowe obozy/i })).toHaveAttribute(
       "href",
       "/obozy/wake-lato-2026",
@@ -107,6 +108,6 @@ describe("DayCampCard", () => {
     expect(container.querySelector("img")).toHaveClass("grayscale");
     expect(screen.queryByText("Ostatnie miejsca")).not.toBeInTheDocument();
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
-    expect(screen.queryByText("Szczegóły")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sprawdź szczegóły")).not.toBeInTheDocument();
   });
 });

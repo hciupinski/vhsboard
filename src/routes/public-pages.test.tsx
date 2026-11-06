@@ -371,6 +371,44 @@ describe("static public pages", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("lists the nearest active camp before finished camps and limits the fillers", async () => {
+    const offers = [
+      {
+        ...homeCamp,
+        id: "old",
+        title: "Starszy obóz",
+        startDate: "2000-01-01",
+        endDate: "2000-01-07",
+      },
+      {
+        ...homeCamp,
+        id: "later",
+        title: "Późniejszy obóz",
+        startDate: "2099-08-01",
+        endDate: "2099-08-07",
+      },
+      {
+        ...homeCamp,
+        id: "recent",
+        title: "Ostatnio zakończony obóz",
+        startDate: "2001-01-01",
+        endDate: "2001-01-07",
+      },
+      { ...homeCamp, id: "near", title: "Najbliższy obóz", startDate: "2099-07-01" },
+    ];
+    mockedListPublishedOffers.mockResolvedValue(offers);
+    await renderRoute("/obozy", HalfDayCampsRoute);
+    const section = screen.getByRole("region", { name: "NAJBLIŻSZE TERMINY" });
+    await waitFor(() =>
+      expect(within(section).getAllByRole("heading", { level: 3 })).toHaveLength(3),
+    );
+    expect(
+      within(section)
+        .getAllByRole("heading", { level: 3 })
+        .map((h) => h.textContent),
+    ).toEqual(["Najbliższy obóz", "Późniejszy obóz", "Ostatnio zakończony obóz"]);
+  });
+
   it("presents active camps with current seasonal copy", async () => {
     await renderRoute("/obozy", HalfDayCampsRoute);
 

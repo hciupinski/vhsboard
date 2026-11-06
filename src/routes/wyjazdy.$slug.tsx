@@ -20,7 +20,6 @@ import { createPageMetadata } from "@/lib/seo";
 const activityLabels: Record<TripOffer["activity"], string> = {
   surf: "Surf",
   snow: "Snowboard",
-  combo: "Surf + snowboard",
 };
 
 export const Route = createFileRoute("/wyjazdy/$slug")({

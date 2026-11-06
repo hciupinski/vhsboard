@@ -62,11 +62,13 @@ const createQuery = (result: { data: unknown; error: Error | null }) => {
   const query = Object.assign(Promise.resolve(result), {
     select: vi.fn(),
     eq: vi.fn(),
+    in: vi.fn(),
     order: vi.fn(),
     maybeSingle: vi.fn(),
   });
   query.select.mockReturnValue(query);
   query.eq.mockReturnValue(query);
+  query.in.mockReturnValue(query);
   query.order.mockReturnValue(query);
   query.maybeSingle.mockReturnValue(query);
   return query;
@@ -138,6 +140,7 @@ describe("public offer repository", () => {
     expect(selectedColumns?.split(",")).toContain("show_last_places_badge");
     expect(offerQuery.eq).toHaveBeenCalledWith("status", "published");
     expect(offerQuery.eq).toHaveBeenCalledWith("offer_kind", "trip");
+    expect(offerQuery.in).toHaveBeenCalledWith("activity", ["surf", "snow"]);
     expect(offers).toMatchObject([
       {
         slug: "atlantic-surf-week",

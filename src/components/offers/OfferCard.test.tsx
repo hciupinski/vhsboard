@@ -107,10 +107,10 @@ describe("public offer components", () => {
   });
 
   it("keeps wrapping status tags and a long title in one expanding card flow", async () => {
-    const title = "Surf i snowboard podczas długiego tygodnia przygód";
+    const title = "Snowboard podczas długiego tygodnia zimowych przygód";
     const { container } = await renderOfferCard({
       ...offer,
-      activity: "combo",
+      activity: "snow",
       title,
       showLastPlacesBadge: true,
     });
@@ -120,7 +120,7 @@ describe("public offer components", () => {
     const details = screen.getByRole("heading", { name: title }).parentElement;
 
     expect(card).toHaveClass("flex", "min-h-[26rem]");
-    expect(screen.getByText("Surf + snowboard")).toBeInTheDocument();
+    expect(screen.getByText("Snowboard")).toBeInTheDocument();
     expect(tags).toHaveClass("flex", "flex-wrap");
     expect(tags).not.toHaveClass("absolute");
     expect(details).toHaveClass("mt-auto");
