@@ -29,8 +29,8 @@ const publishedDayCamp: DayCampOffer = {
   subtitle: "Pięć dni na wodzie.",
   shortDescription: "Wakeboard i dobra ekipa.",
   location: "Central Wake Park, Głowno",
-  startDate: "2026-06-29",
-  endDate: "2026-07-03",
+  startDate: "2099-06-29",
+  endDate: "2099-07-03",
   durationDays: 5,
   groupSizeMin: null,
   groupSizeMax: null,
@@ -60,8 +60,8 @@ const publishedDayCamp: DayCampOffer = {
     terms: [
       {
         label: "Turnus 1",
-        startDate: "2026-06-29",
-        endDate: "2026-07-03",
+        startDate: "2099-06-29",
+        endDate: "2099-07-03",
         bookingUrl: "https://zapisy.example.test/wakeboardowe-lato",
         priceOptions: [{ label: "Obozy", price: 1450 }],
       },

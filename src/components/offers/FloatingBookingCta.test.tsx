@@ -9,6 +9,42 @@ afterEach(() => {
 });
 
 describe("FloatingBookingCta", () => {
+  it("keeps the floating action disabled after the card leaves view", () => {
+    let notify!: IntersectionObserverCallback;
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        constructor(callback: IntersectionObserverCallback) {
+          notify = callback;
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
+    const ref = createRef<HTMLElement>();
+    Object.assign(ref, { current: document.createElement("aside") });
+    render(
+      <FloatingBookingCta
+        cardRef={ref}
+        href="https://example.test/book"
+        label="Przejdź do zapisów"
+        disabled
+      />,
+    );
+    act(() =>
+      notify(
+        [
+          {
+            isIntersecting: false,
+            boundingClientRect: { bottom: -1 },
+          } as IntersectionObserverEntry,
+        ],
+        {} as IntersectionObserver,
+      ),
+    );
+    expect(screen.getByRole("button", { name: "Przejdź do zapisów" })).toBeDisabled();
+    expect(screen.queryByRole("link", { name: "Przejdź do zapisów" })).not.toBeInTheDocument();
+  });
   it("hides when the footer enters the viewport and returns when scrolling above it", () => {
     const callbacks: IntersectionObserverCallback[] = [];
     vi.stubGlobal(

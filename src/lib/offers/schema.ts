@@ -97,7 +97,12 @@ const offerBaseRowSchema = z.object({
   status: z.literal("published"),
 });
 
-export const offerListRowSchema = offerBaseRowSchema;
+export const offerListRowSchema = offerBaseRowSchema.extend({
+  term0start: dateSchema.nullable().optional(),
+  term0end: dateSchema.nullable().optional(),
+  term1start: dateSchema.nullable().optional(),
+  term1end: dateSchema.nullable().optional(),
+});
 const offerDetailRowShape = offerBaseRowSchema.extend({
   description: z.union([offerContentSchema, dayCampContentSchema]),
 });

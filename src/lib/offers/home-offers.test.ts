@@ -75,11 +75,12 @@ describe("selectUpcomingHomeOffers", () => {
     ];
 
     expect(selectUpcomingHomeOffers(offers, "2026-09-27").map((offer) => offer.title)).toEqual([
-      "Dzisiaj",
       "Alfa",
       "Zeta",
       "Obóz wake",
       "Później",
+      "Miniony",
+      "Dzisiaj",
     ]);
     expect(offers.map((offer) => offer.title)).toEqual([
       "Później",

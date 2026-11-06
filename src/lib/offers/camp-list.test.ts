@@ -67,9 +67,9 @@ describe("selectCampListingOffers", () => {
       camp("ended", "2026-10-01", "2026-11-05"),
     ];
     expect(selectCampListingOffers(offers, today).map(({ id }) => id)).toEqual([
+      "future",
       "ongoing",
       "today",
-      "future",
       "undated",
     ]);
   });

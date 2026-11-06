@@ -50,6 +50,26 @@ const completeImageRows = [
 ];
 
 describe("offer row mappers", () => {
+  it("maps projected camp dates and rejects incomplete projections", () => {
+    const row = {
+      ...completeOfferRow,
+      offer_kind: "day_camp",
+      activity: "wake",
+      group_size_min: null,
+      group_size_max: null,
+      term0start: "2026-11-01",
+      term0end: "2026-11-05",
+      term1start: "2026-12-01",
+      term1end: "2026-12-05",
+    };
+    expect(mapOfferListRow(row, new Map())).toMatchObject({
+      campTermDates: [
+        { startDate: "2026-11-01", endDate: "2026-11-05" },
+        { startDate: "2026-12-01", endDate: "2026-12-05" },
+      ],
+    });
+    expect(() => mapOfferListRow({ ...row, term1end: null }, new Map())).toThrow();
+  });
   it("rejects discontinued combined offers in public lists and details", () => {
     const row = { ...completeOfferRow, activity: "combo" };
     expect(() => mapOfferListRow(row, new Map())).toThrow();

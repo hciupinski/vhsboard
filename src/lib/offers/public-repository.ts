@@ -100,7 +100,11 @@ export const listPublishedOffers = async (kind: OfferKind = "trip"): Promise<Pub
   try {
     const { data, error } = await supabase
       .from("offers")
-      .select(LIST_COLUMNS)
+      .select(
+        kind === "day_camp"
+          ? `${LIST_COLUMNS},term0start:description->terms->0->>startDate,term0end:description->terms->0->>endDate,term1start:description->terms->1->>startDate,term1end:description->terms->1->>endDate`
+          : LIST_COLUMNS,
+      )
       .eq("status", PUBLISHED_STATUS)
       .eq("offer_kind", kind)
       .in("activity", kind === "trip" ? ["surf", "snow"] : ["wake", "snow"]);

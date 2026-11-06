@@ -105,22 +105,27 @@ Keep v2 normalization and legacy compatibility at the shared form/data boundarie
 
 ### Dates, lists and marketing badges
 
-Date-based presentation uses `getTodayInWarsaw` in `Europe/Warsaw`. An offer is
-finished only when a non-null `endDate` is before today; an offer ending today
-or without an end date is not finished. This does not change its database status.
-Public finished cards show a greyscale image and `Zakończone`, without a detail
-link or CTA. `show_last_places_badge` is a manually managed marketing flag,
-not availability; finished cards suppress it. Existing detail URLs remain valid
-for published offers.
+Date-based presentation uses `getTodayInWarsaw` in `Europe/Warsaw`. A dated
+term is upcoming before its start date, ongoing from its start through its end
+(inclusive), and finished afterwards. The homepage, trip and camp lists show
+all upcoming offers, then ongoing offers, and add the most recently finished
+offers only until three cards are present. The homepage omits offers without a
+start date; category lists keep undated offers after dated unfinished ones.
+Ties use Polish title and ID. Finished cards are grey and do not link to details;
+ongoing cards remain linked and show `W trakcie` instead of `Ostatnie miejsca`.
 
-The homepage selects dated trips and camps starting today or later, ordered by
-start date and Polish title. Events remain a contact service, not dated offers.
-Related trips exclude the current offer and show at most three upcoming trips.
-The administrator list independently sorts unfinished offers first, then finished
-ones; within each group it orders by start date (missing dates last), Polish
-title and ID. Finished admin cards retain editing actions, and only published
-ones replace their publication label with `Zakończone`. Camp summary dates span
-the first through last term, including gaps between terms.
+Camp summaries include only projected dates for up to two terms, without loading
+the full description. The card is ongoing when any term is ongoing; between
+terms it is upcoming if a later term exists. The next future term determines
+its ordering. Each term's registration closes on its start date, while links to
+the terms remain available if another term is still upcoming. Trip registration
+controls close on the start date. Disabled controls are native buttons; detail
+URLs remain available for published offers. The administrator list independently
+sorts unfinished offers before finished offers, then by start date (missing dates
+last), Polish title and ID; finished admin cards retain editing actions, and only
+published ones replace the publication label with `Zakończone`. Related trips
+continue to show at most three upcoming trips other than the current one. Camp
+summary dates span the first through last term, including gaps between terms.
 
 ## Cookie preferences
 

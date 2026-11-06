@@ -81,10 +81,11 @@ their semantic colors. Hover never becomes a requirement for touch use.
   bottom gradient, activity/status labels, dates, title, starting price, and
   “Sprawdź szczegóły”. Camp listing actions stay visible without hovering.
   Finished offers use grayscale photographs and have no detail link or CTA.
-  The camp listing orders active offers by start date, with undated offers
-  last. It includes all active offers and, only when fewer than three are
-  active, appends the most recently finished camps to fill up to three cards.
-  A camp remains active through its end date in the Europe/Warsaw timezone.
+  The homepage and category listings show upcoming offers first, then cards
+  marked `W trakcie`, and fill any remaining places up to three with the most
+  recently finished offers. Undated category offers follow dated unfinished
+  ones; the homepage omits offers without a start date. Camp status follows
+  individual terms. Started terms have disabled registration controls.
 - Detail pages pair a generous hero with concise trip facts, then organise
   longer content into readable sections: story, highlights, schedule, what is
   included, gallery, and related trips.
