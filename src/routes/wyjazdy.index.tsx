@@ -83,7 +83,7 @@ function TripsPage() {
             <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-foreground shadow-warm">
               <iframe
                 className="aspect-video w-full"
-                src="https://www.youtube-nocookie.com/embed/k4DNSx4JNlU"
+                src="https://www.youtube-nocookie.com/embed/cOt-FTBVPQw"
                 title="Film przedstawiający wyjazdy VHSBOARD"
                 loading="lazy"
                 referrerPolicy="strict-origin-when-cross-origin"
