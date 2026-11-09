@@ -188,7 +188,7 @@ describe("trips list route", () => {
     ).toBeTruthy();
     expect(screen.getByTitle("Film przedstawiający wyjazdy VHSBOARD")).toHaveAttribute(
       "src",
-      "https://www.youtube-nocookie.com/embed/k4DNSx4JNlU",
+      "https://www.youtube-nocookie.com/embed/cOt-FTBVPQw",
     );
   });
 });
