@@ -302,6 +302,7 @@ describe("OfferEditorForm", () => {
     }
     render(<Editor />);
     await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
     expect(screen.getByText("Zakwaterowanie slot")).toBeInTheDocument();
     await user.click(screen.getByRole("tab", { name: "Resort" }));
     await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
@@ -314,7 +315,10 @@ describe("OfferEditorForm", () => {
     const user = userEvent.setup();
     render(
       <OfferEditorForm
-        value={completeInput}
+        value={{
+          ...completeInput,
+          content: { ...completeInput.content, accommodation: { enabled: true, description: "" } },
+        }}
         errors={{}}
         disabled={false}
         onChange={vi.fn()}
@@ -400,6 +404,29 @@ describe("OfferEditorForm", () => {
     expect("terms" in latest.content && latest.content.terms[0]?.priceOptions[1]?.price).toBe(0);
     await user.click(screen.getByRole("button", { name: "Usuń wariant 2 z turnusu 1" }));
     expect("terms" in latest.content && latest.content.terms[0]?.priceOptions).toHaveLength(1);
+  });
+
+  it("hides the accommodation photo manager until the section is enabled", async () => {
+    const user = userEvent.setup();
+    function Editor() {
+      const [value, setValue] = useState(completeInput);
+      return (
+        <OfferEditorForm
+          value={value}
+          errors={{}}
+          disabled={false}
+          onChange={setValue}
+          accommodationImageManager={<p>Zdjęcia noclegu</p>}
+        />
+      );
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    expect(screen.queryByText("Zdjęcia noclegu")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
+    expect(screen.getByText("Zdjęcia noclegu")).toBeInTheDocument();
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
+    expect(screen.queryByText("Zdjęcia noclegu")).not.toBeInTheDocument();
   });
 
   it("keeps accommodation copy after disabling and reopening", async () => {

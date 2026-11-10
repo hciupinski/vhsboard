@@ -1,23 +1,29 @@
-import { getSectionIssues } from "./content-v2";
+import { sectionIsEnabled } from "./content-v2";
 import { supabase } from "../supabase";
 import { z } from "zod";
 import { mapAdminPreviewOfferDetailRow } from "./mapper";
 import {
   editorOfferInputSchema,
   storedEditorOfferInputSchema,
+  validateOfferForPublication,
   type EditableOffer,
   type EditableOfferInput,
 } from "./editor-schema";
-import { OfferRepositoryError } from "./public-repository";
+import { OfferRepositoryError } from "./offer-repository-error";
 import type { OfferKind, OfferStatus, PublicOffer } from "./types";
 import { readOfferImageRows } from "./image-rows";
+import {
+  accommodationPhotoRequired,
+  heroRequired,
+  publicationContentRequired,
+  type OfferImageReadiness,
+} from "./publication-readiness";
 
 const ADMIN_COLUMNS =
   "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,show_last_places_badge,hero_image,status";
 const ADMIN_LIST_COLUMNS = `${ADMIN_COLUMNS},updated_at`;
 const OFFER_IMAGES_BUCKET = "offer-images";
 const SIGNED_URL_TTL_SECONDS = 3600;
-const PUBLISH_READINESS_MESSAGE = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
 const updatedAtSchema = z.string().datetime({ offset: true });
 
 export type AdminOfferListItem = EditableOffer & { updatedAt: string };
@@ -39,6 +45,22 @@ const throwRepositoryError = (error: unknown, message: string): never => {
   throw new OfferRepositoryError(message, { cause: error });
 };
 
+const publicationMessages = new Map([
+  ["Opublikowana oferta wymaga obrazu głównego z poprawnym opisem alternatywnym.", heroRequired],
+  [
+    "Opublikowana oferta z zakwaterowaniem wymaga co najmniej jednego zdjęcia.",
+    accommodationPhotoRequired,
+  ],
+  [
+    "Opublikowana oferta wymaga kompletnej treści właściwej dla rodzaju.",
+    publicationContentRequired,
+  ],
+  [
+    "Opublikowana oferta wymaga poprawnego HTTPS URL-a zapisów.",
+    "Wpisz poprawny adres zapisów HTTPS.",
+  ],
+]);
+
 const throwMutationError = (error: unknown, message: string): never => {
   if (
     isRecord(error) &&
@@ -46,6 +68,10 @@ const throwMutationError = (error: unknown, message: string): never => {
     error["message"].includes("Odśwież CMS")
   )
     throw new OfferRepositoryError("Odśwież CMS przed zapisaniem oferty.", { cause: error });
+  if (isRecord(error) && error["code"] === "23514" && typeof error["message"] === "string") {
+    const publicationMessage = publicationMessages.get(error["message"]);
+    if (publicationMessage) throw new OfferRepositoryError(publicationMessage, { cause: error });
+  }
   if (isDuplicateSlugError(error)) {
     throw new OfferRepositoryError("Taki adres oferty już istnieje", { cause: error });
   }
@@ -271,76 +297,71 @@ export const updateOffer = async (
   }
 };
 
-export const canPublishOffer = async (id: string): Promise<boolean> => {
+const readinessError = "Nie udało się sprawdzić gotowości oferty.";
+
+const hasReadyHero = async (id: string, heroImagePath: string | null): Promise<boolean> => {
+  if (!heroImagePath) return false;
+  const { data, error } = await supabase
+    .from("offer_images")
+    .select("alt_text")
+    .eq("offer_id", id)
+    .eq("storage_path", heroImagePath)
+    .eq("category", "gallery")
+    .maybeSingle();
+
+  if (error) return throwRepositoryError(error, readinessError);
+  const altLength = getStringField(data, "alt_text")?.trim().length ?? 0;
+  return altLength >= 5 && altLength <= 180;
+};
+
+const hasAccommodationPhoto = async (id: string): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from("offer_images")
+    .select("id")
+    .eq("offer_id", id)
+    .eq("category", "accommodation")
+    .limit(1)
+    .maybeSingle();
+  if (error) return throwRepositoryError(error, readinessError);
+  return data !== null;
+};
+
+export const getOfferImageReadiness = async (
+  id: string,
+  heroImagePath: string | null,
+): Promise<OfferImageReadiness> => {
+  const [heroReady, accommodationReady] = await Promise.all([
+    hasReadyHero(id, heroImagePath),
+    hasAccommodationPhoto(id),
+  ]);
+  return { heroReady, accommodationReady };
+};
+
+const getPublicationIssue = async (id: string): Promise<string | null> => {
   try {
-    const { data: offerData, error: offerError } = await supabase
+    const { data, error } = await supabase
       .from("offers")
       .select(ADMIN_COLUMNS)
       .eq("id", id)
       .maybeSingle();
 
-    if (offerError) {
-      throw new OfferRepositoryError("Nie udało się sprawdzić gotowości oferty.", {
-        cause: offerError,
-      });
+    if (error) return throwRepositoryError(error, readinessError);
+    if (!isRecord(data)) return "Nie znaleziono oferty. Odśwież listę ofert.";
+
+    const editable = toEditableOfferInput(data);
+    if (!validateOfferForPublication(editable).success) return publicationContentRequired;
+    if (!(await hasReadyHero(id, editable.heroImagePath))) return heroRequired;
+    if (sectionIsEnabled(editable.content.accommodation) && !(await hasAccommodationPhoto(id))) {
+      return accommodationPhotoRequired;
     }
-
-    if (offerData === null || !isRecord(offerData)) {
-      return false;
-    }
-
-    const editable = toEditableOfferInput(offerData);
-    if (!editorOfferInputSchema.safeParse(editable).success) return false;
-    if (getSectionIssues(editable.content, editable.offerKind ?? "trip").length) return false;
-    const { heroImagePath } = editable;
-    if (heroImagePath === null) {
-      return false;
-    }
-
-    const { data: imageData, error: imageError } = await supabase
-      .from("offer_images")
-      .select("alt_text")
-      .eq("offer_id", id)
-      .eq("storage_path", heroImagePath)
-      .eq("category", "gallery")
-      .maybeSingle();
-
-    if (imageError) {
-      throw new OfferRepositoryError("Nie udało się sprawdzić gotowości oferty.", {
-        cause: imageError,
-      });
-    }
-
-    const altText = getStringField(imageData, "alt_text")?.trim();
-    const heroReady =
-      altText !== undefined && altText !== null && altText.length >= 5 && altText.length <= 180;
-    if (!heroReady) return false;
-
-    const content = offerData.description;
-    const accommodationEnabled =
-      isRecord(content) &&
-      isRecord(content["accommodation"]) &&
-      content["accommodation"]["enabled"] !== false &&
-      typeof content["accommodation"]["description"] === "string";
-    if (!accommodationEnabled) return true;
-
-    const { data: accommodationImage, error: accommodationError } = await supabase
-      .from("offer_images")
-      .select("id")
-      .eq("offer_id", id)
-      .eq("category", "accommodation")
-      .limit(1)
-      .maybeSingle();
-    if (accommodationError) {
-      throw new OfferRepositoryError("Nie udało się sprawdzić gotowości oferty.", {
-        cause: accommodationError,
-      });
-    }
-    return accommodationImage !== null;
+    return null;
   } catch (error) {
-    return throwRepositoryError(error, "Nie udało się sprawdzić gotowości oferty.");
+    return throwRepositoryError(error, readinessError);
   }
 };
+
+export const canPublishOffer = async (id: string): Promise<boolean> =>
+  (await getPublicationIssue(id)) === null;
 
 const updateOfferStatus = async (
   id: string,
@@ -355,9 +376,7 @@ const updateOfferStatus = async (
       .select(ADMIN_COLUMNS)
       .single();
 
-    if (error) {
-      throw new OfferRepositoryError(errorMessage, { cause: error });
-    }
+    if (error) return throwMutationError(error, errorMessage);
 
     return toEditableOffer(data);
   } catch (error) {
@@ -369,8 +388,9 @@ export const setOfferStatus = async (
   id: string,
   status: "draft" | "published",
 ): Promise<EditableOffer> => {
-  if (status === "published" && !(await canPublishOffer(id))) {
-    throw new OfferRepositoryError(PUBLISH_READINESS_MESSAGE);
+  if (status === "published") {
+    const issue = await getPublicationIssue(id);
+    if (issue) throw new OfferRepositoryError(issue);
   }
 
   return updateOfferStatus(id, status, "Nie udało się zmienić statusu oferty.");

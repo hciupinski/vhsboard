@@ -105,6 +105,13 @@ composition of focused components in `src/components/admin/offer-editor`;
 sections emit immutable updates and do not save, authenticate or create their
 own copy of whole-offer state. Image managers are supplied separately for an
 already saved offer and retain responsibility for their upload operations.
+The editor derives field errors and tab markers from the current input.
+It evaluates draft and publication requirements separately and queries image
+readiness independently of saved text. Publication and edits to published
+offers require current media checks and Supabase still enforces readiness at
+write time. Withdrawing publication changes status without saving form edits.
+The accommodation switch controls the CMS uploader and public section while
+preserving existing images.
 Keep v2 normalization and legacy compatibility at the shared form/data boundaries.
 The price note is optional public copy beneath the included and excluded lists.
 An enabled Training section can publish with an introduction alone. Transport
