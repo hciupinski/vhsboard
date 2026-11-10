@@ -19,13 +19,25 @@ select ok(not public.vhs_extra_price('{"kind":"extra","amount":12.345,"from":fal
 select ok(not public.vhs_extra_price('{"kind":"included","amount":50,"from":false,"unit":"osoba"}', true), 'included price cannot conceal a supplement');
 select ok(public.is_valid_trip_content('{"schemaVersion":2,"paragraphs":["Opis wyjazdu"],"highlights":["Program"],"included":["Opieka"],"excluded":["Dojazd"],"schedule":[{"day":"Dzień 1","text":"Przyjazd"}],"accommodation":{"enabled":false,"description":""}}'), 'legacy base and disabled accommodation publish without photos');
 
+select ok(public.is_valid_offer_sections('{"schemaVersion":2,"training":{"enabled":true,"description":"Lekcje na każdym poziomie.","items":[]}}', 'trip', true), 'training introduction publishes without cards');
+select ok(public.is_valid_offer_sections('{"schemaVersion":2,"priceNote":"Dopłaty na miejscu.","transport":{"enabled":true,"description":"Dojazd samodzielny.","types":["own"],"journeys":[]}}', 'trip', true), 'own transport array needs no journey');
+select ok(public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Dojazd z VHS.","types":["own","vhs_bus"],"journeys":[]}}', 'trip', false), 'multiple choices are stored in drafts');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Dojazd z VHS.","types":["own","vhs_bus"],"journeys":[]}}', 'trip', true), 'Bus VHS needs a journey even when own is selected');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Dojazd.","types":["own","own"],"journeys":[]}}', 'trip', false), 'duplicate choices rejected in drafts');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Dojazd.","types":["own",null],"journeys":[]}}', 'trip', false), 'malformed choices rejected');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Dojazd.","types":["own","other"],"journeys":[]}}', 'trip', true), 'custom mode needs a label');
+select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"priceNote":1}', 'trip', false), 'price note must be text');
+select ok(not public.is_valid_offer_sections(jsonb_build_object('schemaVersion',2,'priceNote',repeat('a',1001)), 'trip', true), 'price note length is bounded');
+
 insert into auth.users(id) values ('90000000-0000-4000-8000-000000000001'),('90000000-0000-4000-8000-000000000002');
 insert into public.profiles(id,role) values ('90000000-0000-4000-8000-000000000001','admin'),('90000000-0000-4000-8000-000000000002','editor');
 insert into public.offers(id,slug,activity,title,subtitle,short_description,location,duration_days,price_from,booking_url,status,description)
 values ('90000000-0000-4000-8000-000000000003','qa-vhs020-local-only','snow','Test oferty','Podtytuł testowy','Opis oferty używanej wyłącznie do testu lokalnego.','Test',7,100,'https://example.test','draft','{"schemaVersion":2,"paragraphs":["Opis wyjazdu"],"highlights":["Program"],"included":["Opieka"],"excluded":["Dojazd"],"schedule":[{"day":"Dzień 1","text":"Przyjazd"}]}');
 insert into storage.objects(bucket_id,name) values
 ('offer-images','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000004.webp'),
-('offer-images','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000005.webp');
+('offer-images','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000005.webp'),
+('offer-images','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000006.webp'),
+('offer-images','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000007.webp');
 select throws_ok($$update public.offers set description=description-'schemaVersion' where id='90000000-0000-4000-8000-000000000003'$$, '23514', 'Odśwież CMS przed zapisaniem oferty.', 'old client cannot drop v2 content');
 set local role anon;
 select is((select count(*)::integer from public.offers where id='90000000-0000-4000-8000-000000000003'),0,'anonymous cannot read draft');
@@ -40,6 +52,11 @@ select lives_ok($$select * from public.replace_offer_resort_map('90000000-0000-4
 select lives_ok($$select * from public.replace_offer_resort_map('90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000005.webp','Nowa mapa testowego resortu')$$,'admin atomically replaces map');
 select is((select count(*)::integer from public.offer_images where offer_id='90000000-0000-4000-8000-000000000003' and category='resort_map'),1,'exactly one active map after replacement');
 select throws_ok($$select * from public.replace_offer_resort_map('90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000002/90000000-0000-4000-8000-000000000005.webp','Obca mapa testowa')$$,'22023','Nieprawidłowy obraz mapy.','cannot attach another offer storage path');
+insert into public.offer_images(id,offer_id,storage_path,alt_text,category,position) values
+('90000000-0000-4000-8000-000000000016','90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000006.webp','Szkolenie na stoku','training_gallery',0),
+('90000000-0000-4000-8000-000000000017','90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000007.webp','Ćwiczenia w grupie','training_gallery',1);
+select lives_ok($$select public.reorder_offer_images('90000000-0000-4000-8000-000000000003',array['90000000-0000-4000-8000-000000000017','90000000-0000-4000-8000-000000000016']::uuid[],'training_gallery')$$, 'admin reorders training photos');
+select is((select position from public.offer_images where id='90000000-0000-4000-8000-000000000017'),0,'training photo moved to first position');
 reset role;
 set local role anon;
 select is((select count(*)::integer from public.offer_images where offer_id='90000000-0000-4000-8000-000000000003'),0,'anonymous cannot read draft map');
@@ -55,6 +72,13 @@ select is((select description #>> '{transport,enabled}' from public.offers where
 reset role;
 set local role anon;
 select is((select count(*)::integer from public.offer_images where offer_id='90000000-0000-4000-8000-000000000003' and category='resort_map'),1,'anonymous can read the published map');
+reset role;
+set local role authenticated;
+select lives_ok($$update public.offers set description=description || '{"priceNote":"Dopłaty na miejscu.","training":{"enabled":true,"description":"Lekcje na każdym poziomie.","items":[]},"transport":{"enabled":true,"type":"own","description":"Dojazd samodzielny.","journeys":[]}}'::jsonb where id='90000000-0000-4000-8000-000000000003'$$, 'published offer accepts a price note and training without cards');
+select lives_ok($$update public.offers set description=jsonb_set(description,'{transport}',((description -> 'transport') - 'type') || '{"types":["own"]}'::jsonb) where id='90000000-0000-4000-8000-000000000003'$$, 'published offer accepts the new transport array');
+select throws_ok($$update public.offers set description=description-'priceNote' where id='90000000-0000-4000-8000-000000000003'$$,'23514','Odśwież CMS przed zapisaniem oferty.','stale editor cannot lose price note');
+select throws_ok($$update public.offers set description=jsonb_set(description,'{transport}',((description -> 'transport') - 'types') || '{"type":"own"}'::jsonb) where id='90000000-0000-4000-8000-000000000003'$$,'23514','Odśwież CMS przed zapisaniem oferty.','stale editor cannot lose transport choices');
+select lives_ok($$update public.offers set description=jsonb_set(description,'{priceNote}','""') where id='90000000-0000-4000-8000-000000000003'$$,'current editor can clear the price note');
 reset role;
 select * from finish();
 rollback;

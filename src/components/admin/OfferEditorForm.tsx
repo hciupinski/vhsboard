@@ -8,7 +8,8 @@ import { OfferBasicsSection } from "./offer-editor/OfferBasicsSection";
 import { DayCampParentInfoEditor } from "./offer-editor/DayCampParentInfoEditor";
 import { getOfferEditorSections, type OfferSection } from "@/lib/offers/sections";
 import { normalizeOfferContentV2 } from "@/lib/offers/content-v2";
-import type { ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
+import { OfferValidationSummary } from "./offer-editor/OfferValidationSummary";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { EditableOfferInput } from "@/lib/offers/editor-schema";
@@ -19,23 +20,29 @@ type EditorTab = "basics" | OfferSection["editorTab"];
 type Props = {
   value: EditableOfferInput;
   errors: Record<string, string>;
+  validationTitle?: string | undefined;
   disabled: boolean;
   onChange: (value: EditableOfferInput) => void;
   imageManager?: ReactNode | undefined;
   accommodationImageManager?: ReactNode | undefined;
   resortMapManager?: ReactNode | undefined;
   resortImageManager?: ReactNode | undefined;
+  trainingImageManager?: ReactNode | undefined;
 };
 export function OfferEditorForm({
   value,
   errors,
+  validationTitle,
   disabled,
   onChange,
   imageManager,
   accommodationImageManager,
   resortMapManager,
   resortImageManager,
+  trainingImageManager,
 }: Props) {
+  const [activeTab, setActiveTab] = useState("basics");
+  const tabTriggers = useRef<Partial<Record<EditorTab, HTMLButtonElement>>>({});
   const offerKind = value.offerKind ?? "trip";
   const dayCamp = offerKind === "day_camp" ? (value.content as DayCampContent) : null;
   const trip = offerKind === "trip" ? (value.content as TripOfferContent) : null;
@@ -45,9 +52,6 @@ export function OfferEditorForm({
     onChange({ ...value, content: normalizeOfferContentV2(content, offerKind) });
   const setContent = (content: OfferContent) =>
     onChange({ ...value, content: normalizeOfferContentV2(content, offerKind) });
-  const tabHasError = (prefix: string) =>
-    Object.keys(errors).some((path) => path === prefix || path.startsWith(`${prefix}.`));
-
   const tabs: { editorTab: EditorTab; label: string }[] = [
     { editorTab: "basics", label: "Dane oferty" },
     ...getOfferEditorSections(offerKind),
@@ -61,6 +65,7 @@ export function OfferEditorForm({
       "location",
       "shortDescription",
       "subtitle",
+      "showLastPlacesBadge",
       ...(dayCamp
         ? []
         : [
@@ -76,7 +81,7 @@ export function OfferEditorForm({
     ],
     story: ["content.paragraphs"],
     highlights: ["content.highlights", dayCamp ? "content.dayProgram" : "content.schedule"],
-    inout: ["content.included", "content.excluded", "content.terms"],
+    inout: ["content.included", "content.excluded", "content.priceNote", "content.terms"],
     parent: ["content.parentInfo"],
     resort: ["content.resort", ...(dayCamp ? ["content.venueDescription"] : [])],
     training: ["content.training"],
@@ -86,8 +91,35 @@ export function OfferEditorForm({
     photos: ["heroImagePath"],
   };
 
+  const errorsByTab = new Map<EditorTab, string[]>();
+  for (const path of Object.keys(errors)) {
+    const tab = tabs.find(({ editorTab }) =>
+      tabErrorPaths[editorTab].some((prefix) => path === prefix || path.startsWith(`${prefix}.`)),
+    );
+    const key = tab?.editorTab ?? "basics";
+    errorsByTab.set(key, [...(errorsByTab.get(key) ?? []), path]);
+  }
+  const summaryTabs = tabs.flatMap(({ editorTab, label }) => {
+    const paths = errorsByTab.get(editorTab);
+    if (!paths) return [];
+    const mediaIssue = paths.find(
+      (path) => path === "heroImagePath" || path === "content.accommodation.images",
+    );
+    return [
+      {
+        label,
+        count: paths.length,
+        detail: mediaIssue ? errors[mediaIssue] : undefined,
+        onSelect: () => {
+          setActiveTab(editorTab);
+          tabTriggers.current[editorTab]?.focus();
+        },
+      },
+    ];
+  });
+
   return (
-    <Tabs defaultValue="basics" className="min-w-0">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="min-w-0">
       <TabsList
         aria-label="Sekcje oferty"
         className="flex h-auto w-full max-w-full justify-start overflow-x-auto"
@@ -105,11 +137,15 @@ export function OfferEditorForm({
         }}
       >
         {tabs.map(({ editorTab, label }) => {
-          const hasError = tabErrorPaths[editorTab].some(tabHasError);
+          const hasError = errorsByTab.has(editorTab);
           return (
             <TabsTrigger
               key={editorTab}
               value={editorTab}
+              ref={(element) => {
+                if (element) tabTriggers.current[editorTab] = element;
+                else delete tabTriggers.current[editorTab];
+              }}
               className="min-h-11 shrink-0 focus-visible:ring-inset focus-visible:ring-offset-0"
               aria-label={hasError ? `${label} — zawiera błędy` : label}
             >
@@ -123,6 +159,9 @@ export function OfferEditorForm({
           );
         })}
       </TabsList>
+      {validationTitle ? (
+        <OfferValidationSummary title={validationTitle} tabs={summaryTabs} />
+      ) : null}
 
       <TabsContent value="basics" className="mt-6">
         <OfferBasicsSection value={value} errors={errors} disabled={disabled} onChange={onChange} />
@@ -180,6 +219,7 @@ export function OfferEditorForm({
             onChange={setContent}
             mapManager={resortMapManager}
             resortImageManager={resortImageManager}
+            trainingImageManager={trainingImageManager}
           />
         </TabsContent>
       ))}

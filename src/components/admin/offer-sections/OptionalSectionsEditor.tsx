@@ -1,10 +1,15 @@
 import { createSectionFields } from "./SectionFields";
+import { errorFor } from "../offer-editor/editor-fields";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
   createOptionalSection,
   emptyPrice,
+  getTransportTypes,
+  hasOrganizedTransport,
+  transportLabels,
+  type TransportType,
   sectionIsEnabled,
   type OptionalSectionKey,
 } from "@/lib/offers/content-v2";
@@ -25,6 +30,7 @@ type Props = {
   onChange: (content: OfferContent) => void;
   mapManager?: ReactNode;
   resortImageManager?: ReactNode;
+  trainingImageManager?: ReactNode | undefined;
 };
 export function OptionalSectionsEditor({
   sectionKey,
@@ -34,9 +40,11 @@ export function OptionalSectionsEditor({
   onChange,
   mapManager,
   resortImageManager,
+  trainingImageManager,
 }: Props) {
   const value = content[sectionKey];
   const enabled = sectionIsEnabled(value);
+  const disabledError = enabled ? undefined : errorFor(errors, `content.${sectionKey}`);
   const { field, price, cards } = createSectionFields(errors, disabled);
   const baseCard = () => ({
     id: crypto.randomUUID(),
@@ -47,6 +55,8 @@ export function OptionalSectionsEditor({
   const resort = content.resort;
   const training = content.training;
   const transport = content.transport;
+  const selectedTypes = transport ? getTransportTypes(transport) : [];
+  const transportError = errors["content.transport.types"];
   const insurance = content.insurance;
   return (
     <fieldset
@@ -68,9 +78,16 @@ export function OptionalSectionsEditor({
         <label htmlFor={`${sectionKey}-enabled`}>Pokaż sekcję w ofercie</label>
       </div>
       {!enabled ? (
-        <p className="text-sm text-muted-foreground">
-          Sekcja jest wyłączona. Zapisana treść zostanie zachowana.
-        </p>
+        <>
+          <p className="text-sm text-muted-foreground">
+            Sekcja jest wyłączona. Zapisana treść zostanie zachowana.
+          </p>
+          {disabledError ? (
+            <p className="text-sm text-destructive" role="alert">
+              Włącz sekcję, aby poprawić dane przed zapisaniem. {disabledError}
+            </p>
+          ) : null}
+        </>
       ) : (
         <>
           {resort && sectionKey === "resort" ? (
@@ -106,7 +123,7 @@ export function OptionalSectionsEditor({
                 (description) => onChange({ ...content, training: { ...training, description } }),
                 3000,
               )}
-              <h3 className="font-semibold">Szkolenia → Bloki szkolenia</h3>
+              <h3 className="font-semibold">Szkolenia → Bloki szkolenia (opcjonalne)</h3>
               {cards(
                 training.items,
                 (items) => onChange({ ...content, training: { ...training, items } }),
@@ -128,36 +145,46 @@ export function OptionalSectionsEditor({
                   </>
                 ),
               )}
+              {trainingImageManager}
             </>
           ) : null}
           {transport && sectionKey === "transport" ? (
             <>
-              <label className="block space-y-2">
-                <span className="text-sm font-medium">Transport → Rodzaj transportu</span>
-                <select
-                  className="h-11 w-full rounded-md border bg-card px-3"
-                  value={transport.type}
-                  onChange={(e) =>
-                    onChange({
-                      ...content,
-                      transport: { ...transport, type: e.target.value as typeof transport.type },
-                    })
-                  }
-                >
-                  {Object.entries({
-                    coach: "Autokar",
-                    plane: "Samolot",
-                    train: "Pociąg",
-                    own: "Dojazd własny",
-                    other: "Inny",
-                  }).map(([key, label]) => (
-                    <option key={key} value={key}>
-                      {label}
-                    </option>
+              <fieldset
+                className="space-y-2"
+                aria-describedby={transportError ? "transport-types-error" : undefined}
+              >
+                <legend className="text-sm font-medium">Transport → Rodzaje transportu</legend>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {(Object.keys(transportLabels) as TransportType[]).map((type) => (
+                    <label
+                      key={type}
+                      className="flex min-h-11 items-center gap-3 rounded-md border bg-card px-3"
+                    >
+                      <input
+                        type="checkbox"
+                        className="size-4 accent-primary"
+                        checked={selectedTypes.includes(type)}
+                        onChange={(event) => {
+                          const types = event.target.checked
+                            ? [...selectedTypes, type]
+                            : selectedTypes.filter((selected) => selected !== type);
+                          const next = { ...transport, types };
+                          delete next.type;
+                          onChange({ ...content, transport: next });
+                        }}
+                      />
+                      {transportLabels[type]}
+                    </label>
                   ))}
-                </select>
-              </label>
-              {transport.type === "other"
+                </div>
+                {transportError ? (
+                  <p id="transport-types-error" role="alert" className="text-destructive">
+                    {transportError}
+                  </p>
+                ) : null}
+              </fieldset>
+              {selectedTypes.includes("other")
                 ? field(
                     "transport.customType",
                     "Własna nazwa transportu",
@@ -173,7 +200,7 @@ export function OptionalSectionsEditor({
                 (description) => onChange({ ...content, transport: { ...transport, description } }),
                 3000,
               )}
-              {transport.type !== "own"
+              {hasOrganizedTransport(transport)
                 ? transport.journeys.map((journey, i) => {
                     const term =
                       "terms" in content

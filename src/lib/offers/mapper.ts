@@ -62,7 +62,13 @@ const validateGroupSize = (offer: OfferListRow | AdminPreviewOfferDetailRow): vo
 };
 
 const validateImageOrder = (images: OfferImageRow[], offerId: string): void => {
-  for (const category of ["gallery", "accommodation", "resort_map", "resort_gallery"] as const) {
+  for (const category of [
+    "gallery",
+    "accommodation",
+    "resort_map",
+    "resort_gallery",
+    "training_gallery",
+  ] as const) {
     const categoryImages = images.filter((image) => image.category === category);
     for (let index = 0; index < categoryImages.length; index += 1) {
       const image = categoryImages[index];
@@ -122,6 +128,9 @@ const mapOffer = (
     accommodationImages: images.filter((image) => image.category === "accommodation"),
     ...(images.some((image) => image.category === "resort_gallery")
       ? { resortImages: images.filter((image) => image.category === "resort_gallery") }
+      : {}),
+    ...(images.some((image) => image.category === "training_gallery")
+      ? { trainingImages: images.filter((image) => image.category === "training_gallery") }
       : {}),
     ...(images.some((image) => image.category === "resort_map")
       ? { resortMap: images.find((image) => image.category === "resort_map") ?? null }

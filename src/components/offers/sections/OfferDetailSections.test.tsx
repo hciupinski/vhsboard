@@ -56,6 +56,62 @@ describe("complete shared offer details", () => {
       ).toBe(true);
     },
   );
+  it.each(["trip", "day_camp"] as const)(
+    "marks each %s schedule entry with a decorative timeline dot",
+    (kind) => {
+      const offer = sectionOffer(kind);
+      render(<OfferDetailSections offer={offer} sidebar={null} />);
+      const schedule = document.getElementById(kind === "trip" ? "plan-wyjazdu" : "plan-dnia");
+      const entries = schedule?.querySelectorAll("ol > li");
+      expect(entries?.length).toBeGreaterThan(0);
+      entries?.forEach((entry) =>
+        expect(entry.querySelector('[aria-hidden="true"]')).toBeInTheDocument(),
+      );
+    },
+  );
+  it("renders a training gallery without cards and hides it with the section disabled", () => {
+    const offer = sectionOffer();
+    offer.content.training!.items = [];
+    Object.assign(offer, {
+      trainingImages: [
+        {
+          id: "training-photo",
+          path: "training-photo",
+          alt: "Instruktorka na stoku",
+          position: 0,
+          category: "training_gallery",
+          signedUrl: "https://example.test/training.webp",
+        },
+      ],
+    });
+    const { rerender } = render(<OfferDetailSections offer={offer} sidebar={null} />);
+    expect(screen.getByRole("region", { name: "Szkolenia" })).toContainElement(
+      screen.getByRole("img", { name: "Instruktorka na stoku" }),
+    );
+    expect(screen.getAllByRole("img", { name: "Instruktorka na stoku" })).toHaveLength(1);
+    offer.content.training!.enabled = false;
+    rerender(<OfferDetailSections offer={offer} sidebar={null} />);
+    expect(screen.queryByRole("img", { name: "Instruktorka na stoku" })).not.toBeInTheDocument();
+  });
+  it("shows one public note under the price lists", () => {
+    const offer = sectionOffer();
+    Object.assign(offer.content, { priceNote: "Dopłaty rozliczamy na miejscu." });
+    render(<OfferDetailSections offer={offer} sidebar={null} />);
+    expect(screen.getByRole("region", { name: "Cena" })).toContainElement(
+      screen.getByText("Dopłaty rozliczamy na miejscu."),
+    );
+  });
+  it("shows both transport modes for one shared journey", () => {
+    const offer = sectionOffer();
+    Reflect.deleteProperty(offer.content.transport!, "type");
+    Object.assign(offer.content.transport!, { types: ["own", "vhs_bus"] });
+    render(<OfferDetailSections offer={offer} sidebar={null} />);
+    const section = screen.getByRole("region", { name: "Transport" });
+    expect(section).toHaveTextContent("Dojazd własny");
+    expect(section).toHaveTextContent("Bus VHS");
+    expect(section).toHaveTextContent("Wyjazd");
+    expect(section).toHaveTextContent("Powrót");
+  });
   it("keeps legacy parent transport until the new section is enabled", () => {
     const offer = sectionOffer("day_camp");
     if (offer.offerKind !== "day_camp") throw new Error("expected camp");

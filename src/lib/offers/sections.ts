@@ -63,6 +63,7 @@ export function getOfferSections(offer: PublicOffer): OfferSection[] {
         return (
           content.included.length > 0 ||
           content.excluded.length > 0 ||
+          !!content.priceNote ||
           ("terms" in content && content.terms.length > 0)
         );
       case "photos":

@@ -482,6 +482,19 @@ describe("administrator offer repository", () => {
     expect(mutationQuery.delete).not.toHaveBeenCalled();
   });
 
+  it("explains a missing accommodation photo when the database rejects a published edit", async () => {
+    const databaseError = {
+      code: "23514",
+      message: "Opublikowana oferta z zakwaterowaniem wymaga co najmniej jednego zdjęcia.",
+    };
+    mockedSupabase.from.mockReturnValue(createMutationQuery({ data: null, error: databaseError }));
+
+    await expect(updateOffer(offerId, completeInput)).rejects.toMatchObject({
+      message: "Dodaj co najmniej jedno zdjęcie zakwaterowania.",
+      cause: databaseError,
+    });
+  });
+
   it("preserves an unrelated database cause without using the duplicate-slug message", async () => {
     const databaseError = { code: "42501", details: "row-level security" };
     mockedSupabase.from.mockReturnValue(createMutationQuery({ data: null, error: databaseError }));

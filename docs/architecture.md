@@ -63,6 +63,10 @@ Only the six marketing pages enter the sitemap. See the [SEO runbook](seo-runboo
 - `offer_images` stores object paths, Polish alternative text, and gallery order.
   Publishing requires a hero record belonging to the offer with a valid alt.
   Gallery reordering uses the transactional `reorder_offer_images` RPC.
+  Training photos have their own optional gallery and appear in the enabled
+  Training section independently of its cards. Like other offer photos, they
+  are stored in the private bucket and require a published offer for public
+  access.
 - `contact_documents` stores public PDF metadata. `portal_carousel_images`
   stores selected local asset paths and order; it does not upload carousel files.
 - `portal_rental_document` is a separate singleton holding the optional rental
@@ -101,7 +105,19 @@ composition of focused components in `src/components/admin/offer-editor`;
 sections emit immutable updates and do not save, authenticate or create their
 own copy of whole-offer state. Image managers are supplied separately for an
 already saved offer and retain responsibility for their upload operations.
+The editor derives field errors and tab markers from the current input.
+It evaluates draft and publication requirements separately and queries image
+readiness independently of saved text. Publication and edits to published
+offers require current media checks and Supabase still enforces readiness at
+write time. Withdrawing publication changes status without saving form edits.
+The accommodation switch controls the CMS uploader and public section while
+preserving existing images.
 Keep v2 normalization and legacy compatibility at the shared form/data boundaries.
+The price note is optional public copy beneath the included and excluded lists.
+An enabled Training section can publish with an introduction alone. Transport
+accepts several modes with a shared description and journey, or one journey per
+camp term. Self-arrival alone needs no journey. Existing single-mode offers
+remain readable and editable.
 
 ### Dates, lists and marketing badges
 

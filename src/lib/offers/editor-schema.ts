@@ -1,3 +1,4 @@
+import { isValidIsoDate } from "./date-input";
 import { contentSectionsShape, getSectionIssues, getContentIdentityIssues } from "./content-v2";
 import { z } from "zod";
 
@@ -62,6 +63,7 @@ const dateSchema = z.preprocess(
   textField("Data musi mieć format RRRR-MM-DD.")
     .trim()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Data musi mieć format RRRR-MM-DD.")
+    .refine(isValidIsoDate, "Wpisz istniejącą datę.")
     .nullable(),
 );
 
@@ -272,16 +274,21 @@ const tripEditorOfferInputSchema = z
 
 const timeSchema = trimmedText("Godzina", 1, 120);
 
+const daysInTerm = (startDate: string, endDate: string): number =>
+  Math.round(
+    (Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${startDate}T00:00:00Z`)) / 86_400_000,
+  ) + 1;
+
 const dayCampTermSchema = z
   .object({
     id: z.string().uuid().optional(),
     label: trimmedText("Nazwa turnusu", 1, 120),
     startDate: textField("Data rozpoczęcia turnusu jest wymagana.")
       .trim()
-      .regex(/^\d{4}-\d{2}-\d{2}$/, "Data musi mieć format RRRR-MM-DD."),
+      .refine(isValidIsoDate, "Wpisz istniejącą datę rozpoczęcia turnusu."),
     endDate: textField("Data zakończenia turnusu jest wymagana.")
       .trim()
-      .regex(/^\d{4}-\d{2}-\d{2}$/, "Data musi mieć format RRRR-MM-DD."),
+      .refine(isValidIsoDate, "Wpisz istniejącą datę zakończenia turnusu."),
     bookingUrl: textField("Wpisz poprawny adres zapisów.")
       .trim()
       .url("Wpisz poprawny adres zapisów.")
@@ -290,17 +297,28 @@ const dayCampTermSchema = z
       .array(
         z.object({
           label: trimmedText("Nazwa wariantu ceny", 1, 120),
-          price: z.number().int().positive("Cena musi być większa od zera."),
+          price: z
+            .number()
+            .int("Wpisz cenę w pełnych złotych.")
+            .positive("Cena musi być większa od zera."),
         }),
       )
       .min(1, "Dodaj co najmniej jeden wariant ceny."),
   })
   .superRefine((term, ctx) => {
+    if (!isValidIsoDate(term.startDate) || !isValidIsoDate(term.endDate)) return;
+
     if (term.endDate < term.startDate) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["endDate"],
         message: "Data zakończenia turnusu nie może być wcześniejsza niż data rozpoczęcia.",
+      });
+    } else if (daysInTerm(term.startDate, term.endDate) > 60) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["endDate"],
+        message: "Turnus nie może trwać dłużej niż 60 dni.",
       });
     }
   });
@@ -328,11 +346,6 @@ const dayCampContentSchema = z.object({
     .max(2, "Możesz dodać najwyżej dwa turnusy."),
   ...contentSectionsShape,
 });
-
-const daysInTerm = (startDate: string, endDate: string): number =>
-  Math.round(
-    (Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${startDate}T00:00:00Z`)) / 86_400_000,
-  ) + 1;
 
 const dayCampEditorOfferInputSchema = z
   .object({
@@ -523,16 +536,29 @@ export function changeEditableOfferKind(
   };
 }
 
+export function validateOfferEditor(input: EditableOfferInput) {
+  const draft = editorOfferInputSchema.safeParse(input);
+  const content = draft.success ? draft.data.content : input.content;
+  const sectionIssues = getSectionIssues(content, input.offerKind ?? "trip").map((issue) => ({
+    ...issue,
+    path: ["content", ...issue.path],
+  }));
+  if (!sectionIssues.length) return { draft, publication: draft };
+
+  const baseIssues = draft.success ? [] : draft.error.issues;
+  const basePaths = new Set(baseIssues.map((issue) => issue.path.join(".")));
+  return {
+    draft,
+    publication: {
+      success: false as const,
+      error: new z.ZodError([
+        ...baseIssues,
+        ...sectionIssues.filter((issue) => !basePaths.has(issue.path.join("."))),
+      ]),
+    },
+  };
+}
+
 export function validateOfferForPublication(input: EditableOfferInput) {
-  const base = editorOfferInputSchema.safeParse(input);
-  if (!base.success) return base;
-  const issues = getSectionIssues(base.data.content, base.data.offerKind ?? "trip");
-  return issues.length
-    ? {
-        success: false as const,
-        error: new z.ZodError(
-          issues.map((issue) => ({ ...issue, path: ["content", ...issue.path] })),
-        ),
-      }
-    : base;
+  return validateOfferEditor(input).publication;
 }

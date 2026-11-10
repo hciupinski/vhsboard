@@ -9,7 +9,13 @@ import { OfferStoryImages } from "./OfferStoryImages";
 import { FloatingBookingCta } from "../FloatingBookingCta";
 import { getOfferSections, type OfferSection } from "@/lib/offers/sections";
 import type { PublicOffer } from "@/lib/offers/types";
-import { sectionIsEnabled, type ExtraPrice } from "@/lib/offers/content-v2";
+import {
+  getTransportTypes,
+  hasOrganizedTransport,
+  sectionIsEnabled,
+  transportLabels,
+  type ExtraPrice,
+} from "@/lib/offers/content-v2";
 import { formatTripDates } from "@/lib/offers/formatters";
 
 function Price({ value }: { value: ExtraPrice }) {
@@ -90,7 +96,11 @@ export function OfferDetailSections({
               <h3 className="text-2xl">{camp ? "Plan dnia" : "Plan wyjazdu"}</h3>
               <ol className="mt-4 space-y-4 border-l border-border pl-5">
                 {schedule.map((item, i) => (
-                  <li key={i}>
+                  <li key={i} className="relative">
+                    <span
+                      aria-hidden="true"
+                      className="absolute -left-[27px] top-1.5 size-3 rounded-full bg-sunset-gradient"
+                    />
                     <p className="font-display text-xl">{item.title}</p>
                     <p className="whitespace-pre-line text-sm text-muted-foreground">{item.text}</p>
                   </li>
@@ -131,6 +141,7 @@ export function OfferDetailSections({
               </div>
             ))}
           </div>
+          {content.priceNote ? <Copy>{content.priceNote}</Copy> : null}
           {camp?.terms.length ? (
             <section id="turnusy" tabIndex={-1} className="mt-8">
               <h3 className="text-2xl">Turnusy i ceny</h3>
@@ -212,38 +223,42 @@ export function OfferDetailSections({
       body = (
         <>
           <Copy>{content.training.description}</Copy>
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
-            {content.training.items.map((item) => (
-              <article key={item.id} className="min-w-0 break-words rounded-2xl border bg-card p-6">
-                <h3 className="text-2xl">{item.title}</h3>
-                <Copy>{item.description}</Copy>
-                {item.level ? (
-                  <p className="mt-3 text-sm">
-                    <strong>Dla kogo: </strong>
-                    {item.level}
-                  </p>
-                ) : null}
-                {item.scope ? (
-                  <p className="mt-3 text-sm">
-                    <strong>Zakres zajęć: </strong>
-                    {item.scope}
-                  </p>
-                ) : null}
-                <Price value={item.price} />
-              </article>
-            ))}
-          </div>
+          {content.training.items.length ? (
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+              {content.training.items.map((item) => (
+                <article
+                  key={item.id}
+                  className="min-w-0 break-words rounded-2xl border bg-card p-6"
+                >
+                  <h3 className="text-2xl">{item.title}</h3>
+                  <Copy>{item.description}</Copy>
+                  {item.level ? (
+                    <p className="mt-3 text-sm">
+                      <strong>Dla kogo: </strong>
+                      {item.level}
+                    </p>
+                  ) : null}
+                  {item.scope ? (
+                    <p className="mt-3 text-sm">
+                      <strong>Zakres zajęć: </strong>
+                      {item.scope}
+                    </p>
+                  ) : null}
+                  <Price value={item.price} />
+                </article>
+              ))}
+            </div>
+          ) : null}
+          {offer.trainingImages?.length ? (
+            <OfferGallery images={offer.trainingImages} swipeOnMobile />
+          ) : null}
         </>
       );
     if (editorTab === "transport" && content.transport) {
       const transport = content.transport;
-      const modes = {
-        coach: "Autokar",
-        plane: "Samolot",
-        train: "Pociąg",
-        own: "Dojazd własny",
-        other: transport.customType || "Inny",
-      };
+      const modeLabels = getTransportTypes(transport).map((type) =>
+        type === "other" ? transport.customType || transportLabels.other : transportLabels[type],
+      );
       const date = (value: string) =>
         /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value))
           ? new Intl.DateTimeFormat("pl-PL", { timeZone: "UTC", dateStyle: "long" }).format(
@@ -252,9 +267,9 @@ export function OfferDetailSections({
           : "Do uzupełnienia";
       body = (
         <>
-          <p className="mt-4 font-semibold">{modes[transport.type]}</p>
+          <p className="mt-4 font-semibold">{modeLabels.join(" · ")}</p>
           <Copy>{transport.description}</Copy>
-          {transport.type !== "own" ? (
+          {hasOrganizedTransport(transport) ? (
             <div className="mt-6 grid gap-5 md:grid-cols-2">
               {transport.journeys.map((journey, i) => (
                 <article key={journey.termId ?? i} className="rounded-2xl border bg-card p-6">

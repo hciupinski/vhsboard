@@ -12,17 +12,18 @@ import userEvent from "@testing-library/user-event";
 import type { FunctionComponent, PropsWithChildren } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { OfferRepositoryError } from "@/lib/offers/offer-repository-error";
 import type { EditableOffer, EditableOfferInput } from "@/lib/offers/editor-schema";
 import { Route as AdminEditorRoute } from "./admin.$slug";
 
 const {
-  mockedCanPublishOffer,
+  mockedGetOfferImageReadiness,
   mockedCreateOffer,
   mockedGetAdminOffer,
   mockedSetOfferStatus,
   mockedUpdateOffer,
 } = vi.hoisted(() => ({
-  mockedCanPublishOffer: vi.fn(),
+  mockedGetOfferImageReadiness: vi.fn(),
   mockedCreateOffer: vi.fn(),
   mockedGetAdminOffer: vi.fn(),
   mockedSetOfferStatus: vi.fn(),
@@ -30,7 +31,7 @@ const {
 }));
 
 vi.mock("@/lib/offers/admin-repository", () => ({
-  canPublishOffer: mockedCanPublishOffer,
+  getOfferImageReadiness: mockedGetOfferImageReadiness,
   createOffer: mockedCreateOffer,
   getAdminOffer: mockedGetAdminOffer,
   setOfferStatus: mockedSetOfferStatus,
@@ -259,7 +260,7 @@ const renderAdminEditor = async ({
 };
 
 beforeEach(() => {
-  mockedCanPublishOffer.mockResolvedValue(true);
+  mockedGetOfferImageReadiness.mockResolvedValue({ heroReady: true, accommodationReady: true });
 });
 
 afterEach(() => {
@@ -274,7 +275,7 @@ describe("admin offer editor route", () => {
     const user = userEvent.setup();
     await renderAdminEditor({ slug: "new", initialValue: completeInput });
 
-    await user.click(screen.getByRole("tab", { name: "Galeria" }));
+    await user.click(screen.getByRole("tab", { name: /^Galeria/ }));
 
     expect(screen.getByText("Najpierw zapisz szkic, aby dodać zdjęcia.")).toBeInTheDocument();
     expect(screen.queryByLabelText("Wybierz plik obrazu")).not.toBeInTheDocument();
@@ -290,14 +291,19 @@ describe("admin offer editor route", () => {
     const selectedHeroDraft = { ...draftOffer, ...selectedHeroInput };
     const selectedHeroPublished = { ...selectedHeroDraft, status: "published" as const };
     mockedGetAdminOffer.mockResolvedValueOnce(draftOffer).mockResolvedValue(selectedHeroDraft);
-    mockedCanPublishOffer.mockResolvedValueOnce(false);
+    mockedGetOfferImageReadiness.mockImplementation(async (_id, heroPath) => ({
+      heroReady: heroPath === selectedHeroPath,
+      accommodationReady: true,
+    }));
     mockedUpdateOffer.mockResolvedValue(selectedHeroDraft);
     mockedSetOfferStatus.mockResolvedValue(selectedHeroPublished);
     const { queryClient } = await renderAdminEditor({ slug: draftOffer.slug });
     const invalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
 
-    expect(await screen.findByText(publishReadinessMessage)).toBeInTheDocument();
-    await user.click(screen.getByRole("tab", { name: "Galeria" }));
+    expect(
+      await screen.findByRole("button", { name: `Galeria — ${publishReadinessMessage}` }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: /^Galeria/ }));
     await user.click(await screen.findByRole("button", { name: "Ustaw testowy obraz główny" }));
 
     await waitFor(() =>
@@ -311,10 +317,10 @@ describe("admin offer editor route", () => {
       queryKey: ["admin-offer-publish-readiness", draftOffer.id],
     });
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["published-offers"] });
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["home-offers"] });
     expect(invalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["published-offer", draftOffer.slug],
+      queryKey: ["published-offer", "trip", draftOffer.slug],
     });
-    queryClient.setQueryData(["admin-offer-publish-readiness", draftOffer.id], true);
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
 
     await user.click(screen.getByRole("button", { name: "Opublikuj" }));
@@ -338,7 +344,7 @@ describe("admin offer editor route", () => {
 
     await user.clear(titleInput);
     await user.type(titleInput, "Tytuł zapisany tylko w formularzu");
-    await user.click(screen.getByRole("tab", { name: "Galeria" }));
+    await user.click(screen.getByRole("tab", { name: /^Galeria/ }));
     await user.click(await screen.findByRole("button", { name: "Ustaw testowy obraz główny" }));
 
     expect(await screen.findByText("Zarchiwizowana")).toBeInTheDocument();
@@ -361,6 +367,61 @@ describe("admin offer editor route", () => {
     await user.click(publishButton);
     expect(mockedUpdateOffer).not.toHaveBeenCalled();
     expect(mockedSetOfferStatus).not.toHaveBeenCalled();
+  });
+
+  it("clears a disabled section's errors even when a different section is invalid", async () => {
+    const user = userEvent.setup();
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
+    await renderAdminEditor({ slug: readyDraftOffer.slug });
+    await user.click(screen.getByRole("tab", { name: "Szkolenia" }));
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    expect(screen.getByRole("tab", { name: "Szkolenia — zawiera błędy" })).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Dane oferty" }));
+    setValue("Tytuł wyjazdu", "");
+    await user.click(screen.getByRole("tab", { name: /^Szkolenia/ }));
+    await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    expect(screen.getByRole("tab", { name: "Szkolenia" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Dane oferty — zawiera błędy" })).toBeInTheDocument();
+  });
+
+  it("clears an end date error when the start date is corrected", async () => {
+    mockedGetAdminOffer.mockResolvedValue({
+      ...readyDraftOffer,
+      startDate: "2027-01-02",
+      endDate: "2027-01-06",
+    });
+    await renderAdminEditor({ slug: readyDraftOffer.slug });
+    setValue("Data zakończenia", "2027-01-01");
+    expect(screen.getByLabelText("Data zakończenia")).toHaveAttribute("aria-invalid", "true");
+    setValue("Data rozpoczęcia", "2026-12-30");
+    expect(screen.getByLabelText("Data zakończenia")).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("shows a turnus price error next to the variant and clears it after a correction", async () => {
+    const user = userEvent.setup();
+    mockedGetAdminOffer.mockResolvedValue(dayCampDraftOffer);
+    await renderAdminEditor({ slug: dayCampDraftOffer.slug });
+    await user.click(screen.getByRole("tab", { name: "Cena" }));
+    const price = screen.getByLabelText("Turnus 1, wariant 1 — cena");
+    fireEvent.change(price, { target: { value: "0" } });
+    expect(price).toHaveAccessibleDescription("Cena musi być większa od zera.");
+    fireEvent.change(price, { target: { value: "1200" } });
+    expect(price).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("allows withdrawal with invalid unsaved edits without saving those edits", async () => {
+    const user = userEvent.setup();
+    mockedGetAdminOffer.mockResolvedValue(readyPublishedOffer);
+    mockedSetOfferStatus.mockResolvedValue(readyDraftOffer);
+    await renderAdminEditor({ slug: readyPublishedOffer.slug });
+    setValue("Tytuł wyjazdu", "");
+    await user.click(screen.getByRole("button", { name: "Cofnij publikację" }));
+    await waitFor(() =>
+      expect(mockedSetOfferStatus).toHaveBeenCalledWith(readyPublishedOffer.id, "draft"),
+    );
+    expect(mockedUpdateOffer).not.toHaveBeenCalled();
+    expect(screen.getByLabelText("Tytuł wyjazdu")).toHaveValue("");
+    expect(screen.queryByText("Zapisano")).not.toBeInTheDocument();
   });
 
   it("logs validation blockers without an action or form values and avoids duplicate warnings", async () => {
@@ -396,12 +457,12 @@ describe("admin offer editor route", () => {
   it("shows and logs a readiness lookup failure without leaking the raw error", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
-    mockedCanPublishOffer.mockRejectedValue(new Error("private backend response"));
+    mockedGetOfferImageReadiness.mockRejectedValue(new Error("private backend response"));
 
     await renderAdminEditor({ slug: readyDraftOffer.slug });
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Nie udało się sprawdzić gotowości oferty. Odśwież stronę i spróbuj ponownie.",
+      "Nie udało się sprawdzić zdjęć wymaganych do publikacji.",
     );
     expect(warn).toHaveBeenCalledWith("[VHSBOARD CMS] Publikacja zablokowana.", {
       fieldErrors: {},
@@ -416,14 +477,14 @@ describe("admin offer editor route", () => {
     mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
     const { queryClient } = await renderAdminEditor({ slug: readyDraftOffer.slug });
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
-    mockedCanPublishOffer.mockRejectedValue(new Error("failed refetch"));
+    mockedGetOfferImageReadiness.mockRejectedValue(new Error("failed refetch"));
 
     await queryClient.invalidateQueries({
       queryKey: ["admin-offer-publish-readiness", readyDraftOffer.id],
     });
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Nie udało się sprawdzić gotowości oferty.",
+      "Nie udało się sprawdzić zdjęć wymaganych do publikacji.",
     );
     expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
   });
@@ -435,7 +496,7 @@ describe("admin offer editor route", () => {
     const publishButton = screen.getByRole("button", { name: "Opublikuj" });
     expect(publishButton).toBeDisabled();
     await user.click(publishButton);
-    expect(mockedCanPublishOffer).not.toHaveBeenCalled();
+    expect(mockedGetOfferImageReadiness).not.toHaveBeenCalled();
     expect(mockedCreateOffer).not.toHaveBeenCalled();
     expect(mockedSetOfferStatus).not.toHaveBeenCalled();
     expect(screen.queryByRole("button", { name: "Podgląd" })).not.toBeInTheDocument();
@@ -459,16 +520,50 @@ describe("admin offer editor route", () => {
   it("disables publishing and explains missing persisted hero readiness", async () => {
     const user = userEvent.setup();
     mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
-    mockedCanPublishOffer.mockResolvedValue(false);
+    mockedGetOfferImageReadiness.mockResolvedValue({ heroReady: false, accommodationReady: true });
 
     await renderAdminEditor({ slug: readyDraftOffer.slug });
 
-    expect(await screen.findByText(publishReadinessMessage)).toHaveAttribute("role", "alert");
+    await user.click(
+      await screen.findByRole("button", { name: `Galeria — ${publishReadinessMessage}` }),
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent(publishReadinessMessage);
     const publishButton = screen.getByRole("button", { name: "Opublikuj" });
     expect(publishButton).toBeDisabled();
     await user.click(publishButton);
     expect(mockedUpdateOffer).not.toHaveBeenCalled();
     expect(mockedSetOfferStatus).not.toHaveBeenCalled();
+  });
+
+  it("points to accommodation photos when the hero is ready, and refreshes after a photo change", async () => {
+    const user = userEvent.setup();
+    const draft = {
+      ...readyDraftOffer,
+      content: {
+        ...readyDraftOffer.content,
+        accommodation: { enabled: true, description: "Apartament przy stoku." },
+      },
+    };
+    mockedGetAdminOffer.mockResolvedValue(draft);
+    mockedGetOfferImageReadiness.mockResolvedValue({ heroReady: true, accommodationReady: false });
+    const { queryClient } = await renderAdminEditor({ slug: draft.slug });
+    await user.click(
+      await screen.findByRole("button", {
+        name: "Zakwaterowanie — Dodaj co najmniej jedno zdjęcie zakwaterowania.",
+      }),
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Dodaj co najmniej jedno zdjęcie zakwaterowania.",
+    );
+    expect(screen.getByRole("tab", { name: "Galeria" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
+
+    mockedGetOfferImageReadiness.mockResolvedValue({ heroReady: true, accommodationReady: true });
+    await queryClient.invalidateQueries({
+      queryKey: ["admin-offer-publish-readiness", draft.id],
+    });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
+    expect(screen.getByRole("tab", { name: "Zakwaterowanie" })).toBeInTheDocument();
   });
 
   it("refreshes publication readiness after disabling an incomplete saved section", async () => {
@@ -481,23 +576,21 @@ describe("admin offer editor route", () => {
       },
     };
     mockedGetAdminOffer.mockImplementation(async () => saved);
-    mockedCanPublishOffer.mockImplementation(async () => !saved.content.training.enabled);
     mockedUpdateOffer.mockImplementation(async (_id, input) => {
       saved = { ...saved, ...input } as typeof saved;
       return saved;
     });
     await renderAdminEditor({ slug: saved.slug });
-    await waitFor(() => expect(mockedCanPublishOffer).toHaveBeenCalled());
+    await waitFor(() => expect(mockedGetOfferImageReadiness).toHaveBeenCalled());
     expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
-    expect(
-      screen.getByText("Uzupełnij lub wyłącz opcjonalne sekcje i zapisz szkic przed publikacją."),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Szkolenia —/ })).toBeInTheDocument();
     await user.click(screen.getByRole("tab", { name: /^Szkolenia/ }));
     await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
+    expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Zapisz szkic" }));
     await waitFor(() => expect(mockedUpdateOffer).toHaveBeenCalled());
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
-    expect(mockedCanPublishOffer.mock.calls.length).toBeGreaterThan(1);
+    expect(mockedGetOfferImageReadiness.mock.calls.length).toBeGreaterThan(1);
   });
 
   it("enables publishing for a complete persisted offer with ready hero metadata", async () => {
@@ -506,7 +599,10 @@ describe("admin offer editor route", () => {
     await renderAdminEditor({ slug: readyDraftOffer.slug });
 
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
-    expect(mockedCanPublishOffer).toHaveBeenCalledWith(readyDraftOffer.id);
+    expect(mockedGetOfferImageReadiness).toHaveBeenCalledWith(
+      readyDraftOffer.id,
+      readyHeroImagePath,
+    );
   });
 
   it("saves a new draft, navigates to its slug, and leaves public caches untouched", async () => {
@@ -530,8 +626,9 @@ describe("admin offer editor route", () => {
       queryKey: ["admin-offer", draftOffer.slug],
     });
     expect(invalidateQueries).not.toHaveBeenCalledWith({ queryKey: ["published-offers"] });
+    expect(invalidateQueries).not.toHaveBeenCalledWith({ queryKey: ["home-offers"] });
     expect(invalidateQueries).not.toHaveBeenCalledWith({
-      queryKey: ["published-offer", draftOffer.slug],
+      queryKey: ["published-offer", "trip", draftOffer.slug],
     });
   });
 
@@ -539,7 +636,7 @@ describe("admin offer editor route", () => {
     const user = userEvent.setup();
     mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
     mockedUpdateOffer.mockResolvedValue(readyDraftOffer);
-    mockedSetOfferStatus.mockRejectedValue(new Error(publishReadinessMessage));
+    mockedSetOfferStatus.mockRejectedValue(new OfferRepositoryError(publishReadinessMessage));
     await renderAdminEditor({ slug: readyDraftOffer.slug });
 
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
@@ -575,8 +672,9 @@ describe("admin offer editor route", () => {
       readyPublishedOffer.slug,
     ]);
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["published-offers"] });
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["home-offers"] });
     expect(invalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["published-offer", readyPublishedOffer.slug],
+      queryKey: ["published-offer", "trip", readyPublishedOffer.slug],
     });
   });
 
@@ -594,14 +692,15 @@ describe("admin offer editor route", () => {
     );
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["admin-offers"] });
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["published-offers"] });
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ["home-offers"] });
     expect(invalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["published-offer", publishedOffer.slug],
+      queryKey: ["published-offer", "trip", publishedOffer.slug],
     });
   });
 
   it("keeps edited values and releases every action after a save error", async () => {
     const user = userEvent.setup();
-    mockedGetAdminOffer.mockResolvedValue(draftOffer);
+    mockedGetAdminOffer.mockResolvedValue(readyDraftOffer);
     mockedUpdateOffer.mockRejectedValue(new Error("raw backend details"));
     await renderAdminEditor({ slug: draftOffer.slug });
     const titleInput = screen.getByLabelText("Tytuł wyjazdu");

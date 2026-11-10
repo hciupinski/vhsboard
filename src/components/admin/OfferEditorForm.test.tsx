@@ -302,6 +302,7 @@ describe("OfferEditorForm", () => {
     }
     render(<Editor />);
     await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
     expect(screen.getByText("Zakwaterowanie slot")).toBeInTheDocument();
     await user.click(screen.getByRole("tab", { name: "Resort" }));
     await user.click(screen.getByRole("switch", { name: "Pokaż sekcję w ofercie" }));
@@ -314,7 +315,10 @@ describe("OfferEditorForm", () => {
     const user = userEvent.setup();
     render(
       <OfferEditorForm
-        value={completeInput}
+        value={{
+          ...completeInput,
+          content: { ...completeInput.content, accommodation: { enabled: true, description: "" } },
+        }}
         errors={{}}
         disabled={false}
         onChange={vi.fn()}
@@ -400,6 +404,29 @@ describe("OfferEditorForm", () => {
     expect("terms" in latest.content && latest.content.terms[0]?.priceOptions[1]?.price).toBe(0);
     await user.click(screen.getByRole("button", { name: "Usuń wariant 2 z turnusu 1" }));
     expect("terms" in latest.content && latest.content.terms[0]?.priceOptions).toHaveLength(1);
+  });
+
+  it("hides the accommodation photo manager until the section is enabled", async () => {
+    const user = userEvent.setup();
+    function Editor() {
+      const [value, setValue] = useState(completeInput);
+      return (
+        <OfferEditorForm
+          value={value}
+          errors={{}}
+          disabled={false}
+          onChange={setValue}
+          accommodationImageManager={<p>Zdjęcia noclegu</p>}
+        />
+      );
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("tab", { name: "Zakwaterowanie" }));
+    expect(screen.queryByText("Zdjęcia noclegu")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
+    expect(screen.getByText("Zdjęcia noclegu")).toBeInTheDocument();
+    await user.click(screen.getByRole("switch", { name: "Włącz sekcję" }));
+    expect(screen.queryByText("Zdjęcia noclegu")).not.toBeInTheDocument();
   });
 
   it("keeps accommodation copy after disabling and reopening", async () => {
@@ -520,6 +547,47 @@ describe("OfferEditorForm", () => {
       await user.click(screen.getByRole("tab", { name }));
     }
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("edits a public price note without changing either price list", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+    await user.click(screen.getByRole("tab", { name: "Cena" }));
+    fireEvent.change(screen.getByLabelText("Uwagi do ceny"), {
+      target: { value: "Dopłaty na miejscu." },
+    });
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          priceNote: "Dopłaty na miejscu.",
+          included: ["Nocleg"],
+          excluded: ["Lot"],
+        }),
+      }),
+    );
+  });
+
+  it("keeps own transport selected when adding Bus VHS", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const transport = { enabled: true, type: "own" as const, description: "Dojazd", journeys: [] };
+    const value = { ...completeInput, content: { ...completeInput.content, transport } };
+    render(<OfferEditorForm value={value} errors={{}} disabled={false} onChange={onChange} />);
+    await user.click(screen.getByRole("tab", { name: "Transport" }));
+    expect(screen.getByRole("checkbox", { name: "Dojazd własny" })).toBeChecked();
+    await user.click(screen.getByRole("checkbox", { name: "Bus VHS" }));
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          transport: expect.objectContaining({ types: ["own", "vhs_bus"] }),
+        }),
+      }),
+    );
+    const next = onChange.mock.lastCall?.[0] as EditableOfferInput;
+    expect(next.content.transport).not.toHaveProperty("type");
   });
 
   it("retains transport text after disabling and reopening its optional section", async () => {

@@ -261,6 +261,21 @@ direct-API publication validation, version protection and map permissions. Never
 QA fixture publication against production. Roll back a deployment by retaining the
 forward database migration; do not drop v2 JSON data to make an old CMS writable.
 
+### Zgodność rozszerzonego edytora ofert
+
+Migracja `20261109153000_offer_editor_feedback.sql` rozszerza walidację bez
+przepisywania ofert. Zastosuj ją przed wdrożeniem odpowiadającego frontendu.
+Dojazd zapisany jako pojedyncze `transport.type` pozostaje obsługiwany.
+Zmiana wyboru w nowym CMS zapisuje tablicę `transport.types`. Pole `priceNote`
+można wyczyścić w panelu. Zapis, który usuwa klucz `priceNote` albo zastępuje
+zapisaną tablicę opcji starszym formatem, otrzyma komunikat o odświeżeniu CMS.
+Karty szkolenia są opcjonalne. Usuń rozpoczętą, pustą kartę i zapisz szkic,
+jeśli chcesz opublikować tylko wstęp.
+
+Po zapisaniu nowych opcji transportu, zdjęć szkoleniowych lub publikacji
+szkoleń bez kart starszy frontend może odrzucić publiczny odczyt tych ofert.
+Do cofnięcia wdrożenia użyj buildu z obsługą nowych danych. Zostaw migrację w bazie.
+
 ## Odzyskiwanie hasła administratora
 
 Ekran `/admin/login` zawiera link „Nie pamiętasz hasła?”. Trasa

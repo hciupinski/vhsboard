@@ -2,8 +2,8 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/admin/form-controls";
 import type { DayCampContent, DayCampTerm } from "@/lib/offers/types";
-import { EditorField as Field, CharacterCounter } from "./EditorField";
-import { errorFor, shouldUpdateDate } from "./editor-fields";
+import { EditorField as Field } from "./EditorField";
+import { errorFor, fieldState, shouldUpdateDate } from "./editor-fields";
 
 export function DayCampTermsEditor({
   content,
@@ -26,6 +26,11 @@ export function DayCampTermsEditor({
           Każdy turnus ma własny adres zapisów i może mieć kilka wariantów cenowych.
         </p>
       </div>
+      {errors["content.terms"] ? (
+        <p className="text-sm text-destructive" role="alert">
+          {errors["content.terms"]}
+        </p>
+      ) : null}
       {content.terms.map((term, termIndex) => (
         <div
           key={term.id ?? termIndex}
@@ -83,6 +88,11 @@ export function DayCampTermsEditor({
               </Button>
             ) : null}
           </div>
+          {errors[`content.terms.${termIndex}.id`] ? (
+            <p className="text-sm text-destructive" role="alert">
+              {errors[`content.terms.${termIndex}.id`]}
+            </p>
+          ) : null}
           <div className="grid gap-3 sm:grid-cols-3">
             <Field
               id={`term-label-${termIndex}`}
@@ -92,6 +102,11 @@ export function DayCampTermsEditor({
             >
               <Input
                 id={`term-label-${termIndex}`}
+                {...fieldState(
+                  errors,
+                  `content.terms.${termIndex}.label`,
+                  `term-label-${termIndex}`,
+                )}
                 value={term.label}
                 maxLength={120}
                 onChange={(event) => update(termIndex, { ...term, label: event.target.value })}
@@ -104,6 +119,11 @@ export function DayCampTermsEditor({
             >
               <Input
                 id={`term-start-${termIndex}`}
+                {...fieldState(
+                  errors,
+                  `content.terms.${termIndex}.startDate`,
+                  `term-start-${termIndex}`,
+                )}
                 type="date"
                 value={term.startDate}
                 onChange={(event) => {
@@ -120,6 +140,11 @@ export function DayCampTermsEditor({
             >
               <Input
                 id={`term-end-${termIndex}`}
+                {...fieldState(
+                  errors,
+                  `content.terms.${termIndex}.endDate`,
+                  `term-end-${termIndex}`,
+                )}
                 type="date"
                 value={term.endDate}
                 onChange={(event) => {
@@ -137,6 +162,11 @@ export function DayCampTermsEditor({
               >
                 <Input
                   id={`term-booking-url-${termIndex}`}
+                  {...fieldState(
+                    errors,
+                    `content.terms.${termIndex}.bookingUrl`,
+                    `term-booking-url-${termIndex}`,
+                  )}
                   aria-label={`Turnus ${termIndex + 1} — adres zapisów`}
                   type="url"
                   value={term.bookingUrl}
@@ -148,58 +178,73 @@ export function DayCampTermsEditor({
               </Field>
             </div>
           </div>
-          {term.priceOptions.map((option, optionIndex) => (
-            <div
-              key={optionIndex}
-              className="grid gap-3 rounded-lg bg-muted/40 p-3 sm:grid-cols-[1fr_8rem_auto]"
-            >
-              <div className="min-w-0">
-                <Input
-                  aria-label={`Turnus ${termIndex + 1}, wariant ${optionIndex + 1} — nazwa`}
-                  value={option.label}
-                  maxLength={120}
-                  onChange={(event) =>
+          {term.priceOptions.map((option, optionIndex) => {
+            const fieldPath = `content.terms.${termIndex}.priceOptions.${optionIndex}`;
+            const id = `term-${termIndex}-option-${optionIndex}`;
+            const optionName = `Turnus ${termIndex + 1}, wariant ${optionIndex + 1}`;
+            const updateOption = (patch: Partial<typeof option>) =>
+              update(termIndex, {
+                ...term,
+                priceOptions: term.priceOptions.map((item, index) =>
+                  index === optionIndex ? { ...item, ...patch } : item,
+                ),
+              });
+
+            return (
+              <div
+                key={optionIndex}
+                className="grid items-start gap-3 rounded-lg bg-muted/40 p-3 sm:grid-cols-[minmax(0,1fr)_8rem_auto]"
+              >
+                <Field
+                  id={`${id}-label`}
+                  label={`Nazwa wariantu ${optionIndex + 1}`}
+                  characterCount={{ value: option.label, max: 120 }}
+                  error={errors[`${fieldPath}.label`]}
+                >
+                  <Input
+                    id={`${id}-label`}
+                    aria-label={`${optionName} — nazwa`}
+                    {...fieldState(errors, `${fieldPath}.label`, `${id}-label`)}
+                    value={option.label}
+                    maxLength={120}
+                    onChange={(event) => updateOption({ label: event.target.value })}
+                  />
+                </Field>
+                <Field id={`${id}-price`} label="Cena (PLN)" error={errors[`${fieldPath}.price`]}>
+                  <Input
+                    id={`${id}-price`}
+                    aria-label={`${optionName} — cena`}
+                    {...fieldState(errors, `${fieldPath}.price`, `${id}-price`)}
+                    type="number"
+                    min={1}
+                    value={option.price || ""}
+                    onChange={(event) => updateOption({ price: Number(event.target.value) })}
+                  />
+                </Field>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="sm:mt-6"
+                  aria-label={`Usuń wariant ${optionIndex + 1} z turnusu ${termIndex + 1}`}
+                  disabled={disabled || term.priceOptions.length === 1}
+                  onClick={() =>
                     update(termIndex, {
                       ...term,
-                      priceOptions: term.priceOptions.map((item, index) =>
-                        index === optionIndex ? { ...item, label: event.target.value } : item,
-                      ),
+                      priceOptions: term.priceOptions.filter((_, index) => index !== optionIndex),
                     })
                   }
-                />
-                <CharacterCounter value={option.label} max={120} />
+                >
+                  <Trash2 className="size-4" />
+                </Button>
               </div>
-              <Input
-                aria-label={`Turnus ${termIndex + 1}, wariant ${optionIndex + 1} — cena`}
-                type="number"
-                min={1}
-                value={option.price || ""}
-                onChange={(event) =>
-                  update(termIndex, {
-                    ...term,
-                    priceOptions: term.priceOptions.map((item, index) =>
-                      index === optionIndex ? { ...item, price: Number(event.target.value) } : item,
-                    ),
-                  })
-                }
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={`Usuń wariant ${optionIndex + 1} z turnusu ${termIndex + 1}`}
-                disabled={disabled || term.priceOptions.length === 1}
-                onClick={() =>
-                  update(termIndex, {
-                    ...term,
-                    priceOptions: term.priceOptions.filter((_, index) => index !== optionIndex),
-                  })
-                }
-              >
-                <Trash2 className="size-4" />
-              </Button>
-            </div>
-          ))}
+            );
+          })}
+          {errors[`content.terms.${termIndex}.priceOptions`] ? (
+            <p className="text-sm text-destructive" role="alert">
+              {errors[`content.terms.${termIndex}.priceOptions`]}
+            </p>
+          ) : null}
           <Button
             type="button"
             variant="outline"
