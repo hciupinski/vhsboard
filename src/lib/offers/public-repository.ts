@@ -3,6 +3,9 @@ import { mapOfferDetailRow, mapOfferListRow } from "./mapper";
 import { publishedOfferSeoRowSchema } from "./schema";
 import type { OfferKind, PublicOffer, PublishedOfferSeoRecord } from "./types";
 import { readOfferImageRows } from "./image-rows";
+import { OfferRepositoryError } from "./offer-repository-error";
+
+export { OfferRepositoryError } from "./offer-repository-error";
 
 const PUBLISHED_STATUS = "published";
 const OFFER_IMAGES_BUCKET = "offer-images";
@@ -11,13 +14,6 @@ const LIST_COLUMNS =
   "id,slug,offer_kind,activity,title,subtitle,short_description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,show_last_places_badge,hero_image,status";
 const DETAIL_COLUMNS = `${LIST_COLUMNS},description`;
 const SEO_COLUMNS = "slug,updated_at,offer_kind";
-
-export class OfferRepositoryError extends Error {
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "OfferRepositoryError";
-  }
-}
 
 const rethrowAsRepositoryError = (error: unknown, message: string): never => {
   if (error instanceof OfferRepositoryError) {

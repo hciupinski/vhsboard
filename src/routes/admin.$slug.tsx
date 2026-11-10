@@ -1,4 +1,4 @@
-import { normalizeOfferContentV2, getSectionIssues } from "@/lib/offers/content-v2";
+import { normalizeOfferContentV2 } from "@/lib/offers/content-v2";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -12,13 +12,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   createEmptyEditableOfferInput,
-  editorOfferInputSchema,
-  validateOfferForPublication,
+  validateOfferEditor,
   getEditorFieldErrors,
   type EditableOffer,
   type EditableOfferInput,
 } from "@/lib/offers/editor-schema";
-import { getLiveFieldErrors } from "@/lib/offers/live-validation";
+import { recordEditedFields, visibleOfferErrors } from "@/lib/offers/live-validation";
+import { getOfferImageErrors } from "@/lib/offers/publication-readiness";
+import { OfferRepositoryError } from "@/lib/offers/offer-repository-error";
+import {
+  createOffer,
+  getAdminOffer,
+  getOfferImageReadiness,
+  setOfferStatus,
+  updateOffer,
+} from "@/lib/offers/admin-repository";
+import { homeOffersQueryOptions, publishedOfferQueryOptions } from "@/lib/offers/query-options";
 import type { OfferStatus } from "@/lib/offers/types";
 
 export const Route = createFileRoute("/admin/$slug")({
@@ -44,39 +53,15 @@ const statusLabels: Record<OfferStatus, string> = {
   published: "Opublikowana",
   archived: "Zarchiwizowana",
 };
-const publishReadinessMessage = "Dodaj obraz główny z opisem alternatywnym przed publikacją.";
-const readinessCheckErrorMessage =
-  "Nie udało się sprawdzić gotowości oferty. Odśwież stronę i spróbuj ponownie.";
+const readinessCheckErrorMessage = "Nie udało się sprawdzić zdjęć wymaganych do publikacji.";
 
 const toEditableInput = ({ id: _id, status: _status, ...input }: EditableOffer) => ({
   ...input,
   content: normalizeOfferContentV2(input.content, input.offerKind ?? "trip"),
 });
 
-const getAdminOffer = async (slug: string) => {
-  const repository = await import("@/lib/offers/admin-repository");
-  return repository.getAdminOffer(slug);
-};
-
-const canPublishOffer = async (id: string) => {
-  const repository = await import("@/lib/offers/admin-repository");
-  return repository.canPublishOffer(id);
-};
-
-const createOffer = async (input: EditableOfferInput) => {
-  const repository = await import("@/lib/offers/admin-repository");
-  return repository.createOffer(input);
-};
-
-const updateOffer = async (id: string, input: EditableOfferInput) => {
-  const repository = await import("@/lib/offers/admin-repository");
-  return repository.updateOffer(id, input);
-};
-
-const setOfferStatus = async (id: string, status: "draft" | "published") => {
-  const repository = await import("@/lib/offers/admin-repository");
-  return repository.setOfferStatus(id, status);
-};
+const offerActionMessage = (error: unknown, fallback: string) =>
+  error instanceof OfferRepositoryError ? error.message : fallback;
 
 function OfferEditor() {
   return (
@@ -96,7 +81,9 @@ function OfferEditorContent() {
     createEmptyEditableOfferInput(),
   );
   const [persistedOffer, setPersistedOffer] = useState<EditableOffer | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [editedFields, setEditedFields] = useState<ReadonlySet<string>>(() => new Set());
+  const [attemptedSave, setAttemptedSave] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
@@ -119,9 +106,13 @@ function OfferEditorContent() {
 
   const currentStatus = persistedOffer?.status ?? "draft";
   const readinessQuery = useQuery({
-    queryKey: ["admin-offer-publish-readiness", persistedOffer?.id],
-    queryFn: () => canPublishOffer(persistedOffer!.id),
-    enabled: !isNew && persistedOffer !== null && currentStatus === "draft",
+    queryKey: [
+      "admin-offer-publish-readiness",
+      persistedOffer?.id,
+      formValue.heroImagePath,
+    ] as const,
+    queryFn: ({ queryKey: [, id, heroPath] }) => getOfferImageReadiness(id!, heroPath),
+    enabled: persistedOffer !== null && currentStatus !== "archived",
   });
   const createMutation = useMutation({ mutationFn: createOffer });
   const updateMutation = useMutation({
@@ -132,47 +123,41 @@ function OfferEditorContent() {
     mutationFn: ({ id, status }: { id: string; status: "draft" | "published" }) =>
       setOfferStatus(id, status),
   });
-  const isSubmitting =
-    createMutation.isPending || updateMutation.isPending || statusMutation.isPending;
-  const formValidation = validateOfferForPublication(formValue);
-  const isFormValid = formValidation.success;
-  const canPublish =
-    !isNew &&
-    persistedOffer !== null &&
-    isFormValid &&
-    !readinessQuery.isError &&
-    readinessQuery.data === true;
-  const persistedSectionsIncomplete =
-    persistedOffer !== null &&
-    getSectionIssues(persistedOffer.content, persistedOffer.offerKind ?? "trip").length > 0;
-  const readiness = readinessQuery.isError
-    ? "error"
-    : readinessQuery.data === false
-      ? persistedSectionsIncomplete
-        ? "incomplete_content"
-        : "missing_images"
-      : null;
-  const visibleError =
-    actionError ??
-    (!isNew && persistedOffer !== null && currentStatus === "draft"
-      ? readiness === "error"
-        ? readinessCheckErrorMessage
-        : readiness === "incomplete_content"
-          ? "Uzupełnij lub wyłącz opcjonalne sekcje i zapisz szkic przed publikacją."
-          : readiness === "missing_images"
-            ? publishReadinessMessage
-            : null
-      : null);
-  // Stable diagnostics avoid repeating the same warning on every keystroke.
-  // Only field paths and validation messages are logged, never form values or raw API errors.
+
+  const validation = validateOfferEditor(formValue);
+  const publicationErrors = getEditorFieldErrors(
+    validation.publication.success ? undefined : validation.publication.error,
+  );
+  const mediaChecked = readinessQuery.isSuccess && !readinessQuery.isFetching;
+  const imageErrors = persistedOffer
+    ? getOfferImageErrors(formValue, mediaChecked ? readinessQuery.data : undefined)
+    : {};
+  const hasImageErrors = Object.keys(imageErrors).length > 0;
+  const readyToPublish = mediaChecked && !hasImageErrors && validation.publication.success;
+  const canPublish = !isNew && persistedOffer !== null && readyToPublish;
+  const draftSaveBlocked = attemptedSave && currentStatus === "draft" && !validation.draft.success;
+  const currentErrors = draftSaveBlocked
+    ? getEditorFieldErrors(validation.draft.error)
+    : { ...publicationErrors, ...imageErrors };
+  const fieldErrors =
+    currentStatus === "archived"
+      ? {}
+      : persistedOffer || attemptedSave
+        ? currentErrors
+        : visibleOfferErrors(currentErrors, editedFields);
+  const validationTitle = draftSaveBlocked
+    ? "Popraw pola wymagane do zapisania szkicu."
+    : currentStatus === "published"
+      ? "Do poprawienia przed zapisaniem opublikowanej oferty"
+      : "Do poprawienia przed publikacją";
+
+  // Report paths and known validation messages, without form values or API responses.
+  const readiness = readinessQuery.isError ? "error" : hasImageErrors ? "missing_images" : null;
   const publishDiagnostics =
     currentStatus === "draft" &&
     (persistedOffer !== null || isFormDirty.current) &&
-    (!isFormValid || readiness !== null)
-      ? JSON.stringify({
-          fieldErrors: formValidation.success ? {} : getEditorFieldErrors(formValidation.error),
-          readiness,
-        })
+    (!validation.publication.success || readiness !== null)
+      ? JSON.stringify({ fieldErrors: publicationErrors, readiness })
       : null;
 
   useEffect(() => {
@@ -180,22 +165,6 @@ function OfferEditorContent() {
       console.warn("[VHSBOARD CMS] Publikacja zablokowana.", JSON.parse(publishDiagnostics));
     }
   }, [publishDiagnostics]);
-
-  const validateForm = () => {
-    const result =
-      currentStatus === "published"
-        ? validateOfferForPublication(formValue)
-        : editorOfferInputSchema.safeParse(formValue);
-    if (!result.success) {
-      setFieldErrors(getEditorFieldErrors(result.error));
-      setActionError("Popraw oznaczone pola przed zapisaniem oferty.");
-      return null;
-    }
-
-    setFieldErrors({});
-    setActionError(null);
-    return result.data;
-  };
 
   const invalidateAdminCaches = async (offerSlug: string) => {
     const detailSlugs = new Set([offerSlug]);
@@ -209,14 +178,19 @@ function OfferEditorContent() {
     ]);
   };
 
-  const invalidatePublicCaches = async (offerSlug: string) => {
-    const detailSlugs = new Set([offerSlug]);
-    if (!isNew) detailSlugs.add(slug);
+  const invalidatePublicCaches = async (offer: EditableOffer) => {
+    const detailSlugs = new Set([offer.slug, ...(isNew ? [] : [slug])]);
+    const kinds = new Set([offer.offerKind ?? "trip", persistedOffer?.offerKind ?? "trip"]);
 
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["published-offers"] }),
-      ...[...detailSlugs].map((detailSlug) =>
-        queryClient.invalidateQueries({ queryKey: ["published-offer", detailSlug] }),
+      queryClient.invalidateQueries({ queryKey: homeOffersQueryOptions().queryKey }),
+      ...[...detailSlugs].flatMap((detailSlug) =>
+        [...kinds].map((kind) =>
+          queryClient.invalidateQueries({
+            queryKey: publishedOfferQueryOptions(detailSlug, kind).queryKey,
+          }),
+        ),
       ),
     ]);
   };
@@ -224,12 +198,13 @@ function OfferEditorContent() {
   const invalidateImageDependentCaches = async () => {
     if (!persistedOffer) return;
 
+    setActionError(null);
     await Promise.all([
       invalidateAdminCaches(persistedOffer.slug),
       queryClient.invalidateQueries({
         queryKey: ["admin-offer-publish-readiness", persistedOffer.id],
       }),
-      invalidatePublicCaches(persistedOffer.slug),
+      invalidatePublicCaches(persistedOffer),
     ]);
   };
 
@@ -237,7 +212,6 @@ function OfferEditorContent() {
     setPersistedOffer((current) => (current ? { ...current, heroImagePath } : current));
     setFormValue((current) => ({ ...current, heroImagePath }));
     setActionError(null);
-    setSaved(true);
   };
 
   const persistInput = async (input: EditableOfferInput) => {
@@ -248,6 +222,8 @@ function OfferEditorContent() {
     setPersistedOffer(offer);
     isFormDirty.current = false;
     setFormValue(toEditableInput(offer));
+    setAttemptedSave(false);
+    setEditedFields(new Set());
     setSaved(true);
     await invalidateAdminCaches(offer.slug);
     await queryClient.invalidateQueries({ queryKey: ["admin-offer-publish-readiness", offer.id] });
@@ -260,74 +236,74 @@ function OfferEditorContent() {
   };
 
   const handleSaveDraft = async () => {
-    const input = validateForm();
-    if (!input) return;
+    setAttemptedSave(true);
+    setActionError(null);
+    const isPublished = currentStatus === "published";
+    const result = isPublished ? validation.publication : validation.draft;
+    if (!result.success || (isPublished && (!mediaChecked || hasImageErrors))) return;
 
+    setIsSubmitting(true);
     try {
-      const offer = await persistInput(input);
+      const offer = await persistInput(result.data);
+      if (isPublished) await invalidatePublicCaches(offer);
       await navigateAfterPersistence(offer);
-    } catch {
-      setActionError("Nie udało się zapisać oferty. Spróbuj ponownie.");
+    } catch (error) {
+      setActionError(offerActionMessage(error, "Nie udało się zapisać oferty. Spróbuj ponownie."));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handlePublish = async () => {
-    if (!canPublish) return;
+    if (!canPublish || !validation.publication.success) return;
 
-    const input = validateForm();
-    if (!input) return;
-
+    setActionError(null);
+    setIsSubmitting(true);
     let savedOffer: EditableOffer | null = null;
     try {
-      savedOffer = await persistInput(input);
-
-      const statusValidation = editorOfferInputSchema.safeParse(formValue);
-      if (!statusValidation.success) {
-        setFieldErrors(getEditorFieldErrors(statusValidation.error));
-        setActionError("Popraw oznaczone pola przed opublikowaniem oferty.");
-        return;
-      }
-
+      savedOffer = await persistInput(validation.publication.data);
       const publishedOffer = await statusMutation.mutateAsync({
         id: savedOffer.id,
         status: "published",
       });
       setPersistedOffer(publishedOffer);
-      setSaved(true);
       await Promise.all([
         invalidateAdminCaches(publishedOffer.slug),
-        invalidatePublicCaches(publishedOffer.slug),
+        invalidatePublicCaches(publishedOffer),
       ]);
       await navigateAfterPersistence(publishedOffer);
     } catch (error) {
       setActionError(
-        error instanceof Error && error.message === publishReadinessMessage
-          ? publishReadinessMessage
-          : "Nie udało się opublikować oferty. Spróbuj ponownie.",
+        offerActionMessage(error, "Nie udało się opublikować oferty. Spróbuj ponownie."),
       );
       if (savedOffer) await navigateAfterPersistence(savedOffer);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleUnpublish = async () => {
-    const input = validateForm();
-    if (!input || !persistedOffer) return;
+    if (!persistedOffer) return;
 
+    setActionError(null);
+    setIsSubmitting(true);
     try {
       const draftOffer = await statusMutation.mutateAsync({
         id: persistedOffer.id,
         status: "draft",
       });
-      setPersistedOffer((current) =>
-        current ? { ...current, status: draftOffer.status } : draftOffer,
-      );
-      setSaved(true);
+      setPersistedOffer(draftOffer);
+      setAttemptedSave(false);
       await Promise.all([
         invalidateAdminCaches(draftOffer.slug),
-        invalidatePublicCaches(draftOffer.slug),
+        invalidatePublicCaches(draftOffer),
       ]);
-    } catch {
-      setActionError("Nie udało się cofnąć publikacji. Spróbuj ponownie.");
+    } catch (error) {
+      setActionError(
+        offerActionMessage(error, "Nie udało się cofnąć publikacji. Spróbuj ponownie."),
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -395,17 +371,43 @@ function OfferEditorContent() {
       </header>
 
       <main className="mx-auto max-w-5xl px-5 py-8">
-        {visibleError ? (
+        {actionError ? (
           <p
             role="alert"
             className="mb-5 rounded-xl bg-destructive/10 p-4 text-sm text-destructive"
           >
-            {visibleError}
+            {actionError}
+          </p>
+        ) : null}
+        {readinessQuery.isError ? (
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-destructive/25 bg-destructive/5 p-4">
+            <p role="alert" className="text-sm text-destructive">
+              {readinessCheckErrorMessage}
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => void readinessQuery.refetch()}
+            >
+              Sprawdź zdjęcia ponownie
+            </Button>
+          </div>
+        ) : null}
+        {isNew && !persistedOffer ? (
+          <p className="mb-4 text-sm text-muted-foreground">
+            Zapisz szkic, aby dodać zdjęcie główne i opublikować ofertę.
+          </p>
+        ) : null}
+        {readinessQuery.isFetching ? (
+          <p role="status" className="mb-4 text-sm text-muted-foreground">
+            Sprawdzamy zdjęcia wymagane do publikacji…
           </p>
         ) : null}
         <OfferEditorForm
           value={formValue}
           errors={fieldErrors}
+          validationTitle={validationTitle}
           disabled={isSubmitting || currentStatus === "archived"}
           onChange={(value) => {
             isFormDirty.current = true;
@@ -414,7 +416,7 @@ function OfferEditorContent() {
               content: normalizeOfferContentV2(value.content, value.offerKind ?? "trip"),
             };
             setFormValue(next);
-            setFieldErrors((current) => getLiveFieldErrors(formValue, next, current));
+            setEditedFields((edited) => recordEditedFields(formValue, next, edited));
             setActionError(null);
             setSaved(false);
           }}

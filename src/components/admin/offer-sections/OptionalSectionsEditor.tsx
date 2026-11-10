@@ -1,4 +1,5 @@
 import { createSectionFields } from "./SectionFields";
+import { errorFor } from "../offer-editor/editor-fields";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -43,6 +44,7 @@ export function OptionalSectionsEditor({
 }: Props) {
   const value = content[sectionKey];
   const enabled = sectionIsEnabled(value);
+  const disabledError = enabled ? undefined : errorFor(errors, `content.${sectionKey}`);
   const { field, price, cards } = createSectionFields(errors, disabled);
   const baseCard = () => ({
     id: crypto.randomUUID(),
@@ -76,9 +78,16 @@ export function OptionalSectionsEditor({
         <label htmlFor={`${sectionKey}-enabled`}>Pokaż sekcję w ofercie</label>
       </div>
       {!enabled ? (
-        <p className="text-sm text-muted-foreground">
-          Sekcja jest wyłączona. Zapisana treść zostanie zachowana.
-        </p>
+        <>
+          <p className="text-sm text-muted-foreground">
+            Sekcja jest wyłączona. Zapisana treść zostanie zachowana.
+          </p>
+          {disabledError ? (
+            <p className="text-sm text-destructive" role="alert">
+              Włącz sekcję, aby poprawić dane przed zapisaniem. {disabledError}
+            </p>
+          ) : null}
+        </>
       ) : (
         <>
           {resort && sectionKey === "resort" ? (

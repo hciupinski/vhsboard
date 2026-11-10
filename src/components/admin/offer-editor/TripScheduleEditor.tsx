@@ -5,7 +5,7 @@ import { Textarea } from "@/components/admin/form-controls";
 import type { TripOfferContent } from "@/lib/offers/types";
 import { EditorField as Field } from "./EditorField";
 
-import type { ContentEditorProps } from "./editor-fields";
+import { fieldState, type ContentEditorProps } from "./editor-fields";
 
 export function TripScheduleEditor({
   content,
@@ -30,6 +30,7 @@ export function TripScheduleEditor({
           >
             <Input
               id={`schedule-day-${index}`}
+              {...fieldState(errors, `content.schedule.${index}.day`, `schedule-day-${index}`)}
               value={item.day}
               onChange={(event) =>
                 onChange({
@@ -49,6 +50,7 @@ export function TripScheduleEditor({
             >
               <Textarea
                 id={`schedule-text-${index}`}
+                {...fieldState(errors, `content.schedule.${index}.text`, `schedule-text-${index}`)}
                 value={item.text}
                 onChange={(event) =>
                   onChange({
@@ -78,6 +80,11 @@ export function TripScheduleEditor({
           </Button>
         </div>
       ))}
+      {errors["content.schedule"] ? (
+        <p className="text-sm text-destructive" role="alert">
+          {errors["content.schedule"]}
+        </p>
+      ) : null}
       <Button
         type="button"
         variant="outline"

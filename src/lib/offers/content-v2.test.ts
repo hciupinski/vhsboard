@@ -116,6 +116,39 @@ describe("v2 identity and publication validation", () => {
     ).toContain("transport.customType");
   });
 
+  it("keeps reporting other sections when a section fails structural validation", () => {
+    const issues = getSectionIssues({
+      priceNote: "a".repeat(1001),
+      training: { enabled: true, description: "", items: [] },
+    });
+    expect(issues.map((issue) => issue.path.join("."))).toEqual([
+      "priceNote",
+      "training.description",
+    ]);
+  });
+
+  it("points to the return time for a same-day journey ending before departure", () => {
+    const issues = getSectionIssues({
+      transport: {
+        enabled: true,
+        types: ["vhs_bus"],
+        description: "Przejazd z VHS.",
+        journeys: [
+          {
+            departureDate: "2027-01-15",
+            departureTime: "15:00",
+            departurePlace: "Łódź",
+            returnDate: "2027-01-15",
+            returnTime: "14:00",
+            returnPlace: "Łódź",
+            note: "",
+          },
+        ],
+      },
+    });
+    expect(issues).toMatchObject([{ path: ["transport", "journeys", 0, "returnTime"] }]);
+  });
+
   it("rejects duplicate card IDs before saving a draft", () => {
     const item = {
       id: "10000000-0000-4000-8000-000000000001",

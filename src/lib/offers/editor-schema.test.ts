@@ -110,6 +110,39 @@ const fieldErrorsFor = (input: unknown) => {
 };
 
 describe("editor offer input schema", () => {
+  it("reports optional publication requirements together with invalid basic fields", () => {
+    const result = validateOfferForPublication(
+      mergeInput({
+        title: "",
+        content: {
+          ...completeInput.content,
+          training: { enabled: true, description: "", items: [] },
+        },
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(getEditorFieldErrors(result.success ? undefined : result.error)).toMatchObject({
+      title: "Tytuł musi mieć od 3 do 120 znaków.",
+      "content.training.description": expect.any(String),
+    });
+  });
+
+  it.each([
+    ["2027-02-30", "Wpisz istniejącą datę zakończenia turnusu."],
+    ["2027-03-15", "Turnus nie może trwać dłużej niż 60 dni."],
+  ])("explains invalid turnus end date %s before saving", (endDate, message) => {
+    const term = required(completeDayCamp.content.terms[0]);
+    expect(
+      fieldErrorsFor({
+        ...completeDayCamp,
+        content: {
+          ...completeDayCamp.content,
+          terms: [{ ...term, startDate: "2027-01-01", endDate }],
+        },
+      }),
+    ).toMatchObject({ "content.terms.0.endDate": message });
+  });
+
   it("rejects the discontinued combined surf and snowboard activity", () => {
     expect(editorOfferInputSchema.safeParse({ ...completeInput, activity: "combo" }).success).toBe(
       false,

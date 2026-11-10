@@ -20,6 +20,8 @@ export function OfferAccommodationSection({
   onChange: (content: Content) => void;
   imageManager?: ReactNode | undefined;
 }) {
+  const enabled = sectionIsEnabled(content.accommodation);
+  const imageError = errors["content.accommodation.images"];
   return (
     <>
       <AccommodationEditor
@@ -28,13 +30,22 @@ export function OfferAccommodationSection({
         disabled={disabled}
         onChange={onChange}
       />
-      {imageManager ?? (
-        <section className="rounded-2xl border border-border/70 bg-background p-6">
-          <p className="text-sm text-muted-foreground">
-            Najpierw zapisz szkic, aby dodać zdjęcia zakwaterowania.
-          </p>
-        </section>
-      )}
+      {enabled ? (
+        <>
+          {imageError ? (
+            <p className="text-sm font-medium text-destructive" role="alert">
+              {imageError}
+            </p>
+          ) : null}
+          {imageManager ?? (
+            <section className="rounded-2xl border border-border/70 bg-background p-6">
+              <p className="text-sm text-muted-foreground">
+                Najpierw zapisz szkic, aby dodać zdjęcia zakwaterowania.
+              </p>
+            </section>
+          )}
+        </>
+      ) : null}
     </>
   );
 }
