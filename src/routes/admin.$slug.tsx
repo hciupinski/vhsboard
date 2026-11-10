@@ -444,6 +444,21 @@ function OfferEditorContent() {
               </p>
             )
           }
+          trainingImageManager={
+            persistedOffer ? (
+              <OfferImageManager
+                offerId={persistedOffer.id}
+                heroImagePath={null}
+                category="training_gallery"
+                disabled={isSubmitting || currentStatus === "archived"}
+                onImagesChanged={invalidateImageDependentCaches}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Najpierw zapisz szkic, aby dodać zdjęcia szkolenia.
+              </p>
+            )
+          }
           resortMapManager={
             persistedOffer ? (
               <OfferImageManager

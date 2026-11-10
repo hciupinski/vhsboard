@@ -35,8 +35,47 @@ export const journeySchema = z.object({
   returnPlace: text(120),
   note: text(500),
 });
+const legacyTransportType = z.enum(["coach", "plane", "train", "own", "other"]);
+const transportType = z.enum(["coach", "plane", "train", "own", "other", "vhs_bus"]);
+export type TransportType = z.infer<typeof transportType>;
+export const transportLabels: Record<TransportType, string> = {
+  coach: "Autokar",
+  plane: "Samolot",
+  train: "Pociąg",
+  own: "Dojazd własny",
+  other: "Inny",
+  vhs_bus: "Bus VHS",
+};
+
+const transportSchema = z
+  .object({
+    enabled: z.boolean(),
+    type: legacyTransportType.optional(),
+    types: z
+      .array(transportType)
+      .refine((types) => new Set(types).size === types.length)
+      .optional(),
+    customType: text(120).optional(),
+    description: text(3000),
+    journeys: z.array(journeySchema).max(2),
+  })
+  .refine((transport) => (transport.type === undefined) !== (transport.types === undefined), {
+    path: ["types"],
+    message: "Nieprawidłowy wybór rodzaju transportu.",
+  });
+
+type Transport = z.infer<typeof transportSchema>;
+export const getTransportTypes = (transport: Transport): readonly TransportType[] =>
+  transport.types ?? (transport.type ? [transport.type] : []);
+
+export const hasOrganizedTransport = (transport: Transport) =>
+  getTransportTypes(transport).some((type) => type !== "own");
+
+export const PRICE_NOTE_MAX_LENGTH = 1000;
+
 export const contentSectionsShape = {
   schemaVersion: z.literal(2).optional(),
+  priceNote: text(PRICE_NOTE_MAX_LENGTH).optional(),
   accommodation: z.object({ enabled: z.boolean().optional(), description: text(1000) }).optional(),
   resort: z
     .object({ enabled: z.boolean(), name: text(120), description: text(3000), mapUrl: url })
@@ -51,15 +90,7 @@ export const contentSectionsShape = {
         .refine(uniqueIds, identityError),
     })
     .optional(),
-  transport: z
-    .object({
-      enabled: z.boolean(),
-      type: z.enum(["coach", "plane", "train", "own", "other"]),
-      customType: text(120).optional(),
-      description: text(3000),
-      journeys: z.array(journeySchema).max(2),
-    })
-    .optional(),
+  transport: transportSchema.optional(),
   insurance: z
     .object({
       enabled: z.boolean(),
@@ -117,7 +148,7 @@ export function createOptionalSection(
     case "training":
       return { enabled: true, description: "", items: [] };
     case "transport":
-      return { enabled: true, type: "coach", customType: "", description: "", journeys: [] };
+      return { enabled: true, types: [], customType: "", description: "", journeys: [] };
     case "insurance":
       return {
         enabled: true,
@@ -185,7 +216,8 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
     required(section!.description, [key, "description"]);
     const cards = key === "training" ? content.training!.items : content.insurance!.packages;
     const collection = key === "training" ? "items" : "packages";
-    if (!cards.length) error([key, collection], "Dodaj co najmniej jedną kartę.");
+    if (key === "insurance" && !cards.length)
+      error([key, collection], "Dodaj co najmniej jedną kartę.");
     cards.forEach((item, index) => {
       const path = [key, collection, index];
       required(item.title, [...path, "title"]);
@@ -209,9 +241,11 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
   if (sectionIsEnabled(content.transport)) {
     const transport = content.transport!;
     required(transport.description, ["transport", "description"]);
-    if (transport.type === "other")
-      required(transport.customType ?? "", ["transport", "customType"]);
-    if (transport.type !== "own") {
+    const types = getTransportTypes(transport);
+    if (!types.length)
+      error(["transport", "types"], "Wybierz co najmniej jeden rodzaj transportu.");
+    if (types.includes("other")) required(transport.customType ?? "", ["transport", "customType"]);
+    if (hasOrganizedTransport(transport)) {
       const terms =
         kind === "day_camp" &&
         typeof input === "object" &&

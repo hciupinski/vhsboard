@@ -55,6 +55,67 @@ describe("optional offer sections", () => {
 });
 
 describe("v2 identity and publication validation", () => {
+  it("allows a training introduction without cards but validates cards that are present", () => {
+    const training = { enabled: true, description: "Lekcje na każdym poziomie.", items: [] };
+    expect(getSectionIssues({ training })).toEqual([]);
+    const partial = {
+      ...training,
+      items: [
+        {
+          id: "10000000-0000-4000-8000-000000000001",
+          title: "Jazda",
+          description: "",
+          price: emptyPrice(),
+          level: "",
+          scope: "",
+        },
+      ],
+    };
+    expect(getSectionIssues({ training: partial }).map((issue) => issue.path.join("."))).toEqual([
+      "training.items.0.description",
+    ]);
+  });
+
+  it("preserves a multiline price note and rejects oversized notes", () => {
+    expect(contentSectionsSchema.parse({ priceNote: " Pierwsza linia.\nDruga linia. " })).toEqual({
+      priceNote: "Pierwsza linia.\nDruga linia.",
+    });
+    expect(contentSectionsSchema.safeParse({ priceNote: "a".repeat(1001) }).success).toBe(false);
+  });
+
+  it("requires a journey for Bus VHS even when own transport is selected", () => {
+    const transport = {
+      enabled: true,
+      types: ["own", "vhs_bus"],
+      description: "Dojazd",
+      journeys: [],
+    };
+    expect(contentSectionsSchema.parse({ transport })).toEqual({ transport });
+    expect(getSectionIssues({ transport }).map((issue) => issue.path.join("."))).toEqual([
+      "transport.journeys",
+    ]);
+    expect(getSectionIssues({ transport: { ...transport, types: ["own"] } })).toEqual([]);
+  });
+
+  it("validates transport choices and requires a label for a custom option", () => {
+    const transport = { enabled: true, description: "Dojazd", journeys: [] };
+    for (const types of [["own", "own"], ["invalid"]]) {
+      expect(contentSectionsSchema.safeParse({ transport: { ...transport, types } }).success).toBe(
+        false,
+      );
+    }
+    expect(
+      getSectionIssues({ transport: { ...transport, types: [] } }).map((issue) =>
+        issue.path.join("."),
+      ),
+    ).toEqual(["transport.types"]);
+    expect(
+      getSectionIssues({ transport: { ...transport, types: ["other", "own"] } }).map((issue) =>
+        issue.path.join("."),
+      ),
+    ).toContain("transport.customType");
+  });
+
   it("rejects duplicate card IDs before saving a draft", () => {
     const item = {
       id: "10000000-0000-4000-8000-000000000001",

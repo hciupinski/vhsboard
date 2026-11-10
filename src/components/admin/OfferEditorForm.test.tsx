@@ -522,6 +522,47 @@ describe("OfferEditorForm", () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
+  it("edits a public price note without changing either price list", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <OfferEditorForm value={completeInput} errors={{}} disabled={false} onChange={onChange} />,
+    );
+    await user.click(screen.getByRole("tab", { name: "Cena" }));
+    fireEvent.change(screen.getByLabelText("Uwagi do ceny"), {
+      target: { value: "Dopłaty na miejscu." },
+    });
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          priceNote: "Dopłaty na miejscu.",
+          included: ["Nocleg"],
+          excluded: ["Lot"],
+        }),
+      }),
+    );
+  });
+
+  it("keeps own transport selected when adding Bus VHS", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const transport = { enabled: true, type: "own" as const, description: "Dojazd", journeys: [] };
+    const value = { ...completeInput, content: { ...completeInput.content, transport } };
+    render(<OfferEditorForm value={value} errors={{}} disabled={false} onChange={onChange} />);
+    await user.click(screen.getByRole("tab", { name: "Transport" }));
+    expect(screen.getByRole("checkbox", { name: "Dojazd własny" })).toBeChecked();
+    await user.click(screen.getByRole("checkbox", { name: "Bus VHS" }));
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          transport: expect.objectContaining({ types: ["own", "vhs_bus"] }),
+        }),
+      }),
+    );
+    const next = onChange.mock.lastCall?.[0] as EditableOfferInput;
+    expect(next.content.transport).not.toHaveProperty("type");
+  });
+
   it("retains transport text after disabling and reopening its optional section", async () => {
     const user = userEvent.setup();
     function Editor() {

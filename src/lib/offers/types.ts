@@ -7,7 +7,8 @@ export type TripActivity = "surf" | "snow";
 export type DayCampActivity = "wake" | "snow";
 export type OfferActivity = TripActivity | DayCampActivity;
 
-export type OfferImageCategory = "gallery" | "accommodation" | "resort_map" | "resort_gallery";
+export type OfferImageCategory =
+  "gallery" | "accommodation" | "resort_map" | "resort_gallery" | "training_gallery";
 
 export type AccommodationContent = {
   description: string;
@@ -91,6 +92,7 @@ type PublicOfferBase = {
   accommodationImages: OfferImage[];
   resortMap?: OfferImage | null;
   resortImages?: OfferImage[];
+  trainingImages?: OfferImage[];
 };
 
 export type TripOffer = PublicOfferBase & {

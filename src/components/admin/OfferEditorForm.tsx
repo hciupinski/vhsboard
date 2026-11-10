@@ -25,6 +25,7 @@ type Props = {
   accommodationImageManager?: ReactNode | undefined;
   resortMapManager?: ReactNode | undefined;
   resortImageManager?: ReactNode | undefined;
+  trainingImageManager?: ReactNode | undefined;
 };
 export function OfferEditorForm({
   value,
@@ -35,6 +36,7 @@ export function OfferEditorForm({
   accommodationImageManager,
   resortMapManager,
   resortImageManager,
+  trainingImageManager,
 }: Props) {
   const offerKind = value.offerKind ?? "trip";
   const dayCamp = offerKind === "day_camp" ? (value.content as DayCampContent) : null;
@@ -76,7 +78,7 @@ export function OfferEditorForm({
     ],
     story: ["content.paragraphs"],
     highlights: ["content.highlights", dayCamp ? "content.dayProgram" : "content.schedule"],
-    inout: ["content.included", "content.excluded", "content.terms"],
+    inout: ["content.included", "content.excluded", "content.priceNote", "content.terms"],
     parent: ["content.parentInfo"],
     resort: ["content.resort", ...(dayCamp ? ["content.venueDescription"] : [])],
     training: ["content.training"],
@@ -180,6 +182,7 @@ export function OfferEditorForm({
             onChange={setContent}
             mapManager={resortMapManager}
             resortImageManager={resortImageManager}
+            trainingImageManager={trainingImageManager}
           />
         </TabsContent>
       ))}
