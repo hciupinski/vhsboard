@@ -320,13 +320,15 @@ export function OfferImageManager({
 
       <div>
         <h2 className="font-display text-xl tracking-wide">
-          {category === "resort_gallery"
-            ? "Galeria resortu"
-            : category === "resort_map"
-              ? "Mapa tras resortu"
-              : category === "accommodation"
-                ? "Galeria zakwaterowania"
-                : "Galeria"}
+          {category === "training_gallery"
+            ? "Galeria szkoleń"
+            : category === "resort_gallery"
+              ? "Galeria resortu"
+              : category === "resort_map"
+                ? "Mapa tras resortu"
+                : category === "accommodation"
+                  ? "Galeria zakwaterowania"
+                  : "Galeria"}
         </h2>
         {category === "gallery" ? (
           <p className="mt-3 text-sm text-muted-foreground">
@@ -341,13 +343,15 @@ export function OfferImageManager({
         <ul
           className="mt-4 grid gap-4 sm:grid-cols-2"
           aria-label={
-            category === "resort_gallery"
-              ? "Galeria zdjęć resortu"
-              : category === "resort_map"
-                ? "Mapa resortu"
-                : category === "accommodation"
-                  ? "Galeria zdjęć zakwaterowania"
-                  : "Galeria zdjęć oferty"
+            category === "training_gallery"
+              ? "Galeria zdjęć szkoleń"
+              : category === "resort_gallery"
+                ? "Galeria zdjęć resortu"
+                : category === "resort_map"
+                  ? "Mapa resortu"
+                  : category === "accommodation"
+                    ? "Galeria zdjęć zakwaterowania"
+                    : "Galeria zdjęć oferty"
           }
         >
           {images.map((image, index) => {
