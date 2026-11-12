@@ -19,4 +19,15 @@ describe("OfferHighlights", () => {
     expect(cards[3]!.querySelectorAll(".lucide-sparkles")).toHaveLength(2);
     expect(cards[0]).not.toHaveClass("bg-primary");
   });
+  it("uses one text size for all programme cards", () => {
+    render(
+      <OfferHighlights
+        highlights={["4 noce w pokojach hotelowych lub apartamentach de lux", "Szkolenie"]}
+      />,
+    );
+    const first = screen.getByText(/4 noce/);
+    const second = screen.getByText("Szkolenie");
+    expect(first.className).toBe(second.className);
+    expect(first).toHaveClass("[text-size-adjust:100%]");
+  });
 });

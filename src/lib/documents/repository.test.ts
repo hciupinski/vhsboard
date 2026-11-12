@@ -83,6 +83,7 @@ describe("contact document repository", () => {
       title: "Regulamin",
       storage_path: path,
       position: 0,
+      category: null,
     });
   });
 

@@ -248,6 +248,7 @@ describe("static public pages", () => {
       .getByRole("heading", { name: "Dobre rzeczy dzieją się poza codziennym planem" })
       .closest("section");
     if (!hero) throw new Error("Nie znaleziono sekcji hero");
+    expect(hero.querySelector("[data-hero-copy]")).toHaveClass("bg-foreground/75");
     const heroTripLink = within(hero).getByRole("link", { name: "Zobacz wyjazdy" });
     expect(heroTripLink).toHaveAttribute("href", "/wyjazdy");
     expect(heroTripLink).not.toHaveClass("hidden");
@@ -434,6 +435,8 @@ describe("static public pages", () => {
     await renderRoute("/obozy", HalfDayCampsRoute);
 
     expect(screen.getByRole("heading", { name: /zajawkowe obozy/i })).toBeInTheDocument();
+    const campHero = screen.getByRole("heading", { name: /zajawkowe obozy/i }).closest("section")!;
+    expect(campHero.querySelector("[data-hero-copy]")).toHaveClass("bg-foreground/75");
     expect(
       screen.getByText(
         /wakeboard, skimboard, deskorolka, sup i masa aktywności, które dzieciaki kochają najbardziej/i,
@@ -499,13 +502,26 @@ describe("static public pages", () => {
     );
   });
 
-  it("keeps discontinued services as company background rather than separate sales pages", async () => {
+  it("shows the revised company story", async () => {
     await renderRoute("/o-nas", AboutRoute);
 
-    expect(screen.getByText(/surfingu, snowboardingu i deskorolki/i)).toBeInTheDocument();
+    expect(screen.getByText(/Zajawka do sportów sprawiła/i)).toBeInTheDocument();
+  });
+
+  it("shows the revised home and about copy", async () => {
+    const home = await renderRoute("/", HomeRoute);
     expect(
-      screen.queryByRole("link", { name: /wypożyczalnia|szkoła surfingu/i }),
-    ).not.toBeInTheDocument();
+      screen.getByText(
+        "Obozy i półkolonie dla dzieci i młodzieży - dobra zabawa w małych grupach.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Chcesz dołączyć do wyjazdu, wybrać obóz dla dziecka/),
+    ).toBeInTheDocument();
+    home.unmount();
+    await renderRoute("/o-nas", AboutRoute);
+    expect(screen.getByText(/Doświadczenie eventowe zdobywał w Red Bullu/)).toBeInTheDocument();
+    expect(screen.getByText(/Poznaj nas bliżej - sprawdź/)).toBeInTheDocument();
   });
 
   it("gives the VHS story a founder portrait and visual links to the board sports", async () => {

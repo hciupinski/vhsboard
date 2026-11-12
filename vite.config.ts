@@ -6,8 +6,8 @@ import { defineConfig, loadEnv } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
 import { isBuildOnly } from "./scripts/build-mode";
+import { staticPaths as staticPublicPaths } from "./src/lib/static-paths";
 
-const staticPublicPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
 const spaShellMaskPath = "/spa-shell";
 const adminShellMaskPath = "/admin-shell";
 

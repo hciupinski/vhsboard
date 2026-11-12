@@ -59,6 +59,15 @@ afterEach(() => {
 });
 
 describe("public navigation", () => {
+  it("links to the rental page from the footer and left-aligns contact details on desktop", async () => {
+    await renderPublicChrome("/wyjazdy");
+    const footer = document.querySelector("footer")!;
+    expect(within(footer).getByRole("link", { name: /wypożyczalnia/i })).toHaveAttribute(
+      "href",
+      "/wypozyczalnia/",
+    );
+    expect(footer.querySelector("address")).toHaveClass("sm:text-left");
+  });
   it("uses a larger logo and strong uppercase primary navigation", async () => {
     await renderPublicChrome("/wyjazdy");
 

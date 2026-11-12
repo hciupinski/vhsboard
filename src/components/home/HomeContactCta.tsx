@@ -15,8 +15,8 @@ export function HomeContactCta() {
             MASZ PYTANIA? POGADAJMY!
           </h2>
           <p className="mt-6 max-w-2xl lg:max-w-none text-lg leading-relaxed text-background/80">
-            Nie wiesz jeszcze, który kierunek jest dla Ciebie? Napisz do nas — pomożemy wybrać
-            wyjazd, obóz albo aktywność na Twój event.
+            Chcesz dołączyć do wyjazdu, wybrać obóz dla dziecka albo zorganizować event? Napisz do
+            nas - pomożemy ustalić szczegóły.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-5">
             <Button asChild size="lg" className="rounded-full">

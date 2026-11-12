@@ -36,13 +36,13 @@ function TripsPage() {
     <div className="flex min-h-[100dvh] flex-col bg-background">
       <PublicHeader />
       <PublicJsonLd path="/wyjazdy" label="Wyjazdy" />
-      <main className="flex-1 bg-secondary/55 py-12 sm:py-14">
+      <main className="flex-1 bg-secondary/55 pt-12 sm:pt-14">
         <section className="mx-auto max-w-6xl px-5 mb-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Wyjazdy</p>
           <h1 className="mt-3 text-5xl leading-[0.95] sm:text-7xl">
             WYJAZDY, DO KTÓRYCH CHCE SIĘ WRACAĆ
           </h1>
-          <p className="mt-5 max-w-2xl lg:max-w-none text-lg text-muted-foreground">
+          <p className="mt-5 max-w-2xl lg:max-w-none text-lg leading-relaxed text-balance sm:text-pretty text-muted-foreground">
             Kameralne grupy, dobra ekipa i dużo czasu na desce. Organizujemy wyjazdy snowboardowe i
             surfingowe z myślą o progresie, wspólnych zajawkach i relacjach, które zostają na
             dłużej.

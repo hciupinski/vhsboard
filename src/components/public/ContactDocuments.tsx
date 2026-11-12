@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { listPublicContactDocuments } from "@/lib/documents/repository";
+import { documentCategories } from "@/lib/documents/categories";
 import { Button } from "@/components/ui/button";
 
 export function ContactDocuments() {
@@ -41,22 +42,33 @@ export function ContactDocuments() {
       <h2 id="contact-documents-heading" className="text-2xl">
         Do pobrania
       </h2>
-      <ul className="mt-5 space-y-3 text-md text-muted-foreground">
-        {data.map((document) =>
-          document.signedUrl ? (
-            <li key={document.id}>
-              <a
-                href={document.signedUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="underline decoration-1 underline-offset-4 hover:text-foreground winter:hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                {document.title}
-              </a>
-            </li>
-          ) : null,
-        )}
-      </ul>
+      {([...Object.entries(documentCategories), ["", "Pozostałe dokumenty"]] as const).map(
+        ([category, label]) => {
+          const documents = data.filter(
+            (document) => (document.category ?? "") === category && document.signedUrl,
+          );
+          if (!documents.length) return null;
+          return (
+            <section key={category} className="mt-5">
+              <h3 className="text-xl">{label}</h3>
+              <ul className="mt-3 space-y-3 text-md text-muted-foreground">
+                {documents.map((document) => (
+                  <li key={document.id}>
+                    <a
+                      href={document.signedUrl!}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline decoration-1 underline-offset-4 hover:text-foreground winter:hover:text-interaction focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {document.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        },
+      )}
     </section>
   );
 }

@@ -40,8 +40,7 @@ export function OfferHighlights({
             ) : null}
             <p
               className={cn(
-                "min-w-0 font-display leading-tight [overflow-wrap:anywhere]",
-                featured ? "text-xl" : "text-lg",
+                "min-w-0 font-display text-lg leading-tight [overflow-wrap:anywhere] [text-size-adjust:100%]",
               )}
             >
               {highlight}

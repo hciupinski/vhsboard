@@ -62,18 +62,44 @@ function HalfDayCampsPage() {
             }
             className={`absolute inset-0 -z-20 size-full object-cover ${isWinter ? "object-[70%_center] md:object-center" : "object-center"}`}
           />
-          <div className="absolute inset-0 -z-10 bg-foreground/20" />
           <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:py-36">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
-              Dla dzieci
-            </p>
-            <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">
-              ZAJAWKOWE OBOZY
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/85 text-shadow-md text-shadow-foreground/50">
-              Twoje dziecko nie usiedzi w miejscu? Mamy na to sposób! Gwarantujemy zero nudy,
-              maksimum ruchu i świetną atmosferę pod okiem instruktorów.
-            </p>
+            <div data-hero-copy className="max-w-3xl rounded-3xl bg-foreground/75 p-5 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-background">
+                Dla dzieci
+              </p>
+              <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">
+                ZAJAWKOWE OBOZY
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background text-shadow-md text-shadow-foreground/50">
+                Twoje dziecko nie usiedzi w miejscu? Mamy na to sposób! Gwarantujemy zero nudy,
+                maksimum ruchu i świetną atmosferę pod okiem instruktorów.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section className="bg-secondary/55 py-12 sm:py-14" aria-labelledby="current-camps-heading">
+          <div className="mx-auto max-w-6xl px-5">
+            <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
+              NAJBLIŻSZE TERMINY
+            </h2>
+            {isPending ? <p className="mt-4 text-muted-foreground">Ładowanie obozów…</p> : null}
+            {isError ? (
+              <button type="button" className="mt-4 underline" onClick={() => void refetch()}>
+                Nie udało się pobrać obozów. Spróbuj ponownie.
+              </button>
+            ) : null}
+            {!isPending && !isError && visibleOffers.length === 0 ? (
+              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                Nie mamy teraz otwartych obozów. Wróć do nas za chwilę.
+              </p>
+            ) : null}
+            {!isPending && !isError && visibleOffers.length > 0 ? (
+              <div className="mt-10 grid gap-6 md:grid-cols-3">
+                {visibleOffers.map((offer) => (
+                  <DayCampCard key={offer.id} offer={offer} />
+                ))}
+              </div>
+            ) : null}
           </div>
         </section>
         <section
@@ -81,7 +107,7 @@ function HalfDayCampsPage() {
           aria-labelledby="program-heading"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-            Przez cały rok → złap zajawkę
+            ŁAP ZAJAWKĘ PRZEZ CAŁY ROK
           </p>
           <h2 id="program-heading" className="mt-3 max-w-2xl text-4xl leading-[0.95] sm:text-6xl">
             RUCH, PROGRES, DOBRY VIBE
@@ -125,31 +151,6 @@ function HalfDayCampsPage() {
                 doskonalimy technikę jazdy.
               </p>
             </article>
-          </div>
-        </section>
-        <section className="bg-secondary/55 py-12 sm:py-14" aria-labelledby="current-camps-heading">
-          <div className="mx-auto max-w-6xl px-5">
-            <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
-              NAJBLIŻSZE TERMINY
-            </h2>
-            {isPending ? <p className="mt-4 text-muted-foreground">Ładowanie obozów…</p> : null}
-            {isError ? (
-              <button type="button" className="mt-4 underline" onClick={() => void refetch()}>
-                Nie udało się pobrać obozów. Spróbuj ponownie.
-              </button>
-            ) : null}
-            {!isPending && !isError && visibleOffers.length === 0 ? (
-              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                Nie mamy teraz otwartych obozów. Wróć do nas za chwilę.
-              </p>
-            ) : null}
-            {!isPending && !isError && visibleOffers.length > 0 ? (
-              <div className="mt-10 grid gap-6 md:grid-cols-3">
-                {visibleOffers.map((offer) => (
-                  <DayCampCard key={offer.id} offer={offer} />
-                ))}
-              </div>
-            ) : null}
           </div>
         </section>
         <FaqSection

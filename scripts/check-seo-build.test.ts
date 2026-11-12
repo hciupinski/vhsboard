@@ -8,7 +8,16 @@ import { checkSeoBuild } from "./check-seo-build";
 
 const directories: string[] = [];
 const siteUrl = "https://vhsboard.pages.dev";
-const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
+const staticPaths = [
+  "/",
+  "/o-nas",
+  "/wyjazdy",
+  "/eventy",
+  "/obozy",
+  "/kontakt",
+  "/skimboarding",
+  "/wypozyczalnia",
+];
 
 const outputFile = (outputDirectory: string, path: string) =>
   path === "/" ? join(outputDirectory, "index.html") : join(outputDirectory, path, "index.html");
@@ -23,6 +32,8 @@ const socialTags = (path: string) => {
         "/eventy": "events",
         "/obozy": "camps",
         "/kontakt": "contact",
+        "/skimboarding": "events",
+        "/wypozyczalnia": "trips",
       } as Record<string, string>
     )[path] ?? "offers";
   return `<meta property="og:image" content="${siteUrl}/og/${key}.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:alt" content="VHSBOARD"><meta name="twitter:image" content="${siteUrl}/og/${key}.jpg"><meta name="twitter:card" content="summary_large_image">`;
@@ -31,9 +42,10 @@ const html = (path: string, body = "Pełna treść strony.") => `<!doctype html>
 <html lang="pl"><head>
   <title>Strona ${path}</title>
 ${socialTags(path)}
+  <meta property="og:url" content="${siteUrl}${path === "/" ? path : `${path}/`}">
   <meta name="description" content="Opis strony ${path}.">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="canonical" href="${siteUrl}${path}">
+  <link rel="canonical" href="${siteUrl}${path === "/" ? path : `${path}/`}">
 </head><body>${body}</body></html>`;
 
 const createOutput = async (indexing = false) => {
@@ -58,7 +70,7 @@ const createOutput = async (indexing = false) => {
   }
   await writeFile(
     join(outputDirectory, "sitemap.xml"),
-    `<urlset>${paths.map((path) => `<url><loc>${siteUrl}${path}</loc></url>`).join("")}</urlset>`,
+    `<urlset>${paths.map((path) => `<url><loc>${siteUrl}${path === "/" ? path : `${path}/`}</loc></url>`).join("")}</urlset>`,
   );
   await writeFile(
     join(outputDirectory, "robots.txt"),
@@ -93,6 +105,19 @@ describe("checkSeoBuild", () => {
       '<html lang="pl"><meta name="robots" content="unexpected"></html>',
     );
     await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing })).rejects.toThrow();
+  });
+  it("rejects a noncanonical Open Graph URL", async () => {
+    const outputDirectory = await createOutput();
+    await writeFile(
+      outputFile(outputDirectory, "/wyjazdy"),
+      html("/wyjazdy").replace(
+        'property="og:url" content="https://vhsboard.pages.dev/wyjazdy/"',
+        'property="og:url" content="https://vhsboard.pages.dev/wyjazdy"',
+      ),
+    );
+    await expect(checkSeoBuild({ outputDirectory, siteUrl, indexing: false })).rejects.toThrow(
+      "og:url",
+    );
   });
   it("rejects an indexable or missing admin shell", async () => {
     const outputDirectory = await createOutput();

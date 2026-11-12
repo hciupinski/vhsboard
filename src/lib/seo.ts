@@ -1,5 +1,6 @@
 import { SOCIAL_IMAGES, type SocialImage } from "./social-images";
 import { getSeoConfig } from "./env";
+import { canonicalStaticPath } from "./static-paths";
 
 export { getSeoConfig } from "./env";
 
@@ -39,7 +40,7 @@ export const canonicalUrl = (path: string): string => {
     throw new Error("Canonical może wskazywać wyłącznie bezpieczną ścieżkę lokalną.");
   }
 
-  return `${getSeoConfig().siteUrl}${url.pathname}`;
+  return `${getSeoConfig().siteUrl}${canonicalStaticPath(url.pathname)}`;
 };
 
 export const createPageMetadata = ({

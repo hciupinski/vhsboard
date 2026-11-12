@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { campFaqItems, tripFaqItems } from "./faq";
+import { aboutUsFaqItems, campFaqItems, tripFaqItems } from "./faq";
 
 describe("public FAQ content", () => {
   it("uses all ten trip questions supplied by the client", () => {
@@ -16,6 +16,17 @@ describe("public FAQ content", () => {
       "Czy VHS organizuje cały wyjazd?",
       "Jak zapisać się na wyjazd?",
     ]);
+  });
+
+  it("uses the revised camp answers and eight about-us answers", () => {
+    expect(campFaqItems[0]!.answer.match(/Dokładny przedział wiekowy/g)).toHaveLength(1);
+    expect(campFaqItems[1]!.answer).toContain(
+      "Zajęcia dopasowujemy do poziomu umiejętności, aby każde dziecko mogło się uczyć i rozwijać we własnym tempie.",
+    );
+    expect(aboutUsFaqItems).toHaveLength(8);
+    expect(aboutUsFaqItems[0]!.answer).toContain("to szkoła snowboardu i biuro podróży z Łodzi");
+    expect(aboutUsFaqItems[1]!.answer).toContain("w Polskę za granicę");
+    expect(aboutUsFaqItems[7]!.answer).toContain("Kameralne grupy, osobisty kontakt");
   });
 
   it("keeps six parent-focused camp questions", () => {

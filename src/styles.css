@@ -542,12 +542,6 @@ body[data-development-site="true"] {
   );
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  html:has([data-trip-detail]) {
-    scroll-behavior: smooth;
-  }
-}
-
 @keyframes events-logo-float {
   0%,
   100% {

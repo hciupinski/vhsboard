@@ -7,6 +7,7 @@ const mockedRepository = vi.hoisted(() => ({
   listAdminContactDocuments: vi.fn(),
   retryContactDocumentObjectCleanup: vi.fn(),
   uploadContactDocument: vi.fn(),
+  updateContactDocument: vi.fn(),
 }));
 vi.mock("@/lib/documents/repository", () => mockedRepository);
 import { ContactDocumentManager } from "./ContactDocumentManager";
@@ -53,7 +54,28 @@ describe("ContactDocumentManager", () => {
     await user.upload(screen.getByLabelText("Wybierz plik PDF"), pdf);
     await user.click(screen.getByRole("button", { name: "Dodaj dokument" }));
     await waitFor(() =>
-      expect(mockedRepository.uploadContactDocument).toHaveBeenCalledWith("Informacja", pdf, 1),
+      expect(mockedRepository.uploadContactDocument).toHaveBeenCalledWith(
+        "Informacja",
+        pdf,
+        1,
+        null,
+      ),
+    );
+  });
+  it("allows changing an existing document name and group without replacing its PDF", async () => {
+    const user = userEvent.setup();
+    mockedRepository.listAdminContactDocuments.mockResolvedValue([document]);
+    mockedRepository.updateContactDocument.mockResolvedValue(undefined);
+    render(<ContactDocumentManager />);
+    await user.click(await screen.findByRole("button", { name: "Edytuj Regulamin" }));
+    await user.clear(screen.getByLabelText("Nazwa edytowanego dokumentu"));
+    await user.type(screen.getByLabelText("Nazwa edytowanego dokumentu"), "Regulamin strony");
+    await user.selectOptions(screen.getByLabelText("Grupa edytowanego dokumentu"), "organizer");
+    await user.click(screen.getByRole("button", { name: "Zapisz zmiany" }));
+    expect(mockedRepository.updateContactDocument).toHaveBeenCalledWith(
+      document.id,
+      "Regulamin strony",
+      "organizer",
     );
   });
 });

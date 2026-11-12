@@ -141,7 +141,21 @@ export function OfferDetailSections({
               </div>
             ))}
           </div>
-          {content.priceNote ? <Copy>{content.priceNote}</Copy> : null}
+          {content.priceNote ? (
+            <p className="mt-4 whitespace-pre-line break-words text-xs text-muted-foreground">
+              {content.priceNote}
+            </p>
+          ) : null}
+          {content.showRentalLink ? (
+            <p className="mt-4">
+              <a
+                href="/wypozyczalnia/"
+                className="font-semibold text-primary underline underline-offset-4 hover:text-interaction"
+              >
+                Wypożyczalnia snowboardów
+              </a>
+            </p>
+          ) : null}
           {camp?.terms.length ? (
             <section id="turnusy" tabIndex={-1} className="mt-8">
               <h3 className="text-2xl">Turnusy i ceny</h3>
@@ -324,12 +338,14 @@ export function OfferDetailSections({
                 <Price value={item.price} />
                 <Copy>{item.description}</Copy>
                 <dl className="mt-5 space-y-3">
-                  {item.risks.map((risk) => (
-                    <div key={risk.id}>
-                      <dt className="text-sm text-muted-foreground">{risk.label}</dt>
-                      <dd className="font-medium">{risk.value}</dd>
-                    </div>
-                  ))}
+                  {item.risks
+                    .filter((risk) => risk.label.trim() || risk.value.trim())
+                    .map((risk) => (
+                      <div key={risk.id}>
+                        <dt className="text-sm text-muted-foreground">{risk.label}</dt>
+                        <dd className="font-medium">{risk.value}</dd>
+                      </div>
+                    ))}
                 </dl>
               </article>
             ))}

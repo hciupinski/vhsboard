@@ -69,6 +69,31 @@ describe("complete shared offer details", () => {
       );
     },
   );
+  it.each(["trip", "day_camp"] as const)(
+    "shows the rental link only when enabled for %s",
+    (kind) => {
+      const offer = sectionOffer(kind);
+      offer.content.included = [];
+      offer.content.excluded = [];
+      offer.content.priceNote = "";
+      if (offer.offerKind === "day_camp") offer.content.terms = [];
+      const { rerender } = render(<OfferDetailSections offer={offer} sidebar={null} />);
+      expect(
+        screen.queryByRole("link", { name: "Wypożyczalnia snowboardów" }),
+      ).not.toBeInTheDocument();
+      offer.content.showRentalLink = true;
+      rerender(<OfferDetailSections offer={offer} sidebar={null} />);
+      expect(screen.getByRole("link", { name: "Wypożyczalnia snowboardów" })).toHaveAttribute(
+        "href",
+        "/wypozyczalnia/",
+      );
+      offer.content.showRentalLink = false;
+      rerender(<OfferDetailSections offer={offer} sidebar={null} />);
+      expect(
+        screen.queryByRole("link", { name: "Wypożyczalnia snowboardów" }),
+      ).not.toBeInTheDocument();
+    },
+  );
   it("renders a training gallery without cards and hides it with the section disabled", () => {
     const offer = sectionOffer();
     offer.content.training!.items = [];
@@ -97,6 +122,7 @@ describe("complete shared offer details", () => {
     const offer = sectionOffer();
     Object.assign(offer.content, { priceNote: "Dopłaty rozliczamy na miejscu." });
     render(<OfferDetailSections offer={offer} sidebar={null} />);
+    expect(screen.getByText("Dopłaty rozliczamy na miejscu.")).toHaveClass("text-xs");
     expect(screen.getByRole("region", { name: "Cena" })).toContainElement(
       screen.getByText("Dopłaty rozliczamy na miejscu."),
     );
