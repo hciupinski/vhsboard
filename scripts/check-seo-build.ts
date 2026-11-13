@@ -67,7 +67,6 @@ const socialByPath: Record<string, SocialImage> = {
   "/eventy": SOCIAL_IMAGES.events,
   "/obozy": SOCIAL_IMAGES.camps,
   "/kontakt": SOCIAL_IMAGES.contact,
-  "/skimboarding": SOCIAL_IMAGES.events,
   "/wypozyczalnia": SOCIAL_IMAGES.trips,
 };
 async function checkSocialImage(

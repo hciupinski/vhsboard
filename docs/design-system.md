@@ -90,7 +90,7 @@ their semantic colors. Hover never becomes a requirement for touch use.
   Finished offers use grayscale photographs and have no detail link or CTA.
   The homepage and category listings show upcoming offers first, then cards
   marked `W trakcie`, followed by offers finished within one rolling calendar
-  month. The homepage shows at most three cards; category listings show all
+  month. The homepage shows at most six cards; category listings show all
   eligible offers. Undated category offers follow dated unfinished ones; the
   homepage omits offers without a start date. Camp status follows individual
   terms. Started terms have disabled registration controls.

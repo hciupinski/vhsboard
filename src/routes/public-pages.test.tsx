@@ -191,25 +191,36 @@ beforeEach(() => {
 });
 
 describe("static public pages", () => {
-  it("limits the homepage offer section to three cards", async () => {
+  it("shows a winter camp after three earlier trips and caps the homepage at six cards", async () => {
     const offers = Array.from({ length: 10 }, (_, i) => ({
       ...homeTrip,
       id: `trip-${i}`,
       slug: `trip-${i}`,
       title: `TEST wyjazd ${i}`,
-      startDate: "2099-01-01",
-      endDate: "2099-01-07",
+      startDate: i < 3 ? "2099-01-01" : "2099-01-20",
+      endDate: "2099-01-27",
     }));
+    const winterCamp = {
+      ...homeCamp,
+      activity: "snow" as const,
+      title: "TEST obóz zimowy",
+      startDate: "2099-01-10",
+      endDate: "2099-01-16",
+    };
     mockedListPublishedOffers.mockImplementation((kind: "trip" | "day_camp") =>
-      Promise.resolve(kind === "trip" ? offers : []),
+      Promise.resolve(kind === "trip" ? offers : [winterCamp]),
     );
     await renderRoute("/", HomeRoute);
     const heading = await screen.findByRole("heading", { name: "ROZKŁAD JAZDY" });
     const section = heading.closest("section")!;
     await waitFor(() =>
       expect(
-        within(section).getAllByRole("heading", { level: 3, name: /TEST wyjazd/ }),
-      ).toHaveLength(3),
+        within(section).getAllByRole("heading", { level: 3, name: /TEST (wyjazd|obóz)/ }),
+      ).toHaveLength(6),
+    );
+    expect(within(section).getByRole("link", { name: /TEST obóz zimowy/ })).toHaveAttribute(
+      "href",
+      `/obozy/${winterCamp.slug}`,
     );
   });
   it("keeps the static fallback carousel when configuration cannot be read", async () => {
