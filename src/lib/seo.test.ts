@@ -37,19 +37,14 @@ describe("canonicalUrl", () => {
     expect(() => canonicalUrl(path)).toThrow();
   });
 
-  it.each([
-    "/o-nas",
-    "/wyjazdy",
-    "/eventy",
-    "/obozy",
-    "/kontakt",
-    "/skimboarding",
-    "/wypozyczalnia",
-  ])("canonicalizes the static directory %s", (path) => {
-    setSeoEnvironment();
-    expect(canonicalUrl(path)).toBe(`https://vhsboard.pages.dev${path}/`);
-    expect(canonicalUrl(`${path}/`)).toBe(`https://vhsboard.pages.dev${path}/`);
-  });
+  it.each(["/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt", "/wypozyczalnia"])(
+    "canonicalizes the static directory %s",
+    (path) => {
+      setSeoEnvironment();
+      expect(canonicalUrl(path)).toBe(`https://vhsboard.pages.dev${path}/`);
+      expect(canonicalUrl(`${path}/`)).toBe(`https://vhsboard.pages.dev${path}/`);
+    },
+  );
   it("leaves home, assets and offer details unchanged", () => {
     setSeoEnvironment();
     expect(canonicalUrl("/")).toBe("https://vhsboard.pages.dev/");

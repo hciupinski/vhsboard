@@ -41,7 +41,7 @@ It also has a deliberately small administrator CMS for offers and selected site
 content.
 
 This is **not** a booking application. Every published offer must use an
-external TripAhead booking URL/CTA. Do not implement reservations, payments,
+external HTTPS booking URL/CTA for the service selected by the organizer. Do not implement reservations, payments,
 availability, participant management, or customer accounts.
 
 ## Current stack and project shape
