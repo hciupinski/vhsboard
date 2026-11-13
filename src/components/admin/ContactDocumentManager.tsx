@@ -4,7 +4,9 @@ import {
   deleteContactDocument,
   listAdminContactDocuments,
   uploadContactDocument,
+  updateContactDocument,
 } from "@/lib/documents/repository";
+import { documentCategories, type DocumentCategory } from "@/lib/documents/categories";
 import type { ContactDocument } from "@/lib/documents/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/admin/form-controls";
@@ -14,6 +16,8 @@ export function ContactDocumentManager() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [documents, setDocuments] = useState<ContactDocument[]>([]);
   const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<DocumentCategory | "">("");
+  const [editing, setEditing] = useState<ContactDocument | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -46,13 +50,30 @@ export function ContactDocumentManager() {
         title,
         file,
         Math.max(-1, ...documents.map(({ position }) => position)) + 1,
+        category || null,
       );
       setTitle("");
+      setCategory("");
       setFile(null);
       if (inputRef.current) inputRef.current.value = "";
       await refresh();
     } catch {
       setError("Nie udało się dodać dokumentu. Spróbuj ponownie.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const saveEdit = async () => {
+    if (!editing) return;
+    setIsSaving(true);
+    setError(null);
+    try {
+      await updateContactDocument(editing.id, editing.title, editing.category ?? null);
+      setEditing(null);
+      await refresh();
+    } catch {
+      setError("Nie udało się zapisać zmian dokumentu.");
     } finally {
       setIsSaving(false);
     }
@@ -87,6 +108,23 @@ export function ContactDocumentManager() {
             />
           </div>
           <div>
+            <Label htmlFor="document-category">Grupa dokumentu</Label>
+            <select
+              id="document-category"
+              value={category}
+              onChange={(event) => setCategory(event.target.value as DocumentCategory | "")}
+              disabled={isLoading || isSaving}
+              className="block h-9 w-full rounded-md border bg-card px-3"
+            >
+              <option value="">Pozostałe dokumenty</option>
+              {Object.entries(documentCategories).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
             <Label htmlFor="document-file">Wybierz plik PDF</Label>
             <Input
               id="document-file"
@@ -112,6 +150,41 @@ export function ContactDocumentManager() {
           Dodaj dokument
         </Button>
       </section>
+      {editing ? (
+        <section className="rounded-2xl border p-5 space-y-3">
+          <Label htmlFor="edit-document-title">Nazwa edytowanego dokumentu</Label>
+          <Input
+            id="edit-document-title"
+            value={editing.title}
+            onChange={(event) => setEditing({ ...editing, title: event.target.value })}
+          />
+          <Label htmlFor="edit-document-category">Grupa edytowanego dokumentu</Label>
+          <select
+            id="edit-document-category"
+            value={editing.category ?? ""}
+            onChange={(event) =>
+              setEditing({
+                ...editing,
+                category: (event.target.value || null) as DocumentCategory | null,
+              })
+            }
+            className="block h-9 w-full rounded-md border bg-card px-3"
+          >
+            <option value="">Pozostałe dokumenty</option>
+            {Object.entries(documentCategories).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <Button type="button" disabled={isSaving} onClick={() => void saveEdit()}>
+            Zapisz zmiany
+          </Button>{" "}
+          <Button type="button" variant="outline" onClick={() => setEditing(null)}>
+            Anuluj
+          </Button>
+        </section>
+      ) : null}
       <section>
         <h2 className="text-2xl">Zapisane dokumenty</h2>
         {isLoading ? (
@@ -133,6 +206,20 @@ export function ContactDocumentManager() {
                 >
                   {document.title}
                 </a>
+                <span>
+                  {documentCategories[document.category as DocumentCategory] ??
+                    "Pozostałe dokumenty"}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  aria-label={`Edytuj ${document.title}`}
+                  disabled={isSaving}
+                  onClick={() => setEditing(document)}
+                >
+                  Edytuj
+                </Button>
                 <Button
                   type="button"
                   variant="outline"

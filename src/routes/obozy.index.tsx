@@ -51,7 +51,9 @@ function HalfDayCampsPage() {
       <PublicHeader />
       <PublicJsonLd path="/obozy" label="Obozy" />
       <main className="flex-1">
-        <section className="relative isolate overflow-hidden lg:flex lg:min-h-[36.5rem] lg:items-center">
+        <section
+          className={`relative isolate flex min-h-[calc(100svh-73px-var(--development-banner-height,0px))] flex-col justify-end overflow-hidden lg:min-h-[36.5rem] lg:flex-row lg:items-center${isWinter ? " max-lg:portrait:bg-foreground max-sm:portrait:min-h-[max(calc(100svh-73px-var(--development-banner-height,0px)),calc(112vw+12rem))]" : ""}`}
+        >
           <ResponsiveImage
             sizes={isWinter ? "(max-width: 767px) 1600px, 100vw" : "100vw"}
             image={isWinter ? winterHeroImage : summerHeroImage}
@@ -60,20 +62,48 @@ function HalfDayCampsPage() {
                 ? "Zimowy obóz snowboardowy VHSBOARD w górach"
                 : "Letni obóz sportowy VHSBOARD nad wodą"
             }
-            className={`absolute inset-0 -z-20 size-full object-cover ${isWinter ? "object-[70%_center] md:object-center" : "object-center"}`}
+            className={`absolute inset-0 -z-20 size-full object-cover ${isWinter ? "object-[70%_center] md:object-center max-lg:portrait:h-[min(145vw,calc(100%-9.5rem))] max-lg:portrait:object-[67%_center] max-lg:portrait:mask-b-from-82%" : "object-center"}`}
           />
-          <div className="absolute inset-0 -z-10 bg-foreground/20" />
-          <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:py-36">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 hidden bg-foreground/20 lg:block"
+          />
+          <div className="relative w-full bg-linear-to-t from-foreground via-foreground/85 via-65% to-transparent px-5 pt-16 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:mx-auto lg:max-w-6xl lg:bg-none lg:py-36">
+            <p className="inline-block rounded-full border border-background/40 bg-foreground/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background lg:block lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:text-primary-foreground/80">
               Dla dzieci
             </p>
             <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">
               ZAJAWKOWE OBOZY
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-background/85 text-shadow-md text-shadow-foreground/50">
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-background text-shadow-md text-shadow-foreground/50 sm:text-lg lg:mt-6 lg:text-background/85">
               Twoje dziecko nie usiedzi w miejscu? Mamy na to sposób! Gwarantujemy zero nudy,
               maksimum ruchu i świetną atmosferę pod okiem instruktorów.
             </p>
+          </div>
+        </section>
+        <section className="bg-secondary/55 py-12 sm:py-14" aria-labelledby="current-camps-heading">
+          <div className="mx-auto max-w-6xl px-5">
+            <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
+              NAJBLIŻSZE TERMINY
+            </h2>
+            {isPending ? <p className="mt-4 text-muted-foreground">Ładowanie obozów…</p> : null}
+            {isError ? (
+              <button type="button" className="mt-4 underline" onClick={() => void refetch()}>
+                Nie udało się pobrać obozów. Spróbuj ponownie.
+              </button>
+            ) : null}
+            {!isPending && !isError && visibleOffers.length === 0 ? (
+              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                Nie mamy teraz otwartych obozów. Wróć do nas za chwilę.
+              </p>
+            ) : null}
+            {!isPending && !isError && visibleOffers.length > 0 ? (
+              <div className="mt-10 grid gap-6 md:grid-cols-3">
+                {visibleOffers.map((offer) => (
+                  <DayCampCard key={offer.id} offer={offer} />
+                ))}
+              </div>
+            ) : null}
           </div>
         </section>
         <section
@@ -81,7 +111,7 @@ function HalfDayCampsPage() {
           aria-labelledby="program-heading"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-            Przez cały rok → złap zajawkę
+            ŁAP ZAJAWKĘ PRZEZ CAŁY ROK
           </p>
           <h2 id="program-heading" className="mt-3 max-w-2xl text-4xl leading-[0.95] sm:text-6xl">
             RUCH, PROGRES, DOBRY VIBE
@@ -125,31 +155,6 @@ function HalfDayCampsPage() {
                 doskonalimy technikę jazdy.
               </p>
             </article>
-          </div>
-        </section>
-        <section className="bg-secondary/55 py-12 sm:py-14" aria-labelledby="current-camps-heading">
-          <div className="mx-auto max-w-6xl px-5">
-            <h2 id="current-camps-heading" className="text-3xl sm:text-4xl">
-              NAJBLIŻSZE TERMINY
-            </h2>
-            {isPending ? <p className="mt-4 text-muted-foreground">Ładowanie obozów…</p> : null}
-            {isError ? (
-              <button type="button" className="mt-4 underline" onClick={() => void refetch()}>
-                Nie udało się pobrać obozów. Spróbuj ponownie.
-              </button>
-            ) : null}
-            {!isPending && !isError && visibleOffers.length === 0 ? (
-              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                Nie mamy teraz otwartych obozów. Wróć do nas za chwilę.
-              </p>
-            ) : null}
-            {!isPending && !isError && visibleOffers.length > 0 ? (
-              <div className="mt-10 grid gap-6 md:grid-cols-3">
-                {visibleOffers.map((offer) => (
-                  <DayCampCard key={offer.id} offer={offer} />
-                ))}
-              </div>
-            ) : null}
           </div>
         </section>
         <FaqSection

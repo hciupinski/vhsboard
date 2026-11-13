@@ -19,7 +19,7 @@ export function DayCampProgramEditor({
       className="space-y-8 rounded-2xl border border-border/70 bg-background p-6"
     >
       <div>
-        <h2 className="text-xl font-semibold">Plan dnia</h2>
+        <h2 className="text-xl font-semibold">Plan wyjazdu</h2>
         {content.dayProgram.map((item, index) => {
           const update = (patch: Partial<typeof item>) =>
             onChange({
@@ -50,7 +50,7 @@ export function DayCampProgramEditor({
                   >
                     <Input
                       id={id}
-                      aria-label={`Plan dnia ${index + 1} — ${isTime ? "godzina" : "opis"}`}
+                      aria-label={`Plan wyjazdu ${index + 1} — ${isTime ? "godzina" : "opis"}`}
                       {...fieldState(errors, path, id)}
                       value={item[field]}
                       placeholder={isTime ? "np. 08:00 lub 09:00–10:00" : undefined}

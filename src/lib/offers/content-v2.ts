@@ -86,6 +86,7 @@ export const PRICE_NOTE_MAX_LENGTH = 1000;
 export const contentSectionsShape = {
   schemaVersion: z.literal(2).optional(),
   priceNote: text(PRICE_NOTE_MAX_LENGTH).optional(),
+  showRentalLink: z.boolean().optional(),
   accommodation: z.object({ enabled: z.boolean().optional(), description: text(1000) }).optional(),
   resort: z
     .object({ enabled: z.boolean(), name: text(120), description: text(3000), mapUrl: url })
@@ -265,9 +266,8 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
       );
       price(item.price, [...path, "price"]);
       if ("risks" in item) {
-        if (!item.risks.length)
-          error([...path, "risks"], "Dodaj co najmniej jeden zakres ochrony.");
         item.risks.forEach((risk, i) => {
+          if (!risk.label.trim() && !risk.value.trim()) return;
           required(
             risk.label,
             [...path, "risks", i, "label"],

@@ -87,18 +87,15 @@ function CookieConsentBanner({
       aria-labelledby="cookie-consent-heading"
       className="fixed inset-x-0 bottom-0 z-50 border-t border-background/20 bg-foreground/96 text-background shadow-2xl"
     >
-      <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
-        <h2 id="cookie-consent-heading" className="text-3xl leading-none sm:text-4xl">
+      <div className="mx-auto max-w-6xl px-5 py-4">
+        <h2 id="cookie-consent-heading" className="text-2xl leading-none sm:text-3xl">
           Szanujemy Twoją prywatność
         </h2>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-background/80 sm:text-base">
-          Używamy niezbędnych plików cookie, aby strona działała poprawnie. Za Twoją zgodą możemy w
-          przyszłości korzystać z dodatkowych plików do analizy ruchu i dopasowania komunikacji.
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-background/80">
+          Używamy niezbędnych cookies. Za Twoją zgodą możemy używać także cookies analitycznych i
+          marketingowych. Decyzję możesz zmienić w stopce strony.
         </p>
-        <p className="mt-2 text-sm text-background/70">
-          Swoją decyzję możesz zmienić w każdej chwili.
-        </p>
-        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
           <Button
             className="h-11 border-background/70 bg-transparent text-background hover:bg-background hover:text-foreground winter:hover:bg-interaction winter:hover:text-primary-foreground"
             onClick={onCustomize}

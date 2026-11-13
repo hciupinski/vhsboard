@@ -1,3 +1,5 @@
+/wypozyczalnia-snb-2/ /wypozyczalnia/ 301
+/wypozyczalnia-snb-2 /wypozyczalnia/ 301
 /trips/:slug /wyjazdy/:slug 301
 /wyjazdy/:slug /_shell/app 200
 /obozy/:slug /_shell/app 200

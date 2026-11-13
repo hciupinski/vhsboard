@@ -7,6 +7,12 @@ import {
 } from "./content-v2";
 
 describe("optional offer sections", () => {
+  it("preserves an optional rental link setting including an explicit false", () => {
+    expect(contentSectionsSchema.parse({ showRentalLink: true })).toEqual({ showRentalLink: true });
+    expect(contentSectionsSchema.parse({ showRentalLink: false })).toEqual({
+      showRentalLink: false,
+    });
+  });
   it("allows legacy content and disabled incomplete transport without requiring new data", () => {
     expect(contentSectionsSchema.parse({})).toEqual({});
     const content = { transport: { enabled: false, type: "coach", description: "", journeys: [] } };
@@ -207,5 +213,43 @@ describe("v2 identity and publication validation", () => {
     const saved = contentSectionsSchema.parse(JSON.parse(JSON.stringify(content)));
     expect(saved).toEqual(content);
     expect(getSectionIssues(saved)).toEqual([]);
+  });
+  it("accepts insurance without coverage and rejects partially filled coverage", () => {
+    const insurance = {
+      enabled: true,
+      description: "Opis ubezpieczenia",
+      provider: "",
+      informationUrl: "",
+      packages: [],
+      extensions: [],
+    };
+    expect(
+      getSectionIssues({ insurance }).some(
+        (issue) => issue.path.join(".") === "insurance.packages",
+      ),
+    ).toBe(true);
+    const populated = {
+      ...insurance,
+      packages: [
+        {
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          title: "Pakiet",
+          description: "Opis pakietu",
+          price: { kind: "included", amount: 0, from: false, unit: "" },
+          risks: [{ id: "123e4567-e89b-12d3-a456-426614174001", label: "", value: "" }],
+        },
+      ],
+    };
+    expect(getSectionIssues({ insurance: populated })).toEqual([]);
+    populated.packages[0]!.risks[0]!.label = "\t\n";
+    populated.packages[0]!.risks[0]!.value = "\t";
+    expect(getSectionIssues({ insurance: populated })).toEqual([]);
+    populated.packages[0]!.risks[0]!.label = "Koszty leczenia";
+    populated.packages[0]!.risks[0]!.value = "";
+    expect(
+      getSectionIssues({ insurance: populated }).some((issue) =>
+        issue.path.join(".").endsWith("risks.0.value"),
+      ),
+    ).toBe(true);
   });
 });

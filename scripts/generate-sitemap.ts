@@ -1,9 +1,8 @@
+import { canonicalStaticPath, staticPaths } from "../src/lib/static-paths";
 import { access, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { getSeoConfigFrom } from "../src/lib/env";
-
-const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
 
 export const escapeXml = (value: string): string =>
   value.replace(/[<>&"']/g, (character) => {
@@ -33,7 +32,8 @@ const ensureOutputExists = async (outputDirectory: string, path: string): Promis
   }
 };
 
-const toCanonicalUrl = (siteUrl: string, path: string): string => `${siteUrl}${path}`;
+const toCanonicalUrl = (siteUrl: string, path: string): string =>
+  `${siteUrl}${canonicalStaticPath(path)}`;
 
 type GenerateSitemapInput = {
   outputDirectory: string;

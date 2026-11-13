@@ -148,6 +148,12 @@ describe("trips list route", () => {
       10,
     );
   });
+  it("balances the introductory paragraph on narrow screens", async () => {
+    mockedListPublishedOffers.mockResolvedValue([]);
+    await renderTripsPage();
+    expect(screen.getByText(/kameralne grupy, dobra ekipa/i)).toHaveClass("text-balance");
+  });
+
   it("does not fetch offers while prerendering the marketing page", () => {
     expect(TripsRoute.options.loader).toBeUndefined();
   });

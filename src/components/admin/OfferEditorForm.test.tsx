@@ -74,6 +74,43 @@ afterEach(cleanup);
 
 describe("OfferEditorForm", () => {
   it.each(["trip", "day_camp"] as const)(
+    "enables and clears the rental link for %s",
+    async (kind) => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      function Editor() {
+        const [value, setValue] = useState<EditableOfferInput>(
+          kind === "trip" ? completeInput : dayCampInput,
+        );
+        return (
+          <OfferEditorForm
+            value={value}
+            errors={{}}
+            disabled={false}
+            onChange={(next) => {
+              setValue(next);
+              onChange(next);
+            }}
+          />
+        );
+      }
+      render(<Editor />);
+      await user.click(screen.getByRole("tab", { name: "Cena" }));
+      const toggle = screen.getByRole("checkbox", {
+        name: "Pokaż link do wypożyczalni snowboardów",
+      });
+      expect(toggle).not.toBeChecked();
+      await user.click(toggle);
+      expect(onChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({ content: expect.objectContaining({ showRentalLink: true }) }),
+      );
+      await user.click(toggle);
+      expect(onChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({ content: expect.objectContaining({ showRentalLink: false }) }),
+      );
+    },
+  );
+  it.each(["trip", "day_camp"] as const)(
     "preserves reordered lists in the %s offer data",
     async (kind) => {
       const user = userEvent.setup();
@@ -219,7 +256,7 @@ describe("OfferEditorForm", () => {
     await user.click(screen.getByRole("tab", { name: "O obozie" }));
     fireEvent.change(screen.getByLabelText("Akapity opisu 1"), { target: { value: "Nowy opis" } });
     await user.click(screen.getByRole("tab", { name: "W programie" }));
-    fireEvent.change(screen.getByLabelText("Plan dnia 1 — godzina"), {
+    fireEvent.change(screen.getByLabelText("Plan wyjazdu 1 — godzina"), {
       target: { value: "10:00" },
     });
     await user.click(screen.getByRole("tab", { name: "Cena" }));
@@ -232,7 +269,7 @@ describe("OfferEditorForm", () => {
     await user.click(screen.getByRole("tab", { name: "O obozie" }));
     expect(screen.getByLabelText("Akapity opisu 1")).toHaveValue("Nowy opis");
     await user.click(screen.getByRole("tab", { name: "W programie" }));
-    expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("10:00");
+    expect(screen.getByLabelText("Plan wyjazdu 1 — godzina")).toHaveValue("10:00");
     await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
     expect(screen.getByLabelText("Wiek uczestników")).toHaveValue("10–15 lat");
   });
@@ -904,7 +941,7 @@ describe("OfferEditorForm", () => {
     expect(screen.queryByText("Plan zajęć")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("tab", { name: "W programie" }));
-    expect(screen.getByLabelText("Plan dnia 1 — godzina")).toHaveValue("09:00");
+    expect(screen.getByLabelText("Plan wyjazdu 1 — godzina")).toHaveValue("09:00");
     expect(screen.getByText("5/120 znaków")).toBeInTheDocument();
     await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
     expect(screen.getByLabelText("Wiek uczestników")).toHaveValue("8–14 lat");

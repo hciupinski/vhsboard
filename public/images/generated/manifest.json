@@ -649,6 +649,140 @@
         }
       ]
     },
+    "hero-mobile/oboz-zimowy.jpg": {
+      "sourceHash": "0414f4168682cbd2c4c80dfc4352598b7b880c5050cfa62825a4f84e24cffab1",
+      "asset": {
+        "src": "/images/generated/hero-mobile-oboz-zimowy-600-9a1da1dad6ee.webp",
+        "width": 600,
+        "height": 782,
+        "webpSrcSet": "/images/generated/hero-mobile-oboz-zimowy-480-9dc3f22935a4.webp 480w, /images/generated/hero-mobile-oboz-zimowy-600-9a1da1dad6ee.webp 600w",
+        "avifSrcSet": "/images/generated/hero-mobile-oboz-zimowy-480-5795ef27aae0.avif 480w, /images/generated/hero-mobile-oboz-zimowy-600-0ef4c2d7e792.avif 600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/hero-mobile-oboz-zimowy-480-9dc3f22935a4.webp",
+          "width": 480,
+          "height": 626,
+          "format": "webp",
+          "bytes": 85720
+        },
+        {
+          "path": "/images/generated/hero-mobile-oboz-zimowy-480-5795ef27aae0.avif",
+          "width": 480,
+          "height": 626,
+          "format": "avif",
+          "bytes": 39500
+        },
+        {
+          "path": "/images/generated/hero-mobile-oboz-zimowy-600-9a1da1dad6ee.webp",
+          "width": 600,
+          "height": 782,
+          "format": "webp",
+          "bytes": 114872
+        },
+        {
+          "path": "/images/generated/hero-mobile-oboz-zimowy-600-0ef4c2d7e792.avif",
+          "width": 600,
+          "height": 782,
+          "format": "avif",
+          "bytes": 56036
+        }
+      ]
+    },
+    "hero-mobile/snowboard.jpg": {
+      "sourceHash": "d0e9c6181c78a13860d0dd05bfb15927ccc17d72cb18ab5616f139d49e400802",
+      "asset": {
+        "src": "/images/generated/hero-mobile-snowboard-600-886f83f1b9f5.webp",
+        "width": 600,
+        "height": 782,
+        "webpSrcSet": "/images/generated/hero-mobile-snowboard-480-b606eddf3144.webp 480w, /images/generated/hero-mobile-snowboard-600-886f83f1b9f5.webp 600w",
+        "avifSrcSet": "/images/generated/hero-mobile-snowboard-480-ef525661402a.avif 480w, /images/generated/hero-mobile-snowboard-600-ee05101be8c2.avif 600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/hero-mobile-snowboard-480-b606eddf3144.webp",
+          "width": 480,
+          "height": 626,
+          "format": "webp",
+          "bytes": 45690
+        },
+        {
+          "path": "/images/generated/hero-mobile-snowboard-480-ef525661402a.avif",
+          "width": 480,
+          "height": 626,
+          "format": "avif",
+          "bytes": 22392
+        },
+        {
+          "path": "/images/generated/hero-mobile-snowboard-600-886f83f1b9f5.webp",
+          "width": 600,
+          "height": 782,
+          "format": "webp",
+          "bytes": 63518
+        },
+        {
+          "path": "/images/generated/hero-mobile-snowboard-600-ee05101be8c2.avif",
+          "width": 600,
+          "height": 782,
+          "format": "avif",
+          "bytes": 33016
+        }
+      ]
+    },
+    "hero-mobile/surf.jpg": {
+      "sourceHash": "88d3e457c99b63b7c5d641f9c8cff74377e6ad98b3ee2e323ebb3abe989284f7",
+      "asset": {
+        "src": "/images/generated/hero-mobile-surf-1200-e1a14c003335.webp",
+        "width": 1200,
+        "height": 1920,
+        "webpSrcSet": "/images/generated/hero-mobile-surf-480-0a2d86e43a40.webp 480w, /images/generated/hero-mobile-surf-960-f1b59031436f.webp 960w, /images/generated/hero-mobile-surf-1200-e1a14c003335.webp 1200w",
+        "avifSrcSet": "/images/generated/hero-mobile-surf-480-aabeeda5e7ed.avif 480w, /images/generated/hero-mobile-surf-960-aa55d1b34b41.avif 960w, /images/generated/hero-mobile-surf-1200-cb043a92b86c.avif 1200w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/hero-mobile-surf-480-0a2d86e43a40.webp",
+          "width": 480,
+          "height": 768,
+          "format": "webp",
+          "bytes": 29826
+        },
+        {
+          "path": "/images/generated/hero-mobile-surf-480-aabeeda5e7ed.avif",
+          "width": 480,
+          "height": 768,
+          "format": "avif",
+          "bytes": 17254
+        },
+        {
+          "path": "/images/generated/hero-mobile-surf-960-f1b59031436f.webp",
+          "width": 960,
+          "height": 1536,
+          "format": "webp",
+          "bytes": 94570
+        },
+        {
+          "path": "/images/generated/hero-mobile-surf-960-aa55d1b34b41.avif",
+          "width": 960,
+          "height": 1536,
+          "format": "avif",
+          "bytes": 55902
+        },
+        {
+          "path": "/images/generated/hero-mobile-surf-1200-e1a14c003335.webp",
+          "width": 1200,
+          "height": 1920,
+          "format": "webp",
+          "bytes": 138948
+        },
+        {
+          "path": "/images/generated/hero-mobile-surf-1200-cb043a92b86c.avif",
+          "width": 1200,
+          "height": 1920,
+          "format": "avif",
+          "bytes": 81007
+        }
+      ]
+    },
     "main/eventy-1.jpg": {
       "sourceHash": "dcb7199b32dad6dc2866c7b0746d5036fd64815a1597a90ac2b824028823a74e",
       "asset": {

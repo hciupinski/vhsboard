@@ -42,7 +42,8 @@ export function RentalDocumentManager() {
         Oferta wypożyczalni — PDF
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Dokument pojawi się na stronie Wyjazdy w sekcji wypożyczalni. Maksymalny rozmiar: 10 MiB.
+        Dokument pojawi się na stronie wypożyczalni oraz w sekcji wypożyczalni na stronie Wyjazdy.
+        Maksymalny rozmiar: 10 MiB.
       </p>
       {document.isLoading ? <p className="mt-4 text-sm">Ładowanie dokumentu…</p> : null}
       {document.isError ? (

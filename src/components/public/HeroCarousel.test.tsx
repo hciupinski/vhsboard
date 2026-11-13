@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { PortalCarouselImage } from "@/lib/portal-carousel/types";
+import { DEFAULT_PORTAL_CAROUSEL_IMAGES } from "@/lib/portal-carousel/catalogue";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { HeroCarousel } from "./HeroCarousel";
 
@@ -108,6 +109,29 @@ describe("HeroCarousel", () => {
       "object-[62%_center]",
       "md:object-center",
     );
+  });
+
+  it("serves portrait sources only on mobile, with the original desktop source for each slide", () => {
+    stubReducedMotion(false);
+    render(<HeroCarousel images={DEFAULT_PORTAL_CAROUSEL_IMAGES} />);
+
+    screen.getAllByTestId("hero-carousel-slide").forEach((slide, index) => {
+      const sources = slide.closest("picture")?.querySelectorAll("source");
+      expect(sources).toHaveLength(4);
+      const portraitMedia = "(width < 1024px) and (orientation: portrait)";
+      expect(sources?.[0]).toHaveAttribute("media", portraitMedia);
+      expect(sources?.[0]?.getAttribute("sizes")).toMatch(/^max\(100vw, \d+svh\)$/);
+      expect(sources?.[0]?.getAttribute("srcset")).not.toBe(
+        DEFAULT_PORTAL_CAROUSEL_IMAGES[index]?.responsive?.avifSrcSet,
+      );
+      expect(sources?.[1]).toHaveAttribute("media", portraitMedia);
+      expect(sources?.[2]).not.toHaveAttribute("media");
+      expect(sources?.[2]).toHaveAttribute(
+        "srcset",
+        DEFAULT_PORTAL_CAROUSEL_IMAGES[index]?.responsive?.avifSrcSet,
+      );
+      expect(slide).toHaveClass("object-cover");
+    });
   });
 
   it("does not schedule autoplay for reduced-motion users", () => {

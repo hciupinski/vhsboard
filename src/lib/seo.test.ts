@@ -37,11 +37,30 @@ describe("canonicalUrl", () => {
     expect(() => canonicalUrl(path)).toThrow();
   });
 
+  it.each([
+    "/o-nas",
+    "/wyjazdy",
+    "/eventy",
+    "/obozy",
+    "/kontakt",
+    "/skimboarding",
+    "/wypozyczalnia",
+  ])("canonicalizes the static directory %s", (path) => {
+    setSeoEnvironment();
+    expect(canonicalUrl(path)).toBe(`https://vhsboard.pages.dev${path}/`);
+    expect(canonicalUrl(`${path}/`)).toBe(`https://vhsboard.pages.dev${path}/`);
+  });
+  it("leaves home, assets and offer details unchanged", () => {
+    setSeoEnvironment();
+    expect(canonicalUrl("/")).toBe("https://vhsboard.pages.dev/");
+    expect(canonicalUrl("/og/trips.jpg")).toBe("https://vhsboard.pages.dev/og/trips.jpg");
+    expect(canonicalUrl("/wyjazdy/example")).toBe("https://vhsboard.pages.dev/wyjazdy/example");
+  });
   it("uses the configured origin and removes query and fragment", () => {
     setSeoEnvironment({ VITE_SEO_INDEXING: "true" });
 
     expect(canonicalUrl("/wyjazdy?utm_source=test#details")).toBe(
-      "https://vhsboard.pages.dev/wyjazdy",
+      "https://vhsboard.pages.dev/wyjazdy/",
     );
   });
 });
@@ -60,9 +79,9 @@ describe("createPageMetadata", () => {
       meta: expect.arrayContaining([
         { name: "robots", content: "noindex, nofollow" },
         { property: "og:locale", content: "pl_PL" },
-        { property: "og:url", content: "https://vhsboard.pages.dev/wyjazdy" },
+        { property: "og:url", content: "https://vhsboard.pages.dev/wyjazdy/" },
       ]),
-      links: [{ rel: "canonical", href: "https://vhsboard.pages.dev/wyjazdy" }],
+      links: [{ rel: "canonical", href: "https://vhsboard.pages.dev/wyjazdy/" }],
     });
   });
 });

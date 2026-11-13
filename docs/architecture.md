@@ -31,23 +31,23 @@ social previews, and build-time company configuration require a new Git deploy.
 
 ## Routes and delivery
 
-| Route                                                      | Purpose                                              |
-| ---------------------------------------------------------- | ---------------------------------------------------- |
-| `/`, `/o-nas`, `/wyjazdy`, `/eventy`, `/obozy`, `/kontakt` | Six prerendered marketing pages.                     |
-| `/wyjazdy/:slug`, `/obozy/:slug`                           | JS offer details, served through `/_shell/app.html`. |
-| `/trips/:slug`                                             | Legacy 301 redirect to `/wyjazdy/:slug`.             |
-| `/admin`                                                   | Authorized offer list.                               |
-| `/admin/login`                                             | Administrator sign-in.                               |
-| `/admin/reset-password`                                    | Supabase password recovery.                          |
-| `/admin/new`, `/admin/:slug`                               | Create or edit an offer by slug.                     |
-| `/admin/dokumenty`, `/admin/portal`                        | Contact PDF and carousel management.                 |
+| Route                                                                                         | Purpose                                              |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `/`, `/o-nas`, `/wyjazdy`, `/eventy`, `/obozy`, `/kontakt`, `/skimboarding`, `/wypozyczalnia` | Eight prerendered marketing pages.                   |
+| `/wyjazdy/:slug`, `/obozy/:slug`                                                              | JS offer details, served through `/_shell/app.html`. |
+| `/trips/:slug`                                                                                | Legacy 301 redirect to `/wyjazdy/:slug`.             |
+| `/admin`                                                                                      | Authorized offer list.                               |
+| `/admin/login`                                                                                | Administrator sign-in.                               |
+| `/admin/reset-password`                                                                       | Supabase password recovery.                          |
+| `/admin/new`, `/admin/:slug`                                                                  | Create or edit an offer by slug.                     |
+| `/admin/dokumenty`, `/admin/portal`                                                           | Contact PDF and carousel management.                 |
 
 Cloudflare rewrites in [`public/_redirects`](../public/_redirects) send admin
 routes to a separate `/_shell/admin.html`. It always has `noindex, nofollow`.
 The public shell follows `VITE_SEO_INDEXING`; previews, missing offers, and
 errors have their own noindex metadata in the browser. The internal render
 targets `/spa-shell` and `/admin-shell` are build machinery, not public navigation.
-Only the six marketing pages enter the sitemap. See the [SEO runbook](seo-runbook.md).
+Only the eight marketing pages enter the sitemap. See the [SEO runbook](seo-runbook.md).
 
 ## Data and authorization
 
@@ -67,13 +67,15 @@ Only the six marketing pages enter the sitemap. See the [SEO runbook](seo-runboo
   Training section independently of its cards. Like other offer photos, they
   are stored in the private bucket and require a published offer for public
   access.
-- `contact_documents` stores public PDF metadata. `portal_carousel_images`
+- `contact_documents` stores public PDF metadata, including an optional category (trips, camps, or organizer). Uncategorized legacy PDFs remain visible under “Pozostałe dokumenty” until an administrator assigns them in the document manager. The manager can edit a document’s title and category without replacing its PDF. `portal_carousel_images`
   stores selected local asset paths and order; it does not upload carousel files.
 - `portal_rental_document` is a separate singleton holding the optional rental
   PDF path. CMS → Portal replaces it through `replace_portal_rental_document`;
   its file shares the private `contact-documents` bucket and one-hour signed
   URL rules. The public rental section shows its CTA only when a document is
-  available. This does not add a rental reservation flow.
+  available on the standalone rental page and in the Wyjazdy section. Offers may
+  optionally show a fixed link to the rental page, controlled per offer in the
+  CMS. This does not add a rental reservation flow.
 - `portal_settings` is a singleton (`id = 1`) storing the global
   `original | winter` theme. Public visitors can read it; only CMS administrators
   can update its `theme` column. Client roles cannot insert, delete or move it.

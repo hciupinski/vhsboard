@@ -25,6 +25,7 @@ const cityAndMoreSurf = getLocalImage("about-us/city-and-more-1.jpg");
 const cityAndMoreSkate = getLocalImage("about-us/city-and-more-2.JPG");
 const cityAndMoreSnow = getLocalImage("about-us/city-and-more-3.jpg");
 const marioVhs = getLocalImage("about-us/mario-vhs.jpg");
+const mobileProse = "max-lg:text-justify max-lg:hyphens-auto";
 
 export const Route = createFileRoute("/o-nas")({
   head: () =>
@@ -58,22 +59,17 @@ function AboutPage() {
               className="aspect-[4/3] w-full rounded-3xl object-cover shadow-warm"
             />
           </figure>
-          <div className="max-w-xl lg:col-start-1 lg:row-start-2 lg:self-start">
+          <div className={`max-w-xl lg:col-start-1 lg:row-start-2 lg:self-start ${mobileProse}`}>
             <p className="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg lg:mt-6">
               VHS powstał w 2017 roku i jest doskonałym przykładem tego, jak pasja naturalnie
-              przemieniła się w pracę. Od zawsze byliśmy związani ze sportami deskowymi — nieważne,
-              czy na śniegu, czy na wodzie. Ważne, że na desce.
-            </p>
-            <p className="mt-4 max-w-prose leading-relaxed text-muted-foreground sm:text-lg">
-              Zajawka do sportów — surfingu, snowboardingu i deskorolki — naturalnie przerodziła się
-              w organizację wyjazdów snowboardowych i surfingowych oraz eventów z torem
-              skimboardowym w roli głównej. Z czasem przyszły także półkolonie i obozy dla dzieci i
-              młodzieży.
+              przemieniła się w pracę. Zajawka do sportów sprawiła, że zaczęliśmy organizować
+              wyjazdy i eventy wokół aktywności, które sami uprawiamy. Z czasem dołączyły do nich
+              obozy i półkolonie dla dzieci i młodzieży.
             </p>
             <p className="mt-4 max-w-prose leading-relaxed text-muted-foreground sm:text-lg">
               Od zawsze jesteśmy lokalnym biurem podróży i właśnie taki charakter chcemy zachować.
-              Nie interesuje nas masówka, dlatego nasze wyjazdy pozostają kameralne, a każdy
-              uczestnik jest częścią ekipy, a nie kolejnym numerem na liście.
+              Nie interesuje nas masówka, dlatego nasze wyjazdy pozostają kameralne. Każdy uczestnik
+              jest częścią ekipy, a nie kolejnym numerem na liście.
             </p>
           </div>
         </section>
@@ -97,14 +93,15 @@ function AboutPage() {
             >
               <HeroCarousel images={founderImages} intervalMs={3_500} />
             </figure>
-            <div className="max-w-2xl lg:col-start-2 lg:row-start-2 lg:self-start">
+            <div className={`max-w-2xl lg:col-start-2 lg:row-start-2 lg:self-start ${mobileProse}`}>
               <p className="text-lg leading-relaxed text-foreground lg:mt-6">
                 Mariusz Wójt — całe życie na desce, całe życie na zajawie.
               </p>
               <p className="mt-4 max-w-prose leading-relaxed text-muted-foreground">
                 Certyfikowany instruktor snowboardu i surfingu, organizator wyjazdów oraz eventów,
-                specjalista od wszystkich desek i głównodowodzący VHS-em. Swoją eventową ścieżkę
-                rozpoczął w Red Bullu i kontynuuje ją do dzisiaj.
+                specjalista od wszystkich desek i głównodowodzący VHS-em. Doświadczenie eventowe
+                zdobywał w Red Bullu, a dziś wykorzystuje je przy tworzeniu wydarzeń i sportowych
+                stref.
               </p>
               <p className="mt-6 border-l-2 border-primary pl-4 text-base font-medium leading-relaxed text-foreground">
                 W centrum zawsze są ludzie, progres i czas spędzony razem — reszta ma po prostu
@@ -128,7 +125,9 @@ function AboutPage() {
             >
               OD MIASTA PO GÓRY
             </h2>
-            <p className="mt-5 max-w-prose text-lg leading-relaxed text-muted-foreground lg:max-w-none">
+            <p
+              className={`mt-5 max-w-prose text-lg leading-relaxed text-muted-foreground lg:max-w-none ${mobileProse}`}
+            >
               Zmieniają się miejsca i warunki. Ta sama zostaje potrzeba ruchu, dobrego towarzystwa i
               kolejnego dnia na desce.
             </p>
@@ -167,7 +166,8 @@ function AboutPage() {
           headingId="about-us-faq-heading"
           items={aboutUsFaqItems}
           headerLabel="VHS od kuchni"
-          descriptionClassName="lg:max-w-4xl"
+          description="Poznaj nas bliżej - sprawdź, czym zajmujemy się przez cały rok i jak organizujemy wyjazdy, obozy oraz eventy."
+          descriptionClassName={`lg:max-w-4xl ${mobileProse}`}
         />
       </main>
       <PublicFooter />

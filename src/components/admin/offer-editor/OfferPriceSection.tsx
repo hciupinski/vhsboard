@@ -77,6 +77,16 @@ export function OfferPriceSection({ content, offerKind, errors, disabled, onChan
           Opcjonalny tekst widoczny pod listami „W cenie” i „Poza ceną” w publicznej ofercie.
         </p>
       </div>
+      <label className="mt-4 flex items-center gap-3 rounded-2xl border border-border/70 bg-background p-6">
+        <input
+          type="checkbox"
+          className="size-4 accent-primary"
+          checked={content.showRentalLink ?? false}
+          disabled={disabled}
+          onChange={(event) => onChange({ ...content, showRentalLink: event.target.checked })}
+        />
+        Pokaż link do wypożyczalni snowboardów
+      </label>
       {dayCamp ? (
         <TermsEditor content={dayCamp} errors={errors} disabled={disabled} onChange={setTerms} />
       ) : null}

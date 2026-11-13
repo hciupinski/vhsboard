@@ -1,11 +1,12 @@
 import { supabase } from "../supabase";
 import { createDocumentPath, isDocumentPath } from "./path";
 import { contactDocumentRowSchema, type ContactDocumentRow } from "./schema";
+import type { DocumentCategory } from "./categories";
 import type { ContactDocument } from "./types";
 import { validateDocumentFile, validateDocumentTitle } from "./validation";
 
 const BUCKET = "contact-documents";
-const COLUMNS = "id,title,storage_path,position";
+const COLUMNS = "id,title,storage_path,position,category";
 const SIGNED_URL_TTL_SECONDS = 3600;
 
 export class DocumentRepositoryError extends Error {
@@ -37,6 +38,7 @@ const toDocument = (value: unknown, signedUrl: string | null = null): ContactDoc
     title: row.title,
     path: row.storage_path,
     position: row.position,
+    ...(row.category !== undefined ? { category: row.category } : {}),
     signedUrl,
   };
 };
@@ -83,6 +85,7 @@ export const uploadContactDocument = async (
   title: string,
   file: File,
   position: number,
+  category: DocumentCategory | null = null,
 ): Promise<ContactDocument> => {
   const validTitle = validateDocumentTitle(title);
   if (!validTitle.ok) throw new DocumentRepositoryError(validTitle.error.message);
@@ -101,7 +104,7 @@ export const uploadContactDocument = async (
     throw new DocumentRepositoryError("Nie udało się wgrać dokumentu.", { cause: uploadError });
   const { data, error } = await supabase
     .from("contact_documents")
-    .insert({ title: validTitle.value, storage_path: path, position })
+    .insert({ title: validTitle.value, storage_path: path, position, category })
     .select(COLUMNS)
     .single();
   if (error) {
@@ -151,4 +154,19 @@ export const deleteContactDocument = async (id: string): Promise<void> => {
 export const retryContactDocumentObjectCleanup = async (path: string): Promise<void> => {
   if (!isDocumentPath(path)) throw new DocumentRepositoryError("Nieprawidłowa ścieżka dokumentu.");
   await removeObject(path);
+};
+
+export const updateContactDocument = async (
+  id: string,
+  title: string,
+  category: DocumentCategory | null,
+): Promise<void> => {
+  const validTitle = validateDocumentTitle(title);
+  if (!validTitle.ok) throw new DocumentRepositoryError(validTitle.error.message);
+  const { error } = await supabase
+    .from("contact_documents")
+    .update({ title: validTitle.value, category })
+    .eq("id", id);
+  if (error)
+    throw new DocumentRepositoryError("Nie udało się zapisać dokumentu.", { cause: error });
 };

@@ -45,4 +45,34 @@ describe("ContactDocuments", () => {
     await waitFor(() => expect(mockedList).toHaveBeenCalledOnce());
     expect(screen.queryByRole("heading", { name: "Do pobrania" })).not.toBeInTheDocument();
   });
+  it("groups signed documents by their stored category and keeps unclassified files visible", async () => {
+    mockedList.mockResolvedValue([
+      { id: "1", title: "Warunki", category: "trips", signedUrl: "https://example.test/a.pdf" },
+      { id: "2", title: "Karta", category: "camps", signedUrl: "https://example.test/b.pdf" },
+      {
+        id: "3",
+        title: "Gwarancja",
+        category: "organizer",
+        signedUrl: "https://example.test/c.pdf",
+      },
+      { id: "4", title: "Pozostały", category: null, signedUrl: "https://example.test/d.pdf" },
+    ]);
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <ContactDocuments />
+      </QueryClientProvider>,
+    );
+    for (const name of [
+      "Wyjazdy",
+      "Obozy i półkolonie",
+      "Organizator i strona",
+      "Pozostałe dokumenty",
+    ]) {
+      expect(await screen.findByRole("heading", { name })).toBeVisible();
+    }
+    expect(screen.getByRole("link", { name: "Pozostały" })).toHaveAttribute(
+      "href",
+      "https://example.test/d.pdf",
+    );
+  });
 });

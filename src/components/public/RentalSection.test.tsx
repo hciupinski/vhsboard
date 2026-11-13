@@ -21,6 +21,10 @@ describe("RentalSection", () => {
     getRentalDocument.mockResolvedValue(null);
     renderSection();
     expect(screen.getByRole("heading", { name: "WYPOŻYCZALNIA SNOWBOARDÓW" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Skontaktuj się z nami" })).toHaveAttribute(
+      "href",
+      "/kontakt",
+    );
     expect(screen.queryByRole("link", { name: "Zobacz ofertę i cennik" })).not.toBeInTheDocument();
   });
   it("opens the available offer in a new tab", async () => {
