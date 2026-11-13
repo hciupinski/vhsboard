@@ -54,7 +54,7 @@ const entryPoints = [
   {
     to: "/obozy",
     title: "Obozy",
-    text: "Obozy po naszemu? Aktywne dni pełne sportu, zabawy i nowych doświadczeń.",
+    text: "Obozy i półkolonie dla dzieci i młodzieży - dobra zabawa w małych grupach.",
     action: "Poznaj obozy",
     image: obozy,
     imageAlt: "Dziecko na snowboardzie podczas zimowego obozu VHSBOARD",
@@ -81,21 +81,21 @@ function HomePage() {
       <PublicHeader />
       <PublicJsonLd path="/" label="VHSBOARD" includeSite />
       <main className="flex-1">
-        <section className="relative isolate overflow-hidden">
+        <section className="relative isolate flex min-h-[calc(100svh-73px-var(--development-banner-height,0px))] flex-col justify-end overflow-hidden lg:block lg:min-h-0">
           <HeroCarousel images={heroImages} />
-          <div aria-hidden="true" className="absolute inset-0 bg-foreground/20" />
-          <div className="relative mx-auto max-w-6xl px-5 pb-20 pt-24 sm:pb-28 sm:pt-36">
-            <p className="mb-4 inline-block rounded-full border border-background/40 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background">
+          <div aria-hidden="true" className="absolute inset-0 hidden bg-foreground/20 lg:block" />
+          <div className="relative bg-linear-to-t from-foreground via-foreground/85 via-65% to-transparent px-5 pt-16 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:mx-auto lg:max-w-6xl lg:bg-none lg:pt-36 lg:pb-28">
+            <p className="mb-4 inline-block rounded-full border border-background/40 bg-foreground/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background lg:bg-transparent">
               Wyjazdy · Eventy · Obozy
             </p>
             <h1 className="max-w-3xl text-5xl leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">
               Dobre rzeczy dzieją się poza codziennym planem
             </h1>
-            <p className="mt-5 max-w-xl text-base text-background text-shadow-md text-shadow-foreground/50 sm:text-lg">
+            <p className="mt-4 max-w-xl text-base text-background text-shadow-md text-shadow-foreground/50 sm:text-lg lg:mt-5">
               Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
               eventach i podczas aktywności dla dzieci.
             </p>
-            <Button asChild size="lg" className="mt-8 rounded-full shadow-warm">
+            <Button asChild size="lg" className="mt-5 rounded-full shadow-warm lg:mt-8">
               <Link to="/wyjazdy">Zobacz wyjazdy</Link>
             </Button>
           </div>

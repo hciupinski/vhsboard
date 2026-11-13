@@ -18,6 +18,9 @@ import {
 } from "@/lib/offers/content-v2";
 import { formatTripDates } from "@/lib/offers/formatters";
 
+const descriptionClassName =
+  "whitespace-pre-line break-words hyphens-auto text-justify text-muted-foreground lg:hyphens-manual lg:text-start";
+
 function Price({ value }: { value: ExtraPrice }) {
   return (
     <p className="mt-3 font-semibold text-primary">
@@ -28,7 +31,7 @@ function Price({ value }: { value: ExtraPrice }) {
   );
 }
 function Copy({ children }: { children: string }) {
-  return <p className="mt-4 whitespace-pre-line break-words text-muted-foreground">{children}</p>;
+  return <p className={`mt-4 ${descriptionClassName}`}>{children}</p>;
 }
 function Block({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
   return (
@@ -78,7 +81,7 @@ export function OfferDetailSections({
             .map(([title, value]) => (
               <div key={title} className="rounded-2xl border bg-card p-4">
                 <dt className="font-medium">{title}</dt>
-                <dd className="mt-2 whitespace-pre-line text-sm text-muted-foreground">{value}</dd>
+                <dd className={`mt-2 text-sm ${descriptionClassName}`}>{value}</dd>
               </div>
             ))}
         </dl>
@@ -102,7 +105,7 @@ export function OfferDetailSections({
                       className="absolute -left-[27px] top-1.5 size-3 rounded-full bg-sunset-gradient"
                     />
                     <p className="font-display text-xl">{item.title}</p>
-                    <p className="whitespace-pre-line text-sm text-muted-foreground">{item.text}</p>
+                    <p className={`text-sm ${descriptionClassName}`}>{item.text}</p>
                   </li>
                 ))}
               </ol>
@@ -141,7 +144,19 @@ export function OfferDetailSections({
               </div>
             ))}
           </div>
-          {content.priceNote ? <Copy>{content.priceNote}</Copy> : null}
+          {content.priceNote ? (
+            <p className={`mt-4 text-xs ${descriptionClassName}`}>{content.priceNote}</p>
+          ) : null}
+          {content.showRentalLink ? (
+            <p className="mt-4">
+              <a
+                href="/wypozyczalnia/"
+                className="font-semibold text-primary underline underline-offset-4 hover:text-interaction"
+              >
+                Wypożyczalnia snowboardów
+              </a>
+            </p>
+          ) : null}
           {camp?.terms.length ? (
             <section id="turnusy" tabIndex={-1} className="mt-8">
               <h3 className="text-2xl">Turnusy i ceny</h3>
@@ -324,12 +339,14 @@ export function OfferDetailSections({
                 <Price value={item.price} />
                 <Copy>{item.description}</Copy>
                 <dl className="mt-5 space-y-3">
-                  {item.risks.map((risk) => (
-                    <div key={risk.id}>
-                      <dt className="text-sm text-muted-foreground">{risk.label}</dt>
-                      <dd className="font-medium">{risk.value}</dd>
-                    </div>
-                  ))}
+                  {item.risks
+                    .filter((risk) => risk.label.trim() || risk.value.trim())
+                    .map((risk) => (
+                      <div key={risk.id}>
+                        <dt className="text-sm text-muted-foreground">{risk.label}</dt>
+                        <dd className="font-medium">{risk.value}</dd>
+                      </div>
+                    ))}
                 </dl>
               </article>
             ))}

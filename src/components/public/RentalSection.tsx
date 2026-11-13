@@ -7,7 +7,7 @@ import { getLocalImage } from "@/lib/images/responsive";
 
 const rentalImage = getLocalImage("rental/snowboard.png");
 
-export function RentalSection() {
+export function RentalSection({ standalone = false }: { standalone?: boolean }) {
   const { data: document } = useQuery({
     queryKey: ["public", "rental-document"],
     queryFn: getRentalDocument,
@@ -35,9 +35,15 @@ export function RentalSection() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
             DOBRA DESKA, DOBRA JAZDA
           </p>
-          <h2 id="rental-heading" className="mt-3 text-4xl leading-[0.95] sm:text-5xl">
-            WYPOŻYCZALNIA SNOWBOARDÓW
-          </h2>
+          {standalone ? (
+            <h1 id="rental-heading" className="mt-3 text-4xl leading-[0.95] sm:text-5xl">
+              WYPOŻYCZALNIA SNOWBOARDÓW
+            </h1>
+          ) : (
+            <h2 id="rental-heading" className="mt-3 text-4xl leading-[0.95] sm:text-5xl">
+              WYPOŻYCZALNIA SNOWBOARDÓW
+            </h2>
+          )}
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
             Dobrze dobrany sprzęt to podstawa dobrej jazdy! W naszej wypożyczalni znajdziesz
             wyłącznie{" "}
@@ -54,6 +60,15 @@ export function RentalSection() {
             Oferujemy sprzęt na różne poziomy zaawansowania i style jazdy – od pierwszych skrętów po
             freestyle i freeride. Sprawdź dostępne modele, długości desek i ceny wynajmu. Pomożemy
             wybrać deskę dopasowaną do Ciebie.
+          </p>
+          <p className="mt-6">
+            <a
+              className="font-semibold text-primary underline underline-offset-4 hover:text-interaction"
+              href="/kontakt"
+            >
+              Skontaktuj się z nami
+            </a>
+            , aby zapytać o sprzęt.
           </p>
           {document ? (
             <Button asChild size="lg" className="mt-8 rounded-full">

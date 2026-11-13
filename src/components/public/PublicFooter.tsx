@@ -37,6 +37,13 @@ export function PublicFooter() {
           >
             Dokumenty do pobrania
           </Link>
+          <> | </>
+          <a
+            href="/wypozyczalnia/"
+            className="font-medium text-foreground hover:text-interaction hover:underline"
+          >
+            Wypożyczalnia snowboardów
+          </a>
           <p className="pt-1 text-xs text-foreground">
             Jesteśmy legalnym biurem podróży posiadającym wpis do rejestru organizatorów turystyki o
             nr. 26387.
@@ -48,7 +55,7 @@ export function PublicFooter() {
             </a>
           </p>
         </div>
-        <address className="not-italic text-center sm:text-right">
+        <address className="not-italic text-center sm:text-left">
           <p className="font-medium text-foreground">{config.businessName}</p>
           <p>{config.businessStreet}</p>
           <p>

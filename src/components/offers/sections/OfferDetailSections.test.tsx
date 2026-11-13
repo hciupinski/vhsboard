@@ -7,6 +7,28 @@ import { getOfferSections } from "@/lib/offers/sections";
 afterEach(cleanup);
 describe("complete shared offer details", () => {
   it.each(["trip", "day_camp"] as const)(
+    "justifies %s descriptions only below the desktop breakpoint",
+    (kind) => {
+      const offer = sectionOffer(kind);
+      offer.content.priceNote = "Dopłaty rozliczamy na miejscu.";
+      render(<OfferDetailSections offer={offer} sidebar={null} />);
+
+      const programme =
+        "schedule" in offer.content ? offer.content.schedule : offer.content.dayProgram;
+      expect(screen.getByText(offer.content.paragraphs[0]!)).toHaveClass(
+        "text-justify",
+        "lg:text-start",
+        "hyphens-auto",
+      );
+      expect(screen.getByText(programme[0]!.text)).toHaveClass("text-justify", "lg:text-start");
+      expect(screen.getByText(offer.content.priceNote)).toHaveClass(
+        "text-justify",
+        "lg:text-start",
+      );
+      expect(screen.getByRole("heading", { name: "W cenie" })).not.toHaveClass("text-justify");
+    },
+  );
+  it.each(["trip", "day_camp"] as const)(
     "shows selected %s photos after the story without removing the gallery",
     (kind) => {
       const offer = sectionOffer(kind);
@@ -69,6 +91,31 @@ describe("complete shared offer details", () => {
       );
     },
   );
+  it.each(["trip", "day_camp"] as const)(
+    "shows the rental link only when enabled for %s",
+    (kind) => {
+      const offer = sectionOffer(kind);
+      offer.content.included = [];
+      offer.content.excluded = [];
+      offer.content.priceNote = "";
+      if (offer.offerKind === "day_camp") offer.content.terms = [];
+      const { rerender } = render(<OfferDetailSections offer={offer} sidebar={null} />);
+      expect(
+        screen.queryByRole("link", { name: "Wypożyczalnia snowboardów" }),
+      ).not.toBeInTheDocument();
+      offer.content.showRentalLink = true;
+      rerender(<OfferDetailSections offer={offer} sidebar={null} />);
+      expect(screen.getByRole("link", { name: "Wypożyczalnia snowboardów" })).toHaveAttribute(
+        "href",
+        "/wypozyczalnia/",
+      );
+      offer.content.showRentalLink = false;
+      rerender(<OfferDetailSections offer={offer} sidebar={null} />);
+      expect(
+        screen.queryByRole("link", { name: "Wypożyczalnia snowboardów" }),
+      ).not.toBeInTheDocument();
+    },
+  );
   it("renders a training gallery without cards and hides it with the section disabled", () => {
     const offer = sectionOffer();
     offer.content.training!.items = [];
@@ -97,6 +144,7 @@ describe("complete shared offer details", () => {
     const offer = sectionOffer();
     Object.assign(offer.content, { priceNote: "Dopłaty rozliczamy na miejscu." });
     render(<OfferDetailSections offer={offer} sidebar={null} />);
+    expect(screen.getByText("Dopłaty rozliczamy na miejscu.")).toHaveClass("text-xs");
     expect(screen.getByRole("region", { name: "Cena" })).toContainElement(
       screen.getByText("Dopłaty rozliczamy na miejscu."),
     );

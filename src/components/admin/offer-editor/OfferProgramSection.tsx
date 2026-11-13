@@ -67,9 +67,7 @@ export function OfferProgramSection({
           }}
         />
       </fieldset>
-      <h2 className="mt-6 font-display text-2xl">
-        W programie → {trip ? "Plan wyjazdu" : "Plan dnia"}
-      </h2>
+      <h2 className="mt-6 font-display text-2xl">W programie → Plan wyjazdu</h2>
       {trip ? (
         <TripScheduleEditor
           content={trip}

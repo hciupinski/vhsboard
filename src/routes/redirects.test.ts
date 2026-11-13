@@ -8,7 +8,7 @@ describe("Cloudflare Pages redirects", () => {
     const redirects = readFileSync(resolve(process.cwd(), "public/_redirects"), "utf8");
 
     expect(redirects.trim()).toBe(
-      "/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/obozy/:slug /_shell/app 200\n/admin /_shell/admin 200\n/admin/* /_shell/admin 200",
+      "/wypozyczalnia-snb-2/ /wypozyczalnia/ 301\n/wypozyczalnia-snb-2 /wypozyczalnia/ 301\n/trips/:slug /wyjazdy/:slug 301\n/wyjazdy/:slug /_shell/app 200\n/obozy/:slug /_shell/app 200\n/admin /_shell/admin 200\n/admin/* /_shell/admin 200",
     );
   });
 });

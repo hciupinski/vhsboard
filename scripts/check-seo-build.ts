@@ -1,3 +1,4 @@
+import { canonicalStaticPath, staticPaths } from "../src/lib/static-paths";
 import { access, readdir, readFile, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
 
@@ -5,7 +6,6 @@ import sharp from "sharp";
 import { SOCIAL_IMAGES, type SocialImage } from "../src/lib/social-images";
 import { getSeoConfigFrom } from "../src/lib/env";
 
-const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt"];
 const signedUrlPattern = /(?:[?&]token=|x-amz-|\/object\/sign\/)/i;
 const offerDetailOutputPattern = /^(?:wyjazdy|obozy)\/[^/]+\/index\.html$/;
 
@@ -67,6 +67,8 @@ const socialByPath: Record<string, SocialImage> = {
   "/eventy": SOCIAL_IMAGES.events,
   "/obozy": SOCIAL_IMAGES.camps,
   "/kontakt": SOCIAL_IMAGES.contact,
+  "/skimboarding": SOCIAL_IMAGES.events,
+  "/wypozyczalnia": SOCIAL_IMAGES.trips,
 };
 async function checkSocialImage(
   html: string,
@@ -107,7 +109,8 @@ async function checkSocialImage(
     throw new Error(`${path}: nieprawidłowy plik OG.`);
 }
 
-const expectedCanonical = (siteUrl: string, path: string): string => `${siteUrl}${path}`;
+const expectedCanonical = (siteUrl: string, path: string): string =>
+  `${siteUrl}${canonicalStaticPath(path)}`;
 
 export const checkSeoBuild = async ({
   outputDirectory,
@@ -162,6 +165,15 @@ export const checkSeoBuild = async ({
     if (extractCanonical(html, path) !== expectedCanonical(origin, path)) {
       throw new Error(`${path}: canonical nie jest prawidłowym URL-em kanonicznym.`);
     }
+    const ogUrl = extractSingle(
+      html,
+      /<meta\b[^>]*\bproperty=["']og:url["'][^>]*\bcontent=["']([^"']+)["'][^>]*>/gi,
+      "og:url",
+      path,
+    );
+    if (ogUrl !== expectedCanonical(origin, path)) {
+      throw new Error(`${path}: og:url nie jest prawidłowym URL-em kanonicznym.`);
+    }
     if (signedUrlPattern.test(html)) {
       throw new Error(`${path}: HTML zawiera podpisany URL Storage.`);
     }
@@ -207,7 +219,9 @@ export const checkSeoBuild = async ({
 
   if (
     sitemapUrls.length !== paths.length ||
-    sitemapUrls.some((url) => !paths.includes(url.slice(origin.length)))
+    sitemapUrls.some(
+      (url) => !new Set<string>(paths.map(canonicalStaticPath)).has(url.slice(origin.length)),
+    )
   ) {
     throw new Error("Sitemap zawiera niekanoniczny URL albo pomija stronę publiczną.");
   }

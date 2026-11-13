@@ -114,6 +114,11 @@ describe("camps list route", () => {
     await renderCampsPage();
 
     const offersHeading = screen.getByRole("heading", { name: /najbliższe terminy/i });
+    const programHeading = screen.getByRole("heading", { name: "RUCH, PROGRES, DOBRY VIBE" });
+    expect(
+      offersHeading.compareDocumentPosition(programHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.getByText("ŁAP ZAJAWKĘ PRZEZ CAŁY ROK")).toBeVisible();
     const faqHeading = screen.getByRole("heading", { name: "Najczęściej zadawane pytania" });
 
     expect(

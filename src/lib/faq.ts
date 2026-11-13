@@ -100,12 +100,12 @@ export const campFaqItems: readonly FaqItem[] = [
   {
     question: "Dla dzieci w jakim wieku są obozy i półkolonie VHS?",
     answer:
-      "Wiek uczestników zależy od konkretnego obozu lub turnusu półkolonii, ale przede wszystkim od dziecka. Organizujemy aktywne wyjazdy i półkolonie sportowe dla dzieci i młodzieży, a program oraz grupy dopasowujemy do wieku i poziomu uczestników. Dokładny przedział wiekowy zawsze znajdziesz w opisie wybranego turnusu.  Jeśli dziecko jest nieco młodsze niż wskazany przedział wiekowy, ale jest samodzielne i gotowe na udział w wyjeździe/półkolonii, po wcześniejszej konsultacji z rodzicami możemy dołączyć je do grupy. Dokładny przedział wiekowy zawsze znajdziesz w opisie wybranego turnusu.",
+      "Wiek uczestników zależy od konkretnego obozu lub turnusu półkolonii, ale przede wszystkim od dziecka. Organizujemy aktywne wyjazdy i półkolonie sportowe dla dzieci i młodzieży, a program oraz grupy dopasowujemy do wieku i poziomu uczestników. Dokładny przedział wiekowy zawsze znajdziesz w opisie wybranego turnusu. Jeśli dziecko jest nieco młodsze niż wskazany przedział wiekowy, ale jest samodzielne i gotowe na udział w wyjeździe/półkolonii, po wcześniejszej konsultacji z rodzicami możemy dołączyć je do grupy.",
   },
   {
     question: "Czy dziecko musi już umieć jeździć na snowboardzie, wakeboardzie lub deskorolce?",
     answer:
-      "Nie. Na nasze obozy i półkolonie zapraszamy zarówno dzieci, które dopiero zaczynają swoją przygodę ze sportami deskowymi, jak i bardziej doświadczonych uczestników, którzy chcą zrobić progres. Zajęcia dopasowujemy do poziomu umiejętności, tak aby każde dziecko mogło bezpiecznie się uczyć, rozwijać we własnym tempie.",
+      "Nie. Na nasze obozy i półkolonie zapraszamy zarówno dzieci, które dopiero zaczynają swoją przygodę ze sportami deskowymi, jak i bardziej doświadczonych uczestników, którzy chcą zrobić progres. Zajęcia dopasowujemy do poziomu umiejętności, aby każde dziecko mogło się uczyć i rozwijać we własnym tempie.",
   },
   {
     question: "Kto opiekuje się uczestnikami obozów i półkolonii?",
@@ -133,41 +133,41 @@ export const aboutUsFaqItems: readonly FaqItem[] = [
   {
     question: "Kim jesteśmy?",
     answer:
-      "VHS – Village Head Snowboard, to łódzka szkoła snowboardu i organizator aktywnych wyjazdów, obozów oraz eventów związanych ze sportami deskowymi. Działamy od 2017 roku, łącząc snowboard, surfing, wakeboard, skimboard i deskorolkę. Tworzymy wyjazdy i wydarzenia dla dzieci, młodzieży i dorosłych – zawsze z naciskiem na dobrą atmosferę, progres i aktywnie spędzony czas.",
+      "VHS - to szkoła snowboardu i biuro podróży z Łodzi. Od 2017 roku organizujemy wyjazdy snowboardowe i narciarskie, obozy i półkolonie dla dzieci i młodzieży oraz eventy związane ze sportami deskowymi. Łączymy snowboard, surfing, wakeboard, skimboard i deskorolkę, tworząc okazje do nauki, wspólnej jazdy i poznawania ludzi.",
   },
   {
     question: "Jakie wyjazdy organizujemy?",
     answer:
-      "Zimą organizujemy wyjazdy snowboardowe i narciarskie w Polsce oraz za granicą. Przygotowania do sezonu rozpoczynamy już w listopadzie wybierając na start całoroczne kryte hale np.  Snow Arena w Druskiennikach  czy austriackie lodowce, które pozwalają złapać formę i porządnie się rozjeździć. Od grudnia aż do kwietnia zajmujemy się szkoleniami oraz kursami dla osób początkujących jak i zaawansowanych. W tym czasie oferujemy tygodniowej wyjazdy, obozy dla dzieci jak i szybkie wypady weekendowe.\n\n Fani lata, wody i piaszczystych plaż mogą się z nami wybrać na surf campy. Regularnie jeździmy do Maroko, ale naszymi kierunkami były także Portugalia, Fuertaventura czy Hiszpania. Wraz z lokalnymi, doświadczonymi instruktorami uczymy łapania fal i bezpieczeństwa na wodzie. Praktykujemy też jogę i odkrywamy piękno miejsc, które inspirują – wszystko to w atmosferze relaksu, pasji i dobrej energii.",
+      "Organizujemy wyjazdy snowboardowe i narciarskie, surf campy oraz obozy sportowe dla dzieci i młodzieży. W naszej ofercie znajdziesz zarówno dłuższe wyjazdy, jak i krótkie wypady - w Polskę za granicę. Aktualne kierunki i terminy sprawdzisz w zakładkach „Wyjazdy” oraz „Obozy”.",
   },
   {
     question: "Czy VHS jest szkołą snowboardu z Łodzi?",
     answer:
-      "Tak. VHS to szkoła snowboardu i biuro podróży z Łodzi. Aczkolwiek jeżdżą z nami osoby z całej Polski.",
+      "Tak. Działamy w Łodzi, ale jeżdżą z nami osoby z całej Polski. Możliwości transportu i dojazdu własnego opisujemy przy każdym wyjeździe.",
   },
   {
-    question: "Czy organizujecie obozy i półkolonie sportowe dla dzieci i młodzieży?",
+    question: "Czy organizujecie obozy i półkolonie dla dzieci i młodzieży?",
     answer:
-      "Tak. Organizujemy obozy, wyjazdy oraz półkolonie sportowe dla dzieci i młodzieży. W zależności od sezonu program może obejmować m.in. snowboard, wakeboard, skimboard, deskorolkę, SUP oraz inne aktywności. Zależy nam na ruchu, dobrej zabawie, rozwijaniu umiejętności i budowaniu samodzielności – z dużą zajawką, bez sportowej musztry.",
+      "Tak! Zimą organizujemy obozy snowboardowe i narciarskie, a latem obozy i półkolonie ze sportami deskowymi. W programie pojawiają się m.in. wakeboard, skimboard, deskorolka i SUP. Łączymy naukę z zabawą, a zajęcia dopasowujemy do wieku i umiejętności uczestników. Szczegółowy program oraz przedział wiekowy znajdziesz przy każdym turnusie.",
   },
   {
     question: "Czym VHS zajmuje się zimą?",
     answer:
-      "Zimą przenosimy się w góry. Organizujemy wyjazdy snowboardowe i narciarskie dla dzieci, młodzieży i dorosłych – zarówno w Polsce, jak i za granicą. Prowadzimy szkolenia na różnych poziomach zaawansowania, od pierwszych kroków na desce po doskonalenie techniki. Dbamy o całą organizację wyjazdu, komfort uczestników, dobrą atmosferę i przede wszystkim dużo czasu na stoku.",
+      "Zimą najwięcej czasu spędzamy na stoku. Organizujemy wyjazdy snowboardowe i narciarskie, obozy oraz szkolenia dla początkujących i bardziej doświadczonych uczestników. Uczymy pierwszych skrętów, pomagamy doskonalić technikę i rozwijać freestyle - naszą szczególną zajawkę.",
   },
   {
     question: "Czym VHS zajmuje się latem?",
     answer:
-      "Latem przenosimy się ze śniegu na wodę. Organizujemy półkolonie i zajęcia sportowe oraz profesjonalne eventy skimboardowe z wykorzystaniem mobilnych torów. Nasze strefy skimboardowe i skate sprawdzają się podczas eventów miejskich, pikników, imprez firmowych, festiwali oraz wydarzeń organizowanych przez centra handlowe.",
+      "Latem działamy na wodzie i w mieście. Organizujemy obozy i półkolonie sportowe, surf campy oraz eventy z mobilnymi torami skimboardowymi i strefami skate. Nasze aktywności pojawiają się na piknikach, festiwalach, imprezach firmowych i miejskich oraz w centrach handlowych.",
   },
   {
-    question: "Czy VHS organizuje eventy skimboardowe w całej Polsce?",
+    question: "Czy organizujecie eventy skimboardowe w całej Polsce?",
     answer:
-      "I nie tylko :) Nasze mobilne tory skimboardowe możemy rozstawić w różnych lokalizacjach w Polsce, a także za granicą. Zapewniamy transport, montaż i demontaż toru, sprzęt oraz – w zależności od wybranego wariantu – obsługę instruktorów. Dzięki mobilnej konstrukcji możemy stworzyć strefę skimboardową nawet w miejscu, które na co dzień nie ma nic wspólnego z surfingiem.",
+      "Tak - działamy w całej Polsce, a także za granicą. Zapewniamy transport, montaż i demontaż mobilnego toru, sprzęt oraz obsługę zgodną z wybranym wariantem oferty. Rozmiar toru i zakres strefy dopasowujemy do dostępnej przestrzeni oraz charakteru wydarzenia.",
   },
   {
     question: "Co wyróżnia VHS?",
     answer:
-      "Nie tworzymy masowych wyjazdów. Stawiamy na kameralne grupy, indywidualne podejście, progres i ludzi. Chcemy znać uczestników, mieć czas na wspólną jazdę i tworzyć atmosferę, dzięki której po zakończeniu jednego wyjazdu zaczyna się myśleć o kolejnym. Sport jest dla nas punktem wyjścia – równie ważne są wspólne doświadczenia i relacje. Tak samo podchodzimy do eventów. Każdą strefę dopasowujemy do miejsca, wydarzenia i jego uczestników. Zapewniamy sprzęt, montaż, organizację i doświadczoną obsługę, tworząc aktywne strefy wodne, które angażują ludzi i przyciągają uwagę. ",
+      "Kameralne grupy, osobisty kontakt i instruktorzy, którzy sami żyją sportami deskowymi. Chcemy znać uczestników, mieć czas na wspólną jazdę i pomagać każdemu robić postępy. Równie ważne są dla nas atmosfera i relacje, które zostają po wyjeździe. Do eventów podchodzimy równie indywidualnie - dopasowujemy strefę do miejsca, wydarzenia i jego uczestników.",
   },
 ];

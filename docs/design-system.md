@@ -71,6 +71,13 @@ their semantic colors. Hover never becomes a requirement for touch use.
 
 - Lead major pages with strong, authentic outdoor photography. Use a dark,
   readable overlay when copy appears over an image.
+- Below the desktop breakpoint, the homepage and camps listing heroes fill
+  the visible screen below the header and align copy and any CTA to the
+  bottom over a gradient. They can grow on short screens to keep the content
+  accessible.
+- On portrait screens below the desktop breakpoint, the homepage carousel
+  serves separate image sources framed around the subject. Use the generated
+  image catalogue and choose source sizes that account for the cover crop.
 - Keep primary content inside `max-w-6xl` containers with `px-5` mobile
   gutters. Increase vertical rhythm at larger breakpoints rather than shrinking
   content into desktop-only layouts.
@@ -90,6 +97,9 @@ their semantic colors. Hover never becomes a requirement for touch use.
 - Detail pages pair a generous hero with concise trip facts, then organise
   longer content into readable sections: story, highlights, schedule, what is
   included, gallery, and related trips.
+- In trip and camp detail sections, justify descriptions on mobile and allow
+  automatic hyphenation. At the desktop breakpoint, align descriptions to the
+  start of the line.
 
 ### Admin CMS
 

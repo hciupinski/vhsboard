@@ -37,7 +37,10 @@ bun run check:seo
 `build` prerenderuje wyłącznie strony marketingowe i generuje
 `.output/public/sitemap.xml` oraz końcowy `.output/public/robots.txt`.
 Szczegóły ofert są pobierane w przeglądarce z Supabase, więc opublikowanie
-oferty w CMS nie wymaga nowego deployu.
+oferty w CMS nie wymaga nowego deployu. Canonicale, `og:url`, JSON-LD i
+mapa witryny używają końcowego ukośnika dla statycznych stron katalogowych
+(np. `/wyjazdy/`); strona główna pozostaje `/`, a szczegóły ofert zachowują
+swoje adresy.
 `check:seo` sprawdza meta dane, canonicale, język, robots, sitemapę, brak
 panelu admina, statycznych szczegółów ofert oraz podpisanych URL-i Storage.
 
@@ -97,3 +100,31 @@ wymiarów i alt obrazu; sprawdza oba shelle oraz fizyczne pliki grafik.
 Po zmianie routingu lub metadanych zbuduj i sprawdź lokalnie oba ustawienia
 `VITE_SEO_INDEXING=false` i `true`; nie zmieniaj tym ustawienia konta GitHub.
 Po próbie z `true` odtwórz lokalny artefakt dla rzeczywistej konfiguracji deployu.
+
+## Migracja istniejących adresów
+
+Przed przełączeniem domeny zbierz adresy ze starej mapy witryny, menu, linków
+wewnętrznych, Search Console i logów oraz uwzględnij publiczne pliki PDF.
+Dla każdego adresu potwierdź aktualną treść, odpowiednik i wynik HTTP przed
+oraz po przełączeniu. Stosuj pojedyncze 301 tylko do rzeczywiście równoważnej
+treści; nie kieruj wszystkich brakujących adresów na stronę główną.
+
+Nie przełączaj domeny, dopóki istotne adresy oraz działająca oferta skimboardu
+nie mają uzgodnionej i sprawdzonej obsługi. Po deployu sprawdź pełne łańcuchy
+przekierowań, końcowe statusy i treść na rzeczywistej domenie.
+
+## Statyczne 404 i cache
+
+`public/404.html` wyłącza domyślny fallback SPA Cloudflare Pages dla nieznanych
+ścieżek; Pages zwraca tę stronę ze statusem 404. Jawne reguły `_redirects`
+nadal kierują szczegóły ofert i panel do odpowiednich shelli. Ponieważ shell
+oferty jest statyczny, nieistniejący slug również otrzymuje HTTP 200 przed
+sprawdzeniem w przeglądarce; sam komunikat i noindex nie zmieniają tego statusu.
+Pełne 404 dla tych adresów wymaga mechanizmu znającego stan CMS przed odpowiedzią.
+
+`public/_headers` ustawia roczny `immutable` wyłącznie na `/assets/*`, gdzie Vite
+umieszcza wersjonowane hashem zasoby. Nie umieszczaj tam plików bez hasha ani
+HTML. Pozostałe ścieżki zachowują domyślne zachowanie Pages, w tym rewalidację.
+Po wdrożeniu sprawdź nagłówki rzeczywistego pliku JS/CSS z hashem i HTML oraz
+powtórz po kolejnym deployu. Sam lokalny plik `_headers` nie dowodzi działania
+konfiguracji CDN.
