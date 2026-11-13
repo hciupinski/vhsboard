@@ -248,8 +248,24 @@ describe("static public pages", () => {
       .getByRole("heading", { name: "Dobre rzeczy dzieją się poza codziennym planem" })
       .closest("section");
     if (!hero) throw new Error("Nie znaleziono sekcji hero");
-    expect(hero.querySelector("[data-hero-copy]")).toHaveClass("bg-foreground/75");
+    expect(hero).toHaveClass(
+      "min-h-[calc(100svh-73px-var(--development-banner-height,0px))]",
+      "justify-end",
+      "lg:min-h-0",
+    );
+    expect(hero.querySelector('[aria-hidden="true"].lg\\:block')).toHaveClass("bg-foreground/20");
+    expect(within(hero).getByText("Wyjazdy · Eventy · Obozy")).toHaveClass(
+      "bg-foreground/80",
+      "lg:bg-transparent",
+    );
+    const subtitle = within(hero).getByText(/^Żyjemy deską przez cały rok/);
+    expect(subtitle.parentElement).toHaveClass("bg-linear-to-t", "lg:bg-none");
+    expect(subtitle).toHaveClass("text-background");
+    expect(subtitle.parentElement).toContainElement(
+      within(hero).getByRole("heading", { level: 1 }),
+    );
     const heroTripLink = within(hero).getByRole("link", { name: "Zobacz wyjazdy" });
+    expect(subtitle.parentElement).toContainElement(heroTripLink);
     expect(heroTripLink).toHaveAttribute("href", "/wyjazdy");
     expect(heroTripLink).not.toHaveClass("hidden");
     expect(screen.getByTestId("topic-selector")).toHaveClass("topic-selector");
@@ -436,7 +452,19 @@ describe("static public pages", () => {
 
     expect(screen.getByRole("heading", { name: /zajawkowe obozy/i })).toBeInTheDocument();
     const campHero = screen.getByRole("heading", { name: /zajawkowe obozy/i }).closest("section")!;
-    expect(campHero.querySelector("[data-hero-copy]")).toHaveClass("bg-foreground/75");
+    expect(campHero).toHaveClass(
+      "min-h-[calc(100svh-73px-var(--development-banner-height,0px))]",
+      "justify-end",
+      "lg:min-h-[36.5rem]",
+      "lg:items-center",
+    );
+    expect(campHero.querySelector('[aria-hidden="true"].lg\\:block')).toHaveClass(
+      "bg-foreground/20",
+    );
+    expect(within(campHero).getByText(/^Twoje dziecko/).parentElement).toHaveClass(
+      "bg-linear-to-t",
+      "lg:bg-none",
+    );
     expect(
       screen.getByText(
         /wakeboard, skimboard, deskorolka, sup i masa aktywności, które dzieciaki kochają najbardziej/i,
@@ -489,6 +517,12 @@ describe("static public pages", () => {
     for (const source of hero.querySelectorAll("picture source")) {
       expect(source.getAttribute("srcset")).toMatch(/^\/images\/generated\/obozy-main-obozy-zima-/);
     }
+    expect(image()).toHaveClass(
+      "max-lg:portrait:h-[min(145vw,calc(100%-9.5rem))]",
+      "max-lg:portrait:object-[67%_center]",
+      "max-lg:portrait:mask-b-from-82%",
+      "md:object-center",
+    );
 
     await act(async () => {
       mockedGetPublicPortalTheme.mockResolvedValue("original");
@@ -500,12 +534,25 @@ describe("static public pages", () => {
         expect.stringMatching(/^\/images\/generated\/obozy-main-obozy-lato-/),
       ),
     );
+    expect(image()).not.toHaveClass("max-lg:portrait:h-[min(145vw,calc(100%-9.5rem))]");
   });
 
   it("shows the revised company story", async () => {
     await renderRoute("/o-nas", AboutRoute);
 
-    expect(screen.getByText(/Zajawka do sportów sprawiła/i)).toBeInTheDocument();
+    for (const copy of [
+      /Zajawka do sportów sprawiła/i,
+      /Od zawsze jesteśmy lokalnym biurem podróży/i,
+      /Certyfikowany instruktor snowboardu i surfingu/i,
+    ]) {
+      expect(screen.getByText(copy).parentElement).toHaveClass(
+        "max-lg:text-justify",
+        "max-lg:hyphens-auto",
+      );
+    }
+    for (const copy of [/Zmieniają się miejsca i warunki/i, /Poznaj nas bliżej - sprawdź/i]) {
+      expect(screen.getByText(copy)).toHaveClass("max-lg:text-justify", "max-lg:hyphens-auto");
+    }
   });
 
   it("shows the revised home and about copy", async () => {

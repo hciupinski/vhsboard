@@ -25,6 +25,7 @@ const cityAndMoreSurf = getLocalImage("about-us/city-and-more-1.jpg");
 const cityAndMoreSkate = getLocalImage("about-us/city-and-more-2.JPG");
 const cityAndMoreSnow = getLocalImage("about-us/city-and-more-3.jpg");
 const marioVhs = getLocalImage("about-us/mario-vhs.jpg");
+const mobileProse = "max-lg:text-justify max-lg:hyphens-auto";
 
 export const Route = createFileRoute("/o-nas")({
   head: () =>
@@ -58,7 +59,7 @@ function AboutPage() {
               className="aspect-[4/3] w-full rounded-3xl object-cover shadow-warm"
             />
           </figure>
-          <div className="max-w-xl lg:col-start-1 lg:row-start-2 lg:self-start">
+          <div className={`max-w-xl lg:col-start-1 lg:row-start-2 lg:self-start ${mobileProse}`}>
             <p className="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg lg:mt-6">
               VHS powstał w 2017 roku i jest doskonałym przykładem tego, jak pasja naturalnie
               przemieniła się w pracę. Zajawka do sportów sprawiła, że zaczęliśmy organizować
@@ -92,7 +93,7 @@ function AboutPage() {
             >
               <HeroCarousel images={founderImages} intervalMs={3_500} />
             </figure>
-            <div className="max-w-2xl lg:col-start-2 lg:row-start-2 lg:self-start">
+            <div className={`max-w-2xl lg:col-start-2 lg:row-start-2 lg:self-start ${mobileProse}`}>
               <p className="text-lg leading-relaxed text-foreground lg:mt-6">
                 Mariusz Wójt — całe życie na desce, całe życie na zajawie.
               </p>
@@ -124,7 +125,9 @@ function AboutPage() {
             >
               OD MIASTA PO GÓRY
             </h2>
-            <p className="mt-5 max-w-prose text-lg leading-relaxed text-muted-foreground lg:max-w-none">
+            <p
+              className={`mt-5 max-w-prose text-lg leading-relaxed text-muted-foreground lg:max-w-none ${mobileProse}`}
+            >
               Zmieniają się miejsca i warunki. Ta sama zostaje potrzeba ruchu, dobrego towarzystwa i
               kolejnego dnia na desce.
             </p>
@@ -164,7 +167,7 @@ function AboutPage() {
           items={aboutUsFaqItems}
           headerLabel="VHS od kuchni"
           description="Poznaj nas bliżej - sprawdź, czym zajmujemy się przez cały rok i jak organizujemy wyjazdy, obozy oraz eventy."
-          descriptionClassName="lg:max-w-4xl"
+          descriptionClassName={`lg:max-w-4xl ${mobileProse}`}
         />
       </main>
       <PublicFooter />

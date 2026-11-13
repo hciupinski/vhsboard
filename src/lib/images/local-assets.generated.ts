@@ -109,6 +109,33 @@ export const LOCAL_IMAGE_ASSETS = {
     avifSrcSet:
       "/images/generated/carousel-karuzela_oboz2-480-145fd2c2816a.avif 480w, /images/generated/carousel-karuzela_oboz2-960-55a7eefef6e8.avif 960w, /images/generated/carousel-karuzela_oboz2-1600-c7d5df3c1d2f.avif 1600w",
   },
+  "hero-mobile/oboz-zimowy.jpg": {
+    src: "/images/generated/hero-mobile-oboz-zimowy-600-9a1da1dad6ee.webp",
+    width: 600,
+    height: 782,
+    webpSrcSet:
+      "/images/generated/hero-mobile-oboz-zimowy-480-9dc3f22935a4.webp 480w, /images/generated/hero-mobile-oboz-zimowy-600-9a1da1dad6ee.webp 600w",
+    avifSrcSet:
+      "/images/generated/hero-mobile-oboz-zimowy-480-5795ef27aae0.avif 480w, /images/generated/hero-mobile-oboz-zimowy-600-0ef4c2d7e792.avif 600w",
+  },
+  "hero-mobile/snowboard.jpg": {
+    src: "/images/generated/hero-mobile-snowboard-600-886f83f1b9f5.webp",
+    width: 600,
+    height: 782,
+    webpSrcSet:
+      "/images/generated/hero-mobile-snowboard-480-b606eddf3144.webp 480w, /images/generated/hero-mobile-snowboard-600-886f83f1b9f5.webp 600w",
+    avifSrcSet:
+      "/images/generated/hero-mobile-snowboard-480-ef525661402a.avif 480w, /images/generated/hero-mobile-snowboard-600-ee05101be8c2.avif 600w",
+  },
+  "hero-mobile/surf.jpg": {
+    src: "/images/generated/hero-mobile-surf-1200-e1a14c003335.webp",
+    width: 1200,
+    height: 1920,
+    webpSrcSet:
+      "/images/generated/hero-mobile-surf-480-0a2d86e43a40.webp 480w, /images/generated/hero-mobile-surf-960-f1b59031436f.webp 960w, /images/generated/hero-mobile-surf-1200-e1a14c003335.webp 1200w",
+    avifSrcSet:
+      "/images/generated/hero-mobile-surf-480-aabeeda5e7ed.avif 480w, /images/generated/hero-mobile-surf-960-aa55d1b34b41.avif 960w, /images/generated/hero-mobile-surf-1200-cb043a92b86c.avif 1200w",
+  },
   "main/eventy-1.jpg": {
     src: "/images/generated/main-eventy-1-1535-ffe389a6d3ce.webp",
     width: 1535,
