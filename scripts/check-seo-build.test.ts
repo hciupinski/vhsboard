@@ -8,16 +8,7 @@ import { checkSeoBuild } from "./check-seo-build";
 
 const directories: string[] = [];
 const siteUrl = "https://vhsboard.pages.dev";
-const staticPaths = [
-  "/",
-  "/o-nas",
-  "/wyjazdy",
-  "/eventy",
-  "/obozy",
-  "/kontakt",
-  "/skimboarding",
-  "/wypozyczalnia",
-];
+const staticPaths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt", "/wypozyczalnia"];
 
 const outputFile = (outputDirectory: string, path: string) =>
   path === "/" ? join(outputDirectory, "index.html") : join(outputDirectory, path, "index.html");
@@ -32,7 +23,6 @@ const socialTags = (path: string) => {
         "/eventy": "events",
         "/obozy": "camps",
         "/kontakt": "contact",
-        "/skimboarding": "events",
         "/wypozyczalnia": "trips",
       } as Record<string, string>
     )[path] ?? "offers";

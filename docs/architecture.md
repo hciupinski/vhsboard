@@ -5,7 +5,8 @@
 VHSBOARD is a Polish marketing site for surfing and snowboarding trips, events,
 and children's sports camps. The small administrator CMS manages offers, offer
 photographs, contact PDFs, and the homepage carousel. Every published offer
-links to an external TripAhead booking flow. Reservations, payments,
+links to the external HTTPS booking service selected in the CMS. Use
+“Adres zapisów” for a trip or for each individual camp term. Reservations, payments,
 availability, participant management, and public accounts are outside this app.
 
 ## Current implementation
@@ -31,23 +32,24 @@ social previews, and build-time company configuration require a new Git deploy.
 
 ## Routes and delivery
 
-| Route                                                                                         | Purpose                                              |
-| --------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `/`, `/o-nas`, `/wyjazdy`, `/eventy`, `/obozy`, `/kontakt`, `/skimboarding`, `/wypozyczalnia` | Eight prerendered marketing pages.                   |
-| `/wyjazdy/:slug`, `/obozy/:slug`                                                              | JS offer details, served through `/_shell/app.html`. |
-| `/trips/:slug`                                                                                | Legacy 301 redirect to `/wyjazdy/:slug`.             |
-| `/admin`                                                                                      | Authorized offer list.                               |
-| `/admin/login`                                                                                | Administrator sign-in.                               |
-| `/admin/reset-password`                                                                       | Supabase password recovery.                          |
-| `/admin/new`, `/admin/:slug`                                                                  | Create or edit an offer by slug.                     |
-| `/admin/dokumenty`, `/admin/portal`                                                           | Contact PDF and carousel management.                 |
+| Route                                                                        | Purpose                                              |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `/`, `/o-nas`, `/wyjazdy`, `/eventy`, `/obozy`, `/kontakt`, `/wypozyczalnia` | Seven prerendered marketing pages.                   |
+| `/wyjazdy/:slug`, `/obozy/:slug`                                             | JS offer details, served through `/_shell/app.html`. |
+| `/skimboarding/`                                                             | Legacy 301 redirect to `/eventy/`.                   |
+| `/trips/:slug`                                                               | Legacy 301 redirect to `/wyjazdy/:slug`.             |
+| `/admin`                                                                     | Authorized offer list.                               |
+| `/admin/login`                                                               | Administrator sign-in.                               |
+| `/admin/reset-password`                                                      | Supabase password recovery.                          |
+| `/admin/new`, `/admin/:slug`                                                 | Create or edit an offer by slug.                     |
+| `/admin/dokumenty`, `/admin/portal`                                          | Contact PDF and carousel management.                 |
 
 Cloudflare rewrites in [`public/_redirects`](../public/_redirects) send admin
 routes to a separate `/_shell/admin.html`. It always has `noindex, nofollow`.
 The public shell follows `VITE_SEO_INDEXING`; previews, missing offers, and
 errors have their own noindex metadata in the browser. The internal render
 targets `/spa-shell` and `/admin-shell` are build machinery, not public navigation.
-Only the eight marketing pages enter the sitemap. See the [SEO runbook](seo-runbook.md).
+Only the seven marketing pages enter the sitemap. See the [SEO runbook](seo-runbook.md).
 
 ## Data and authorization
 
@@ -130,7 +132,7 @@ ongoing offers, then recently finished offers. Finished offers appear only if
 they ended within one rolling calendar month, including the boundary date:
 for example, on 6 November the boundary is 6 October. When the preceding month
 is shorter, the boundary uses its last day. The homepage shows
-at most three cards and omits offers without a start date. Category lists show
+at most six cards and omits offers without a start date. Category lists show
 all eligible offers and keep undated offers after dated unfinished ones.
 Ties use Polish title and ID. Finished cards are grey and do not link to details;
 ongoing cards remain linked and show `W trakcie` instead of `Ostatnie miejsca`.

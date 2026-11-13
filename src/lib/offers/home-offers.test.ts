@@ -71,18 +71,18 @@ describe("selectUpcomingHomeOffers", () => {
       selectUpcomingHomeOffers([old, recent, upcoming], "2026-11-06").map((o) => o.title),
     ).toEqual(["Nowy", "Niedawny"]);
   });
-  it("caps the home list at three even when ten future offers exist", () => {
+  it("caps the home list at six even when ten future offers exist", () => {
     const offers = Array.from({ length: 10 }, (_, i) => trip(`Wyjazd ${i}`, "2026-12-01"));
-    expect(selectUpcomingHomeOffers(offers, "2026-11-06")).toHaveLength(3);
+    expect(selectUpcomingHomeOffers(offers, "2026-11-06")).toHaveLength(6);
   });
-  it("selects the three nearest upcoming offers in date and Polish title order", () => {
+  it("orders upcoming, ongoing and recently finished offers", () => {
     const offers = [
       trip("Później", "2026-10-01"),
       trip("Zeta", "2026-09-28"),
       camp("Obóz wake", "2026-09-29"),
       trip("Alfa", "2026-09-28"),
-      trip("Dzisiaj", "2026-09-27"),
-      trip("Miniony", "2026-09-26"),
+      { ...trip("Dzisiaj", "2026-09-27"), endDate: "2026-09-30" },
+      { ...trip("Miniony", "2026-09-26"), endDate: "2026-09-26" },
       trip("Termin wkrótce", null),
     ];
 
@@ -90,6 +90,9 @@ describe("selectUpcomingHomeOffers", () => {
       "Alfa",
       "Zeta",
       "Obóz wake",
+      "Później",
+      "Dzisiaj",
+      "Miniony",
     ]);
     expect(offers.map((offer) => offer.title)).toEqual([
       "Później",

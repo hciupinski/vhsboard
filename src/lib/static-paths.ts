@@ -6,7 +6,6 @@ export const staticPaths = [
   "/eventy",
   "/obozy",
   "/kontakt",
-  "/skimboarding",
   "/wypozyczalnia",
 ] as const;
 

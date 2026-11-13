@@ -109,8 +109,13 @@ Dla każdego adresu potwierdź aktualną treść, odpowiednik i wynik HTTP przed
 oraz po przełączeniu. Stosuj pojedyncze 301 tylko do rzeczywiście równoważnej
 treści; nie kieruj wszystkich brakujących adresów na stronę główną.
 
-Nie przełączaj domeny, dopóki istotne adresy oraz działająca oferta skimboardu
-nie mają uzgodnionej i sprawdzonej obsługi. Po deployu sprawdź pełne łańcuchy
+Zatwierdzone przekierowania starego WordPressa są w
+[`public/_redirects`](../public/_redirects). Dawny adres `/skimboarding/`
+prowadzi do `/eventy/`. Jawna lista starych ofert prowadzi do `/wyjazdy/`
+i pozostawia bez zmian obecne adresy ofert w CMS.
+
+Nie przełączaj domeny, dopóki istotne adresy nie mają uzgodnionej
+i sprawdzonej obsługi. Po deployu sprawdź pełne łańcuchy
 przekierowań, końcowe statusy i treść na rzeczywistej domenie.
 
 ## Statyczne 404 i cache

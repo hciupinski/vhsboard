@@ -10,16 +10,7 @@ const directories: string[] = [];
 const createOutputDirectory = async () => {
   const outputDirectory = await mkdtemp(join(tmpdir(), "vhsboard-sitemap-"));
   directories.push(outputDirectory);
-  const paths = [
-    "/",
-    "/o-nas",
-    "/wyjazdy",
-    "/eventy",
-    "/obozy",
-    "/kontakt",
-    "/skimboarding",
-    "/wypozyczalnia",
-  ];
+  const paths = ["/", "/o-nas", "/wyjazdy", "/eventy", "/obozy", "/kontakt", "/wypozyczalnia"];
   for (const path of paths) {
     const filename =
       path === "/"
@@ -47,8 +38,8 @@ describe("generateSitemap", () => {
     const sitemap = await readFile(join(outputDirectory, "sitemap.xml"), "utf8");
     const robots = await readFile(join(outputDirectory, "robots.txt"), "utf8");
     expect(sitemap).toContain("<loc>https://vhsboard.pages.dev/obozy/</loc>");
-    expect(sitemap).toContain("<loc>https://vhsboard.pages.dev/skimboarding/</loc>");
     expect(sitemap).toContain("<loc>https://vhsboard.pages.dev/wypozyczalnia/</loc>");
+    expect(sitemap).not.toContain("/skimboarding");
     expect(sitemap).not.toContain("/wyjazdy/atlantic-surf-week");
     expect(sitemap).not.toContain("/admin");
     expect(robots).toContain("Disallow: /admin");

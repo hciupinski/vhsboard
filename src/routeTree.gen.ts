@@ -15,7 +15,6 @@ import { Route as EventyRouteImport } from './routes/eventy'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as ONasRouteImport } from './routes/o-nas'
 import { Route as ObozyRouteImport } from './routes/obozy'
-import { Route as SkimboardingRouteImport } from './routes/skimboarding'
 import { Route as SpaShellRouteImport } from './routes/spa-shell'
 import { Route as WypozyczalniaRouteImport } from './routes/wypozyczalnia'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -58,11 +57,6 @@ const ONasRoute = ONasRouteImport.update({
 const ObozyRoute = ObozyRouteImport.update({
   id: '/obozy',
   path: '/obozy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SkimboardingRoute = SkimboardingRouteImport.update({
-  id: '/skimboarding',
-  path: '/skimboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpaShellRoute = SpaShellRouteImport.update({
@@ -138,7 +132,6 @@ export interface FileRoutesByFullPath {
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
   '/obozy': typeof ObozyRouteWithChildren
-  '/skimboarding': typeof SkimboardingRoute
   '/spa-shell': typeof SpaShellRoute
   '/wypozyczalnia': typeof WypozyczalniaRoute
   '/admin/$slug': typeof AdminSlugRoute
@@ -159,7 +152,6 @@ export interface FileRoutesByTo {
   '/eventy': typeof EventyRoute
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
-  '/skimboarding': typeof SkimboardingRoute
   '/spa-shell': typeof SpaShellRoute
   '/wypozyczalnia': typeof WypozyczalniaRoute
   '/admin/$slug': typeof AdminSlugRoute
@@ -182,7 +174,6 @@ export interface FileRoutesById {
   '/kontakt': typeof KontaktRoute
   '/o-nas': typeof ONasRoute
   '/obozy': typeof ObozyRouteWithChildren
-  '/skimboarding': typeof SkimboardingRoute
   '/spa-shell': typeof SpaShellRoute
   '/wypozyczalnia': typeof WypozyczalniaRoute
   '/admin/$slug': typeof AdminSlugRoute
@@ -206,7 +197,6 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/o-nas'
     | '/obozy'
-    | '/skimboarding'
     | '/spa-shell'
     | '/wypozyczalnia'
     | '/admin/$slug'
@@ -227,7 +217,6 @@ export interface FileRouteTypes {
     | '/eventy'
     | '/kontakt'
     | '/o-nas'
-    | '/skimboarding'
     | '/spa-shell'
     | '/wypozyczalnia'
     | '/admin/$slug'
@@ -249,7 +238,6 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/o-nas'
     | '/obozy'
-    | '/skimboarding'
     | '/spa-shell'
     | '/wypozyczalnia'
     | '/admin/$slug'
@@ -272,7 +260,6 @@ export interface RootRouteChildren {
   KontaktRoute: typeof KontaktRoute
   ONasRoute: typeof ONasRoute
   ObozyRoute: typeof ObozyRouteWithChildren
-  SkimboardingRoute: typeof SkimboardingRoute
   SpaShellRoute: typeof SpaShellRoute
   WypozyczalniaRoute: typeof WypozyczalniaRoute
   AdminSlugRoute: typeof AdminSlugRoute
@@ -328,13 +315,6 @@ declare module '@tanstack/react-router' {
       path: '/obozy'
       fullPath: '/obozy'
       preLoaderRoute: typeof ObozyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/skimboarding': {
-      id: '/skimboarding'
-      path: '/skimboarding'
-      fullPath: '/skimboarding'
-      preLoaderRoute: typeof SkimboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/spa-shell': {
@@ -450,7 +430,6 @@ const rootRouteChildren: RootRouteChildren = {
   KontaktRoute: KontaktRoute,
   ONasRoute: ONasRoute,
   ObozyRoute: ObozyRouteWithChildren,
-  SkimboardingRoute: SkimboardingRoute,
   SpaShellRoute: SpaShellRoute,
   WypozyczalniaRoute: WypozyczalniaRoute,
   AdminSlugRoute: AdminSlugRoute,
