@@ -3,7 +3,6 @@ import { PRICE_NOTE_MAX_LENGTH } from "@/lib/offers/content-v2";
 import { Textarea } from "@/components/admin/form-controls";
 import { EditorField } from "./EditorField";
 import { ListField } from "@/components/admin/ListField";
-import { DayCampTermsEditor as TermsEditor } from "./DayCampTermsEditor";
 import { errorFor } from "./editor-fields";
 import type { DayCampContent, TripOfferContent, OfferKind } from "@/lib/offers/types";
 type Content = DayCampContent | TripOfferContent;
@@ -14,11 +13,9 @@ type CommonProps = {
   disabled: boolean;
   onChange: (content: Content) => void;
 };
-export function OfferPriceSection({ content, offerKind, errors, disabled, onChange }: CommonProps) {
+export function OfferPriceSection({ content, errors, disabled, onChange }: CommonProps) {
   const priceNote = content.priceNote ?? "";
   const noteError = errorFor(errors, "content.priceNote");
-  const dayCamp = offerKind === "day_camp" ? (content as DayCampContent) : null;
-  const setTerms = (terms: DayCampContent["terms"]) => dayCamp && onChange({ ...dayCamp, terms });
   const listChange = (field: "included" | "excluded", next: string[]) =>
     onChange({ ...content, [field]: next });
   return (
@@ -87,9 +84,6 @@ export function OfferPriceSection({ content, offerKind, errors, disabled, onChan
         />
         Pokaż link do wypożyczalni snowboardów
       </label>
-      {dayCamp ? (
-        <TermsEditor content={dayCamp} errors={errors} disabled={disabled} onChange={setTerms} />
-      ) : null}
     </>
   );
 }

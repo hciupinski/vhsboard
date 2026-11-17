@@ -259,7 +259,7 @@ describe("OfferEditorForm", () => {
     fireEvent.change(screen.getByLabelText("Plan wyjazdu 1 — godzina"), {
       target: { value: "10:00" },
     });
-    await user.click(screen.getByRole("tab", { name: "Cena" }));
+    await user.click(screen.getByRole("tab", { name: "Dane oferty" }));
     fireEvent.change(screen.getByLabelText("Turnus 1, wariant 1 — cena"), {
       target: { value: "" },
     });
@@ -300,10 +300,6 @@ describe("OfferEditorForm", () => {
     );
     fireEvent.change(screen.getByLabelText("Data rozpoczęcia"), { target: { value: "" } });
     expect(onChange).toHaveBeenLastCalledWith({ ...completeInput, startDate: null });
-    fireEvent.change(screen.getByLabelText("Minimalna liczba uczestników"), {
-      target: { value: "" },
-    });
-    expect(onChange).toHaveBeenLastCalledWith({ ...completeInput, groupSizeMin: null });
     fireEvent.change(screen.getByLabelText("Liczba dni"), { target: { value: "" } });
     expect(onChange).toHaveBeenLastCalledWith({ ...completeInput, durationDays: 0 });
     fireEvent.change(screen.getByLabelText("Cena od"), { target: { value: "" } });
@@ -407,7 +403,7 @@ describe("OfferEditorForm", () => {
       );
     }
     render(<Editor />);
-    await user.click(screen.getByRole("tab", { name: "Cena" }));
+    await user.click(screen.getByRole("tab", { name: "Dane oferty" }));
     await user.click(screen.getByRole("button", { name: "Przenieś turnus 2 wyżej" }));
     expect("terms" in latest.content && latest.content.terms.map((term) => term.id)).toEqual([
       secondId,
@@ -932,7 +928,6 @@ describe("OfferEditorForm", () => {
       <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={vi.fn()} />,
     );
 
-    await user.click(screen.getByRole("tab", { name: "Cena" }));
     expect(screen.getByText("Turnusy i warianty cen")).toBeInTheDocument();
     expect(screen.getByLabelText("Turnus 1, wariant 1 — cena")).toHaveValue(1290);
     expect(screen.getByLabelText("Turnus 1 — adres zapisów")).toHaveValue(
@@ -1100,7 +1095,7 @@ describe("OfferEditorForm", () => {
     const props = { value: dayCampInput, disabled: false, onChange: vi.fn() };
     const { rerender } = render(<OfferEditorForm {...props} errors={{}} />);
     for (const [path, tab] of [
-      ["content.terms.0.bookingUrl", "Cena"],
+      ["content.terms.0.bookingUrl", "Dane oferty"],
       ["subtitle", "Dane oferty"],
       ["content.highlights.0", "W programie"],
       ["content.venueDescription", "Resort"],

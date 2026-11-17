@@ -1,3 +1,4 @@
+import { DayCampTermsEditor } from "./offer-editor/DayCampTermsEditor";
 import { OfferPhotosSection } from "./offer-editor/OfferPhotosSection";
 import { OfferAccommodationSection } from "./offer-editor/OfferAccommodationSection";
 import { OfferOptionalSection } from "./offer-editor/OfferOptionalSection";
@@ -58,6 +59,8 @@ export function OfferEditorForm({
   ];
   const tabErrorPaths: Record<EditorTab, string[]> = {
     basics: [
+      "content.terms",
+      "audience",
       "offerKind",
       "activity",
       "title",
@@ -81,7 +84,7 @@ export function OfferEditorForm({
     ],
     story: ["content.paragraphs"],
     highlights: ["content.highlights", dayCamp ? "content.dayProgram" : "content.schedule"],
-    inout: ["content.included", "content.excluded", "content.priceNote", "content.terms"],
+    inout: ["content.included", "content.excluded", "content.priceNote"],
     parent: ["content.parentInfo"],
     resort: ["content.resort", ...(dayCamp ? ["content.venueDescription"] : [])],
     training: ["content.training"],
@@ -165,6 +168,14 @@ export function OfferEditorForm({
 
       <TabsContent value="basics" className="mt-6">
         <OfferBasicsSection value={value} errors={errors} disabled={disabled} onChange={onChange} />
+        {dayCamp ? (
+          <DayCampTermsEditor
+            content={dayCamp}
+            errors={errors}
+            disabled={disabled}
+            onChange={(terms) => setDayCamp({ ...dayCamp, terms })}
+          />
+        ) : null}
       </TabsContent>
 
       <TabsContent value="story" className="mt-6">

@@ -23,6 +23,7 @@ export type EditableOfferInput = {
   startDate: string | null;
   endDate: string | null;
   durationDays: number;
+  audience?: string | null | undefined;
   groupSizeMin: number | null;
   groupSizeMax: number | null;
   priceFrom: number;
@@ -226,6 +227,7 @@ const tripEditorOfferInputSchema = z
         .int("Czas trwania musi być liczbą całkowitą.")
         .min(1, "Czas trwania musi wynosić co najmniej 1 dzień.")
         .max(60, "Czas trwania nie może być dłuższy niż 60 dni."),
+      audience: z.string().trim().max(240).nullable().optional(),
       groupSizeMin: groupSizeSchema("Minimalna liczba uczestników"),
       groupSizeMax: groupSizeSchema("Maksymalna liczba uczestników"),
       priceFrom: z
@@ -367,8 +369,9 @@ const dayCampEditorOfferInputSchema = z
     startDate: z.unknown(),
     endDate: z.unknown(),
     durationDays: z.unknown(),
-    groupSizeMin: z.unknown(),
-    groupSizeMax: z.unknown(),
+    audience: z.string().trim().max(240).nullable().optional(),
+    groupSizeMin: groupSizeSchema("Minimalna liczba uczestników"),
+    groupSizeMax: groupSizeSchema("Maksymalna liczba uczestników"),
     priceFrom: z.unknown(),
     currency: z.literal("PLN"),
     bookingUrl: z.unknown(),
@@ -394,8 +397,6 @@ const dayCampEditorOfferInputSchema = z
         terms[0]!.endDate,
       ),
       durationDays: Math.max(...terms.map((term) => daysInTerm(term.startDate, term.endDate))),
-      groupSizeMin: null,
-      groupSizeMax: null,
       priceFrom: Math.min(...cheapest.priceOptions.map((option) => option.price)),
       bookingUrl: cheapest.bookingUrl,
     };
@@ -504,7 +505,10 @@ export function changeEditableOfferKind(
       ...input,
       offerKind,
       activity: "wake",
-      content: createEmptyDayCampContent(),
+      content: {
+        ...createEmptyDayCampContent(),
+        ...(input.content.highlightIcons ? { highlightIcons: [] } : {}),
+      },
       startDate: null,
       endDate: null,
       durationDays: 1,
@@ -520,6 +524,7 @@ export function changeEditableOfferKind(
     offerKind,
     activity: "surf",
     content: {
+      ...(input.content.highlightIcons ? { highlightIcons: [] } : {}),
       paragraphs: [""],
       highlights: [""],
       included: [""],

@@ -401,7 +401,6 @@ describe("admin offer editor route", () => {
     const user = userEvent.setup();
     mockedGetAdminOffer.mockResolvedValue(dayCampDraftOffer);
     await renderAdminEditor({ slug: dayCampDraftOffer.slug });
-    await user.click(screen.getByRole("tab", { name: "Cena" }));
     const price = screen.getByLabelText("Turnus 1, wariant 1 — cena");
     fireEvent.change(price, { target: { value: "0" } });
     expect(price).toHaveAccessibleDescription("Cena musi być większa od zera.");

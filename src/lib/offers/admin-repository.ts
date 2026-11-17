@@ -20,7 +20,7 @@ import {
 } from "./publication-readiness";
 
 const ADMIN_COLUMNS =
-  "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,group_size_min,group_size_max,price_from,currency,booking_url,show_last_places_badge,hero_image,status";
+  "id,slug,offer_kind,activity,title,subtitle,short_description,description,location,start_date,end_date,duration_days,audience,group_size_min,group_size_max,price_from,currency,booking_url,show_last_places_badge,hero_image,status";
 const ADMIN_LIST_COLUMNS = `${ADMIN_COLUMNS},updated_at`;
 const OFFER_IMAGES_BUCKET = "offer-images";
 const SIGNED_URL_TTL_SECONDS = 3600;
@@ -126,6 +126,7 @@ const toEditableOfferInput = (row: Record<string, unknown>): EditableOfferInput 
     startDate: row["start_date"],
     endDate: row["end_date"],
     durationDays: row["duration_days"],
+    audience: row["audience"] ?? null,
     groupSizeMin: row["group_size_min"],
     groupSizeMax: row["group_size_max"],
     priceFrom: row["price_from"],
@@ -174,6 +175,7 @@ const toOfferRow = (input: EditableOfferInput) => ({
   start_date: input.startDate,
   end_date: input.endDate,
   duration_days: input.durationDays,
+  audience: input.audience?.trim() || null,
   group_size_min: input.groupSizeMin,
   group_size_max: input.groupSizeMax,
   price_from: input.priceFrom,

@@ -114,6 +114,7 @@ const mapOffer = (
     startDate: row.start_date,
     endDate: row.end_date,
     durationDays: row.duration_days,
+    ...(row.audience ? { audience: row.audience } : {}),
     groupSizeMin: row.group_size_min,
     groupSizeMax: row.group_size_max,
     priceFrom: row.price_from,
