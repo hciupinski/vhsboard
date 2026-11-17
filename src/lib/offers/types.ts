@@ -80,6 +80,7 @@ type PublicOfferBase = {
   startDate: string | null;
   endDate: string | null;
   durationDays: number;
+  audience?: string | null;
   groupSizeMin: number | null;
   groupSizeMax: number | null;
   priceFrom: number;

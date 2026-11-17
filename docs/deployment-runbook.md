@@ -222,3 +222,5 @@ Repozytorium nie wdraża automatycznych backupów, alertów ani rollbacku bazy.
 Sprawdź możliwości i aktualną konfigurację kopii w projekcie Supabase przed
 operacją na danych. Nie traktuj ponownego deployu starego frontendu jako
 cofnięcia migracji bazy. Migracje powinny zachowywać zgodność ze starszym kodem.
+
+Pole `offers.audience` jest opcjonalne i zastępuje publiczny wiersz liczebności grupy; historyczne `group_size_min` i `group_size_max` pozostają w bazie. Migrację dodającą kolumnę oraz walidację ikon programu zastosuj przed publikacją frontendu, który ją odczytuje.

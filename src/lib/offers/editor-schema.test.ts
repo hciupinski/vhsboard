@@ -168,6 +168,16 @@ describe("editor offer input schema", () => {
     ).toBe(false);
   });
 
+  it("explicitly clears icons when changing offer kind", () => {
+    const withIcons = {
+      ...completeInput,
+      content: { ...completeInput.content, highlightIcons: ["sun"] },
+    };
+    const camp = changeEditableOfferKind(withIcons, "day_camp");
+    expect(camp.content.highlightIcons).toEqual([]);
+    expect(changeEditableOfferKind(camp, "trip").content.highlightIcons).toEqual([]);
+  });
+
   it("replaces fields that belong only to the previously selected offer kind", () => {
     const dayCamp = changeEditableOfferKind(completeInput, "day_camp");
 

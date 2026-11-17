@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getRentalDocument } from "@/lib/documents/rental-repository";
 import { getLocalImage } from "@/lib/images/responsive";
 
-const rentalImage = getLocalImage("rental/snowboard.png");
+const rentalImage = getLocalImage("rental/snowboards.jpg");
 
 export function RentalSection({ standalone = false }: { standalone?: boolean }) {
   const { data: document } = useQuery({
@@ -26,7 +26,7 @@ export function RentalSection({ standalone = false }: { standalone?: boolean }) 
           <ResponsiveImage
             sizes="(min-width: 1024px) 50vw, 100vw"
             image={rentalImage}
-            alt="Snowboardzista jadący w głębokim śniegu"
+            alt="Snowboardzista w śniegu i modele desek snowboardowych Salomon"
             loading="lazy"
             className="h-auto w-full rounded-3xl shadow-warm"
           />

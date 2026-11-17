@@ -1,3 +1,5 @@
+import { defaultParseSearch } from "@tanstack/react-router";
+import { rentalReturn } from "@/lib/offers/rental-return";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { OfferDetailSections } from "./OfferDetailSections";
@@ -6,6 +8,23 @@ import { getOfferSections } from "@/lib/offers/sections";
 
 afterEach(cleanup);
 describe("complete shared offer details", () => {
+  it.each(["123", "true", "false", "null"])(
+    "preserves slug %s in the rendered rental link",
+    (slug) => {
+      const offer = sectionOffer("trip");
+      offer.slug = slug;
+      offer.content.showRentalLink = true;
+      render(<OfferDetailSections offer={offer} sidebar={null} />);
+      const href = screen
+        .getByRole("link", { name: "Wypożyczalnia snowboardów" })
+        .getAttribute("href")!;
+      const search = defaultParseSearch(new URL(href, "https://example.test").search) as Record<
+        string,
+        string
+      >;
+      expect(rentalReturn(search["kind"]!, search["slug"]!).href).toBe(`/wyjazdy/${slug}/`);
+    },
+  );
   it.each(["trip", "day_camp"] as const)(
     "justifies %s descriptions only below the desktop breakpoint",
     (kind) => {
@@ -107,7 +126,7 @@ describe("complete shared offer details", () => {
       rerender(<OfferDetailSections offer={offer} sidebar={null} />);
       expect(screen.getByRole("link", { name: "Wypożyczalnia snowboardów" })).toHaveAttribute(
         "href",
-        "/wypozyczalnia/",
+        `/wypozyczalnia/?kind=${kind}&slug=${offer.slug}`,
       );
       offer.content.showRentalLink = false;
       rerender(<OfferDetailSections offer={offer} sidebar={null} />);
