@@ -1,3 +1,4 @@
+import { rentalSearch } from "@/lib/offers/rental-return";
 import { BookingButton } from "@/components/offers/BookingButton";
 import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { hasFutureBooking } from "@/lib/offers/offer-timing";
@@ -150,7 +151,7 @@ export function OfferDetailSections({
           {content.showRentalLink ? (
             <p className="mt-4">
               <a
-                href="/wypozyczalnia/"
+                href={`/wypozyczalnia/${rentalSearch(offer.offerKind, offer.slug)}`}
                 className="font-semibold text-primary underline underline-offset-4 hover:text-interaction"
               >
                 Wypożyczalnia snowboardów

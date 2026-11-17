@@ -13,13 +13,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/admin/form-controls";
 import { EditorField as Field, SubtitleField } from "./EditorField";
-import {
-  errorFor,
-  fieldState,
-  nullableNumber,
-  shouldUpdateDate,
-  toOfferSlug,
-} from "./editor-fields";
+import { errorFor, fieldState, shouldUpdateDate, toOfferSlug } from "./editor-fields";
 
 export function OfferBasicsSection({
   value,
@@ -144,6 +138,16 @@ export function OfferBasicsSection({
           />
         </Field>
       </div>
+      <Field id="audience" label="Dla kogo" error={errors["audience"]}>
+        <Input
+          id="audience"
+          value={value.audience ?? ""}
+          maxLength={240}
+          disabled={disabled}
+          {...state("audience")}
+          onChange={(event) => set("audience", event.target.value)}
+        />
+      </Field>
       <SubtitleField
         value={value.subtitle}
         error={errors["subtitle"]}
@@ -259,38 +263,6 @@ function TripBasics({
             className="w-20"
           />
         </div>
-      </Field>
-      <Field
-        id="group-size-min"
-        label="Minimalna liczba uczestników"
-        error={errors["groupSizeMin"]}
-      >
-        <Input
-          id="group-size-min"
-          type="number"
-          min={1}
-          max={99}
-          value={value.groupSizeMin ?? ""}
-          disabled={disabled}
-          {...state("groupSizeMin", "group-size-min")}
-          onChange={(event) => set("groupSizeMin", nullableNumber(event.target.value))}
-        />
-      </Field>
-      <Field
-        id="group-size-max"
-        label="Maksymalna liczba uczestników"
-        error={errors["groupSizeMax"]}
-      >
-        <Input
-          id="group-size-max"
-          type="number"
-          min={1}
-          max={99}
-          value={value.groupSizeMax ?? ""}
-          disabled={disabled}
-          {...state("groupSizeMax", "group-size-max")}
-          onChange={(event) => set("groupSizeMax", nullableNumber(event.target.value))}
-        />
       </Field>
       <div className="sm:col-span-2">
         <Field id="booking-url" label="Adres zapisów" error={errors["bookingUrl"]}>

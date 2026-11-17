@@ -2,7 +2,7 @@ import { isValidBookingUrl } from "@/lib/offers/booking-url";
 import { BookingButton } from "./BookingButton";
 import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { hasFutureBooking } from "@/lib/offers/offer-timing";
-import { formatGroupSize, formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
+import { formatPriceFrom, formatTripDates } from "@/lib/offers/formatters";
 import type { PublicOffer } from "@/lib/offers/types";
 
 export function OfferFacts({
@@ -29,10 +29,12 @@ export function OfferFacts({
           <dt className="text-muted-foreground">Czas</dt>
           <dd className="font-medium">{offer.durationDays} dni</dd>
         </div>
-        <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 border-b border-border pb-2">
-          <dt className="text-muted-foreground">Grupa</dt>
-          <dd className="font-medium">{formatGroupSize(offer.groupSizeMin, offer.groupSizeMax)}</dd>
-        </div>
+        {offer.audience?.trim() ? (
+          <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 border-b border-border pb-2">
+            <dt className="text-muted-foreground">Dla kogo</dt>
+            <dd className="font-medium">{offer.audience}</dd>
+          </div>
+        ) : null}
         <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
           <dt className="text-muted-foreground">Cena od osoby</dt>
           <dd className="font-display text-xl text-primary">

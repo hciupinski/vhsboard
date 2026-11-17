@@ -77,6 +77,10 @@ set local role authenticated;
 insert into public.offer_images(offer_id,storage_path,alt_text,category,position) values ('90000000-0000-4000-8000-000000000003','offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000004.webp','Zdjęcie główne testowej oferty','gallery',0);
 update public.offers set hero_image='offers/90000000-0000-4000-8000-000000000003/90000000-0000-4000-8000-000000000004.webp' where id='90000000-0000-4000-8000-000000000003';
 select lives_ok($$update public.offers set description=description || '{"transport":{"enabled":false,"type":"coach","description":"","journeys":[]},"accommodation":{"enabled":false,"description":""}}'::jsonb, status='published' where id='90000000-0000-4000-8000-000000000003'$$, 'v2 publishes with disabled incomplete transport and accommodation without accommodation photos');
+select lives_ok($$update public.offers set description=description || '{"highlightIcons":["waves"]}'::jsonb where id='90000000-0000-4000-8000-000000000003'$$, 'published trip accepts highlight icons');
+select throws_ok($$update public.offers set description=description-'highlightIcons' where id='90000000-0000-4000-8000-000000000003'$$,'23514','Odśwież CMS przed zapisaniem oferty.','stale editor cannot remove icons');
+select lives_ok($$update public.offers set description=description || '{"highlightIcons":[]}'::jsonb where id='90000000-0000-4000-8000-000000000003'$$,'current editor can clear icons');
+select throws_ok($$update public.offers set description=description || '{"highlightIcons":[1]}'::jsonb where id='90000000-0000-4000-8000-000000000003'$$,'23514','Nieprawidłowa struktura sekcji oferty.','published trip rejects malformed icons');
 select throws_ok($$update public.offers set description=jsonb_set(description,'{transport,enabled}','true') where id='90000000-0000-4000-8000-000000000003'$$,'23514','Opublikowana oferta wymaga kompletnej treści właściwej dla rodzaju.','direct API cannot publish incomplete enabled transport');
 select is((select description #>> '{transport,enabled}' from public.offers where id='90000000-0000-4000-8000-000000000003'),'false','failed publication retains previous public data');
 reset role;
@@ -90,5 +94,14 @@ select throws_ok($$update public.offers set description=description-'priceNote' 
 select throws_ok($$update public.offers set description=jsonb_set(description,'{transport}',((description -> 'transport') - 'types') || '{"type":"own"}'::jsonb) where id='90000000-0000-4000-8000-000000000003'$$,'23514','Odśwież CMS przed zapisaniem oferty.','stale editor cannot lose transport choices');
 select lives_ok($$update public.offers set description=jsonb_set(description,'{priceNote}','""') where id='90000000-0000-4000-8000-000000000003'$$,'current editor can clear the price note');
 reset role;
+-- Exercise camp publication and subsequent icon edits through the real guard.
+insert into public.offers(id,slug,offer_kind,activity,title,subtitle,short_description,location,duration_days,price_from,booking_url,status,description)
+values ('90000000-0000-4000-8000-000000000030','qa-icons-camp','day_camp','snow','Test obozu','Testowy podtytuł','Wystarczająco długi opis testowego obozu.','Szczyrk',5,1400,'https://example.test','draft',
+'{"paragraphs":["Opis obozu"],"highlights":["Program"],"included":["Opieka"],"excluded":["Dojazd"],"dayProgram":[{"time":"09:00","text":"Rozgrzewka"}],"venueDescription":"Stok dla dzieci.","parentInfo":{"ageRange":"7–12 lat","supervision":"Stała opieka.","safety":"Zajęcia w kaskach."},"terms":[{"label":"Turnus 1","startDate":"2027-02-01","endDate":"2027-02-05","bookingUrl":"https://example.test","priceOptions":[{"label":"Podstawowy","price":1400}]}]}');
+insert into storage.objects(bucket_id,name) values ('offer-images','offers/90000000-0000-4000-8000-000000000030/90000000-0000-4000-8000-000000000031.webp');
+insert into public.offer_images(offer_id,storage_path,alt_text,category,position) values ('90000000-0000-4000-8000-000000000030','offers/90000000-0000-4000-8000-000000000030/90000000-0000-4000-8000-000000000031.webp','Zdjęcie obozu','gallery',0);
+select lives_ok($$update public.offers set hero_image='offers/90000000-0000-4000-8000-000000000030/90000000-0000-4000-8000-000000000031.webp',status='published' where id='90000000-0000-4000-8000-000000000030'$$,'camp publishes with complete content');
+select lives_ok($$update public.offers set description=description || '{"highlightIcons":["sun"]}'::jsonb where id='90000000-0000-4000-8000-000000000030'$$,'published camp accepts icons');
+select throws_ok($$update public.offers set description=description-'dayProgram' where id='90000000-0000-4000-8000-000000000030'$$,'23514','Opublikowana oferta wymaga kompletnej treści właściwej dla rodzaju.','icons do not bypass camp publication guard');
 select * from finish();
 rollback;

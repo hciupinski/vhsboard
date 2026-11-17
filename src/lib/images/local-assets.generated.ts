@@ -226,6 +226,15 @@ export const LOCAL_IMAGE_ASSETS = {
     avifSrcSet:
       "/images/generated/rental-snowboard-480-7ff5e22e25ca.avif 480w, /images/generated/rental-snowboard-583-179455ab4c78.avif 583w",
   },
+  "rental/snowboards.jpg": {
+    src: "/images/generated/rental-snowboards-1280-7ea69e850d93.webp",
+    width: 1280,
+    height: 1014,
+    webpSrcSet:
+      "/images/generated/rental-snowboards-480-0edbcd8731cd.webp 480w, /images/generated/rental-snowboards-960-92d3cecf54d6.webp 960w, /images/generated/rental-snowboards-1280-7ea69e850d93.webp 1280w",
+    avifSrcSet:
+      "/images/generated/rental-snowboards-480-7d92f835ac5e.avif 480w, /images/generated/rental-snowboards-960-a70970f75625.avif 960w, /images/generated/rental-snowboards-1280-5202bd637f4e.avif 1280w",
+  },
   "skim-laczy.jpg": {
     src: "/images/generated/skim-laczy-888-3f14063ceff1.webp",
     width: 888,

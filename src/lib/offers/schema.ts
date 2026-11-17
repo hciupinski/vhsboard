@@ -87,6 +87,7 @@ const offerBaseRowSchema = z.object({
   start_date: dateSchema.nullable(),
   end_date: dateSchema.nullable(),
   duration_days: z.number().int().min(1).max(60),
+  audience: z.string().max(240).nullable().optional(),
   group_size_min: optionalGroupSizeSchema,
   group_size_max: optionalGroupSizeSchema,
   price_from: z.number().int().nonnegative(),

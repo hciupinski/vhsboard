@@ -85,7 +85,7 @@ function HomePage() {
           <HeroCarousel images={heroImages} />
           <div aria-hidden="true" className="absolute inset-0 hidden bg-foreground/20 lg:block" />
           <div className="relative bg-linear-to-t from-foreground via-foreground/85 via-65% to-transparent px-5 pt-16 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:mx-auto lg:max-w-6xl lg:bg-none lg:pt-36 lg:pb-28">
-            <p className="mb-4 inline-block rounded-full border border-background/40 bg-foreground/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background lg:bg-transparent">
+            <p className="mb-4 inline-block rounded-full border border-background/40 bg-transparent px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background text-shadow-md text-shadow-foreground/50">
               Wyjazdy · Eventy · Obozy
             </p>
             <h1 className="max-w-3xl text-5xl leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">

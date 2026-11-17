@@ -265,10 +265,7 @@ describe("static public pages", () => {
       "lg:min-h-0",
     );
     expect(hero.querySelector('[aria-hidden="true"].lg\\:block')).toHaveClass("bg-foreground/20");
-    expect(within(hero).getByText("Wyjazdy · Eventy · Obozy")).toHaveClass(
-      "bg-foreground/80",
-      "lg:bg-transparent",
-    );
+    expect(within(hero).getByText("Wyjazdy · Eventy · Obozy")).toHaveClass("bg-transparent");
     const subtitle = within(hero).getByText(/^Żyjemy deską przez cały rok/);
     expect(subtitle.parentElement).toHaveClass("bg-linear-to-t", "lg:bg-none");
     expect(subtitle).toHaveClass("text-background");
@@ -360,8 +357,8 @@ describe("static public pages", () => {
     expect(
       screen.getByRole("heading", { name: "NIEWAŻNE GDZIE. WAŻNE, ŻE NA DESCE" }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/VHSBOARD działa od 2017 roku\./i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Poznaj VHSBOARD" })).toHaveAttribute("href", "/o-nas");
+    expect(screen.getByText(/VHS działa od 2017 roku\./i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Poznaj VHS" })).toHaveAttribute("href", "/o-nas");
     const contactHeading = screen.getByRole("heading", { name: "MASZ PYTANIA? POGADAJMY!" });
     expect(contactHeading).toBeInTheDocument();
     const contactSection = contactHeading.closest("section");

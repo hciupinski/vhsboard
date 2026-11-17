@@ -19,21 +19,21 @@ export function HomeBrandStory() {
         />
       </figure>
       <div className="max-w-xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">O VHSBOARD</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">O VHS</p>
         <h2 className="mt-3 text-4xl leading-[0.92] sm:text-6xl">
           NIEWAŻNE GDZIE. WAŻNE, ŻE NA DESCE
         </h2>
         <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-          VHSBOARD działa od 2017 roku. Organizujemy wyjazdy surfingowe i snowboardowe, obozy
-          sportowe dla dzieci i młodzieży oraz eventy z torem skimboardowym. Zawsze wokół tej samej
-          zajawki: ruchu, ludzi i czasu spędzonego razem.
+          VHS działa od 2017 roku. Organizujemy wyjazdy surfingowe i snowboardowe, obozy sportowe
+          dla dzieci i młodzieży oraz eventy z torem skimboardowym. Zawsze wokół tej samej zajawki:
+          ruchu, ludzi i czasu spędzonego razem.
         </p>
         <p className="mt-4 leading-relaxed text-muted-foreground">
           Jesteśmy lokalnym biurem podróży. Nie interesuje nas masówka — wolimy kameralne wyjazdy,
           na których każdy jest częścią ekipy.
         </p>
         <Button asChild size="lg" className="mt-8 rounded-full">
-          <Link to="/o-nas">Poznaj VHSBOARD</Link>
+          <Link to="/o-nas">Poznaj VHS</Link>
         </Button>
       </div>
     </section>

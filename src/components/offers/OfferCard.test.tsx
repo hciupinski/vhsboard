@@ -180,6 +180,17 @@ describe("public offer components", () => {
     expect(screen.queryByText("<strong>Tekst administratora</strong>")).not.toBeInTheDocument();
   });
 
+  it("shows an optional audience in place of the old group size", () => {
+    const { rerender } = render(
+      <OfferFacts offer={{ ...offer, audience: "Dla początkujących" }} />,
+    );
+    expect(screen.getByText("Dla kogo")).toBeInTheDocument();
+    expect(screen.getByText("Dla początkujących")).toBeInTheDocument();
+    expect(screen.queryByText("Grupa")).not.toBeInTheDocument();
+    rerender(<OfferFacts offer={{ ...offer, audience: "  " }} />);
+    expect(screen.queryByText("Dla kogo")).not.toBeInTheDocument();
+  });
+
   it("uses the required external-link protection for the booking CTA", () => {
     render(<OfferFacts offer={offer} />);
 
