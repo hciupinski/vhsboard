@@ -1,4 +1,4 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -22,6 +22,113 @@ const images: [OfferImage, OfferImage, OfferImage] = [
 afterEach(cleanup);
 
 describe("OfferGallery", () => {
+  it("navigates and loops with horizontal swipes on the enlarged photo", async () => {
+    const user = userEvent.setup();
+    render(<OfferGallery images={images} />);
+    await user.click(screen.getByRole("button", { name: "Powiększ zdjęcie: Plaża" }));
+    const photo = within(screen.getByRole("dialog")).getByRole("img", { name: "Plaża" });
+    fireEvent.touchStart(photo, {
+      touches: [{ identifier: 1, clientX: 200, clientY: 100 }],
+      changedTouches: [{ identifier: 1, clientX: 200, clientY: 100 }],
+    });
+    fireEvent.touchEnd(photo, {
+      touches: [],
+      changedTouches: [{ identifier: 1, clientX: 100, clientY: 100 }],
+    });
+    expect(within(screen.getByRole("dialog")).getByRole("img", { name: "Dom" })).toBeVisible();
+    const nextPhoto = within(screen.getByRole("dialog")).getByRole("img", { name: "Dom" });
+    fireEvent.touchStart(nextPhoto, {
+      touches: [{ identifier: 2, clientX: 100, clientY: 100 }],
+      changedTouches: [{ identifier: 2, clientX: 100, clientY: 100 }],
+    });
+    fireEvent.touchEnd(nextPhoto, {
+      touches: [],
+      changedTouches: [{ identifier: 2, clientX: 200, clientY: 100 }],
+    });
+    expect(within(screen.getByRole("dialog")).getByRole("img", { name: "Plaża" })).toBeVisible();
+    fireEvent.touchStart(photo, {
+      touches: [{ identifier: 3, clientX: 100, clientY: 100 }],
+      changedTouches: [{ identifier: 3, clientX: 100, clientY: 100 }],
+    });
+    fireEvent.touchEnd(photo, {
+      touches: [],
+      changedTouches: [{ identifier: 3, clientX: 200, clientY: 100 }],
+    });
+    expect(within(screen.getByRole("dialog")).getByRole("img", { name: "Góry" })).toBeVisible();
+  });
+
+  it("ignores taps, short movements and predominantly vertical gestures", async () => {
+    const user = userEvent.setup();
+    render(<OfferGallery images={images} />);
+    await user.click(screen.getByRole("button", { name: "Powiększ zdjęcie: Plaża" }));
+    const photo = within(screen.getByRole("dialog")).getByRole("img", { name: "Plaża" });
+    const start = { identifier: 1, clientX: 100, clientY: 100 };
+    for (const end of [
+      start,
+      { ...start, clientX: 130 },
+      { ...start, clientX: 160, clientY: 190 },
+    ]) {
+      fireEvent.touchStart(photo, { touches: [start], changedTouches: [start] });
+      fireEvent.touchEnd(photo, { touches: [], changedTouches: [end] });
+      expect(within(screen.getByRole("dialog")).getByRole("img", { name: "Plaża" })).toBeVisible();
+    }
+  });
+
+  it("cancels a gesture when another finger touches or the browser cancels it", async () => {
+    const user = userEvent.setup();
+    render(<OfferGallery images={images} />);
+    await user.click(screen.getByRole("button", { name: "Powiększ zdjęcie: Plaża" }));
+    const dialog = screen.getByRole("dialog");
+    const photo = within(dialog).getByRole("img", { name: "Plaża" });
+    const first = { identifier: 1, clientX: 200, clientY: 100 };
+    const second = { identifier: 2, clientX: 220, clientY: 100 };
+    const end = { ...first, clientX: 100 };
+    fireEvent.touchStart(photo, { touches: [first], changedTouches: [first] });
+    fireEvent.touchStart(within(dialog).getByRole("button", { name: "Następne zdjęcie" }), {
+      touches: [first, second],
+      changedTouches: [second],
+    });
+    fireEvent.touchEnd(photo, { touches: [], changedTouches: [end] });
+    expect(within(dialog).getByRole("img", { name: "Plaża" })).toBeVisible();
+    fireEvent.touchStart(photo, { touches: [first], changedTouches: [first] });
+    fireEvent.touchCancel(photo, { touches: [], changedTouches: [first] });
+    fireEvent.touchEnd(photo, { touches: [], changedTouches: [end] });
+    expect(within(dialog).getByRole("img", { name: "Plaża" })).toBeVisible();
+  });
+
+  it("forgets an unfinished gesture when the dialog closes", async () => {
+    const user = userEvent.setup();
+    render(<OfferGallery images={images} />);
+    await user.click(screen.getByRole("button", { name: "Powiększ zdjęcie: Plaża" }));
+    const first = { identifier: 1, clientX: 200, clientY: 100 };
+    fireEvent.touchStart(within(screen.getByRole("dialog")).getByRole("img", { name: "Plaża" }), {
+      touches: [first],
+      changedTouches: [first],
+    });
+    await user.keyboard("{Escape}");
+    await user.click(screen.getByRole("button", { name: "Powiększ zdjęcie: Plaża" }));
+    const dialog = screen.getByRole("dialog");
+    fireEvent.touchEnd(within(dialog).getByRole("img", { name: "Plaża" }), {
+      touches: [],
+      changedTouches: [{ ...first, clientX: 100 }],
+    });
+    expect(within(dialog).getByRole("img", { name: "Plaża" })).toBeVisible();
+  });
+
+  it("cancels a swipe when a second finger touches outside the dialog", async () => {
+    const user = userEvent.setup();
+    render(<OfferGallery images={images} />);
+    await user.click(screen.getByRole("button", { name: "Powiększ zdjęcie: Plaża" }));
+    const dialog = screen.getByRole("dialog");
+    const photo = within(dialog).getByRole("img", { name: "Plaża" });
+    const first = { identifier: 1, clientX: 200, clientY: 100 };
+    const second = { identifier: 2, clientX: 2, clientY: 2 };
+    fireEvent.touchStart(photo, { touches: [first], changedTouches: [first] });
+    fireEvent.touchStart(document.body, { touches: [first, second], changedTouches: [second] });
+    fireEvent.touchEnd(document.body, { touches: [first], changedTouches: [second] });
+    fireEvent.touchEnd(photo, { touches: [], changedTouches: [{ ...first, clientX: 100 }] });
+    expect(within(dialog).getByRole("img", { name: "Plaża" })).toBeVisible();
+  });
   it("opens the clicked photo and loops in both directions with buttons and keys", async () => {
     const user = userEvent.setup();
     render(<OfferGallery images={images} title="Galeria" />);

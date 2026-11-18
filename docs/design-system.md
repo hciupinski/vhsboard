@@ -138,7 +138,8 @@ their semantic colors. Hover never becomes a requirement for touch use.
   20/18 px from the 1024 px breakpoint. Keep its existing accordion behavior.
 - Use `OfferGallery` for offer and accommodation photos. Its Radix lightbox
   contains the full image without cropping, supports looping previous/next
-  controls and arrow keys, announces the current photo, and returns focus to
+  controls, arrow keys and horizontal touch swipes on the enlarged photo,
+  announces the current photo, and returns focus to
   the opening thumbnail on close. Controls have at least 44 × 44 px targets;
   missing signed URLs do not produce empty thumbnails.
 
