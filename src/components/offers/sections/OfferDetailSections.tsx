@@ -439,7 +439,6 @@ export function OfferDetailSections({
         cardRef={bookingCardRef}
         href={camp?.terms.length ? "#turnusy" : offer.bookingUrl}
         label="Przejdź do zapisów"
-        showOnMobile={!!camp}
         disabled={!hasFutureBooking(offer, getTodayInWarsaw())}
       />
     </>

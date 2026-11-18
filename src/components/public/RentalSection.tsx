@@ -16,21 +16,24 @@ export function RentalSection({ standalone = false }: { standalone?: boolean }) 
     refetchInterval: 30 * 60 * 1000,
     refetchOnWindowFocus: true,
   });
+  const rentalFigure = (
+    <figure className={standalone ? undefined : "lg:order-first"}>
+      <ResponsiveImage
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        image={rentalImage}
+        alt="Snowboardzista w śniegu i modele desek snowboardowych Salomon"
+        loading="lazy"
+        className="h-auto w-full rounded-3xl shadow-warm"
+      />
+    </figure>
+  );
   return (
     <section
       className="border-t border-border bg-background py-12 sm:py-14"
       aria-labelledby="rental-heading"
     >
       <div className="mx-auto grid max-w-6xl gap-10 px-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
-        <figure>
-          <ResponsiveImage
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            image={rentalImage}
-            alt="Snowboardzista w śniegu i modele desek snowboardowych Salomon"
-            loading="lazy"
-            className="h-auto w-full rounded-3xl shadow-warm"
-          />
-        </figure>
+        {standalone ? rentalFigure : null}
         <div className="max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
             DOBRA DESKA, DOBRA JAZDA
@@ -53,15 +56,19 @@ export function RentalSection({ standalone = false }: { standalone?: boolean }) 
             </strong>{" "}
             – damskie, męskie i juniorskie.
           </p>
-          <p className="mt-4 leading-relaxed text-muted-foreground">
+          <p
+            className={`mt-4 leading-relaxed text-muted-foreground ${standalone ? "" : "text-lg"}`}
+          >
             Każdy snowboard jest systematycznie serwisowany - ostrzony oraz smarowany!
           </p>
-          <p className="mt-4 leading-relaxed text-muted-foreground">
+          <p
+            className={`mt-4 leading-relaxed text-muted-foreground ${standalone ? "" : "text-lg"}`}
+          >
             Oferujemy sprzęt na różne poziomy zaawansowania i style jazdy – od pierwszych skrętów po
             freestyle i freeride. Sprawdź dostępne modele, długości desek i ceny wynajmu. Pomożemy
             wybrać deskę dopasowaną do Ciebie.
           </p>
-          <p className="mt-6">
+          <p className={`mt-6 ${standalone ? "" : "text-lg"}`}>
             <a
               className="font-semibold text-primary underline underline-offset-4 hover:text-interaction"
               href="/kontakt"
@@ -78,6 +85,7 @@ export function RentalSection({ standalone = false }: { standalone?: boolean }) 
             </Button>
           ) : null}
         </div>
+        {!standalone ? rentalFigure : null}
       </div>
     </section>
   );

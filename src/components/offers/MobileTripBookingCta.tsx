@@ -4,11 +4,13 @@ import { isValidBookingUrl } from "@/lib/offers/booking-url";
 export function MobileTripBookingCta({
   bookingUrl,
   disabled = false,
+  ariaLabel = "Zapisy na wyjazd",
 }: {
   bookingUrl: string;
   disabled?: boolean;
+  ariaLabel?: string;
 }) {
-  if (!isValidBookingUrl(bookingUrl)) return null;
+  if (bookingUrl !== "#turnusy" && !isValidBookingUrl(bookingUrl)) return null;
 
   return (
     <>
@@ -17,7 +19,7 @@ export function MobileTripBookingCta({
         className="h-[calc(5rem+env(safe-area-inset-bottom))] shrink-0 lg:hidden"
       />
       <aside
-        aria-label="Zapisy na wyjazd"
+        aria-label={ariaLabel}
         className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-3 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur lg:hidden"
       >
         <BookingButton href={bookingUrl} disabled={disabled} className="h-12 w-full rounded-full">
