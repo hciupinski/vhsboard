@@ -133,13 +133,13 @@ function AboutPage() {
             </p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:grid-rows-2 md:gap-6">
-            <figure className="order-first overflow-hidden rounded-3xl shadow-warm md:row-span-2">
+            <figure className="relative order-first aspect-[3/4] overflow-hidden rounded-3xl shadow-warm md:row-span-2 md:aspect-auto">
               <ResponsiveImage
                 loading="lazy"
                 sizes="(min-width: 768px) 1250px, calc(237vw - 95px)"
                 image={cityAndMoreSurf}
                 alt="Uczestnicy wyjazdu surfingowego z deskami na plaży"
-                className="aspect-[3/4] w-full object-cover md:h-full md:aspect-auto"
+                className="absolute left-1/2 top-0 h-full w-auto max-w-none -translate-x-1/2"
               />
             </figure>
             <figure className="overflow-hidden rounded-3xl shadow-warm">

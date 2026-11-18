@@ -218,56 +218,56 @@
       ]
     },
     "about-us/city-and-more-4.jpg": {
-      "sourceHash": "fbeb938e3d5d5da3ee62094cdb023ab59e952d5d0dae5c268a292928f1ac015d",
+      "sourceHash": "19baa6f07dc24ebe3613cd01e3a85b9b4780431b3d67f82a078cc481320c6c7f",
       "asset": {
-        "src": "/images/generated/about-us-city-and-more-4-1600-bc3cb5c0163d.webp",
+        "src": "/images/generated/about-us-city-and-more-4-1600-484b82b0b47d.webp",
         "width": 1600,
         "height": 901,
-        "webpSrcSet": "/images/generated/about-us-city-and-more-4-480-947163806246.webp 480w, /images/generated/about-us-city-and-more-4-960-9654c60a368f.webp 960w, /images/generated/about-us-city-and-more-4-1600-bc3cb5c0163d.webp 1600w",
-        "avifSrcSet": "/images/generated/about-us-city-and-more-4-480-113178fc9742.avif 480w, /images/generated/about-us-city-and-more-4-960-6157dd4b916c.avif 960w, /images/generated/about-us-city-and-more-4-1600-dd07d764dd0d.avif 1600w"
+        "webpSrcSet": "/images/generated/about-us-city-and-more-4-480-cec7b9391518.webp 480w, /images/generated/about-us-city-and-more-4-960-19d52dfd40a1.webp 960w, /images/generated/about-us-city-and-more-4-1600-484b82b0b47d.webp 1600w",
+        "avifSrcSet": "/images/generated/about-us-city-and-more-4-480-4c98ab891040.avif 480w, /images/generated/about-us-city-and-more-4-960-9be4ce810e56.avif 960w, /images/generated/about-us-city-and-more-4-1600-a53826838083.avif 1600w"
       },
       "variants": [
         {
-          "path": "/images/generated/about-us-city-and-more-4-480-947163806246.webp",
+          "path": "/images/generated/about-us-city-and-more-4-480-cec7b9391518.webp",
           "width": 480,
           "height": 270,
           "format": "webp",
-          "bytes": 35348
+          "bytes": 30342
         },
         {
-          "path": "/images/generated/about-us-city-and-more-4-480-113178fc9742.avif",
+          "path": "/images/generated/about-us-city-and-more-4-480-4c98ab891040.avif",
           "width": 480,
           "height": 270,
           "format": "avif",
-          "bytes": 16701
+          "bytes": 14304
         },
         {
-          "path": "/images/generated/about-us-city-and-more-4-960-9654c60a368f.webp",
+          "path": "/images/generated/about-us-city-and-more-4-960-19d52dfd40a1.webp",
           "width": 960,
-          "height": 540,
+          "height": 541,
           "format": "webp",
-          "bytes": 115508
+          "bytes": 97932
         },
         {
-          "path": "/images/generated/about-us-city-and-more-4-960-6157dd4b916c.avif",
+          "path": "/images/generated/about-us-city-and-more-4-960-9be4ce810e56.avif",
           "width": 960,
-          "height": 540,
+          "height": 541,
           "format": "avif",
-          "bytes": 53466
+          "bytes": 46375
         },
         {
-          "path": "/images/generated/about-us-city-and-more-4-1600-bc3cb5c0163d.webp",
+          "path": "/images/generated/about-us-city-and-more-4-1600-484b82b0b47d.webp",
           "width": 1600,
           "height": 901,
           "format": "webp",
-          "bytes": 286256
+          "bytes": 254474
         },
         {
-          "path": "/images/generated/about-us-city-and-more-4-1600-dd07d764dd0d.avif",
+          "path": "/images/generated/about-us-city-and-more-4-1600-a53826838083.avif",
           "width": 1600,
           "height": 901,
           "format": "avif",
-          "bytes": 130377
+          "bytes": 117688
         }
       ]
     },

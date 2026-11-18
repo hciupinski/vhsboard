@@ -38,13 +38,13 @@ export const LOCAL_IMAGE_ASSETS = {
       "/images/generated/about-us-city-and-more-3-480-af92486569f0.avif 480w, /images/generated/about-us-city-and-more-3-960-af8074360e60.avif 960w, /images/generated/about-us-city-and-more-3-1600-8744ea77b4fa.avif 1600w",
   },
   "about-us/city-and-more-4.jpg": {
-    src: "/images/generated/about-us-city-and-more-4-1600-bc3cb5c0163d.webp",
+    src: "/images/generated/about-us-city-and-more-4-1600-484b82b0b47d.webp",
     width: 1600,
     height: 901,
     webpSrcSet:
-      "/images/generated/about-us-city-and-more-4-480-947163806246.webp 480w, /images/generated/about-us-city-and-more-4-960-9654c60a368f.webp 960w, /images/generated/about-us-city-and-more-4-1600-bc3cb5c0163d.webp 1600w",
+      "/images/generated/about-us-city-and-more-4-480-cec7b9391518.webp 480w, /images/generated/about-us-city-and-more-4-960-19d52dfd40a1.webp 960w, /images/generated/about-us-city-and-more-4-1600-484b82b0b47d.webp 1600w",
     avifSrcSet:
-      "/images/generated/about-us-city-and-more-4-480-113178fc9742.avif 480w, /images/generated/about-us-city-and-more-4-960-6157dd4b916c.avif 960w, /images/generated/about-us-city-and-more-4-1600-dd07d764dd0d.avif 1600w",
+      "/images/generated/about-us-city-and-more-4-480-4c98ab891040.avif 480w, /images/generated/about-us-city-and-more-4-960-9be4ce810e56.avif 960w, /images/generated/about-us-city-and-more-4-1600-a53826838083.avif 1600w",
   },
   "about-us/mario-skate.jpg": {
     src: "/images/generated/about-us-mario-skate-1280-5ee2a661ca57.webp",
