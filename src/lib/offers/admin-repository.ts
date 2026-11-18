@@ -4,6 +4,7 @@ import { z } from "zod";
 import { mapAdminPreviewOfferDetailRow } from "./mapper";
 import {
   editorOfferInputSchema,
+  editorInputSchemaForExisting,
   storedEditorOfferInputSchema,
   validateOfferForPublication,
   type EditableOffer,
@@ -279,9 +280,12 @@ export const createOffer = async (input: EditableOfferInput): Promise<EditableOf
 export const updateOffer = async (
   id: string,
   input: EditableOfferInput,
+  previousParagraphs?: readonly string[],
 ): Promise<EditableOffer> => {
   try {
-    const parsedInput = editorOfferInputSchema.parse(input);
+    const parsedInput = previousParagraphs
+      ? editorInputSchemaForExisting(previousParagraphs).parse(input)
+      : editorOfferInputSchema.parse(input);
     const { data, error } = await supabase
       .from("offers")
       .update(toOfferRow(parsedInput))
@@ -313,7 +317,7 @@ const hasReadyHero = async (id: string, heroImagePath: string | null): Promise<b
 
   if (error) return throwRepositoryError(error, readinessError);
   const altLength = getStringField(data, "alt_text")?.trim().length ?? 0;
-  return altLength >= 5 && altLength <= 180;
+  return altLength >= 1 && altLength <= 180;
 };
 
 const hasAccommodationPhoto = async (id: string): Promise<boolean> => {
@@ -351,7 +355,8 @@ const getPublicationIssue = async (id: string): Promise<string | null> => {
     if (!isRecord(data)) return "Nie znaleziono oferty. Odśwież listę ofert.";
 
     const editable = toEditableOfferInput(data);
-    if (!validateOfferForPublication(editable).success) return publicationContentRequired;
+    if (!validateOfferForPublication(editable, editable.content.paragraphs).success)
+      return publicationContentRequired;
     if (!(await hasReadyHero(id, editable.heroImagePath))) return heroRequired;
     if (sectionIsEnabled(editable.content.accommodation) && !(await hasAccommodationPhoto(id))) {
       return accommodationPhotoRequired;

@@ -328,7 +328,11 @@ describe("admin offer editor route", () => {
     await waitFor(() =>
       expect(mockedSetOfferStatus).toHaveBeenCalledWith(draftOffer.id, "published"),
     );
-    expect(mockedUpdateOffer).toHaveBeenCalledWith(draftOffer.id, selectedHeroInput);
+    expect(mockedUpdateOffer).toHaveBeenCalledWith(
+      draftOffer.id,
+      selectedHeroInput,
+      draftOffer.content.paragraphs,
+    );
   });
 
   it("preserves unsaved form fields when an image change refetches the offer", async () => {
@@ -361,7 +365,7 @@ describe("admin offer editor route", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
     await user.clear(titleInput);
 
-    expect(await screen.findByText("Tytuł musi mieć od 3 do 120 znaków.")).toBeInTheDocument();
+    expect(await screen.findByText("Tytuł musi mieć od 1 do 120 znaków.")).toBeInTheDocument();
     const publishButton = screen.getByRole("button", { name: "Opublikuj" });
     expect(publishButton).toBeDisabled();
     await user.click(publishButton);
@@ -430,16 +434,16 @@ describe("admin offer editor route", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
     expect(warn).not.toHaveBeenCalled();
 
-    setValue("Krótki opis", "x");
+    setValue("Krótki opis", " ");
 
     await waitFor(() =>
       expect(warn).toHaveBeenCalledWith("[VHSBOARD CMS] Publikacja zablokowana.", {
-        fieldErrors: { shortDescription: "Krótki opis musi mieć od 20 do 500 znaków." },
+        fieldErrors: { shortDescription: "Krótki opis musi mieć od 1 do 500 znaków." },
         readiness: null,
       }),
     );
     expect(screen.getByRole("button", { name: "Opublikuj" })).toBeDisabled();
-    setValue("Krótki opis", "xx");
+    setValue("Krótki opis", "  ");
     setValue("Miejsce", "Prywatna lokalizacja testowa");
     expect(warn).toHaveBeenCalledTimes(1);
     expect(JSON.stringify(warn.mock.calls)).not.toContain("Prywatna lokalizacja testowa");
@@ -449,7 +453,7 @@ describe("admin offer editor route", () => {
 
     setValue("Krótki opis", readyDraftOffer.shortDescription);
     await waitFor(() => expect(screen.getByRole("button", { name: "Opublikuj" })).toBeEnabled());
-    setValue("Krótki opis", "x");
+    setValue("Krótki opis", " ");
     expect(warn).toHaveBeenCalledTimes(2);
   });
 
@@ -660,7 +664,11 @@ describe("admin offer editor route", () => {
     await waitFor(() =>
       expect(mockedSetOfferStatus).toHaveBeenCalledWith(readyDraftOffer.id, "published"),
     );
-    expect(mockedUpdateOffer).toHaveBeenCalledWith(readyDraftOffer.id, readyInput);
+    expect(mockedUpdateOffer).toHaveBeenCalledWith(
+      readyDraftOffer.id,
+      readyInput,
+      readyDraftOffer.content.paragraphs,
+    );
     expect(mockedCreateOffer).not.toHaveBeenCalled();
     expect(mockedUpdateOffer.mock.invocationCallOrder[0]).toBeLessThan(
       required(mockedSetOfferStatus.mock.invocationCallOrder[0]),
@@ -751,7 +759,11 @@ describe("admin offer editor route", () => {
 
     await waitFor(() => expect(router.state.location.pathname).toBe(`/admin/${renamedOffer.slug}`));
     await waitFor(() => expect(mockedGetAdminOffer).toHaveBeenCalledWith(renamedOffer.slug));
-    expect(mockedUpdateOffer).toHaveBeenCalledWith(draftOffer.id, renamedInput);
+    expect(mockedUpdateOffer).toHaveBeenCalledWith(
+      draftOffer.id,
+      renamedInput,
+      draftOffer.content.paragraphs,
+    );
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ["admin-offer", draftOffer.slug],
     });

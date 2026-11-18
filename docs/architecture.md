@@ -84,7 +84,9 @@ Only the seven marketing pages enter the sitemap. See the [SEO runbook](seo-runb
 - `profiles.role = 'admin'` is manually granted to approved Auth users. Login alone
   does not authorize editing. Route checks improve UX; database and Storage RLS
   protect every mutation. Public and administrator repositories and query keys
-  remain separate, including authenticated preview queries.
+  remain separate, including authenticated preview queries. The admin guard uses
+  its matched route as the login return path and ignores checks after navigation
+  away from that route.
 
 Implementation modules live under `src/lib/offers`, `src/lib/images`,
 `src/lib/documents`, `src/lib/portal-carousel`, and `src/lib/auth`. Schema changes

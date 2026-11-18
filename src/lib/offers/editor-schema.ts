@@ -1,3 +1,4 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "./text-limits";
 import { isValidIsoDate } from "./date-input";
 import { contentSectionsShape, getSectionIssues, getContentIdentityIssues } from "./content-v2";
 import { z } from "zod";
@@ -198,9 +199,9 @@ const tripEditorOfferInputSchema = z
       activity: z.enum(["surf", "snow", ""], {
         errorMap: () => ({ message: "Wybierz rodzaj wyjazdu." }),
       }),
-      title: trimmedText("Tytuł", 3, 120),
-      subtitle: trimmedText("Podtytuł", 3, 280),
-      shortDescription: trimmedText("Krótki opis", 20, 500),
+      title: trimmedText("Tytuł", 1, 120),
+      subtitle: trimmedText("Podtytuł", 1, 280),
+      shortDescription: trimmedText("Krótki opis", 1, 500),
       content: z.object(
         {
           paragraphs: nonEmptyList,
@@ -216,7 +217,7 @@ const tripEditorOfferInputSchema = z
           invalid_type_error: "Uzupełnij opis oferty.",
         },
       ),
-      location: trimmedText("Lokalizacja", 2, 120),
+      location: trimmedText("Lokalizacja", 1, 120),
       startDate: dateSchema,
       endDate: dateSchema,
       durationDays: z
@@ -332,15 +333,20 @@ const dayCampContentSchema = z.object({
   included: nonEmptyList,
   excluded: nonEmptyList,
   dayProgram: z
-    .array(z.object({ time: timeSchema, text: trimmedText("Opis programu dnia", 1, 500) }))
+    .array(
+      z.object({
+        time: timeSchema,
+        text: trimmedText("Opis programu dnia", 1, OFFER_LONG_TEXT_MAX_LENGTH),
+      }),
+    )
     .min(1, "Dodaj co najmniej jedną pozycję programu dnia."),
-  venueDescription: trimmedText("Opis miejsca", 3, 500),
+  venueDescription: trimmedText("Opis miejsca", 1, OFFER_LONG_TEXT_MAX_LENGTH),
   parentInfo: z.object({
-    ageRange: trimmedText("Wiek uczestników", 2, 120),
-    supervision: trimmedText("Informacja o opiece", 3, 500),
-    safety: trimmedText("Informacja o bezpieczeństwie", 3, 500),
-    transport: optionalText(500),
-    meals: optionalText(500),
+    ageRange: trimmedText("Wiek uczestników", 1, 120),
+    supervision: trimmedText("Informacja o opiece", 1, OFFER_LONG_TEXT_MAX_LENGTH),
+    safety: trimmedText("Informacja o bezpieczeństwie", 1, OFFER_LONG_TEXT_MAX_LENGTH),
+    transport: optionalText(OFFER_LONG_TEXT_MAX_LENGTH),
+    meals: optionalText(OFFER_LONG_TEXT_MAX_LENGTH),
   }),
   terms: z
     .array(dayCampTermSchema)
@@ -361,11 +367,11 @@ const dayCampEditorOfferInputSchema = z
     activity: z.enum(["wake", "snow"], {
       errorMap: () => ({ message: "Wybierz aktywność obozów." }),
     }),
-    title: trimmedText("Tytuł", 3, 120),
-    subtitle: trimmedText("Podtytuł", 3, 280),
-    shortDescription: trimmedText("Krótki opis", 20, 500),
+    title: trimmedText("Tytuł", 1, 120),
+    subtitle: trimmedText("Podtytuł", 1, 280),
+    shortDescription: trimmedText("Krótki opis", 1, 500),
     content: dayCampContentSchema,
-    location: trimmedText("Lokalizacja", 2, 120),
+    location: trimmedText("Lokalizacja", 1, 120),
     startDate: z.unknown(),
     endDate: z.unknown(),
     durationDays: z.unknown(),
@@ -426,10 +432,28 @@ export const storedEditorOfferInputSchema = z.preprocess(
     .transform((value) => schemaForOfferKind(value).parse(value)),
 );
 
-export const editorOfferInputSchema = storedEditorOfferInputSchema.refine(
-  (offer) => offer.activity !== "",
-  { path: ["activity"], message: "Wybierz rodzaj wyjazdu." },
-);
+const createEditorInputSchema = (previousParagraphs?: readonly string[]) =>
+  storedEditorOfferInputSchema.superRefine((offer, ctx) => {
+    if (offer.activity === "")
+      ctx.addIssue({ code: "custom", path: ["activity"], message: "Wybierz rodzaj wyjazdu." });
+    const paragraphs = offer.content.paragraphs;
+    const unchanged =
+      previousParagraphs !== undefined &&
+      paragraphs.length === previousParagraphs.length &&
+      paragraphs.every((value, index) => value === previousParagraphs[index]);
+    if (!unchanged)
+      paragraphs.forEach((value, index) => {
+        if (value.length > OFFER_LONG_TEXT_MAX_LENGTH)
+          ctx.addIssue({
+            code: "custom",
+            path: ["content", "paragraphs", index],
+            message: `Wpisz maksymalnie ${OFFER_LONG_TEXT_MAX_LENGTH} znaków.`,
+          });
+      });
+  });
+export const editorOfferInputSchema = createEditorInputSchema();
+export const editorInputSchemaForExisting = (previousParagraphs: readonly string[]) =>
+  createEditorInputSchema(previousParagraphs);
 
 export function getEditorFieldErrors(
   error: z.ZodError<unknown> | undefined,
@@ -541,8 +565,11 @@ export function changeEditableOfferKind(
   };
 }
 
-export function validateOfferEditor(input: EditableOfferInput) {
-  const draft = editorOfferInputSchema.safeParse(input);
+export function validateOfferEditor(
+  input: EditableOfferInput,
+  previousParagraphs?: readonly string[],
+) {
+  const draft = createEditorInputSchema(previousParagraphs).safeParse(input);
   const content = draft.success ? draft.data.content : input.content;
   const sectionIssues = getSectionIssues(content, input.offerKind ?? "trip").map((issue) => ({
     ...issue,
@@ -564,6 +591,9 @@ export function validateOfferEditor(input: EditableOfferInput) {
   };
 }
 
-export function validateOfferForPublication(input: EditableOfferInput) {
-  return validateOfferEditor(input).publication;
+export function validateOfferForPublication(
+  input: EditableOfferInput,
+  previousParagraphs?: readonly string[],
+) {
+  return validateOfferEditor(input, previousParagraphs).publication;
 }

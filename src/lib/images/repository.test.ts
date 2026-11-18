@@ -290,8 +290,8 @@ describe("offer image repository upload", () => {
     expect(JSON.stringify(consoleError.mock.calls)).not.toContain("private network details");
   });
 
-  it.each([" abcd ", ` ${"a".repeat(181)} `])(
-    "rejects alt text outside the trimmed 5–180 character range before Storage",
+  it.each(["   ", ` ${"a".repeat(181)} `])(
+    "rejects alt text outside the trimmed 1–180 character range before Storage",
     async (altText) => {
       const file = new File(["jpeg-data"], "fala.jpeg", { type: "image/jpeg" });
 

@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/admin/form-controls";
 import { Textarea } from "@/components/admin/form-controls";
 import { Label } from "@/components/ui/label";
+import { CharacterCounter } from "@/components/admin/offer-editor/EditorField";
 
 type ListChange =
   | { type: "edit"; index: number }
@@ -33,6 +34,7 @@ type Props = {
   hint?: string | undefined;
   values: string[];
   multiline?: boolean;
+  maxLength?: number | undefined;
   placeholder?: string;
   error?: string | undefined;
   reorderable?: boolean;
@@ -48,6 +50,7 @@ type RowProps = {
   index: number;
   count: number;
   multiline?: boolean | undefined;
+  maxLength?: number | undefined;
   placeholder?: string | undefined;
   reorderable: boolean;
   disabled: boolean;
@@ -64,6 +67,7 @@ function ListRow({
   index,
   count,
   multiline,
+  maxLength,
   placeholder,
   reorderable,
   disabled,
@@ -101,25 +105,34 @@ function ListRow({
       <Label htmlFor={inputId} className="sr-only">
         {label} {index + 1}
       </Label>
-      {multiline ? (
-        <Textarea
-          id={inputId}
-          disabled={disabled}
-          value={value}
-          placeholder={placeholder}
-          onChange={(e) => onEdit(e.target.value)}
-          className="min-h-24 min-w-0 flex-1"
-        />
-      ) : (
-        <Input
-          id={inputId}
-          disabled={disabled}
-          value={value}
-          placeholder={placeholder}
-          onChange={(e) => onEdit(e.target.value)}
-          className={extra ? "min-w-0 flex-[1_1_calc(100%-3rem)] sm:flex-1" : "min-w-0 flex-1"}
-        />
-      )}
+      <div
+        className={
+          extra && !multiline ? "min-w-0 flex-[1_1_calc(100%-3rem)] sm:flex-1" : "min-w-0 flex-1"
+        }
+      >
+        {multiline ? (
+          <Textarea
+            id={inputId}
+            disabled={disabled}
+            value={value}
+            maxLength={maxLength}
+            placeholder={placeholder}
+            onChange={(e) => onEdit(e.target.value)}
+            className="min-h-24 min-w-0 flex-1"
+          />
+        ) : (
+          <Input
+            id={inputId}
+            disabled={disabled}
+            value={value}
+            maxLength={maxLength}
+            placeholder={placeholder}
+            onChange={(e) => onEdit(e.target.value)}
+            className="min-w-0 w-full"
+          />
+        )}
+        {maxLength !== undefined ? <CharacterCounter value={value} max={maxLength} /> : null}
+      </div>
       {extra}
       <div className="flex shrink-0 items-center">
         {reorderable ? (
@@ -167,6 +180,7 @@ export function ListField({
   hint,
   values,
   multiline,
+  maxLength,
   placeholder,
   error,
   reorderable = false,
@@ -243,6 +257,7 @@ export function ListField({
                 index={index}
                 count={values.length}
                 multiline={multiline}
+                maxLength={maxLength}
                 placeholder={placeholder}
                 reorderable={reorderable}
                 disabled={disabled}

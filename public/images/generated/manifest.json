@@ -1,6 +1,60 @@
 {
   "version": 1,
   "images": {
+    "about-us/about-snowboard-group.jpg": {
+      "sourceHash": "7891e49c9e91ad24ef7f416b4566a77a345be226957d8506565a33fcc44531cc",
+      "asset": {
+        "src": "/images/generated/about-us-about-snowboard-group-1600-1e5c98b83ea2.webp",
+        "width": 1600,
+        "height": 1067,
+        "webpSrcSet": "/images/generated/about-us-about-snowboard-group-480-8cc01854a185.webp 480w, /images/generated/about-us-about-snowboard-group-960-c777ebbd50e4.webp 960w, /images/generated/about-us-about-snowboard-group-1600-1e5c98b83ea2.webp 1600w",
+        "avifSrcSet": "/images/generated/about-us-about-snowboard-group-480-12ba2325a3b3.avif 480w, /images/generated/about-us-about-snowboard-group-960-cce7b539280b.avif 960w, /images/generated/about-us-about-snowboard-group-1600-b54b445eee0c.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-about-snowboard-group-480-8cc01854a185.webp",
+          "width": 480,
+          "height": 320,
+          "format": "webp",
+          "bytes": 28826
+        },
+        {
+          "path": "/images/generated/about-us-about-snowboard-group-480-12ba2325a3b3.avif",
+          "width": 480,
+          "height": 320,
+          "format": "avif",
+          "bytes": 13833
+        },
+        {
+          "path": "/images/generated/about-us-about-snowboard-group-960-c777ebbd50e4.webp",
+          "width": 960,
+          "height": 640,
+          "format": "webp",
+          "bytes": 98280
+        },
+        {
+          "path": "/images/generated/about-us-about-snowboard-group-960-cce7b539280b.avif",
+          "width": 960,
+          "height": 640,
+          "format": "avif",
+          "bytes": 46826
+        },
+        {
+          "path": "/images/generated/about-us-about-snowboard-group-1600-1e5c98b83ea2.webp",
+          "width": 1600,
+          "height": 1067,
+          "format": "webp",
+          "bytes": 219812
+        },
+        {
+          "path": "/images/generated/about-us-about-snowboard-group-1600-b54b445eee0c.avif",
+          "width": 1600,
+          "height": 1067,
+          "format": "avif",
+          "bytes": 104121
+        }
+      ]
+    },
     "about-us/city-and-more-1.jpg": {
       "sourceHash": "9486a4b218e712fc39902d5aba7cb62665ea64418f6fd030af5b799d8c9294d2",
       "asset": {
@@ -160,6 +214,60 @@
           "height": 1067,
           "format": "avif",
           "bytes": 146049
+        }
+      ]
+    },
+    "about-us/city-and-more-4.jpg": {
+      "sourceHash": "fbeb938e3d5d5da3ee62094cdb023ab59e952d5d0dae5c268a292928f1ac015d",
+      "asset": {
+        "src": "/images/generated/about-us-city-and-more-4-1600-bc3cb5c0163d.webp",
+        "width": 1600,
+        "height": 901,
+        "webpSrcSet": "/images/generated/about-us-city-and-more-4-480-947163806246.webp 480w, /images/generated/about-us-city-and-more-4-960-9654c60a368f.webp 960w, /images/generated/about-us-city-and-more-4-1600-bc3cb5c0163d.webp 1600w",
+        "avifSrcSet": "/images/generated/about-us-city-and-more-4-480-113178fc9742.avif 480w, /images/generated/about-us-city-and-more-4-960-6157dd4b916c.avif 960w, /images/generated/about-us-city-and-more-4-1600-dd07d764dd0d.avif 1600w"
+      },
+      "variants": [
+        {
+          "path": "/images/generated/about-us-city-and-more-4-480-947163806246.webp",
+          "width": 480,
+          "height": 270,
+          "format": "webp",
+          "bytes": 35348
+        },
+        {
+          "path": "/images/generated/about-us-city-and-more-4-480-113178fc9742.avif",
+          "width": 480,
+          "height": 270,
+          "format": "avif",
+          "bytes": 16701
+        },
+        {
+          "path": "/images/generated/about-us-city-and-more-4-960-9654c60a368f.webp",
+          "width": 960,
+          "height": 540,
+          "format": "webp",
+          "bytes": 115508
+        },
+        {
+          "path": "/images/generated/about-us-city-and-more-4-960-6157dd4b916c.avif",
+          "width": 960,
+          "height": 540,
+          "format": "avif",
+          "bytes": 53466
+        },
+        {
+          "path": "/images/generated/about-us-city-and-more-4-1600-bc3cb5c0163d.webp",
+          "width": 1600,
+          "height": 901,
+          "format": "webp",
+          "bytes": 286256
+        },
+        {
+          "path": "/images/generated/about-us-city-and-more-4-1600-dd07d764dd0d.avif",
+          "width": 1600,
+          "height": 901,
+          "format": "avif",
+          "bytes": 130377
         }
       ]
     },

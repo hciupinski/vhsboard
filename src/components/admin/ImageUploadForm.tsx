@@ -13,9 +13,9 @@ type ImageUploadFormProps = {
 };
 
 const validateAlt = (value: string) =>
-  value.trim().length >= 5 && value.trim().length <= 180
+  value.trim().length >= 1 && value.trim().length <= 180
     ? null
-    : "Opis alternatywny musi mieć od 5 do 180 znaków.";
+    : "Opis alternatywny musi mieć od 1 do 180 znaków.";
 const validateFile = (file: File | null) => {
   if (!file) return "Wybierz plik obrazu.";
   const result = validateImageFile(file);
@@ -109,7 +109,7 @@ export function ImageUploadForm({ disabled = false, onUpload, onChange }: ImageU
             value={alt}
             className="h-11"
             required
-            minLength={5}
+            minLength={1}
             maxLength={180}
             aria-invalid={!!altError}
             aria-describedby={`${id}-alt-hint${altError ? ` ${id}-alt-error` : ""}`}
@@ -122,7 +122,7 @@ export function ImageUploadForm({ disabled = false, onUpload, onChange }: ImageU
             }}
           />
           <p id={`${id}-alt-hint`} className="text-sm text-muted-foreground">
-            Opisz krótko, co przedstawia zdjęcie; od 5 do 180 znaków.
+            Opisz krótko, co przedstawia zdjęcie; od 1 do 180 znaków.
           </p>
           {altError ? (
             <p id={`${id}-alt-error`} role="alert" className="text-sm text-destructive">
