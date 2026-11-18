@@ -1,3 +1,4 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "@/lib/offers/text-limits";
 import type { ReactNode } from "react";
 import { Textarea } from "@/components/admin/form-controls";
 import { OptionalSectionsEditor } from "../offer-sections/OptionalSectionsEditor";
@@ -38,18 +39,19 @@ export function OfferOptionalSection({
       (!dayCamp.resort ||
         !dayCamp.resort.enabled ||
         (dayCamp.venueDescription &&
+          dayCamp.venueDescription !== dayCamp.resort.description &&
           dayCamp.venueDescription !== dayCamp.resort.description.slice(0, 500))) ? (
         <div className="mb-6 rounded-2xl border border-border bg-background p-6">
           <Field
             id="venue-description"
             label="Resort → Opis miejsca zajęć"
-            characterCount={{ value: dayCamp.venueDescription, max: 500 }}
+            characterCount={{ value: dayCamp.venueDescription, max: OFFER_LONG_TEXT_MAX_LENGTH }}
             error={errorFor(errors, "content.venueDescription")}
           >
             <Textarea
               id="venue-description"
               value={dayCamp.venueDescription}
-              maxLength={500}
+              maxLength={OFFER_LONG_TEXT_MAX_LENGTH}
               disabled={disabled}
               className="min-h-24"
               onChange={(event) => onChange({ ...dayCamp, venueDescription: event.target.value })}
@@ -82,9 +84,10 @@ export function OfferOptionalSection({
               next.resort.description !== dayCamp.resort?.description &&
               (!dayCamp.venueDescription ||
                 !dayCamp.resort ||
+                dayCamp.venueDescription === dayCamp.resort.description ||
                 dayCamp.venueDescription === dayCamp.resort.description.slice(0, 500))
             ) {
-              next.venueDescription = next.resort.description.slice(0, 500);
+              next.venueDescription = next.resort.description;
             }
           }
           onChange(next);

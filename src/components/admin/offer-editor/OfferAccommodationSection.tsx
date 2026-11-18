@@ -1,3 +1,4 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "@/lib/offers/text-limits";
 import type { ReactNode } from "react";
 import type { DayCampContent, TripOfferContent } from "@/lib/offers/types";
 import { sectionIsEnabled } from "@/lib/offers/content-v2";
@@ -96,13 +97,13 @@ function AccommodationEditor({
         <Field
           id="accommodation-description"
           label="Opis zakwaterowania"
-          characterCount={{ value: description, max: 1000 }}
+          characterCount={{ value: description, max: OFFER_LONG_TEXT_MAX_LENGTH }}
           error={error}
         >
           <Textarea
             id="accommodation-description"
             value={description}
-            maxLength={1000}
+            maxLength={OFFER_LONG_TEXT_MAX_LENGTH}
             className="min-h-32"
             {...(error
               ? { "aria-invalid": true, "aria-describedby": "accommodation-description-error" }

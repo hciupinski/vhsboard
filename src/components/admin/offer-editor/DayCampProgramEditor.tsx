@@ -1,6 +1,7 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "@/lib/offers/text-limits";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/admin/form-controls";
+import { Input, Textarea } from "@/components/admin/form-controls";
 import type { DayCampContent } from "@/lib/offers/types";
 import { EditorField as Field } from "./EditorField";
 import { fieldState } from "./editor-fields";
@@ -38,7 +39,7 @@ export function DayCampProgramEditor({
                 const path = `content.dayProgram.${index}.${field}`;
                 const id = `day-program-${index}-${field}`;
                 const isTime = field === "time";
-                const max = isTime ? 120 : 500;
+                const max = isTime ? 120 : OFFER_LONG_TEXT_MAX_LENGTH;
                 const label = isTime ? "Godzina" : "Opis pozycji";
                 return (
                   <Field
@@ -48,15 +49,26 @@ export function DayCampProgramEditor({
                     characterCount={{ value: item[field], max }}
                     error={errors[path]}
                   >
-                    <Input
-                      id={id}
-                      aria-label={`Plan wyjazdu ${index + 1} — ${isTime ? "godzina" : "opis"}`}
-                      {...fieldState(errors, path, id)}
-                      value={item[field]}
-                      placeholder={isTime ? "np. 08:00 lub 09:00–10:00" : undefined}
-                      maxLength={max}
-                      onChange={(event) => update({ [field]: event.target.value })}
-                    />
+                    {isTime ? (
+                      <Input
+                        id={id}
+                        aria-label={`Plan wyjazdu ${index + 1} — ${isTime ? "godzina" : "opis"}`}
+                        {...fieldState(errors, path, id)}
+                        value={item[field]}
+                        placeholder={isTime ? "np. 08:00 lub 09:00–10:00" : undefined}
+                        maxLength={max}
+                        onChange={(event) => update({ [field]: event.target.value })}
+                      />
+                    ) : (
+                      <Textarea
+                        id={id}
+                        aria-label={`Plan wyjazdu ${index + 1} — opis`}
+                        {...fieldState(errors, path, id)}
+                        value={item[field]}
+                        maxLength={max}
+                        onChange={(event) => update({ [field]: event.target.value })}
+                      />
+                    )}
                   </Field>
                 );
               })}

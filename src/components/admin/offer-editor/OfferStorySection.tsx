@@ -1,3 +1,4 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "@/lib/offers/text-limits";
 import { ListField } from "@/components/admin/ListField";
 import { errorFor } from "./editor-fields";
 export function OfferStorySection({
@@ -20,6 +21,7 @@ export function OfferStorySection({
         label="Akapity opisu"
         hint="Jedno pole na akapit"
         multiline
+        maxLength={OFFER_LONG_TEXT_MAX_LENGTH}
         values={paragraphs}
         placeholder="Opowiedz o tej ofercie…"
         error={errorFor(errors, "content.paragraphs")}

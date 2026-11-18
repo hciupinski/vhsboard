@@ -246,6 +246,27 @@ describe("OfferEditorForm", () => {
     expect(screen.getByLabelText("Adres URL oferty")).toHaveValue("wlasny-adres");
   });
 
+  it("shows 5000-character limits and counters for long camp text", async () => {
+    const user = userEvent.setup();
+    render(
+      <OfferEditorForm value={dayCampInput} errors={{}} disabled={false} onChange={vi.fn()} />,
+    );
+    await user.click(screen.getByRole("tab", { name: "O obozie" }));
+    expect(screen.getByLabelText("Akapity opisu 1")).toHaveAttribute("maxlength", "5000");
+    expect(
+      screen.getByText(`${dayCampInput.content.paragraphs[0]!.length}/5000 znaków`),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "W programie" }));
+    expect(screen.getByLabelText("Plan wyjazdu 1 — opis").tagName).toBe("TEXTAREA");
+    expect(screen.getByLabelText("Plan wyjazdu 1 — opis")).toHaveAttribute("maxlength", "5000");
+    await user.click(screen.getByRole("tab", { name: "Dla rodzica" }));
+    expect(screen.getByLabelText("Transport — wcześniejszy opis dla rodzica")).toHaveAttribute(
+      "maxlength",
+      "5000",
+    );
+    expect(screen.getAllByText(/\/5000 znaków/).length).toBeGreaterThanOrEqual(3);
+  });
+
   it("retains camp changes across the story, programme, price and parent tabs", async () => {
     const user = userEvent.setup();
     function Editor() {

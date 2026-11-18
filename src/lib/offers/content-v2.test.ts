@@ -82,11 +82,87 @@ describe("v2 identity and publication validation", () => {
     ]);
   });
 
+  it.each([5000, 5001])("validates all optional long prose at %i characters", (length) => {
+    const text = "x".repeat(length);
+    const card = {
+      id: "10000000-0000-4000-8000-000000000001",
+      title: "x",
+      description: text,
+      price: emptyPrice(),
+    };
+    const contents = [
+      { priceNote: text },
+      { accommodation: { description: text } },
+      { resort: { enabled: false, name: "", description: text, mapUrl: "" } },
+      { training: { enabled: false, description: text, items: [] } },
+      {
+        training: { enabled: false, description: "", items: [{ ...card, level: "", scope: text }] },
+      },
+      { transport: { enabled: false, type: "own", description: text, journeys: [] } },
+      {
+        transport: {
+          enabled: false,
+          type: "own",
+          description: "",
+          journeys: [
+            {
+              departureDate: "",
+              departureTime: "",
+              departurePlace: "",
+              returnDate: "",
+              returnTime: "",
+              returnPlace: "",
+              note: text,
+            },
+          ],
+        },
+      },
+      {
+        insurance: {
+          enabled: false,
+          description: text,
+          provider: "",
+          informationUrl: "",
+          packages: [],
+          extensions: [],
+        },
+      },
+      {
+        insurance: {
+          enabled: false,
+          description: "",
+          provider: "",
+          informationUrl: "",
+          packages: [{ ...card, risks: [] }],
+          extensions: [card],
+        },
+      },
+    ];
+    for (const content of contents)
+      expect(contentSectionsSchema.safeParse(content).success).toBe(length === 5000);
+  });
+  it("accepts one-character required section text and rejects whitespace", () => {
+    expect(
+      getSectionIssues({ resort: { enabled: true, name: "x", description: "x", mapUrl: "" } }),
+    ).toEqual([]);
+    expect(
+      getSectionIssues({ resort: { enabled: true, name: " ", description: "x", mapUrl: "" } }),
+    ).not.toEqual([]);
+  });
+  it("accepts long section descriptions up to 5000", () => {
+    expect(
+      contentSectionsSchema.safeParse({
+        priceNote: "a".repeat(5000),
+        accommodation: { description: "b".repeat(5000) },
+      }).success,
+    ).toBe(true);
+  });
+
   it("preserves a multiline price note and rejects oversized notes", () => {
     expect(contentSectionsSchema.parse({ priceNote: " Pierwsza linia.\nDruga linia. " })).toEqual({
       priceNote: "Pierwsza linia.\nDruga linia.",
     });
-    expect(contentSectionsSchema.safeParse({ priceNote: "a".repeat(1001) }).success).toBe(false);
+    expect(contentSectionsSchema.safeParse({ priceNote: "a".repeat(5001) }).success).toBe(false);
   });
 
   it("requires a journey for Bus VHS even when own transport is selected", () => {
@@ -124,7 +200,7 @@ describe("v2 identity and publication validation", () => {
 
   it("keeps reporting other sections when a section fails structural validation", () => {
     const issues = getSectionIssues({
-      priceNote: "a".repeat(1001),
+      priceNote: "a".repeat(5001),
       training: { enabled: true, description: "", items: [] },
     });
     expect(issues.map((issue) => issue.path.join("."))).toEqual([

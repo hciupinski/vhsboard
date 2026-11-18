@@ -1,3 +1,5 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "@/lib/offers/text-limits";
+import { CharacterCounter } from "@/components/admin/offer-editor/EditorField";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/admin/form-controls";
@@ -40,9 +42,7 @@ export function createSectionFields(errors: Record<string, string>, disabled: bo
             {error}
           </p>
         ) : null}
-        <p className="text-xs text-muted-foreground">
-          {value.length} / {max}
-        </p>
+        <CharacterCounter value={value} max={max} />
       </div>
     );
   };
@@ -121,7 +121,7 @@ export function createSectionFields(errors: Record<string, string>, disabled: bo
               "Opis karty w ofercie",
               item.description,
               (description) => update({ ...item, description }),
-              1500,
+              OFFER_LONG_TEXT_MAX_LENGTH,
             )}
             {price(item.price, (price) => update({ ...item, price }), `${path}.${index}.price`)}
             {extras?.(item, update, index)}

@@ -9,7 +9,7 @@ import { validateImageFile } from "./validation";
 import { isMissingStoryImageColumn, readOfferImageRows } from "../offers/image-rows";
 
 const OFFER_IMAGES_BUCKET = "offer-images";
-const MIN_ALT_TEXT_LENGTH = 5;
+const MIN_ALT_TEXT_LENGTH = 1;
 const MAX_ALT_TEXT_LENGTH = 180;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const STORAGE_PATH_PATTERN = new RegExp(
@@ -98,7 +98,7 @@ const validateUploadInput = (offerId: string, file: File, altText: string, posit
     normalizedAltText.length < MIN_ALT_TEXT_LENGTH ||
     normalizedAltText.length > MAX_ALT_TEXT_LENGTH
   ) {
-    throw new ImageRepositoryError("Opis alternatywny musi mieć od 5 do 180 znaków.");
+    throw new ImageRepositoryError("Opis alternatywny musi mieć od 1 do 180 znaków.");
   }
 
   if (!Number.isInteger(position) || position < 0) {
@@ -264,7 +264,7 @@ export const updateOfferImageAlt = async (
   ensureUuid(imageId, "Nieprawidłowy identyfikator obrazu.");
   const alt = altText.trim();
   if (alt.length < MIN_ALT_TEXT_LENGTH || alt.length > MAX_ALT_TEXT_LENGTH) {
-    throw new ImageRepositoryError("Opis alternatywny musi mieć od 5 do 180 znaków.");
+    throw new ImageRepositoryError("Opis alternatywny musi mieć od 1 do 180 znaków.");
   }
   const { data, error } = await supabase
     .from("offer_images")

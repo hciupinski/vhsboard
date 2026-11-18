@@ -41,7 +41,7 @@ type OfferImageManagerProps = {
 
 const isValidAltText = (altText: string) => {
   const length = altText.trim().length;
-  return length >= 5 && length <= 180;
+  return length >= 1 && length <= 180;
 };
 
 const imageActionError = "Nie udało się wykonać tej operacji na zdjęciu. Spróbuj ponownie.";
@@ -190,7 +190,7 @@ export function OfferImageManager({
 
   const handleSaveAlt = async (image: OfferImage) => {
     if (!isValidAltText(editedAlt)) {
-      setError("Opis alternatywny musi mieć od 5 do 180 znaków.");
+      setError("Opis alternatywny musi mieć od 1 do 180 znaków.");
       return;
     }
     setError(null);

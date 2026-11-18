@@ -6,6 +6,7 @@ import {
   createEmptyEditableOfferInput,
   editorOfferInputSchema,
   validateOfferForPublication,
+  validateOfferEditor,
   getEditorFieldErrors,
   normalizeEditableOfferInput,
   type EditableOfferInput,
@@ -109,6 +110,46 @@ const fieldErrorsFor = (input: unknown) => {
   return getEditorFieldErrors(result.success ? undefined : result.error);
 };
 
+describe("offer prose limits", () => {
+  it.each([5000, 5001])("applies the paragraph limit at %i characters", (length) => {
+    const input = mergeInput({
+      content: { ...completeInput.content, paragraphs: ["x".repeat(length)] },
+    });
+    expect(editorOfferInputSchema.safeParse(input).success).toBe(length === 5000);
+  });
+  it("preserves an unchanged legacy paragraph while rejecting an altered array", () => {
+    const paragraphs = ["x".repeat(5001)];
+    const input = mergeInput({ content: { ...completeInput.content, paragraphs } });
+    expect(validateOfferEditor(input, paragraphs).draft.success).toBe(true);
+    expect(
+      validateOfferEditor(
+        { ...input, content: { ...input.content, paragraphs: [...paragraphs, "new"] } },
+        paragraphs,
+      ).draft.success,
+    ).toBe(false);
+  });
+  it.each([5000, 5001])("checks camp long text fields at %i characters", (length) => {
+    const text = "x".repeat(length);
+    for (const content of [
+      { ...completeDayCamp.content, paragraphs: [text] },
+      { ...completeDayCamp.content, dayProgram: [{ time: "x", text }] },
+      { ...completeDayCamp.content, venueDescription: text },
+      ...(["supervision", "safety", "transport", "meals"] as const).map((field) => ({
+        ...completeDayCamp.content,
+        parentInfo: { ...completeDayCamp.content.parentInfo, [field]: text },
+      })),
+    ])
+      expect(editorOfferInputSchema.safeParse({ ...completeDayCamp, content }).success).toBe(
+        length === 5000,
+      );
+  });
+  it("accepts one non-whitespace character in required text fields", () => {
+    const input = mergeInput({ title: "x", subtitle: "x", shortDescription: "x", location: "x" });
+    expect(editorOfferInputSchema.safeParse(input).success).toBe(true);
+    expect(editorOfferInputSchema.safeParse({ ...input, title: "  " }).success).toBe(false);
+  });
+});
+
 describe("editor offer input schema", () => {
   it("reports optional publication requirements together with invalid basic fields", () => {
     const result = validateOfferForPublication(
@@ -122,7 +163,7 @@ describe("editor offer input schema", () => {
     );
     expect(result.success).toBe(false);
     expect(getEditorFieldErrors(result.success ? undefined : result.error)).toMatchObject({
-      title: "Tytuł musi mieć od 3 do 120 znaków.",
+      title: "Tytuł musi mieć od 1 do 120 znaków.",
       "content.training.description": expect.any(String),
     });
   });
@@ -445,15 +486,15 @@ describe("editor offer input schema", () => {
   );
 
   it.each([
-    ["title", { title: "aa" }, "title", "Tytuł musi mieć od 3 do 120 znaków."],
-    ["subtitle", { subtitle: "aa" }, "subtitle", "Podtytuł musi mieć od 3 do 280 znaków."],
+    ["title", { title: " " }, "title", "Tytuł musi mieć od 1 do 120 znaków."],
+    ["subtitle", { subtitle: " " }, "subtitle", "Podtytuł musi mieć od 1 do 280 znaków."],
     [
       "short description",
-      { shortDescription: "Za krótko" },
+      { shortDescription: " " },
       "shortDescription",
-      "Krótki opis musi mieć od 20 do 500 znaków.",
+      "Krótki opis musi mieć od 1 do 500 znaków.",
     ],
-    ["location", { location: "A" }, "location", "Lokalizacja musi mieć od 2 do 120 znaków."],
+    ["location", { location: " " }, "location", "Lokalizacja musi mieć od 1 do 120 znaków."],
     [
       "slug",
       { slug: "Zła Oferta" },

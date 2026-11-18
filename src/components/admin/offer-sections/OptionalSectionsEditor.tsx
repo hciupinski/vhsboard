@@ -1,3 +1,4 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "@/lib/offers/text-limits";
 import { createSectionFields } from "./SectionFields";
 import { errorFor } from "../offer-editor/editor-fields";
 import type { ReactNode } from "react";
@@ -100,7 +101,7 @@ export function OptionalSectionsEditor({
                 "Resort → Opis miejsca",
                 resort.description,
                 (description) => onChange({ ...content, resort: { ...resort, description } }),
-                3000,
+                OFFER_LONG_TEXT_MAX_LENGTH,
               )}
               {field(
                 "resort.mapUrl",
@@ -121,7 +122,7 @@ export function OptionalSectionsEditor({
                 "Szkolenia → Wstęp",
                 training.description,
                 (description) => onChange({ ...content, training: { ...training, description } }),
-                3000,
+                OFFER_LONG_TEXT_MAX_LENGTH,
               )}
               <h3 className="font-semibold">Szkolenia → Bloki szkolenia (opcjonalne)</h3>
               {cards(
@@ -140,7 +141,7 @@ export function OptionalSectionsEditor({
                       "Zakres / liczba zajęć",
                       item.scope,
                       (scope) => update({ ...item, scope }),
-                      500,
+                      OFFER_LONG_TEXT_MAX_LENGTH,
                     )}
                   </>
                 ),
@@ -198,7 +199,7 @@ export function OptionalSectionsEditor({
                 "Transport → Opis organizacyjny",
                 transport.description,
                 (description) => onChange({ ...content, transport: { ...transport, description } }),
-                3000,
+                OFFER_LONG_TEXT_MAX_LENGTH,
               )}
               {hasOrganizedTransport(transport)
                 ? transport.journeys.map((journey, i) => {
@@ -276,7 +277,7 @@ export function OptionalSectionsEditor({
                           "Dodatkowe informacje o godzinach",
                           journey.note,
                           (note) => change({ ...journey, note }),
-                          500,
+                          OFFER_LONG_TEXT_MAX_LENGTH,
                         )}
                       </fieldset>
                     );
@@ -296,7 +297,7 @@ export function OptionalSectionsEditor({
                 "Ubezpieczenie → Wstęp",
                 insurance.description,
                 (description) => onChange({ ...content, insurance: { ...insurance, description } }),
-                3000,
+                OFFER_LONG_TEXT_MAX_LENGTH,
               )}
               {field(
                 "insurance.provider",

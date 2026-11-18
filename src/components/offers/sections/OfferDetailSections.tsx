@@ -211,6 +211,7 @@ export function OfferDetailSections({
           <Copy>{content.resort.description}</Copy>
           {camp &&
           camp.venueDescription &&
+          camp.venueDescription !== content.resort.description &&
           camp.venueDescription !== content.resort.description.slice(0, 500) ? (
             <>
               <h3 className="mt-6 text-2xl">Miejsce zajęć</h3>

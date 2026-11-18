@@ -1,3 +1,4 @@
+import { offerDetailRowSchema, offerImageRowSchema } from "./schema";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mockedSupabase = vi.hoisted(() => ({
@@ -49,6 +50,42 @@ const detailRow = {
     schedule: [{ day: "Dzień 1", text: "Przyjazd." }],
   },
 };
+
+describe("public long content compatibility", () => {
+  it("reads published long sections and preserves oversized legacy paragraphs", () => {
+    const row = {
+      ...detailRow,
+      description: {
+        ...detailRow.description,
+        paragraphs: ["x".repeat(5001)],
+        accommodation: { description: "x".repeat(5000) },
+      },
+    };
+    const result = offerDetailRowSchema.parse(row);
+    expect(result.description.paragraphs[0]).toHaveLength(5001);
+    expect(result.description.accommodation?.description).toHaveLength(5000);
+  });
+  it("accepts non-empty short image alt text", () => {
+    expect(
+      offerImageRowSchema.safeParse({
+        id: offerId,
+        offer_id: offerId,
+        storage_path: "image.webp",
+        alt_text: "x",
+        position: 0,
+      }).success,
+    ).toBe(true);
+    expect(
+      offerImageRowSchema.safeParse({
+        id: offerId,
+        offer_id: offerId,
+        storage_path: "image.webp",
+        alt_text: " ",
+        position: 0,
+      }).success,
+    ).toBe(false);
+  });
+});
 
 const imageRow = {
   id: "b1f8e810-1df3-42d9-90df-2a1a69ad9a2c",

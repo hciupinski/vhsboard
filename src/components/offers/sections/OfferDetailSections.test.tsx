@@ -204,6 +204,16 @@ describe("complete shared offer details", () => {
       offer.content.venueDescription,
     );
   });
+  it("renders a long mirrored venue description once", () => {
+    const offer = sectionOffer("day_camp");
+    if (offer.offerKind !== "day_camp" || !offer.content.resort)
+      throw new Error("expected camp resort");
+    const description = "x".repeat(501);
+    offer.content.resort.description = description;
+    offer.content.venueDescription = description;
+    render(<OfferDetailSections offer={offer} sidebar={null} />);
+    expect(screen.getAllByText(description)).toHaveLength(1);
+  });
   it("preserves distinct legacy venue text when a resort is also configured", () => {
     const offer = sectionOffer("day_camp");
     if (offer.offerKind !== "day_camp") throw new Error("expected camp");
