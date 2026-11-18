@@ -100,8 +100,8 @@ their semantic colors. Hover never becomes a requirement for touch use.
 - Trip and camp detail pages use a persistent mobile booking bar with safe-area
   spacing. Camp bookings link to the terms section when terms exist; otherwise
   they use the external booking URL. The floating booking action is desktop-only.
-- In trip and camp detail sections, justify descriptions on mobile and allow
-  automatic hyphenation. At the desktop breakpoint, align descriptions to the
+- In trip and camp category and detail sections, justify prose descriptions on
+  mobile and allow automatic hyphenation. At the desktop breakpoint, align descriptions to the
   start of the line.
 
 ### Admin CMS

@@ -108,6 +108,20 @@ afterEach(() => {
 });
 
 describe("camps list route", () => {
+  it("justifies category prose on mobile", async () => {
+    mockedListPublishedOffers.mockResolvedValue([]);
+    await renderCampsPage();
+    for (const text of [
+      "Twoje dziecko nie usiedzi",
+      "Wakeboard, skimboard, deskorolka",
+      "Uczestnicy — od początkujących",
+      "Zebraliśmy odpowiedzi na najczęstsze",
+    ]) {
+      expect(
+        screen.getByText((content, element) => element?.tagName === "P" && content.includes(text)),
+      ).toHaveClass("max-lg:text-justify", "max-lg:hyphens-auto");
+    }
+  });
   it("shows parent-focused FAQ after the upcoming camp list", async () => {
     mockedListPublishedOffers.mockResolvedValue([publishedCamp]);
 
