@@ -75,7 +75,7 @@ function HalfDayCampsPage() {
             <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">
               ZAJAWKOWE OBOZY
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-background text-shadow-md text-shadow-foreground/50 sm:text-lg lg:mt-6 lg:text-background/85">
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-background text-shadow-md text-shadow-foreground/50 sm:text-lg lg:mt-6 lg:text-background/85 max-lg:text-justify max-lg:hyphens-auto">
               Twoje dziecko nie usiedzi w miejscu? Mamy na to sposób! Gwarantujemy zero nudy,
               maksimum ruchu i świetną atmosferę pod okiem instruktorów.
             </p>
@@ -130,7 +130,7 @@ function HalfDayCampsPage() {
                 Lato
               </p>
               <h3 className="mt-3 text-3xl sm:text-4xl">WODA | WAKEBOARD</h3>
-              <p className="mt-4 max-w-xl leading-relaxed text-background/90">
+              <p className="mt-4 max-w-xl leading-relaxed text-background/90 max-lg:text-justify max-lg:hyphens-auto">
                 Wakeboard, skimboard, deskorolka, SUP i masa aktywności, które dzieciaki kochają
                 najbardziej! Małe grupy, 100% czasu na świeżym powietrzu i program, w którym jest
                 miejsce zarówno na naukę, jak i dobrą zabawę.
@@ -149,7 +149,7 @@ function HalfDayCampsPage() {
                 Zima
               </p>
               <h3 className="mt-3 text-3xl sm:text-4xl">ŚNIEG | SNOWBOARD</h3>
-              <p className="mt-4 max-w-xl leading-relaxed text-background/90">
+              <p className="mt-4 max-w-xl leading-relaxed text-background/90 max-lg:text-justify max-lg:hyphens-auto">
                 Uczestnicy — od początkujących po zaawansowanych riderów — codziennie trenują pod
                 okiem doświadczonych instruktorów. Kładziemy duży nacisk na freestyle, ale także
                 doskonalimy technikę jazdy.
@@ -159,7 +159,7 @@ function HalfDayCampsPage() {
         </section>
         <FaqSection
           headingId="camp-faq-heading"
-          descriptionClassName="lg:max-w-none"
+          descriptionClassName="lg:max-w-none max-lg:text-justify max-lg:hyphens-auto"
           items={campFaqItems}
           description="Zebraliśmy odpowiedzi na najczęstsze pytania rodziców dotyczące naszych obozów i półkolonii – od zapisów i szkolenia po opiekę, sprzęt i organizację."
         />

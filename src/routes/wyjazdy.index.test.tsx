@@ -133,6 +133,19 @@ afterEach(() => {
 });
 
 describe("trips list route", () => {
+  it("justifies category prose on mobile", async () => {
+    mockedListPublishedOffers.mockResolvedValue([]);
+    await renderTripsPage();
+    for (const text of [
+      "Kameralne grupy, dobra ekipa",
+      "Poznaj atmosferę wyjazdów VHSBOARD",
+      "Zebraliśmy najważniejsze informacje",
+    ]) {
+      expect(
+        screen.getByText((content, element) => element?.tagName === "P" && content.includes(text)),
+      ).toHaveClass("max-lg:text-justify", "max-lg:hyphens-auto");
+    }
+  });
   it("renders all ten upcoming trips", async () => {
     const base = publishedOffers[0]!;
     mockedListPublishedOffers.mockResolvedValue(
@@ -148,10 +161,10 @@ describe("trips list route", () => {
       10,
     );
   });
-  it("balances the introductory paragraph on narrow screens", async () => {
+  it("keeps pretty wrapping on the introductory paragraph at desktop widths", async () => {
     mockedListPublishedOffers.mockResolvedValue([]);
     await renderTripsPage();
-    expect(screen.getByText(/kameralne grupy, dobra ekipa/i)).toHaveClass("text-balance");
+    expect(screen.getByText(/kameralne grupy, dobra ekipa/i)).toHaveClass("lg:text-pretty");
   });
 
   it("does not fetch offers while prerendering the marketing page", () => {

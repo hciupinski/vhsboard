@@ -38,7 +38,9 @@ describe("RentalSection", () => {
     expect(Array.from(prose).slice(1)).toHaveLength(4);
     Array.from(prose)
       .slice(1)
-      .forEach((paragraph) => expect(paragraph).toHaveClass("text-lg"));
+      .forEach((paragraph) =>
+        expect(paragraph).toHaveClass("text-lg", "max-lg:text-justify", "max-lg:hyphens-auto"),
+      );
   });
   it("retains image-first document order on the standalone page", () => {
     getRentalDocument.mockResolvedValue(null);
@@ -46,6 +48,9 @@ describe("RentalSection", () => {
     const figure = container.querySelector("figure")!;
     const heading = screen.getByRole("heading", { name: "WYPOŻYCZALNIA SNOWBOARDÓW" });
     expect(figure.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    heading
+      .parentElement!.querySelectorAll("p")
+      .forEach((paragraph) => expect(paragraph).not.toHaveClass("max-lg:text-justify"));
   });
   it("opens the available offer in a new tab", async () => {
     getRentalDocument.mockResolvedValue({

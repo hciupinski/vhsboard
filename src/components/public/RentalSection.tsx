@@ -47,7 +47,9 @@ export function RentalSection({ standalone = false }: { standalone?: boolean }) 
               WYPOŻYCZALNIA SNOWBOARDÓW
             </h2>
           )}
-          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+          <p
+            className={`mt-6 text-lg leading-relaxed text-muted-foreground ${standalone ? "" : "max-lg:text-justify max-lg:hyphens-auto"}`}
+          >
             Dobrze dobrany sprzęt to podstawa dobrej jazdy! W naszej wypożyczalni znajdziesz
             wyłącznie{" "}
             <strong>
@@ -57,18 +59,20 @@ export function RentalSection({ standalone = false }: { standalone?: boolean }) 
             – damskie, męskie i juniorskie.
           </p>
           <p
-            className={`mt-4 leading-relaxed text-muted-foreground ${standalone ? "" : "text-lg"}`}
+            className={`mt-4 leading-relaxed text-muted-foreground ${standalone ? "" : "text-lg max-lg:text-justify max-lg:hyphens-auto"}`}
           >
             Każdy snowboard jest systematycznie serwisowany - ostrzony oraz smarowany!
           </p>
           <p
-            className={`mt-4 leading-relaxed text-muted-foreground ${standalone ? "" : "text-lg"}`}
+            className={`mt-4 leading-relaxed text-muted-foreground ${standalone ? "" : "text-lg max-lg:text-justify max-lg:hyphens-auto"}`}
           >
             Oferujemy sprzęt na różne poziomy zaawansowania i style jazdy – od pierwszych skrętów po
             freestyle i freeride. Sprawdź dostępne modele, długości desek i ceny wynajmu. Pomożemy
             wybrać deskę dopasowaną do Ciebie.
           </p>
-          <p className={`mt-6 ${standalone ? "" : "text-lg"}`}>
+          <p
+            className={`mt-6 ${standalone ? "" : "text-lg max-lg:text-justify max-lg:hyphens-auto"}`}
+          >
             <a
               className="font-semibold text-primary underline underline-offset-4 hover:text-interaction"
               href="/kontakt"
