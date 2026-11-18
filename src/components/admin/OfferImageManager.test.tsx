@@ -213,12 +213,12 @@ describe("OfferImageManager", () => {
     await waitFor(() => expect(file).toBeEnabled());
     await user.click(screen.getByRole("button", { name: "Dodaj zdjęcie" }));
     expect(file).toHaveAccessibleDescription(/Wybierz plik obrazu/);
-    expect(alt).toHaveAccessibleDescription(/od 5 do 180 znaków/);
+    expect(alt).toHaveAccessibleDescription(/od 1 do 180 znaków/);
     expect(alt).toHaveAttribute("aria-invalid", "true");
     await user.upload(file, jpegFile);
     expect(file).toHaveAttribute("aria-invalid", "false");
     expect(alt).toHaveAttribute("aria-invalid", "true");
-    await user.type(alt, "   a   ");
+    await user.type(alt, "      ");
     expect(alt).toHaveAttribute("aria-invalid", "true");
     await user.clear(alt);
     await user.type(alt, imageOne.alt);
@@ -288,7 +288,7 @@ describe("OfferImageManager", () => {
 
     expect(screen.getByLabelText("Opis alternatywny (wymagany)")).toBeRequired();
     expect(
-      screen.getByText("Opisz krótko, co przedstawia zdjęcie; od 5 do 180 znaków."),
+      screen.getByText("Opisz krótko, co przedstawia zdjęcie; od 1 do 180 znaków."),
     ).toBeInTheDocument();
   });
 

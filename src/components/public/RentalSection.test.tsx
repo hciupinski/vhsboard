@@ -8,11 +8,11 @@ afterEach(() => {
   cleanup();
   vi.resetAllMocks();
 });
-function renderSection() {
+function renderSection(standalone = false) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   return render(
     <QueryClientProvider client={client}>
-      <RentalSection />
+      <RentalSection standalone={standalone} />
     </QueryClientProvider>,
   );
 }
@@ -26,6 +26,31 @@ describe("RentalSection", () => {
       "/kontakt",
     );
     expect(screen.queryByRole("link", { name: "Zobacz ofertę i cennik" })).not.toBeInTheDocument();
+  });
+  it("places embedded text before the image and sizes all prose consistently", () => {
+    getRentalDocument.mockResolvedValue(null);
+    const { container } = renderSection();
+    const heading = screen.getByRole("heading", { name: "WYPOŻYCZALNIA SNOWBOARDÓW" });
+    const figure = container.querySelector("figure")!;
+    expect(heading.compareDocumentPosition(figure) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(figure).toHaveClass("lg:order-first");
+    const prose = heading.parentElement!.querySelectorAll("p");
+    expect(Array.from(prose).slice(1)).toHaveLength(4);
+    Array.from(prose)
+      .slice(1)
+      .forEach((paragraph) =>
+        expect(paragraph).toHaveClass("text-lg", "max-lg:text-justify", "max-lg:hyphens-auto"),
+      );
+  });
+  it("retains image-first document order on the standalone page", () => {
+    getRentalDocument.mockResolvedValue(null);
+    const { container } = renderSection(true);
+    const figure = container.querySelector("figure")!;
+    const heading = screen.getByRole("heading", { name: "WYPOŻYCZALNIA SNOWBOARDÓW" });
+    expect(figure.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    heading
+      .parentElement!.querySelectorAll("p")
+      .forEach((paragraph) => expect(paragraph).not.toHaveClass("max-lg:text-justify"));
   });
   it("opens the available offer in a new tab", async () => {
     getRentalDocument.mockResolvedValue({

@@ -37,7 +37,7 @@ select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"e
 select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Dojazd.","types":["own",null],"journeys":[]}}', 'trip', false), 'malformed choices rejected');
 select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"transport":{"enabled":true,"description":"Dojazd.","types":["own","other"],"journeys":[]}}', 'trip', true), 'custom mode needs a label');
 select ok(not public.is_valid_offer_sections('{"schemaVersion":2,"priceNote":1}', 'trip', false), 'price note must be text');
-select ok(not public.is_valid_offer_sections(jsonb_build_object('schemaVersion',2,'priceNote',repeat('a',1001)), 'trip', true), 'price note length is bounded');
+select ok(not public.is_valid_offer_sections(jsonb_build_object('schemaVersion',2,'priceNote',repeat('a',5001)), 'trip', true), 'price note length is bounded');
 
 insert into auth.users(id) values ('90000000-0000-4000-8000-000000000001'),('90000000-0000-4000-8000-000000000002');
 insert into public.profiles(id,role) values ('90000000-0000-4000-8000-000000000001','admin'),('90000000-0000-4000-8000-000000000002','editor');

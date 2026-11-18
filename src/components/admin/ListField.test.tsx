@@ -49,6 +49,32 @@ describe("reorderable list fields", () => {
     expect(screen.queryByRole("button", { name: /przeciągnij/i })).not.toBeInTheDocument();
   });
 
+  it("keeps the extra action usable alongside a list value", async () => {
+    const user = userEvent.setup();
+    function Editor() {
+      const [values, setValues] = useState(["Surf"]);
+      const [icon, setIcon] = useState("Fala");
+      return (
+        <ListField
+          label="Atrakcje"
+          values={values}
+          onChange={setValues}
+          renderExtra={() => (
+            <button type="button" onClick={() => setIcon("Góra")}>
+              {icon}
+            </button>
+          )}
+        />
+      );
+    }
+    render(<Editor />);
+    await user.click(screen.getByRole("button", { name: "Fala" }));
+    await user.clear(screen.getByLabelText("Atrakcje 1"));
+    await user.type(screen.getByLabelText("Atrakcje 1"), "Snowboard");
+    expect(screen.getByRole("button", { name: "Góra" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Atrakcje 1")).toHaveValue("Snowboard");
+  });
+
   it("disables editing and reordering for archived offers", () => {
     render(
       <ListField

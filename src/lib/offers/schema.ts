@@ -1,3 +1,4 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "./text-limits";
 import { contentSectionsShape, getSectionIssues } from "./content-v2";
 import { z } from "zod";
 
@@ -33,15 +34,20 @@ export const dayCampContentSchema = z.object({
   included: z.array(requiredTextSchema).min(1),
   excluded: z.array(requiredTextSchema).min(1),
   dayProgram: z
-    .array(z.object({ time: requiredTextSchema.max(120), text: requiredTextSchema.max(500) }))
+    .array(
+      z.object({
+        time: requiredTextSchema.max(120),
+        text: requiredTextSchema.max(OFFER_LONG_TEXT_MAX_LENGTH),
+      }),
+    )
     .min(1),
-  venueDescription: requiredTextSchema.max(500),
+  venueDescription: requiredTextSchema.max(OFFER_LONG_TEXT_MAX_LENGTH),
   parentInfo: z.object({
     ageRange: requiredTextSchema.max(120),
-    supervision: requiredTextSchema.max(500),
-    safety: requiredTextSchema.max(500),
-    transport: requiredTextSchema.max(500).optional(),
-    meals: requiredTextSchema.max(500).optional(),
+    supervision: requiredTextSchema.max(OFFER_LONG_TEXT_MAX_LENGTH),
+    safety: requiredTextSchema.max(OFFER_LONG_TEXT_MAX_LENGTH),
+    transport: requiredTextSchema.max(OFFER_LONG_TEXT_MAX_LENGTH).optional(),
+    meals: requiredTextSchema.max(OFFER_LONG_TEXT_MAX_LENGTH).optional(),
   }),
   terms: z
     .array(
@@ -155,7 +161,7 @@ export const offerImageRowSchema = z.object({
   id: z.string().uuid(),
   offer_id: z.string().uuid(),
   storage_path: z.string().trim().min(1),
-  alt_text: z.string().trim().min(5).max(180),
+  alt_text: z.string().trim().min(1).max(180),
   category: z
     .enum(["gallery", "accommodation", "resort_map", "resort_gallery", "training_gallery"])
     .default("gallery"),

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "./text-limits";
 import { isValidIsoDate } from "./date-input";
 import type { OfferContent, OfferKind } from "./types";
 
@@ -34,7 +35,12 @@ export const extraPriceSchema = z.object({
 const uniqueIds = (items: { id: string }[]) =>
   new Set(items.map((item) => item.id)).size === items.length;
 const identityError = "Każdy element musi mieć unikalny identyfikator.";
-const card = { id, title: text(120), description: text(1500), price: extraPriceSchema };
+const card = {
+  id,
+  title: text(120),
+  description: text(OFFER_LONG_TEXT_MAX_LENGTH),
+  price: extraPriceSchema,
+};
 export const journeySchema = z.object({
   termId: id.optional(),
   departureDate: text(10),
@@ -43,7 +49,7 @@ export const journeySchema = z.object({
   returnDate: text(10),
   returnTime: text(5),
   returnPlace: text(120),
-  note: text(500),
+  note: text(OFFER_LONG_TEXT_MAX_LENGTH),
 });
 const legacyTransportType = z.enum(["coach", "plane", "train", "own", "other"]);
 const transportType = z.enum(["coach", "plane", "train", "own", "other", "vhs_bus"]);
@@ -66,7 +72,7 @@ const transportSchema = z
       .refine((types) => new Set(types).size === types.length)
       .optional(),
     customType: text(120).optional(),
-    description: text(3000),
+    description: text(OFFER_LONG_TEXT_MAX_LENGTH),
     journeys: z.array(journeySchema).max(2),
   })
   .refine((transport) => (transport.type === undefined) !== (transport.types === undefined), {
@@ -81,22 +87,29 @@ export const getTransportTypes = (transport: Transport): readonly TransportType[
 export const hasOrganizedTransport = (transport: Transport) =>
   getTransportTypes(transport).some((type) => type !== "own");
 
-export const PRICE_NOTE_MAX_LENGTH = 1000;
+export const PRICE_NOTE_MAX_LENGTH = OFFER_LONG_TEXT_MAX_LENGTH;
 
 export const contentSectionsShape = {
   schemaVersion: z.literal(2).optional(),
   priceNote: text(PRICE_NOTE_MAX_LENGTH).optional(),
   showRentalLink: z.boolean().optional(),
-  accommodation: z.object({ enabled: z.boolean().optional(), description: text(1000) }).optional(),
+  accommodation: z
+    .object({ enabled: z.boolean().optional(), description: text(OFFER_LONG_TEXT_MAX_LENGTH) })
+    .optional(),
   resort: z
-    .object({ enabled: z.boolean(), name: text(120), description: text(3000), mapUrl: url })
+    .object({
+      enabled: z.boolean(),
+      name: text(120),
+      description: text(OFFER_LONG_TEXT_MAX_LENGTH),
+      mapUrl: url,
+    })
     .optional(),
   training: z
     .object({
       enabled: z.boolean(),
-      description: text(3000),
+      description: text(OFFER_LONG_TEXT_MAX_LENGTH),
       items: z
-        .array(z.object({ ...card, level: text(120), scope: text(500) }))
+        .array(z.object({ ...card, level: text(120), scope: text(OFFER_LONG_TEXT_MAX_LENGTH) }))
         .max(12)
         .refine(uniqueIds, identityError),
     })
@@ -105,7 +118,7 @@ export const contentSectionsShape = {
   insurance: z
     .object({
       enabled: z.boolean(),
-      description: text(3000),
+      description: text(OFFER_LONG_TEXT_MAX_LENGTH),
       provider: text(120),
       informationUrl: url,
       packages: z
@@ -216,7 +229,7 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
   const error = (path: (string | number)[], message: string) =>
     issues.push({ code: "custom", path, message });
   const required = (value: string, path: (string | number)[], message: string) => {
-    if (value.trim().length < 3) error(path, message);
+    if (value.trim().length < 1) error(path, message);
   };
   const price = (value: ExtraPrice, path: (string | number)[]) => {
     if (value.kind === "included" && value.amount !== 0)
@@ -228,19 +241,11 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
     required(
       content.accommodation!.description,
       ["accommodation", "description"],
-      "Wpisz opis zakwaterowania (co najmniej 3 znaki).",
+      "Wpisz opis zakwaterowania.",
     );
   if (sectionIsEnabled(content.resort)) {
-    required(
-      content.resort!.name,
-      ["resort", "name"],
-      "Wpisz nazwę resortu (co najmniej 3 znaki).",
-    );
-    required(
-      content.resort!.description,
-      ["resort", "description"],
-      "Wpisz opis resortu (co najmniej 3 znaki).",
-    );
+    required(content.resort!.name, ["resort", "name"], "Wpisz nazwę resortu.");
+    required(content.resort!.description, ["resort", "description"], "Wpisz opis resortu.");
   }
   for (const key of ["training", "insurance"] as const) {
     const section = content[key];
@@ -249,8 +254,8 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
       section!.description,
       [key, "description"],
       key === "training"
-        ? "Wpisz wstęp do sekcji Szkolenia (co najmniej 3 znaki)."
-        : "Wpisz wstęp do sekcji Ubezpieczenie (co najmniej 3 znaki).",
+        ? "Wpisz wstęp do sekcji Szkolenia."
+        : "Wpisz wstęp do sekcji Ubezpieczenie.",
     );
     const cards = key === "training" ? content.training!.items : content.insurance!.packages;
     const collection = key === "training" ? "items" : "packages";
@@ -258,21 +263,13 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
       error([key, collection], "Dodaj co najmniej jedną kartę.");
     cards.forEach((item, index) => {
       const path = [key, collection, index];
-      required(item.title, [...path, "title"], "Wpisz nagłówek karty (co najmniej 3 znaki).");
-      required(
-        item.description,
-        [...path, "description"],
-        "Wpisz opis karty (co najmniej 3 znaki).",
-      );
+      required(item.title, [...path, "title"], "Wpisz nagłówek karty.");
+      required(item.description, [...path, "description"], "Wpisz opis karty.");
       price(item.price, [...path, "price"]);
       if ("risks" in item) {
         item.risks.forEach((risk, i) => {
           if (!risk.label.trim() && !risk.value.trim()) return;
-          required(
-            risk.label,
-            [...path, "risks", i, "label"],
-            "Wpisz nazwę zakresu ochrony (co najmniej 3 znaki).",
-          );
+          required(risk.label, [...path, "risks", i, "label"], "Wpisz nazwę zakresu ochrony.");
           if (!risk.value.trim())
             error([...path, "risks", i, "value"], "Wpisz limit lub opis ochrony.");
         });
@@ -280,11 +277,7 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
     });
     if (key === "insurance")
       content.insurance!.extensions.forEach((item, i) => {
-        required(
-          item.title,
-          [key, "extensions", i, "title"],
-          "Wpisz nazwę rozszerzenia (co najmniej 3 znaki).",
-        );
+        required(item.title, [key, "extensions", i, "title"], "Wpisz nazwę rozszerzenia.");
         price(item.price, [key, "extensions", i, "price"]);
       });
   }
@@ -293,7 +286,7 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
     required(
       transport.description,
       ["transport", "description"],
-      "Wpisz opis organizacyjny transportu (co najmniej 3 znaki).",
+      "Wpisz opis organizacyjny transportu.",
     );
     const types = getTransportTypes(transport);
     if (!types.length)
@@ -334,16 +327,8 @@ export function getSectionIssues(input: unknown, kind: OfferKind = "trip"): z.Zo
         for (const field of ["departureTime", "returnTime"] as const)
           if (journey[field] && !/^([01]\d|2[0-3]):[0-5]\d$/.test(journey[field]))
             error([...path, field], "Wpisz poprawną godzinę.");
-        required(
-          journey.departurePlace,
-          [...path, "departurePlace"],
-          "Wpisz miejsce zbiórki (co najmniej 3 znaki).",
-        );
-        required(
-          journey.returnPlace,
-          [...path, "returnPlace"],
-          "Wpisz miejsce powrotu (co najmniej 3 znaki).",
-        );
+        required(journey.departurePlace, [...path, "departurePlace"], "Wpisz miejsce zbiórki.");
+        required(journey.returnPlace, [...path, "returnPlace"], "Wpisz miejsce powrotu.");
         if (isValidIsoDate(journey.departureDate) && isValidIsoDate(journey.returnDate)) {
           if (journey.returnDate < journey.departureDate) {
             error(

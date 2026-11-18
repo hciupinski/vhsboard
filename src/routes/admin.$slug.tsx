@@ -117,14 +117,14 @@ function OfferEditorContent() {
   const createMutation = useMutation({ mutationFn: createOffer });
   const updateMutation = useMutation({
     mutationFn: ({ id, input }: { id: string; input: EditableOfferInput }) =>
-      updateOffer(id, input),
+      updateOffer(id, input, persistedOffer?.content.paragraphs),
   });
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: "draft" | "published" }) =>
       setOfferStatus(id, status),
   });
 
-  const validation = validateOfferEditor(formValue);
+  const validation = validateOfferEditor(formValue, persistedOffer?.content.paragraphs);
   const publicationErrors = getEditorFieldErrors(
     validation.publication.success ? undefined : validation.publication.error,
   );

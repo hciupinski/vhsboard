@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useMatch, useNavigate, useRouter } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import { getAdminSession, signOut } from "@/lib/auth/session";
@@ -9,15 +9,24 @@ type AdminGuardProps = {
 };
 
 export function AdminGuard({ children }: AdminGuardProps) {
-  const location = useLocation();
+  const pathname = useMatch({
+    strict: false,
+    shouldThrow: false,
+    select: (match) => match.pathname,
+  });
   const navigate = useNavigate();
+  const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
+    if (!pathname) return;
     let isActive = true;
 
     void getAdminSession().then((session) => {
-      if (!isActive) {
+      if (
+        !isActive ||
+        router.state.location.pathname.replace(/\/$/, "") !== pathname.replace(/\/$/, "")
+      ) {
         return;
       }
 
@@ -28,7 +37,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
       void navigate({
         to: "/admin/login",
-        search: { next: location.pathname },
+        search: { next: pathname.replace(/\/$/, "") },
         replace: true,
       });
     });
@@ -36,7 +45,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
     return () => {
       isActive = false;
     };
-  }, [location.pathname, navigate]);
+  }, [pathname, navigate, router]);
 
   if (isChecking) {
     return (

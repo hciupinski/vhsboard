@@ -1,0 +1,1 @@
+export const OFFER_LONG_TEXT_MAX_LENGTH = 5000;

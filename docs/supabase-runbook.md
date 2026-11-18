@@ -71,7 +71,7 @@ Szkice i archiwum nie mogą otrzymać publicznego URL-a.
 
 PostgreSQL odrzuca zmianę statusu na `published`, jeżeli `hero_image` nie
 wskazuje rekordu `offer_images` tej samej oferty z opisem alternatywnym mającym
-po `trim()` od 5 do 180 znaków. To zabezpieczenie działa również dla
+po `trim()` od 1 do 180 znaków. To zabezpieczenie działa również dla
 bezpośrednich zapytań administratora, niezależnie od formularza. Kolejność
 galerii zmieniaj wyłącznie przez RPC `reorder_offer_images`; funkcja sprawdza
 pełną permutację i zapisuje wszystkie pozycje w jednej transakcji.
@@ -128,7 +128,7 @@ przed uploadem poprawnie orientuje obraz, zmniejsza najdłuższą krawędź do
 1920 px i zapisuje WebP do 2 MiB. Nie powiększa małych zdjęć. Brak dekodera,
 kodera WebP lub zbyt duży wynik kończy operację czytelnym błędem przed zapisem
 Storage. Nowe obiekty otrzymują unikalną ścieżkę `.webp`; granica bucketu
-8 MiB i istniejące obiekty pozostają bez zmian. Opis alternatywny ma 5–180
+8 MiB i istniejące obiekty pozostają bez zmian. Opis alternatywny ma 1–180
 znaków. Gdy zapis metadanych po uploadzie zawiedzie, aplikacja próbuje usunąć
 osierocony obiekt i zgłasza nieudane sprzątanie.
 
@@ -246,6 +246,16 @@ camp term UUIDs are generated once and preserved. Older tabs attempting to save 
 v2 offer receive “Odśwież CMS przed zapisaniem oferty.” Refresh before editing again.
 To hide an optional section, disable its switch; do not delete its content or images.
 An incomplete enabled section can be saved in a draft but cannot be published.
+Required offer text and image alt text need at least one non-whitespace character.
+Long offer descriptions, each story paragraph and the supported camp details are
+limited to 5,000 UTF-16 code units; short fields retain their own maximums. An
+existing longer story paragraph remains readable and can be saved unchanged with
+its paragraph array; editing that array requires every paragraph to fit the limit.
+Apply `20261118120000_offer_text_limits.sql` before deploying the matching CMS.
+Deploy the matching frontend before administrators enter longer text; older
+frontend parsers cannot read the expanded fields. Keep the new frontend when
+rolling back, and run `supabase/tests/offer_text_limits.sql` against a disposable
+database.
 
 The map RPC requires an existing object in the same offer folder and valid alt text.
 It serializes replacements with a row lock. Cleanup failure is recoverable through

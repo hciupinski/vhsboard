@@ -18,11 +18,27 @@ describe("MobileTripBookingCta", () => {
       "https://tripahead.example/snow",
     );
   });
-  it.each(["", "invalid", "http://example.test", "javascript:alert(1)"])(
-    "renders neither action nor reserved space for %s",
-    (bookingUrl) => {
-      const { container } = render(<MobileTripBookingCta bookingUrl={bookingUrl} />);
-      expect(container).toBeEmptyDOMElement();
-    },
-  );
+  it("links to camp terms in the same tab with a camp label", () => {
+    render(<MobileTripBookingCta bookingUrl="#turnusy" ariaLabel="Zapisy na obóz" />);
+    const link = screen.getByRole("link", { name: "Zapisz się" });
+    expect(link).toHaveAttribute("href", "#turnusy");
+    expect(link).not.toHaveAttribute("target");
+    expect(screen.getByRole("complementary", { name: "Zapisy na obóz" })).toBeInTheDocument();
+  });
+  it("disables the terms action without a link", () => {
+    render(<MobileTripBookingCta bookingUrl="#turnusy" disabled />);
+    expect(screen.getByRole("button", { name: "Zapisz się" })).toBeDisabled();
+    expect(screen.queryByRole("link", { name: "Zapisz się" })).not.toBeInTheDocument();
+  });
+  it.each([
+    "#other",
+    "#turnusy-extra",
+    "",
+    "invalid",
+    "http://example.test",
+    "javascript:alert(1)",
+  ])("renders neither action nor reserved space for %s", (bookingUrl) => {
+    const { container } = render(<MobileTripBookingCta bookingUrl={bookingUrl} />);
+    expect(container).toBeEmptyDOMElement();
+  });
 });

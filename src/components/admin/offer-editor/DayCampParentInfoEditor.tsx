@@ -1,3 +1,4 @@
+import { OFFER_LONG_TEXT_MAX_LENGTH } from "@/lib/offers/text-limits";
 import { Input } from "@/components/admin/form-controls";
 import { Textarea } from "@/components/admin/form-controls";
 import type { DayCampContent } from "@/lib/offers/types";
@@ -39,13 +40,13 @@ export function DayCampParentInfoEditor({
       <Field
         id="parent-supervision"
         label="Opieka"
-        characterCount={{ value: content.parentInfo.supervision, max: 500 }}
+        characterCount={{ value: content.parentInfo.supervision, max: OFFER_LONG_TEXT_MAX_LENGTH }}
         error={errorFor(errors, "content.parentInfo.supervision")}
       >
         <Textarea
           id="parent-supervision"
           value={content.parentInfo.supervision}
-          maxLength={500}
+          maxLength={OFFER_LONG_TEXT_MAX_LENGTH}
           onChange={(event) =>
             onChange({
               ...content,
@@ -57,13 +58,13 @@ export function DayCampParentInfoEditor({
       <Field
         id="parent-safety"
         label="Bezpieczeństwo"
-        characterCount={{ value: content.parentInfo.safety, max: 500 }}
+        characterCount={{ value: content.parentInfo.safety, max: OFFER_LONG_TEXT_MAX_LENGTH }}
         error={errorFor(errors, "content.parentInfo.safety")}
       >
         <Textarea
           id="parent-safety"
           value={content.parentInfo.safety}
-          maxLength={500}
+          maxLength={OFFER_LONG_TEXT_MAX_LENGTH}
           onChange={(event) =>
             onChange({
               ...content,
@@ -77,12 +78,13 @@ export function DayCampParentInfoEditor({
           id="parent-legacy-transport"
           label="Transport — wcześniejszy opis dla rodzica"
           hint="Widoczny w Dla rodzica, dopóki sekcja Transport jest wyłączona."
+          characterCount={{ value: content.parentInfo.transport, max: OFFER_LONG_TEXT_MAX_LENGTH }}
           error={errorFor(errors, "content.parentInfo.transport")}
         >
           <Textarea
             id="parent-legacy-transport"
             value={content.parentInfo.transport}
-            maxLength={500}
+            maxLength={OFFER_LONG_TEXT_MAX_LENGTH}
             onChange={(event) =>
               onChange({
                 ...content,
@@ -97,13 +99,16 @@ export function DayCampParentInfoEditor({
           id="parent-meals"
           label="Wyżywienie"
           hint="Opcjonalnie"
-          characterCount={{ value: content.parentInfo.meals ?? "", max: 500 }}
+          characterCount={{
+            value: content.parentInfo.meals ?? "",
+            max: OFFER_LONG_TEXT_MAX_LENGTH,
+          }}
           error={errorFor(errors, "content.parentInfo.meals")}
         >
           <Textarea
             id="parent-meals"
             value={content.parentInfo.meals ?? ""}
-            maxLength={500}
+            maxLength={OFFER_LONG_TEXT_MAX_LENGTH}
             onChange={(event) =>
               onChange({
                 ...content,

@@ -430,8 +430,8 @@ describe("administrator offer repository", () => {
     expect(mockedSupabase.from).toHaveBeenCalledTimes(2);
   });
 
-  it.each(["abcd", ` ${"a".repeat(181)} `])(
-    "rejects a hero image alt outside the trimmed 5–180 character range",
+  it.each(["   ", ` ${"a".repeat(181)} `])(
+    "rejects a hero image alt outside the trimmed 1–180 character range",
     async (altText) => {
       const offerQuery = createQuery({ data: draftRow, error: null });
       const imageQuery = createQuery({ data: { alt_text: altText }, error: null });

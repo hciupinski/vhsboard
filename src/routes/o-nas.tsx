@@ -21,10 +21,10 @@ const founderImages = (
   const responsive = getLocalImage(path);
   return { path, label, src: responsive.src, responsive };
 });
-const cityAndMoreSurf = getLocalImage("about-us/city-and-more-1.jpg");
+const cityAndMoreSurf = getLocalImage("about-us/city-and-more-4.jpg");
 const cityAndMoreSkate = getLocalImage("about-us/city-and-more-2.JPG");
 const cityAndMoreSnow = getLocalImage("about-us/city-and-more-3.jpg");
-const marioVhs = getLocalImage("about-us/mario-vhs.jpg");
+const snowboardGroup = getLocalImage("about-us/about-snowboard-group.jpg");
 const mobileProse = "max-lg:text-justify max-lg:hyphens-auto";
 
 export const Route = createFileRoute("/o-nas")({
@@ -54,9 +54,9 @@ function AboutPage() {
           <figure className="relative lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-center">
             <ResponsiveImage
               sizes="(min-width: 1024px) 50vw, 100vw"
-              image={marioVhs}
-              alt="Uczestnicy surf campu VHS ułożeni w znak VHS na plaży"
-              className="aspect-[4/3] w-full rounded-3xl object-cover shadow-warm"
+              image={snowboardGroup}
+              alt="Grupa uczestników wyjazdu snowboardowego VHSBOARD na stoku"
+              className="aspect-[4/3] w-full rounded-3xl object-cover object-right shadow-warm"
             />
           </figure>
           <div className={`max-w-xl lg:col-start-1 lg:row-start-2 lg:self-start ${mobileProse}`}>
@@ -133,13 +133,13 @@ function AboutPage() {
             </p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:grid-rows-2 md:gap-6">
-            <figure className="order-first overflow-hidden rounded-3xl shadow-warm md:row-span-2">
+            <figure className="relative order-first aspect-[3/4] overflow-hidden rounded-3xl shadow-warm md:row-span-2 md:aspect-auto">
               <ResponsiveImage
                 loading="lazy"
-                sizes="(min-width: 1024px) 50vw, 100vw"
+                sizes="(min-width: 768px) 1250px, calc(237vw - 95px)"
                 image={cityAndMoreSurf}
                 alt="Uczestnicy wyjazdu surfingowego z deskami na plaży"
-                className="aspect-[3/4] w-full object-cover md:h-full md:aspect-auto"
+                className="absolute left-1/2 top-0 h-full w-auto max-w-none -translate-x-1/2"
               />
             </figure>
             <figure className="overflow-hidden rounded-3xl shadow-warm">

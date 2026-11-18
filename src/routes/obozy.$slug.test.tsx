@@ -148,10 +148,16 @@ describe("day-camp detail route", () => {
     expect(screen.getByRole("heading", { name: "W cenie" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Poza ceną" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Galeria" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Zapisz się" })).toHaveAttribute(
-      "href",
-      "https://zapisy.example.test/wakeboardowe-lato",
-    );
+    expect(
+      screen
+        .getAllByRole("link", { name: "Zapisz się" })
+        .some(
+          (link) => link.getAttribute("href") === "https://zapisy.example.test/wakeboardowe-lato",
+        ),
+    ).toBe(true);
+    expect(
+      within(screen.getByRole("complementary", { name: "Zapisy na obóz" })).getByRole("link"),
+    ).toHaveAttribute("href", "#turnusy");
     expect(screen.getByRole("link", { name: "Przejdź do zapisów" })).toHaveAttribute(
       "href",
       "#turnusy",
@@ -163,6 +169,49 @@ describe("day-camp detail route", () => {
     expect(
       screen.queryByRole("button", { name: "Odtwórz film: Obozy VHSBOARD" }),
     ).not.toBeInTheDocument();
+  });
+
+  it.each([
+    { label: "future term", terms: ["2000-01-01", "2099-01-01"], enabled: true },
+    { label: "all terms started", terms: ["2000-01-01", "2001-01-01"], enabled: false },
+  ])("uses future terms to determine mobile availability: $label", async ({ terms, enabled }) => {
+    const term = publishedDayCamp.content.terms[0]!;
+    mockedGetPublishedOfferBySlug.mockResolvedValue({
+      ...publishedDayCamp,
+      content: {
+        ...publishedDayCamp.content,
+        terms: terms.map((startDate) => ({ ...term, startDate })),
+      },
+    });
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const router = createRouter({
+      routeTree,
+      context: { queryClient },
+      history: createMemoryHistory({ initialEntries: ["/obozy/wakeboardowe-lato"] }),
+    });
+    await router.load();
+    render(<RouterProvider router={router} />);
+    const bar = await screen.findByRole("complementary", { name: "Zapisy na obóz" });
+    if (enabled) expect(within(bar).getByRole("link")).toHaveAttribute("href", "#turnusy");
+    else expect(within(bar).getByRole("button")).toBeDisabled();
+  });
+
+  it("uses the external URL for a camp without terms", async () => {
+    mockedGetPublishedOfferBySlug.mockResolvedValue({
+      ...publishedDayCamp,
+      content: { ...publishedDayCamp.content, terms: [] },
+    });
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const router = createRouter({
+      routeTree,
+      context: { queryClient },
+      history: createMemoryHistory({ initialEntries: ["/obozy/wakeboardowe-lato"] }),
+    });
+    await router.load();
+    render(<RouterProvider router={router} />);
+    const bar = await screen.findByRole("complementary", { name: "Zapisy na obóz" });
+    expect(within(bar).getByRole("link")).toHaveAttribute("href", publishedDayCamp.bookingUrl);
+    expect(within(bar).getByRole("link")).toHaveAttribute("target", "_blank");
   });
 
   it("links camp sections in their public reading order", async () => {
