@@ -111,8 +111,10 @@ treści; nie kieruj wszystkich brakujących adresów na stronę główną.
 
 Zatwierdzone przekierowania starego WordPressa są w
 [`public/_redirects`](../public/_redirects). Dawny adres `/skimboarding/`
-prowadzi do `/eventy/`. Jawna lista starych ofert prowadzi do `/wyjazdy/`
-i pozostawia bez zmian obecne adresy ofert w CMS.
+prowadzi do `/eventy/`. Większość adresów starych ofert prowadzi do `/wyjazdy/`,
+a `/home/oboz_zimowy-freestyle` (również z końcowym ukośnikiem) prowadzi do
+`/obozy/oboz-freestyle-2027`. Przekierowania pozostawiają bez zmian obecne
+adresy ofert w CMS.
 
 Nie przełączaj domeny, dopóki istotne adresy nie mają uzgodnionej
 i sprawdzonej obsługi. Po deployu sprawdź pełne łańcuchy

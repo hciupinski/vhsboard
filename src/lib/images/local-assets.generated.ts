@@ -83,22 +83,22 @@ export const LOCAL_IMAGE_ASSETS = {
       "/images/generated/about-us-mario-vhs-480-1128a7ba14ff.avif 480w, /images/generated/about-us-mario-vhs-960-bc208ffe25fa.avif 960w, /images/generated/about-us-mario-vhs-1600-0053b20335d2.avif 1600w",
   },
   "carousel/1karuzela_snb.png": {
-    src: "/images/generated/carousel-1karuzela_snb-1600-5a8a0d02da61.webp",
+    src: "/images/generated/carousel-1karuzela_snb-1600-f8e77dd0b908.webp",
     width: 1600,
-    height: 622,
+    height: 548,
     webpSrcSet:
-      "/images/generated/carousel-1karuzela_snb-480-a45632f65f4e.webp 480w, /images/generated/carousel-1karuzela_snb-960-48a734ecff0f.webp 960w, /images/generated/carousel-1karuzela_snb-1600-5a8a0d02da61.webp 1600w",
+      "/images/generated/carousel-1karuzela_snb-480-5b96aaadaecb.webp 480w, /images/generated/carousel-1karuzela_snb-960-3da62757d66f.webp 960w, /images/generated/carousel-1karuzela_snb-1600-f8e77dd0b908.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-1karuzela_snb-480-465c4597b299.avif 480w, /images/generated/carousel-1karuzela_snb-960-24a964220d89.avif 960w, /images/generated/carousel-1karuzela_snb-1600-7e27db72bdf2.avif 1600w",
+      "/images/generated/carousel-1karuzela_snb-480-d4dce23390d8.avif 480w, /images/generated/carousel-1karuzela_snb-960-dc28b3bcd75f.avif 960w, /images/generated/carousel-1karuzela_snb-1600-999accaa7bd6.avif 1600w",
   },
-  "carousel/2karuzela_oboz1.png": {
-    src: "/images/generated/carousel-2karuzela_oboz1-1600-1d988bedf642.webp",
+  "carousel/2karuzela_oboz.png": {
+    src: "/images/generated/carousel-2karuzela_oboz-1600-1d988bedf642.webp",
     width: 1600,
     height: 622,
     webpSrcSet:
-      "/images/generated/carousel-2karuzela_oboz1-480-2fe6c2b4045e.webp 480w, /images/generated/carousel-2karuzela_oboz1-960-c6bcb6a436a9.webp 960w, /images/generated/carousel-2karuzela_oboz1-1600-1d988bedf642.webp 1600w",
+      "/images/generated/carousel-2karuzela_oboz-480-2fe6c2b4045e.webp 480w, /images/generated/carousel-2karuzela_oboz-960-c6bcb6a436a9.webp 960w, /images/generated/carousel-2karuzela_oboz-1600-1d988bedf642.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-2karuzela_oboz1-480-d6370c526c37.avif 480w, /images/generated/carousel-2karuzela_oboz1-960-38f07c8f169f.avif 960w, /images/generated/carousel-2karuzela_oboz1-1600-df9f23052e9f.avif 1600w",
+      "/images/generated/carousel-2karuzela_oboz-480-d6370c526c37.avif 480w, /images/generated/carousel-2karuzela_oboz-960-38f07c8f169f.avif 960w, /images/generated/carousel-2karuzela_oboz-1600-df9f23052e9f.avif 1600w",
   },
   "carousel/3karuzela_surf.png": {
     src: "/images/generated/carousel-3karuzela_surf-1600-510e662469e6.webp",
@@ -109,50 +109,50 @@ export const LOCAL_IMAGE_ASSETS = {
     avifSrcSet:
       "/images/generated/carousel-3karuzela_surf-480-44cabe740437.avif 480w, /images/generated/carousel-3karuzela_surf-960-018fbafe4dc8.avif 960w, /images/generated/carousel-3karuzela_surf-1600-7d9a9902f4a1.avif 1600w",
   },
-  "carousel/4eventy_karuzela.png": {
-    src: "/images/generated/carousel-4eventy_karuzela-1600-0d3b402593f6.webp",
+  "carousel/4karuzela_skim.png": {
+    src: "/images/generated/carousel-4karuzela_skim-1600-46e15e16a828.webp",
     width: 1600,
-    height: 622,
+    height: 549,
     webpSrcSet:
-      "/images/generated/carousel-4eventy_karuzela-480-317e3d381699.webp 480w, /images/generated/carousel-4eventy_karuzela-960-7402145a2587.webp 960w, /images/generated/carousel-4eventy_karuzela-1600-0d3b402593f6.webp 1600w",
+      "/images/generated/carousel-4karuzela_skim-480-8df784a5b363.webp 480w, /images/generated/carousel-4karuzela_skim-960-90b7e3afd2d0.webp 960w, /images/generated/carousel-4karuzela_skim-1600-46e15e16a828.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-4eventy_karuzela-480-78fc253833a9.avif 480w, /images/generated/carousel-4eventy_karuzela-960-7e31614d7734.avif 960w, /images/generated/carousel-4eventy_karuzela-1600-667e3022eb12.avif 1600w",
+      "/images/generated/carousel-4karuzela_skim-480-e1f9331bcb7e.avif 480w, /images/generated/carousel-4karuzela_skim-960-bd7b7e12fcc8.avif 960w, /images/generated/carousel-4karuzela_skim-1600-d841b6f38931.avif 1600w",
   },
-  "carousel/karuzela_oboz2.png": {
-    src: "/images/generated/carousel-karuzela_oboz2-1600-ebe3deb78d96.webp",
+  "carousel/mobile/1karuzela_snb_mobile_cut.jpg": {
+    src: "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-1600-4fec16922467.webp",
     width: 1600,
-    height: 622,
+    height: 1838,
     webpSrcSet:
-      "/images/generated/carousel-karuzela_oboz2-480-f16600917c1b.webp 480w, /images/generated/carousel-karuzela_oboz2-960-6cb95b698f51.webp 960w, /images/generated/carousel-karuzela_oboz2-1600-ebe3deb78d96.webp 1600w",
+      "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-480-16c2825d98f1.webp 480w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-960-e17ba9e7aa7a.webp 960w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-1600-4fec16922467.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-karuzela_oboz2-480-145fd2c2816a.avif 480w, /images/generated/carousel-karuzela_oboz2-960-55a7eefef6e8.avif 960w, /images/generated/carousel-karuzela_oboz2-1600-c7d5df3c1d2f.avif 1600w",
+      "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-480-aef393e96fdf.avif 480w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-960-a8d44f3642c4.avif 960w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-1600-198f94d05f79.avif 1600w",
   },
-  "hero-mobile/oboz-zimowy.jpg": {
-    src: "/images/generated/hero-mobile-oboz-zimowy-600-9a1da1dad6ee.webp",
-    width: 600,
-    height: 782,
+  "carousel/mobile/2karuzela_oboz_mobile_cut.jpg": {
+    src: "/images/generated/carousel-mobile-2karuzela_oboz_mobile_cut-1188-6fd6ccb91534.webp",
+    width: 1188,
+    height: 1919,
     webpSrcSet:
-      "/images/generated/hero-mobile-oboz-zimowy-480-9dc3f22935a4.webp 480w, /images/generated/hero-mobile-oboz-zimowy-600-9a1da1dad6ee.webp 600w",
+      "/images/generated/carousel-mobile-2karuzela_oboz_mobile_cut-480-9d8fdd21f021.webp 480w, /images/generated/carousel-mobile-2karuzela_oboz_mobile_cut-960-e3edf51d5fbf.webp 960w, /images/generated/carousel-mobile-2karuzela_oboz_mobile_cut-1188-6fd6ccb91534.webp 1188w",
     avifSrcSet:
-      "/images/generated/hero-mobile-oboz-zimowy-480-5795ef27aae0.avif 480w, /images/generated/hero-mobile-oboz-zimowy-600-0ef4c2d7e792.avif 600w",
+      "/images/generated/carousel-mobile-2karuzela_oboz_mobile_cut-480-85e7e860c4e0.avif 480w, /images/generated/carousel-mobile-2karuzela_oboz_mobile_cut-960-9fe57b9f393a.avif 960w, /images/generated/carousel-mobile-2karuzela_oboz_mobile_cut-1188-ebae2c53e788.avif 1188w",
   },
-  "hero-mobile/snowboard.jpg": {
-    src: "/images/generated/hero-mobile-snowboard-600-886f83f1b9f5.webp",
-    width: 600,
-    height: 782,
-    webpSrcSet:
-      "/images/generated/hero-mobile-snowboard-480-b606eddf3144.webp 480w, /images/generated/hero-mobile-snowboard-600-886f83f1b9f5.webp 600w",
-    avifSrcSet:
-      "/images/generated/hero-mobile-snowboard-480-ef525661402a.avif 480w, /images/generated/hero-mobile-snowboard-600-ee05101be8c2.avif 600w",
-  },
-  "hero-mobile/surf.jpg": {
-    src: "/images/generated/hero-mobile-surf-1200-e1a14c003335.webp",
-    width: 1200,
+  "carousel/mobile/3karuzela_surf_mobile_cut.jpg": {
+    src: "/images/generated/carousel-mobile-3karuzela_surf_mobile_cut-1234-2ca50f069a6c.webp",
+    width: 1234,
     height: 1920,
     webpSrcSet:
-      "/images/generated/hero-mobile-surf-480-0a2d86e43a40.webp 480w, /images/generated/hero-mobile-surf-960-f1b59031436f.webp 960w, /images/generated/hero-mobile-surf-1200-e1a14c003335.webp 1200w",
+      "/images/generated/carousel-mobile-3karuzela_surf_mobile_cut-480-4b74a48bcd04.webp 480w, /images/generated/carousel-mobile-3karuzela_surf_mobile_cut-960-9419ba67c82a.webp 960w, /images/generated/carousel-mobile-3karuzela_surf_mobile_cut-1234-2ca50f069a6c.webp 1234w",
     avifSrcSet:
-      "/images/generated/hero-mobile-surf-480-aabeeda5e7ed.avif 480w, /images/generated/hero-mobile-surf-960-aa55d1b34b41.avif 960w, /images/generated/hero-mobile-surf-1200-cb043a92b86c.avif 1200w",
+      "/images/generated/carousel-mobile-3karuzela_surf_mobile_cut-480-6e9406976792.avif 480w, /images/generated/carousel-mobile-3karuzela_surf_mobile_cut-960-30fe55636a17.avif 960w, /images/generated/carousel-mobile-3karuzela_surf_mobile_cut-1234-03773d1dadab.avif 1234w",
+  },
+  "carousel/mobile/4karuzela_skim_mobile_cut.jpg": {
+    src: "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-ae849a26201b.webp",
+    width: 466,
+    height: 939,
+    webpSrcSet:
+      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-ae849a26201b.webp 466w",
+    avifSrcSet:
+      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-cc51af29e82f.avif 466w",
   },
   "main/eventy-1.jpg": {
     src: "/images/generated/main-eventy-1-1535-ffe389a6d3ce.webp",

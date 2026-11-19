@@ -25,12 +25,26 @@ export function OfferGallery({
   const visibleImages = images.filter((image) => image.signedUrl !== null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const openingThumbnail = useRef<HTMLButtonElement | null>(null);
+  const touchStart = useRef<{ id: number; x: number; y: number } | null>(null);
   const selectedIndex = visibleImages.findIndex((image) => image.id === selectedId);
   const selectedImage = visibleImages[selectedIndex];
   const hasNavigation = visibleImages.length > 1;
+  const isOpen = Boolean(selectedImage);
 
   useEffect(() => {
-    if (selectedId !== null && selectedIndex === -1) setSelectedId(null);
+    if (!isOpen) return;
+    const cancelMultitouch = (event: TouchEvent) => {
+      if (event.touches.length > 1) touchStart.current = null;
+    };
+    document.addEventListener("touchstart", cancelMultitouch, { capture: true, passive: true });
+    return () => document.removeEventListener("touchstart", cancelMultitouch, true);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (selectedId !== null && selectedIndex === -1) {
+      touchStart.current = null;
+      setSelectedId(null);
+    }
   }, [selectedId, selectedIndex]);
 
   const movePhoto = (direction: number) => {
@@ -98,7 +112,15 @@ export function OfferGallery({
         ))}
       </div>
 
-      <Dialog open={Boolean(selectedImage)} onOpenChange={(open) => !open && setSelectedId(null)}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            touchStart.current = null;
+            setSelectedId(null);
+          }
+        }}
+      >
         {selectedImage ? (
           <DialogContent
             className="flex h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-none flex-col gap-3 border-0 bg-transparent p-0 text-background shadow-none sm:rounded-none [&>button]:right-0 [&>button]:top-0 [&>button]:grid [&>button]:size-11 [&>button]:place-items-center [&>button]:rounded-full [&>button]:bg-black/70 [&>button]:text-background [&>button]:opacity-100 winter:[&>button:hover]:bg-interaction winter:[&>button:hover]:text-primary-foreground [&>button]:focus-visible:ring-background [&>button]:focus-visible:ring-offset-black"
@@ -127,7 +149,34 @@ export function OfferGallery({
               {selectedIndex + 1} / {visibleImages.length}
               <span className="sr-only">: {selectedImage.alt}</span>
             </p>
-            <div className="flex min-h-0 flex-1 items-center justify-center">
+            <div
+              className="flex min-h-0 flex-1 items-center justify-center"
+              onTouchStart={(event) => {
+                const touch = event.touches[0];
+                touchStart.current =
+                  event.touches.length === 1 && touch
+                    ? { id: touch.identifier, x: touch.clientX, y: touch.clientY }
+                    : null;
+              }}
+              onTouchMove={(event) => {
+                if (event.touches.length !== 1) touchStart.current = null;
+              }}
+              onTouchCancel={() => {
+                touchStart.current = null;
+              }}
+              onTouchEnd={(event) => {
+                const start = touchStart.current;
+                touchStart.current = null;
+                if (!start || event.touches.length !== 0) return;
+                const touch = Array.from(event.changedTouches).find(
+                  (item) => item.identifier === start.id,
+                );
+                if (!touch) return;
+                const dx = touch.clientX - start.x;
+                const dy = touch.clientY - start.y;
+                if (Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy)) movePhoto(dx < 0 ? 1 : -1);
+              }}
+            >
               <img
                 src={selectedImage.signedUrl ?? undefined}
                 alt={selectedImage.alt}

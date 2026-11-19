@@ -13,16 +13,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CookieConsentProvider } from "@/components/cookie-consent/CookieConsentProvider";
 import type { DayCampOffer, TripOffer } from "@/lib/offers/types";
 
-const mockedListPublicPortalCarouselImages = vi.hoisted(() => vi.fn());
 const mockedListPublishedOffers = vi.hoisted(() => vi.fn());
 const mockedGetPublicPortalTheme = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/portal-theme/repository", () => ({
   getPublicPortalTheme: mockedGetPublicPortalTheme,
-}));
-
-vi.mock("@/lib/portal-carousel/repository", () => ({
-  listPublicPortalCarouselImages: mockedListPublicPortalCarouselImages,
 }));
 
 vi.mock("@/lib/offers/public-repository", () => ({
@@ -153,8 +148,6 @@ afterEach(() => {
 beforeEach(() => {
   mockedGetPublicPortalTheme.mockReset();
   mockedGetPublicPortalTheme.mockResolvedValue("original");
-  mockedListPublicPortalCarouselImages.mockReset();
-  mockedListPublicPortalCarouselImages.mockResolvedValue([]);
   mockedListPublishedOffers.mockReset();
   mockedListPublishedOffers.mockResolvedValue([]);
   vi.stubGlobal(
@@ -223,28 +216,9 @@ describe("static public pages", () => {
       `/obozy/${winterCamp.slug}`,
     );
   });
-  it("keeps the static fallback carousel when configuration cannot be read", async () => {
-    mockedListPublicPortalCarouselImages.mockRejectedValue(new Error("offline"));
-
+  it("renders four static homepage slides", async () => {
     await renderRoute("/", HomeRoute);
-
-    await waitFor(() => expect(mockedListPublicPortalCarouselImages).toHaveBeenCalledOnce());
-    expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(5);
-  });
-
-  it("uses ordered public carousel images when configuration loads", async () => {
-    mockedListPublicPortalCarouselImages.mockResolvedValue([
-      { path: "carousel/surf.jpg", src: "/surf.jpg", label: "Surf" },
-      { path: "carousel/snow.jpg", src: "/snow.jpg", label: "Snow" },
-    ]);
-
-    await renderRoute("/", HomeRoute);
-
-    await waitFor(() =>
-      expect(
-        screen.getAllByTestId("hero-carousel-slide").map((image) => image.getAttribute("src")),
-      ).toEqual(["/surf.jpg", "/snow.jpg"]),
-    );
+    expect(screen.getAllByTestId("hero-carousel-slide")).toHaveLength(4);
   });
 
   it("presents the three main areas as photo-led entry points", async () => {

@@ -80,7 +80,7 @@ supabase test db supabase/tests
 Instrukcję ręcznego nadania roli administratora, zasady podpisanych URL-i i
 bezpiecznej ewolucji schematu zawiera [runbook Supabase](docs/supabase-runbook.md).
 
-Publikacja i edycja ofert, PDF-ów oraz wybór zdjęć karuzeli w CMS nie wymagają
+Publikacja i edycja ofert, PDF-ów oraz ustawień portalu w CMS nie wymagają
 rebuilda. Zmiany kodu, zdjęć repozytorium, fontów i grafik OG wymagają deployu.
 Aktualne trasy i granice aplikacji opisuje [architektura](docs/architecture.md),
 a reguły mediów i interakcji — [system designu](docs/design-system.md).
@@ -89,7 +89,8 @@ a reguły mediów i interakcji — [system designu](docs/design-system.md).
 
 `docs/` zawiera aktualny opis rozwiązania, design system, runbooki i notatki
 wydań w `docs/releases/YYYY-MM-DD.N.md`. Plany i specyfikacje zadań przedstawiaj
-w czacie, a wyniki pracy w czacie, PR lub właściwym trackerze. Pliki robocze powstają
+w czacie, a wyniki pracy w czacie lub PR. Wpisy i dowody do trackera powstają tylko
+na wyraźne polecenie użytkownika. Pliki robocze powstają
 w katalogu tymczasowym poza repozytorium. Trwałe ustalenia dopisuj do właściwego
 istniejącego dokumentu po sprawdzeniu ich zgodności z kodem. Szczegółowe zasady
 dokumentowania pracy zawiera [przewodnik agentów](AGENTS.md#documentation-and-agent-working-materials).

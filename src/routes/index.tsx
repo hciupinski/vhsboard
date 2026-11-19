@@ -16,7 +16,7 @@ import { getTodayInWarsaw } from "@/lib/offers/home-offers";
 import { homeOffersQueryOptions } from "@/lib/offers/query-options";
 import { SOCIAL_IMAGES } from "@/lib/social-images";
 import { createPageMetadata } from "@/lib/seo";
-import { DEFAULT_PORTAL_CAROUSEL_IMAGES } from "@/lib/portal-carousel/catalogue";
+import { HOME_CAROUSEL_IMAGES } from "@/lib/images/home-carousel";
 
 const obozy = getLocalImage("main/obozy-zima.jpg");
 const eventy = getLocalImage("main/eventy-1.jpg");
@@ -62,13 +62,6 @@ const entryPoints = [
 ] as const;
 
 function HomePage() {
-  const { data: configuredImages } = useQuery({
-    queryKey: ["public-portal-carousel"],
-    queryFn: async () =>
-      (await import("@/lib/portal-carousel/repository")).listPublicPortalCarouselImages(),
-    retry: false,
-  });
-  const heroImages = configuredImages?.length ? configuredImages : DEFAULT_PORTAL_CAROUSEL_IMAGES;
   const {
     data: homeOffers = [],
     isPending: areHomeOffersPending,
@@ -82,16 +75,16 @@ function HomePage() {
       <PublicJsonLd path="/" label="VHSBOARD" includeSite />
       <main className="flex-1">
         <section className="relative isolate flex min-h-[calc(100svh-73px-var(--development-banner-height,0px))] flex-col justify-end overflow-hidden lg:block lg:min-h-0">
-          <HeroCarousel images={heroImages} />
+          <HeroCarousel images={HOME_CAROUSEL_IMAGES} />
           <div aria-hidden="true" className="absolute inset-0 hidden bg-foreground/20 lg:block" />
           <div className="relative bg-linear-to-t from-foreground via-foreground/85 via-65% to-transparent px-5 pt-16 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:mx-auto lg:max-w-6xl lg:bg-none lg:pt-36 lg:pb-28">
             <p className="mb-4 inline-block rounded-full border border-background/40 bg-transparent px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-background text-shadow-md text-shadow-foreground/50">
               Wyjazdy · Eventy · Obozy
             </p>
-            <h1 className="max-w-3xl text-5xl leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">
+            <h1 className="max-w-3xl text-[2.5rem] leading-[0.95] text-background text-shadow-md text-shadow-foreground/50 sm:text-7xl">
               Dobre rzeczy dzieją się poza codziennym planem
             </h1>
-            <p className="mt-4 max-w-xl text-base text-background text-shadow-md text-shadow-foreground/50 sm:text-lg lg:mt-5">
+            <p className="mt-4 max-w-xl text-[0.9375rem] text-background text-shadow-md text-shadow-foreground/50 sm:text-lg lg:mt-5">
               Żyjemy deską przez cały rok. Łączymy ludzi, sport i dobrą energię — na wyjazdach,
               eventach i podczas aktywności dla dzieci.
             </p>

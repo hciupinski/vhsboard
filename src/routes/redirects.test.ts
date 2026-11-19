@@ -22,6 +22,7 @@ describe("Cloudflare Pages redirects", () => {
       "/eventy/": ["/skimboarding", "/zorganizuj-event"],
       "/o-nas/": ["/szkolenia", "/skateboarding-2"],
       "/wypozyczalnia/": ["/serwis"],
+      "/obozy/oboz-freestyle-2027": ["/home/oboz_zimowy-freestyle"],
       "/kontakt/": [
         "/pliki-cookies",
         "/polityka-cookies",
@@ -35,7 +36,6 @@ describe("Cloudflare Pages redirects", () => {
         "/surfing/surfcamp-maroko",
         "/home/livigno_pierwszy_snieg_2022",
         "/home/oboz_zimowy-podhale",
-        "/home/oboz_zimowy-freestyle",
         "/home/family-weekend-trzech-kroli",
         "/zimowiska-z-impaktem",
         "/spring-break-2025",

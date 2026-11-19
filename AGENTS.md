@@ -29,7 +29,7 @@ Read this file before changing the application. The detailed references are:
 - Document the current supported behavior, its important constraints, and reusable
   procedures. Exclude abandoned alternatives, unimplemented proposals, task
   chronology, one-off test counts, local QA URLs, screenshots, and Drive links.
-  Put task-specific results in the chat, PR, or the client tracker as applicable.
+  Put task-specific results in the chat or PR.
 - Create a new permanent document only for a distinct, reusable subject that
   does not fit an existing document; link it from this guide or the README.
 
@@ -55,8 +55,8 @@ availability, participant management, or customer accounts.
   `/admin/dokumenty`, `/admin/portal`
 - Public and admin details receive separate static shells; admin always stays noindex
 
-Offers, photographs, contact PDFs, and carousel selection use Supabase, Auth,
-and RLS. Publishing content does not rebuild the frontend. Code, repository
+Offers, photographs, contact PDFs, and portal settings use Supabase, Auth,
+and RLS. The homepage carousel uses repository images. Publishing content does not rebuild the frontend. Code, repository
 photographs, fonts, and OG images require a Git build/deploy.
 
 ## Design guardrails
@@ -104,26 +104,19 @@ photographs, fonts, and OG images require a Git build/deploy.
 
 ## Task tracking and client review
 
-- The [shared Google Sheets tracker](https://docs.google.com/spreadsheets/d/1MLn5I9EcpKrJRD6PP8rUxh8OoaHaeqMyHkwvmYN6sQQ/edit)
-  is the source of truth for client feedback. Read its current state before
-  selecting tasks and identify each task by its stable `VHS-###` ID, not a saved
-  row number.
+- Use the user's current instructions and approved scope to select work.
+  The [shared Google Sheets tracker](https://docs.google.com/spreadsheets/d/1MLn5I9EcpKrJRD6PP8rUxh8OoaHaeqMyHkwvmYN6sQQ/edit)
+  remains a historical reference for client feedback; consult it when needed
+  for context, using stable `VHS-###` IDs rather than saved row numbers.
 - Before implementing a batch, present its scope and plan in the chat for the
   user's approval. Keep tasks requiring client decisions or missing materials separate.
-- For every completed task, verify the actual behavior and capture a real
-  screenshot as evidence. Embed the screenshot in the matching task's
-  `Po / dowód` cell and fill in `Co poprawiono` and `Weryfikacja / wersja`,
-  including the tested URL/environment, viewport, result, and commit/version.
-  Keep screenshots accessible in the project Drive folder; link additional
-  viewport screenshots from the same row.
-- Re-read the tracker before updating a row so sorting or concurrent edits do
-  not attach results to the wrong task. Preserve the original report and `Przed`
-  evidence. Use `Do akceptacji` only after verification and screenshot evidence;
-  leave `Akceptacja klientki` for human review. Never close partially completed
-  requests or claim that a local fix is deployed publicly.
-- For the approved 2026-10-23 batch, the user explicitly accepted durable Drive
-  screenshot links in the existing `Po / dowód` cells instead of inline images.
-  Preserve these links; do not replace them with expiring tool URLs.
+- Do not create tracker entries, update tracker rows, or collect or upload
+  screenshot evidence for the tracker unless the user explicitly requests it.
+  Existing reports and evidence links remain unchanged.
+- Verify the actual behavior and report results in the chat or PR. Screenshots
+  are optional aids for checking the UI, not a required delivery artifact.
+  Never claim a partially completed request is complete or a local fix is
+  deployed publicly.
 
 ## Useful commands
 
