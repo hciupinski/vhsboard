@@ -866,28 +866,28 @@
       ]
     },
     "carousel/mobile/4karuzela_skim_mobile_cut.jpg": {
-      "sourceHash": "ffb3373650bd20416b13a4600400b099dc6690012cca41090d8b141ef7276ac9",
+      "sourceHash": "dbc664860edda823ccbbdf8606a5b9908f3185d83b761dcecb17866629f588b0",
       "asset": {
-        "src": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-f1b4e3722a3d.webp",
-        "width": 468,
-        "height": 847,
-        "webpSrcSet": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-f1b4e3722a3d.webp 468w",
-        "avifSrcSet": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-577755610e44.avif 468w"
+        "src": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-ae849a26201b.webp",
+        "width": 466,
+        "height": 939,
+        "webpSrcSet": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-ae849a26201b.webp 466w",
+        "avifSrcSet": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-cc51af29e82f.avif 466w"
       },
       "variants": [
         {
-          "path": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-f1b4e3722a3d.webp",
-          "width": 468,
-          "height": 847,
+          "path": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-ae849a26201b.webp",
+          "width": 466,
+          "height": 939,
           "format": "webp",
-          "bytes": 111942
+          "bytes": 118568
         },
         {
-          "path": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-577755610e44.avif",
-          "width": 468,
-          "height": 847,
+          "path": "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-cc51af29e82f.avif",
+          "width": 466,
+          "height": 939,
           "format": "avif",
-          "bytes": 52756
+          "bytes": 56163
         }
       ]
     },
