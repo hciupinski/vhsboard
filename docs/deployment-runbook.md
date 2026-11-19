@@ -145,8 +145,9 @@ zgodą na merge lub deploy; nie uruchamiaj ich bez polecenia użytkownika.
   włączyć osobno; wtedy kontrola publicznych URL wymaga odpowiedniego dostępu.
 - Sprawdź publiczne trasy, refresh szczegółów ofert i admina, logowanie/reset,
   odczyt draftów i izolację zapisów dev od produkcji. Wyniki, URL, SHA, run CI
-  i screenshoty 1440×900 oraz 390×844 przedstaw w czacie lub PR, a dla zgłoszeń
-  klientki w trackerze. Nie twórz raportu sesji ani kolekcji dowodów w `docs/`.
+  przedstaw w czacie lub PR. Screenshoty mogą pomóc w kontroli UI, ale nie są
+  wymaganym artefaktem. Nie twórz wpisów ani dowodów do trackera bez wyraźnego
+  polecenia użytkownika. Nie twórz raportu sesji ani kolekcji dowodów w `docs/`.
 - Nie zgłaszaj wdrożenia na podstawie merge lub samego lokalnego buildu.
 
 ## Przyszłe przepięcie domeny
