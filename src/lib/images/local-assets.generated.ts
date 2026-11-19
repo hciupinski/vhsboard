@@ -146,13 +146,13 @@ export const LOCAL_IMAGE_ASSETS = {
       "/images/generated/carousel-mobile-3karuzela_surf_mobile_cut-480-6e9406976792.avif 480w, /images/generated/carousel-mobile-3karuzela_surf_mobile_cut-960-30fe55636a17.avif 960w, /images/generated/carousel-mobile-3karuzela_surf_mobile_cut-1234-03773d1dadab.avif 1234w",
   },
   "carousel/mobile/4karuzela_skim_mobile_cut.jpg": {
-    src: "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-f1b4e3722a3d.webp",
-    width: 468,
-    height: 847,
+    src: "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-ae849a26201b.webp",
+    width: 466,
+    height: 939,
     webpSrcSet:
-      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-f1b4e3722a3d.webp 468w",
+      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-ae849a26201b.webp 466w",
     avifSrcSet:
-      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-577755610e44.avif 468w",
+      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-466-cc51af29e82f.avif 466w",
   },
   "main/eventy-1.jpg": {
     src: "/images/generated/main-eventy-1-1535-ffe389a6d3ce.webp",
