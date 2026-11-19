@@ -4,7 +4,7 @@
 
 VHSBOARD is a Polish marketing site for surfing and snowboarding trips, events,
 and children's sports camps. The small administrator CMS manages offers, offer
-photographs, contact PDFs, and the homepage carousel. Every published offer
+photographs, contact PDFs, the rental document, and the global theme. Every published offer
 links to the external HTTPS booking service selected in the CMS. Use
 “Adres zapisów” for a trip or for each individual camp term. Reservations, payments,
 availability, participant management, and public accounts are outside this app.
@@ -42,7 +42,7 @@ social previews, and build-time company configuration require a new Git deploy.
 | `/admin/login`                                                               | Administrator sign-in.                               |
 | `/admin/reset-password`                                                      | Supabase password recovery.                          |
 | `/admin/new`, `/admin/:slug`                                                 | Create or edit an offer by slug.                     |
-| `/admin/dokumenty`, `/admin/portal`                                          | Contact PDF and carousel management.                 |
+| `/admin/dokumenty`, `/admin/portal`                                          | Contact PDF, theme and rental document management.   |
 
 Cloudflare rewrites in [`public/_redirects`](../public/_redirects) send admin
 routes to a separate `/_shell/admin.html`. It always has `noindex, nofollow`.
@@ -69,8 +69,7 @@ Only the seven marketing pages enter the sitemap. See the [SEO runbook](seo-runb
   Training section independently of its cards. Like other offer photos, they
   are stored in the private bucket and require a published offer for public
   access.
-- `contact_documents` stores public PDF metadata, including an optional category (trips, camps, or organizer). Uncategorized legacy PDFs remain visible under “Pozostałe dokumenty” until an administrator assigns them in the document manager. The manager can edit a document’s title and category without replacing its PDF. `portal_carousel_images`
-  stores selected local asset paths and order; it does not upload carousel files.
+- `contact_documents` stores public PDF metadata, including an optional category (trips, camps, or organizer). Uncategorized legacy PDFs remain visible under “Pozostałe dokumenty” until an administrator assigns them in the document manager. The manager can edit a document’s title and category without replacing its PDF.
 - `portal_rental_document` is a separate singleton holding the optional rental
   PDF path. CMS → Portal replaces it through `replace_portal_rental_document`;
   its file shares the private `contact-documents` bucket and one-hour signed
@@ -89,7 +88,7 @@ Only the seven marketing pages enter the sitemap. See the [SEO runbook](seo-runb
   away from that route.
 
 Implementation modules live under `src/lib/offers`, `src/lib/images`,
-`src/lib/documents`, `src/lib/portal-carousel`, and `src/lib/auth`. Schema changes
+`src/lib/documents`, and `src/lib/auth`. Schema changes
 live in `supabase/migrations`; security tests live in `supabase/tests`.
 The [Supabase runbook](supabase-runbook.md) describes local database checks and roles.
 
@@ -164,9 +163,16 @@ dialog. A failed persistence attempt leaves the UI open rather than claiming
 the choice was saved. The banner itself adds no analytics or marketing tags;
 any future optional integration must enforce its category's consent explicitly.
 
+## Homepage carousel
+
+The homepage uses four ordered desktop and portrait image pairs from the
+repository, defined in `src/lib/images/home-carousel.ts` and served through the
+generated image catalogue. Changing them requires image generation and a Git
+deploy. Legacy carousel database objects remain unused by the frontend.
+
 ## Global appearance
 
-CMS → Portal publishes the shared theme independently of carousel selection.
+CMS → Portal publishes the shared theme.
 `PortalThemeProvider` reads it with a separate public Query key and applies a
 root HTML attribute so dialogs and cookie preferences share the palette.
 Admin routes and the admin build shell do not apply the public theme.

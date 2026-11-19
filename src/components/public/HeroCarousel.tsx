@@ -6,27 +6,19 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { getLocalImage, type ResponsiveImageAsset } from "@/lib/images/responsive";
-import type { PortalCarouselImage } from "@/lib/portal-carousel/types";
+import type { ResponsiveImageAsset } from "@/lib/images/responsive";
 import { ResponsiveImage } from "./ResponsiveImage";
 
+export type HeroCarouselImage = {
+  readonly path: string;
+  readonly src: string;
+  readonly responsive?: ResponsiveImageAsset;
+  readonly portrait?: ResponsiveImageAsset;
+};
+
 type HeroCarouselProps = {
-  images: readonly PortalCarouselImage[];
+  images: readonly HeroCarouselImage[];
   intervalMs?: number;
-};
-
-const mobileImageClasses: Readonly<Record<string, string>> = {
-  "carousel/1karuzela_snb.png": "object-[62%_center] md:object-center",
-  "carousel/3karuzela_surf.png": "object-[75%_center] md:object-center",
-  "carousel/4eventy_karuzela.png": "object-[68%_center] md:object-center",
-};
-
-const mobileHeroImages: Readonly<Record<string, ResponsiveImageAsset>> = {
-  "carousel/1karuzela_snb.png": getLocalImage("hero-mobile/snowboard.jpg"),
-  "carousel/2karuzela_oboz1.png": getLocalImage("hero-mobile/oboz-zimowy.jpg"),
-  "carousel/3karuzela_surf.png": getLocalImage("hero-mobile/surf.jpg"),
-  "carousel/4eventy_karuzela.png": getLocalImage("main/eventy-1.jpg"),
-  "carousel/karuzela_oboz2.png": getLocalImage("main/obozy-zima.jpg"),
 };
 
 const mobileHeroMedia = "(width < 1024px) and (orientation: portrait)";
@@ -66,15 +58,14 @@ const HeroCarousel = ({ images, intervalMs = 5_500 }: HeroCarouselProps) => {
     >
       <CarouselContent className="ml-0 h-full">
         {images.map((image, index) => {
-          const position = mobileImageClasses[image.path];
-          const portrait = image.responsive ? mobileHeroImages[image.path] : undefined;
-          const imageClassName = `h-full w-full object-cover ${position ?? ""}${portrait && position ? " portrait:object-center" : ""}`;
+          const portrait = image.portrait;
+          const imageClassName = "h-full w-full object-cover";
           return (
             <CarouselItem className="h-full pl-0" key={image.path}>
               {image.responsive ? (
                 <ResponsiveImage
                   image={image.responsive}
-                  sizes={position ? "(max-width: 767px) 1600px, 100vw" : "100vw"}
+                  sizes="100vw"
                   artDirection={
                     portrait
                       ? [

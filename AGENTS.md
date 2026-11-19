@@ -55,8 +55,8 @@ availability, participant management, or customer accounts.
   `/admin/dokumenty`, `/admin/portal`
 - Public and admin details receive separate static shells; admin always stays noindex
 
-Offers, photographs, contact PDFs, and carousel selection use Supabase, Auth,
-and RLS. Publishing content does not rebuild the frontend. Code, repository
+Offers, photographs, contact PDFs, and portal settings use Supabase, Auth,
+and RLS. The homepage carousel uses repository images. Publishing content does not rebuild the frontend. Code, repository
 photographs, fonts, and OG images require a Git build/deploy.
 
 ## Design guardrails
