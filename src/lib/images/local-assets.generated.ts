@@ -83,13 +83,13 @@ export const LOCAL_IMAGE_ASSETS = {
       "/images/generated/about-us-mario-vhs-480-1128a7ba14ff.avif 480w, /images/generated/about-us-mario-vhs-960-bc208ffe25fa.avif 960w, /images/generated/about-us-mario-vhs-1600-0053b20335d2.avif 1600w",
   },
   "carousel/1karuzela_snb.png": {
-    src: "/images/generated/carousel-1karuzela_snb-1600-5a8a0d02da61.webp",
+    src: "/images/generated/carousel-1karuzela_snb-1600-f8e77dd0b908.webp",
     width: 1600,
-    height: 622,
+    height: 548,
     webpSrcSet:
-      "/images/generated/carousel-1karuzela_snb-480-a45632f65f4e.webp 480w, /images/generated/carousel-1karuzela_snb-960-48a734ecff0f.webp 960w, /images/generated/carousel-1karuzela_snb-1600-5a8a0d02da61.webp 1600w",
+      "/images/generated/carousel-1karuzela_snb-480-5b96aaadaecb.webp 480w, /images/generated/carousel-1karuzela_snb-960-3da62757d66f.webp 960w, /images/generated/carousel-1karuzela_snb-1600-f8e77dd0b908.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-1karuzela_snb-480-465c4597b299.avif 480w, /images/generated/carousel-1karuzela_snb-960-24a964220d89.avif 960w, /images/generated/carousel-1karuzela_snb-1600-7e27db72bdf2.avif 1600w",
+      "/images/generated/carousel-1karuzela_snb-480-d4dce23390d8.avif 480w, /images/generated/carousel-1karuzela_snb-960-dc28b3bcd75f.avif 960w, /images/generated/carousel-1karuzela_snb-1600-999accaa7bd6.avif 1600w",
   },
   "carousel/2karuzela_oboz.png": {
     src: "/images/generated/carousel-2karuzela_oboz-1600-1d988bedf642.webp",
@@ -110,22 +110,22 @@ export const LOCAL_IMAGE_ASSETS = {
       "/images/generated/carousel-3karuzela_surf-480-44cabe740437.avif 480w, /images/generated/carousel-3karuzela_surf-960-018fbafe4dc8.avif 960w, /images/generated/carousel-3karuzela_surf-1600-7d9a9902f4a1.avif 1600w",
   },
   "carousel/4karuzela_skim.png": {
-    src: "/images/generated/carousel-4karuzela_skim-1600-0d3b402593f6.webp",
+    src: "/images/generated/carousel-4karuzela_skim-1600-46e15e16a828.webp",
     width: 1600,
-    height: 622,
+    height: 549,
     webpSrcSet:
-      "/images/generated/carousel-4karuzela_skim-480-317e3d381699.webp 480w, /images/generated/carousel-4karuzela_skim-960-7402145a2587.webp 960w, /images/generated/carousel-4karuzela_skim-1600-0d3b402593f6.webp 1600w",
+      "/images/generated/carousel-4karuzela_skim-480-8df784a5b363.webp 480w, /images/generated/carousel-4karuzela_skim-960-90b7e3afd2d0.webp 960w, /images/generated/carousel-4karuzela_skim-1600-46e15e16a828.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-4karuzela_skim-480-78fc253833a9.avif 480w, /images/generated/carousel-4karuzela_skim-960-7e31614d7734.avif 960w, /images/generated/carousel-4karuzela_skim-1600-667e3022eb12.avif 1600w",
+      "/images/generated/carousel-4karuzela_skim-480-e1f9331bcb7e.avif 480w, /images/generated/carousel-4karuzela_skim-960-bd7b7e12fcc8.avif 960w, /images/generated/carousel-4karuzela_skim-1600-d841b6f38931.avif 1600w",
   },
   "carousel/mobile/1karuzela_snb_mobile_cut.jpg": {
-    src: "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-657-9880d2ffe046.webp",
-    width: 657,
-    height: 966,
+    src: "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-1600-4fec16922467.webp",
+    width: 1600,
+    height: 1838,
     webpSrcSet:
-      "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-480-126917a0fb4d.webp 480w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-657-9880d2ffe046.webp 657w",
+      "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-480-16c2825d98f1.webp 480w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-960-e17ba9e7aa7a.webp 960w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-1600-4fec16922467.webp 1600w",
     avifSrcSet:
-      "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-480-da13ecdf3ef0.avif 480w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-657-5c99eb2caec8.avif 657w",
+      "/images/generated/carousel-mobile-1karuzela_snb_mobile_cut-480-aef393e96fdf.avif 480w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-960-a8d44f3642c4.avif 960w, /images/generated/carousel-mobile-1karuzela_snb_mobile_cut-1600-198f94d05f79.avif 1600w",
   },
   "carousel/mobile/2karuzela_oboz_mobile_cut.jpg": {
     src: "/images/generated/carousel-mobile-2karuzela_oboz_mobile_cut-1188-6fd6ccb91534.webp",
@@ -146,13 +146,13 @@ export const LOCAL_IMAGE_ASSETS = {
       "/images/generated/carousel-mobile-3karuzela_surf_mobile_cut-480-6e9406976792.avif 480w, /images/generated/carousel-mobile-3karuzela_surf_mobile_cut-960-30fe55636a17.avif 960w, /images/generated/carousel-mobile-3karuzela_surf_mobile_cut-1234-03773d1dadab.avif 1234w",
   },
   "carousel/mobile/4karuzela_skim_mobile_cut.jpg": {
-    src: "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-472-c4334b485e57.webp",
-    width: 472,
-    height: 629,
+    src: "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-f1b4e3722a3d.webp",
+    width: 468,
+    height: 847,
     webpSrcSet:
-      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-472-c4334b485e57.webp 472w",
+      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-f1b4e3722a3d.webp 468w",
     avifSrcSet:
-      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-472-e2baf44f5ccc.avif 472w",
+      "/images/generated/carousel-mobile-4karuzela_skim_mobile_cut-468-577755610e44.avif 468w",
   },
   "main/eventy-1.jpg": {
     src: "/images/generated/main-eventy-1-1535-ffe389a6d3ce.webp",
