@@ -80,7 +80,7 @@ supabase test db supabase/tests
 Instrukcję ręcznego nadania roli administratora, zasady podpisanych URL-i i
 bezpiecznej ewolucji schematu zawiera [runbook Supabase](docs/supabase-runbook.md).
 
-Publikacja i edycja ofert, PDF-ów oraz wybór zdjęć karuzeli w CMS nie wymagają
+Publikacja i edycja ofert, PDF-ów oraz ustawień portalu w CMS nie wymagają
 rebuilda. Zmiany kodu, zdjęć repozytorium, fontów i grafik OG wymagają deployu.
 Aktualne trasy i granice aplikacji opisuje [architektura](docs/architecture.md),
 a reguły mediów i interakcji — [system designu](docs/design-system.md).

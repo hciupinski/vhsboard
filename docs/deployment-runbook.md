@@ -160,7 +160,7 @@ Redirect dokładnie z `vhsboard.pages.dev` nie może objąć aliasu develop.
 
 ## Zmiany treści
 
-CMS zapisuje oferty, galerie, PDF-y, karuzelę i motyw w Supabase wybranego
+CMS zapisuje oferty, galerie, PDF-y i motyw w Supabase wybranego
 środowiska. Nie przebudowuje Pages. Kod, katalog lokalnych fotografii, fonty,
 OG oraz publiczne dane firmy z `VITE_*` wymagają nowego buildu/deployu.
 

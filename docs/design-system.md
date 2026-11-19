@@ -74,10 +74,11 @@ their semantic colors. Hover never becomes a requirement for touch use.
 - Below the desktop breakpoint, the homepage and camps listing heroes fill
   the visible screen below the header and align copy and any CTA to the
   bottom over a gradient. They can grow on short screens to keep the content
-  accessible.
+  accessible. On small phones, the homepage hero uses compact heading and body type.
 - On portrait screens below the desktop breakpoint, the homepage carousel
-  serves separate image sources framed around the subject. Use the generated
-  image catalogue and choose source sizes that account for the cover crop.
+  serves the matching dedicated portrait crop for each of its four ordered
+  desktop scenes. Use the generated image catalogue and choose source sizes
+  that account for the cover crop.
 - Keep primary content inside `max-w-6xl` containers with `px-5` mobile
   gutters. Increase vertical rhythm at larger breakpoints rather than shrinking
   content into desktop-only layouts.

@@ -14,21 +14,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Route as AdminDocumentsRoute } from "./admin.dokumenty";
 import { Route as AdminPortalRoute } from "./admin.portal";
 
-const { mockedGetAdminSession, mockedListAdminPortalCarouselImages, mockedGetAdminPortalTheme } =
-  vi.hoisted(() => ({
-    mockedGetAdminSession: vi.fn(),
-    mockedListAdminPortalCarouselImages: vi.fn(),
-    mockedGetAdminPortalTheme: vi.fn(),
-  }));
+const { mockedGetAdminSession, mockedGetAdminPortalTheme } = vi.hoisted(() => ({
+  mockedGetAdminSession: vi.fn(),
+  mockedGetAdminPortalTheme: vi.fn(),
+}));
 
 vi.mock("@/lib/auth/session", () => ({
   getAdminSession: mockedGetAdminSession,
   signOut: vi.fn(),
-}));
-
-vi.mock("@/lib/portal-carousel/repository", () => ({
-  listAdminPortalCarouselImages: mockedListAdminPortalCarouselImages,
-  savePortalCarouselImages: vi.fn(),
 }));
 
 vi.mock("@/lib/portal-theme/repository", () => ({
@@ -84,7 +77,6 @@ const expectMobileSafeHeader = (actionLinkName: string) => {
 };
 
 beforeEach(() => {
-  mockedListAdminPortalCarouselImages.mockResolvedValue([]);
   mockedGetAdminPortalTheme.mockResolvedValue("original");
 });
 
@@ -112,13 +104,14 @@ describe("admin portal route", () => {
     expect(head.meta).toContainEqual({ name: "robots", content: "noindex, nofollow" });
   });
 
-  it("renders the carousel manager and links to Oferty and Dokumenty", async () => {
+  it("renders theme and rental managers without carousel selection", async () => {
     mockedGetAdminSession.mockResolvedValue({ user: {} });
 
     await renderAdminPage(AdminPortalRoute.options.component as FunctionComponent, "/admin/portal");
 
     expect(await screen.findByRole("heading", { name: "Ustawienia portalu" })).toBeInTheDocument();
-    expect(screen.getByRole("region", { name: "Karuzela portalu" })).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Karuzela portalu" })).not.toBeInTheDocument();
+    expect(screen.getByRole("region", { name: /wypożyczalni/i })).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Wygląd strony" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Oferty" })).toHaveAttribute("href", "/admin");
     expect(screen.getByRole("link", { name: "Dokumenty" })).toHaveAttribute(

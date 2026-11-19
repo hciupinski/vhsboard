@@ -180,21 +180,13 @@ aktywnego dokumentu w celu ponowienia uploadu.
 
 ## Karuzela strony głównej
 
-`public.portal_carousel_images` przechowuje wybór i kolejność zdjęć z katalogu
-repozytorium. Administrator zapisuje pełną listę przez
-`set_portal_carousel_images`; publiczny użytkownik może ją odczytać, ale nie
-zmienić. CMS wybiera istniejące ścieżki — nie wysyła nowych plików karuzeli.
-Dodanie nowego zdjęcia do katalogu wymaga wygenerowania wariantów i deployu;
-zmiana wyboru istniejących zdjęć wymaga tylko zapisu w CMS.
-
-Ścieżki karuzeli są identyfikatorami zapisanymi w bazie. Po zmianie nazw zdjęć
-sprawdź `src/lib/portal-carousel/catalogue.ts` i wszystkie odwołania aplikacji
-oraz generatora OG. Odczyt mapuje znane stare ścieżki na aktualne, pomija
-nieznane wpisy i usuwa powtórzenia z zachowaniem pierwszego wystąpienia.
-Pusty wybór publiczny korzysta z zestawu domyślnego. Zapis dopuszcza wyłącznie
-unikalne ścieżki z bieżącego katalogu; aliasy służą zgodności odczytu, nie nowym
-zapisom. Po wymianie fotografii wykonaj regenerację i kontrole obrazów opisane
-w [runbooku wdrożenia](deployment-runbook.md#zdjęcia-fonty-i-podglądy-udostępniania).
+Karuzela korzysta z czterech par zdjęć repozytorium określonych w
+`src/lib/images/home-carousel.ts`, bez odczytu i edycji konfiguracji w CMS.
+Historyczna tabela `public.portal_carousel_images` i funkcja
+`set_portal_carousel_images` pozostają w bazie, ale frontend ich nie używa.
+Po zmianie fotografii wykonaj regenerację i kontrole obrazów opisane
+w [runbooku wdrożenia](deployment-runbook.md#zdjęcia-fonty-i-podglądy-udostępniania)
+oraz wdróż nowy build.
 
 ## Globalny motyw portalu
 

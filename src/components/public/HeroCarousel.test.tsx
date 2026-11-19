@@ -1,8 +1,8 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { PortalCarouselImage } from "@/lib/portal-carousel/types";
-import { DEFAULT_PORTAL_CAROUSEL_IMAGES } from "@/lib/portal-carousel/catalogue";
+import type { HeroCarouselImage } from "./HeroCarousel";
+import { HOME_CAROUSEL_IMAGES } from "@/lib/images/home-carousel";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { HeroCarousel } from "./HeroCarousel";
 
@@ -26,16 +26,14 @@ vi.mock("embla-carousel-react", () => ({
   default: embla.useEmblaCarousel,
 }));
 
-const images: readonly PortalCarouselImage[] = [
+const images: readonly HeroCarouselImage[] = [
   {
     path: "carousel/surf.jpg",
     src: "/surf.jpg",
-    label: "surf",
   },
   {
     path: "carousel/snow.jpg",
     src: "/snow.jpg",
-    label: "snow",
   },
 ];
 
@@ -98,39 +96,21 @@ describe("HeroCarousel", () => {
     expect(embla.api.scrollNext).toHaveBeenCalledTimes(1);
   });
 
-  it("positions the snowboarder in the mobile frame and preserves desktop centering", () => {
+  it("pairs each homepage desktop scene with its matching portrait crop", () => {
     stubReducedMotion(false);
-    render(
-      <HeroCarousel
-        images={[{ path: "carousel/1karuzela_snb.png", src: "/snow.png", label: "Snow" }]}
-      />,
-    );
-    expect(screen.getByTestId("hero-carousel-slide")).toHaveClass(
-      "object-[62%_center]",
-      "md:object-center",
-    );
-  });
-
-  it("serves portrait sources only on mobile, with the original desktop source for each slide", () => {
-    stubReducedMotion(false);
-    render(<HeroCarousel images={DEFAULT_PORTAL_CAROUSEL_IMAGES} />);
-
-    screen.getAllByTestId("hero-carousel-slide").forEach((slide, index) => {
+    render(<HeroCarousel images={HOME_CAROUSEL_IMAGES} />);
+    const scenes = ["1karuzela_snb", "2karuzela_oboz", "3karuzela_surf", "4karuzela_skim"];
+    const slides = screen.getAllByTestId("hero-carousel-slide");
+    expect(slides).toHaveLength(4);
+    slides.forEach((slide, index) => {
       const sources = slide.closest("picture")?.querySelectorAll("source");
       expect(sources).toHaveLength(4);
-      const portraitMedia = "(width < 1024px) and (orientation: portrait)";
-      expect(sources?.[0]).toHaveAttribute("media", portraitMedia);
+      expect(sources?.[0]).toHaveAttribute("media", "(width < 1024px) and (orientation: portrait)");
       expect(sources?.[0]?.getAttribute("sizes")).toMatch(/^max\(100vw, \d+svh\)$/);
-      expect(sources?.[0]?.getAttribute("srcset")).not.toBe(
-        DEFAULT_PORTAL_CAROUSEL_IMAGES[index]?.responsive?.avifSrcSet,
-      );
-      expect(sources?.[1]).toHaveAttribute("media", portraitMedia);
-      expect(sources?.[2]).not.toHaveAttribute("media");
-      expect(sources?.[2]).toHaveAttribute(
-        "srcset",
-        DEFAULT_PORTAL_CAROUSEL_IMAGES[index]?.responsive?.avifSrcSet,
-      );
-      expect(slide).toHaveClass("object-cover");
+      expect(sources?.[0]?.getAttribute("srcset")).toContain(`${scenes[index]}_mobile_cut`);
+      expect(sources?.[2]?.getAttribute("srcset")).toContain(scenes[index]);
+      expect(slide).toHaveAttribute("loading", index === 0 ? "eager" : "lazy");
+      expect(slide).toHaveAttribute("fetchpriority", index === 0 ? "high" : "auto");
     });
   });
 
