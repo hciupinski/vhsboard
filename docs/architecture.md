@@ -215,8 +215,9 @@ branch head, applies forward migrations to its own Supabase, builds the static
 artifact, checks SEO and uploads it to the same Pages project `vhsboard`.
 
 Pages production branch must remain `main`, verified through API before every
-upload. The main site uses `https://vhsboard.pages.dev` until a separate domain
-cutover; develop uses `https://develop.vhsboard.pages.dev` and always noindex.
+upload. The main site uses `https://vhsboard.pl` with indexing enabled; develop uses
+`https://develop.vhsboard.pages.dev` and always noindex. The Pages domain is
+the technical hosting address.
 The production Supabase is retained; development uses an independent project,
 Auth users and Storage. CMS content does not move with Git merges. Deployment
 metadata and a public `_deployment.json` marker verify the exact SHA served by

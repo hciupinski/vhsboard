@@ -2,7 +2,9 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TripSectionNavigation } from "./TripSectionNavigation";
-import { tripSections } from "@/lib/offers/trip-sections";
+import { getOfferEditorSections } from "@/lib/offers/sections";
+
+const tripSections = getOfferEditorSections("trip");
 
 let headerHeight = 61;
 let sectionTops: Record<string, number>;

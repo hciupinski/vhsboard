@@ -3,24 +3,24 @@
 ## Środowiska
 
 Jeden projekt Cloudflare Pages Direct Upload `vhsboard` obsługuje produkcję
-z `main` (`https://vhsboard.pages.dev`, docelowo `https://vhsboard.pl`) i preview
+z `main` (`https://vhsboard.pl`) i preview
 z `develop` (`https://develop.vhsboard.pages.dev`). Budowanie i migracje prowadzi
 GitHub Actions, bez integracji Git Cloudflare i bez serwera aplikacyjnego.
-Ta konfiguracja nie przepina domeny ani istniejącego WordPressa.
+Adres `vhsboard.pages.dev` jest techniczną subdomeną projektu Pages.
 
 | Ustawienie                                | production                                 | development                                |
 | ----------------------------------------- | ------------------------------------------ | ------------------------------------------ |
 | Dozwolony ref                             | `refs/heads/main`                          | `refs/heads/develop`                       |
 | Supabase project ref                      | `jiqgcbqsbmzokcmtjtsw`                     | `hrtxiivubihmxsjuxzer`                     |
 | `VITE_SUPABASE_URL`                       | `https://jiqgcbqsbmzokcmtjtsw.supabase.co` | `https://hrtxiivubihmxsjuxzer.supabase.co` |
-| `VITE_SITE_URL` przed migracją domeny     | `https://vhsboard.pages.dev`               | `https://develop.vhsboard.pages.dev`       |
-| `VITE_SEO_INDEXING` przed migracją domeny | `false`                                    | `false`                                    |
+| `VITE_SITE_URL`                           | `https://vhsboard.pl`               | `https://develop.vhsboard.pages.dev`       |
+| `VITE_SEO_INDEXING`                       | `true`                                    | `false`                                    |
 
 ## Jednorazowe przygotowanie
 
 1. Potwierdź w API Pages: projekt `vhsboard`, subdomena `vhsboard.pages.dev`,
    `production_branch=main`. Direct Upload może wymagać API do zmiany tej gałęzi.
-   Nie ustawiaj develop jako production branch i nie dodawaj teraz domeny.
+   Nie ustawiaj develop jako production branch; sprawdź domenę i TLS produkcji.
 2. GitHub Environments: `production` dopuszcza tylko branch `main`,
    `development` tylko `develop`; bez reguł tagów. Zachowaj istniejące reguły ochrony.
 3. W każdym Environment ustaw publiczne variables: `CLOUDFLARE_PAGES_PROJECT=vhsboard`,
@@ -77,30 +77,14 @@ concurrency chronią każde środowisko przed nakładającymi się migracjami;
 `cancel-in-progress=false` nie przerywa trwającej migracji. GitHub może zastąpić
 oczekujący run nowszym, więc nie każdy commit musi zostać osobno opublikowany.
 
-## Pierwszy start i codzienna praca
+## Codzienna praca
 
-Przed aktywacją poczekaj na zakończenie wszystkich istniejących deployów produkcji.
-Dla main zachowujemy dotychczasową grupę concurrency `production-deploy`, aby
-stary run nie nałożył się na bootstrap. Nie ponawiaj runów sprzed bootstrapu:
-GitHub używa w nich starego workflow z pierwotnego SHA, bez nowych zabezpieczeń.
-Zamiast tego uruchom aktualny workflow z bieżącego main.
-
-Przed mergem nowego pipeline przygotuj obydwa Environments i wymagane nazwy
-sekretów/variables. Pierwszy bootstrap trafia do main przy zachowaniu obecnej
-produkcji i jej Supabase. Po zielonym deployu utwórz develop od świeżego main
-albo przenieś bootstrap PR-em na istniejący develop; nigdy nie resetuj cudzej pracy.
-Push develop stosuje migracje nowego Supabase i publikuje pierwszy preview.
-Po migracjach utwórz osobnego administratora dev.
-
-Później: feature → PR do develop → testy na stałym aliasie → gałąź wydania od świeżego develop → PR do main → produkcja. Przygotowanie
+Feature → PR do develop → testy na stałym aliasie → gałąź wydania od świeżego develop → PR do main → produkcja. Przygotowanie
 wydania opisuje [skill VHSBOARD release](../.agents/skills/vhsboard-release/SKILL.md).
 Hotfix i commit notatek wydania z main przenieś również do develop przez PR
 przed kolejnym wydaniem. Wymagaj czterech
 rzeczywistych kontroli Verify na obu branchach; nie omijaj istniejących reguł.
 Merge przenosi kod i migracje, ale nie oferty, konta ani pliki CMS.
-
-Usuń stare repository-level kopie konfiguracji Supabase/SEO dopiero po zielonych
-wdrożeniach i sprawdzeniu Verify do obu branchy. Wspólne dane firmy mogą pozostać.
 
 ## Przygotowanie i publikacja wydania
 
@@ -150,13 +134,11 @@ zgodą na merge lub deploy; nie uruchamiaj ich bez polecenia użytkownika.
   polecenia użytkownika. Nie twórz raportu sesji ani kolekcji dowodów w `docs/`.
 - Nie zgłaszaj wdrożenia na podstawie merge lub samego lokalnego buildu.
 
-## Przyszłe przepięcie domeny
+## Kontrola domeny
 
-Osobny etap po uzyskaniu dostępów hosting/domena z VHS-051: audyt URL WordPress
-oraz przekierowań 301, zachowanie DNS poczty, dodanie Pages Custom domain i TLS,
-aktualizacja Auth produkcji, `VITE_SITE_URL=https://vhsboard.pl`, dopiero przy
-uruchomieniu indeksowania `VITE_SEO_INDEXING=true`, nowy build/deploy i kontrola SEO.
-Redirect dokładnie z `vhsboard.pages.dev` nie może objąć aliasu develop.
+Sprawdzaj domenę produkcyjną, TLS, DNS poczty, przekierowania, Auth i SEO
+po zmianach konfiguracji. Redirect z technicznej subdomeny Pages nie może
+objąć aliasu develop. Procedury i mapowania legacy opisuje [runbook SEO](seo-runbook.md).
 
 ## Zmiany treści
 

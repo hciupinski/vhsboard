@@ -10,15 +10,6 @@ export const LOCAL_IMAGE_ASSETS = {
     avifSrcSet:
       "/images/generated/about-us-about-snowboard-group-480-12ba2325a3b3.avif 480w, /images/generated/about-us-about-snowboard-group-960-cce7b539280b.avif 960w, /images/generated/about-us-about-snowboard-group-1600-b54b445eee0c.avif 1600w",
   },
-  "about-us/city-and-more-1.jpg": {
-    src: "/images/generated/about-us-city-and-more-1-1600-f3dcaa19a6e7.webp",
-    width: 1600,
-    height: 1066,
-    webpSrcSet:
-      "/images/generated/about-us-city-and-more-1-480-0d318eb05efa.webp 480w, /images/generated/about-us-city-and-more-1-960-743cb148d371.webp 960w, /images/generated/about-us-city-and-more-1-1600-f3dcaa19a6e7.webp 1600w",
-    avifSrcSet:
-      "/images/generated/about-us-city-and-more-1-480-673efa8583dc.avif 480w, /images/generated/about-us-city-and-more-1-960-7258d9ff0f4d.avif 960w, /images/generated/about-us-city-and-more-1-1600-aead518d7aae.avif 1600w",
-  },
   "about-us/city-and-more-2.JPG": {
     src: "/images/generated/about-us-city-and-more-2-1600-0ef682e8d52e.webp",
     width: 1600,
@@ -181,24 +172,6 @@ export const LOCAL_IMAGE_ASSETS = {
     avifSrcSet:
       "/images/generated/main-wyjazdy-480-ec4c7687b020.avif 480w, /images/generated/main-wyjazdy-960-3a0f0efe0015.avif 960w, /images/generated/main-wyjazdy-1600-307b9685ec2a.avif 1600w",
   },
-  "o-nas.jpg": {
-    src: "/images/generated/o-nas-1600-2aa69e0e61bc.webp",
-    width: 1600,
-    height: 1066,
-    webpSrcSet:
-      "/images/generated/o-nas-480-c9aa1cdc529d.webp 480w, /images/generated/o-nas-960-9451fc634ecf.webp 960w, /images/generated/o-nas-1600-2aa69e0e61bc.webp 1600w",
-    avifSrcSet:
-      "/images/generated/o-nas-480-e19488258f29.avif 480w, /images/generated/o-nas-960-e3fdb2ca0483.avif 960w, /images/generated/o-nas-1600-5cdb704f087c.avif 1600w",
-  },
-  "obozy.jpg": {
-    src: "/images/generated/obozy-1600-075502252a02.webp",
-    width: 1600,
-    height: 1069,
-    webpSrcSet:
-      "/images/generated/obozy-480-d6f9d6e42abc.webp 480w, /images/generated/obozy-960-d3a2b04c5738.webp 960w, /images/generated/obozy-1600-075502252a02.webp 1600w",
-    avifSrcSet:
-      "/images/generated/obozy-480-6439f0b0a2d0.avif 480w, /images/generated/obozy-960-0357f547cade.avif 960w, /images/generated/obozy-1600-3dcc1f24c2cd.avif 1600w",
-  },
   "obozy/main-obozy-lato.jpg": {
     src: "/images/generated/obozy-main-obozy-lato-1600-25720ea52223.webp",
     width: 1600,
@@ -234,15 +207,6 @@ export const LOCAL_IMAGE_ASSETS = {
       "/images/generated/obozy-obozy-zima-480-c22f6160a335.webp 480w, /images/generated/obozy-obozy-zima-960-1fb8138510cb.webp 960w, /images/generated/obozy-obozy-zima-1280-3ffe8cdcab90.webp 1280w",
     avifSrcSet:
       "/images/generated/obozy-obozy-zima-480-e9cec0f3033b.avif 480w, /images/generated/obozy-obozy-zima-960-faee215db3cb.avif 960w, /images/generated/obozy-obozy-zima-1280-8890fbe14a8a.avif 1280w",
-  },
-  "rental/snowboard.png": {
-    src: "/images/generated/rental-snowboard-583-a0c63357671e.webp",
-    width: 583,
-    height: 454,
-    webpSrcSet:
-      "/images/generated/rental-snowboard-480-2c7640e70ded.webp 480w, /images/generated/rental-snowboard-583-a0c63357671e.webp 583w",
-    avifSrcSet:
-      "/images/generated/rental-snowboard-480-7ff5e22e25ca.avif 480w, /images/generated/rental-snowboard-583-179455ab4c78.avif 583w",
   },
   "rental/snowboards.jpg": {
     src: "/images/generated/rental-snowboards-1280-7ea69e850d93.webp",

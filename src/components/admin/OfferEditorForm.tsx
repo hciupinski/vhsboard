@@ -47,8 +47,6 @@ export function OfferEditorForm({
   const offerKind = value.offerKind ?? "trip";
   const dayCamp = offerKind === "day_camp" ? (value.content as DayCampContent) : null;
   const trip = offerKind === "trip" ? (value.content as TripOfferContent) : null;
-  const set = <K extends keyof EditableOfferInput>(key: K, nextValue: EditableOfferInput[K]) =>
-    onChange({ ...value, [key]: nextValue });
   const setDayCamp = (content: DayCampContent) =>
     onChange({ ...value, content: normalizeOfferContentV2(content, offerKind) });
   const setContent = (content: OfferContent) =>

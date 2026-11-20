@@ -292,14 +292,14 @@ W **Authentication → URL Configuration → Redirect URLs** dodaj dokładne adr
 zachowując dotychczasowe wpisy:
 
 ```text
-https://vhsboard.pages.dev/admin/reset-password
+https://vhsboard.pl/admin/reset-password
 http://localhost:3000/admin/reset-password
 http://127.0.0.1:3000/admin/reset-password
 ```
 
-Pozostaw produkcyjny **Site URL** `https://vhsboard.pages.dev` jako domyślny.
-Nie przełączaj globalnego Site URL na localhost. Po zmianie domeny produkcyjnej
-zaktualizuj również jej dokładny adres odzyskiwania. Wysyłka z aplikacji podaje
+Produkcyjny **Site URL** powinien być `https://vhsboard.pl`. Sprawdź to
+w hostowanej konfiguracji wraz z dokładnym adresem odzyskiwania.
+Nie przełączaj globalnego Site URL na localhost. Wysyłka z aplikacji podaje
 bieżący origin w `redirectTo`; Supabase dopuszcza tylko adresy ze swojej listy.
 Lokalny `supabase/config.toml` zawiera analogiczne adresy lokalne i wymaga restartu
 lokalnego Auth, by nowe wpisy zaczęły obowiązywać. Ten plik nie aktualizuje

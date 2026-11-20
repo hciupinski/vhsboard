@@ -3,14 +3,7 @@ import { isValidIsoDate } from "./date-input";
 import { contentSectionsShape, getSectionIssues, getContentIdentityIssues } from "./content-v2";
 import { z } from "zod";
 
-import type {
-  DayCampContent,
-  OfferActivity,
-  OfferContent,
-  OfferKind,
-  OfferStatus,
-  TripOfferContent,
-} from "./types";
+import type { DayCampContent, OfferActivity, OfferContent, OfferKind, OfferStatus } from "./types";
 
 export type EditableOfferInput = {
   offerKind?: OfferKind;

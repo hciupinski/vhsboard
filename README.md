@@ -45,11 +45,11 @@ bun run format
 
 ## Wdrożenia
 
-Gałąź `main` wdraża produkcję na `https://vhsboard.pages.dev`, a `develop`
+Gałąź `main` wdraża produkcję na `https://vhsboard.pl`, a `develop`
 wersję testową na `https://develop.vhsboard.pages.dev`. Każde środowisko używa
 własnego projektu Supabase. Workflow uruchamia push, merge lub ręczne
-wywołanie z właściwej gałęzi. Domena `vhsboard.pl` pozostaje poza zakresem
-tego wdrożenia i nadal obsługuje ją WordPress. Konfigurację, procedurę wydań
+wywołanie z właściwej gałęzi. Cloudflare Pages zapewnia hosting techniczny.
+Konfigurację, procedurę wydań
 oraz sprawdzenia wdrożenia opisuje
 [runbook wdrożenia](docs/deployment-runbook.md).
 
@@ -61,8 +61,7 @@ konfiguracyjne danych kontaktowych i firmy: `VITE_CONTACT_EMAIL`,
 zmiennych środowiskowych deployu, nigdy w repozytorium.
 
 Techniczne SEO wymaga też `VITE_SITE_URL` (dokładnego originu HTTPS) oraz
-`VITE_SEO_INDEXING` (`true` albo `false`). Dopóki adres Pages jest jedynym
-adresem wdrożenia, ustaw `VITE_SEO_INDEXING=false`; sitemapę i kontrolę
+`VITE_SEO_INDEXING` (`true` na produkcji, `false` na develop); sitemapę i kontrolę
 statycznego outputu opisuje [runbook SEO](docs/seo-runbook.md).
 
 ## Supabase lokalnie
