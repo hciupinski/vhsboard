@@ -9,9 +9,8 @@ projektu Pages i oddzielnych buildów.
 - `VITE_SITE_URL` musi być dokładnym originem HTTPS, bez ścieżki, query,
   fragmentu, portu i danych logowania.
 - `VITE_SEO_INDEXING` musi mieć wartość `false` albo `true`.
-- Obecnie ustaw `VITE_SITE_URL` na adres projektu `*.pages.dev` oraz
-  `VITE_SEO_INDEXING=false`. Roboty mogą pobrać stronę, ale HTML zawsze
-  zawiera `noindex, nofollow`.
+- Produkcja używa `VITE_SITE_URL=https://vhsboard.pl` oraz
+  `VITE_SEO_INDEXING=true`.
 
 Dla dev zawsze ustaw `VITE_SITE_URL=https://develop.vhsboard.pages.dev` oraz
 `VITE_SEO_INDEXING=false`. Sprawdź meta robots i nagłówek preview X-Robots-Tag.
@@ -44,9 +43,9 @@ swoje adresy.
 `check:seo` sprawdza meta dane, canonicale, język, robots, sitemapę, brak
 panelu admina, statycznych szczegółów ofert oraz podpisanych URL-i Storage.
 
-## Pierwszy merge i kontrola
+## Kontrola po wdrożeniu
 
-Po merge'u do `main` sprawdź view-source dla strony głównej i `/wyjazdy`.
+Po wdrożeniu `main` sprawdź view-source dla strony głównej i `/wyjazdy`.
 Treść szczegółu oferty ładuje się po stronie przeglądarki, dlatego testuj ją
 normalnie po otwarciu adresu `/wyjazdy/:slug` albo `/obozy/:slug`.
 Otwórz też `/sitemap.xml` i `/robots.txt`; sitemap nie może zawierać `/admin`
@@ -56,19 +55,11 @@ Przed publikacją oferty potwierdź ręcznie rzeczywistą cenę PLN oraz działa
 link HTTPS do zewnętrznego systemu zapisów. Dane firmy w JSON-LD pochodzą wyłącznie z publicznej
 konfiguracji deployu, więc muszą odpowiadać zatwierdzonym danym firmy.
 
-## Przyszłe przełączenie domeny
+## Kontrola domeny produkcyjnej
 
-Po osobnym zatwierdzeniu migracji domeny oraz skonfigurowaniu i zweryfikowaniu DNS dla `vhsboard.pl` zmień w tym samym
-środowisku GitHub `production`:
-
-```text
-VITE_SITE_URL=https://vhsboard.pl
-VITE_SEO_INDEXING=true
-```
-
-Nie zmieniaj przy tym konfiguracji development. Zaktualizuj też URL Auth produkcji.
-Wykonaj nowy build i deploy, następnie sprawdź canonicale, sitemapę i
-`index, follow` na wdrożonej domenie przed zgłoszeniem jej do indeksowania.
+Po zmianach konfiguracji lub deployu sprawdź canonicale, sitemapę, robots.txt
+i `index, follow` na `https://vhsboard.pl`. Utrzymuj zgodne adresy Auth
+i osobną konfigurację development.
 
 ## HTML ofert i panelu
 
@@ -103,10 +94,9 @@ Po próbie z `true` odtwórz lokalny artefakt dla rzeczywistej konfiguracji depl
 
 ## Migracja istniejących adresów
 
-Przed przełączeniem domeny zbierz adresy ze starej mapy witryny, menu, linków
+Przy zmianach przekierowań porównuj adresy starej mapy witryny, menu, linków
 wewnętrznych, Search Console i logów oraz uwzględnij publiczne pliki PDF.
-Dla każdego adresu potwierdź aktualną treść, odpowiednik i wynik HTTP przed
-oraz po przełączeniu. Stosuj pojedyncze 301 tylko do rzeczywiście równoważnej
+Dla każdego adresu potwierdź aktualną treść, odpowiednik i wynik HTTP. Stosuj pojedyncze 301 tylko do rzeczywiście równoważnej
 treści; nie kieruj wszystkich brakujących adresów na stronę główną.
 
 Zatwierdzone przekierowania starego WordPressa są w
@@ -116,8 +106,7 @@ a `/home/oboz_zimowy-freestyle` (również z końcowym ukośnikiem) prowadzi do
 `/obozy/oboz-freestyle-2027`. Przekierowania pozostawiają bez zmian obecne
 adresy ofert w CMS.
 
-Nie przełączaj domeny, dopóki istotne adresy nie mają uzgodnionej
-i sprawdzonej obsługi. Po deployu sprawdź pełne łańcuchy
+Po deployu sprawdź pełne łańcuchy
 przekierowań, końcowe statusy i treść na rzeczywistej domenie.
 
 ## Statyczne 404 i cache

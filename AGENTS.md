@@ -49,10 +49,10 @@ availability, participant management, or customer accounts.
 - React 19 + TypeScript + Vite
 - TanStack Router, Start, and Query
 - Tailwind CSS 4 and Radix UI primitives
-- Prerendered marketing routes: `/`, `/o-nas`, `/wyjazdy`, `/eventy`, `/obozy`, `/kontakt`
+- Prerendered marketing routes: `/`, `/o-nas`, `/wyjazdy`, `/eventy`, `/obozy`, `/kontakt`, `/wypozyczalnia`
 - JS offer details: `/wyjazdy/:slug`, `/obozy/:slug`; `/trips/:slug` is a legacy 301 redirect
 - Supabase CMS: `/admin`, `/admin/login`, `/admin/new`, `/admin/:slug`,
-  `/admin/dokumenty`, `/admin/portal`
+  `/admin/dokumenty`, `/admin/portal`, `/admin/reset-password`
 - Public and admin details receive separate static shells; admin always stays noindex
 
 Offers, photographs, contact PDFs, and portal settings use Supabase, Auth,

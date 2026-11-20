@@ -46,7 +46,7 @@ export function OptionalSectionsEditor({
   const value = content[sectionKey];
   const enabled = sectionIsEnabled(value);
   const disabledError = enabled ? undefined : errorFor(errors, `content.${sectionKey}`);
-  const { field, price, cards } = createSectionFields(errors, disabled);
+  const { field, cards } = createSectionFields(errors, disabled);
   const baseCard = () => ({
     id: crypto.randomUUID(),
     title: "",
